@@ -379,7 +379,7 @@ const LeadDetailsPage = () => {
                           {offer.images.map(img => img && img.url && (
                             <div key={img._id || img.url} style={{ position: 'relative', width: 100, height: 100, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#000' }}>
                               <img 
-                                src={`http://localhost:5000${img.url}`} 
+                                src={img.url.startsWith('http') ? img.url : `http://localhost:5000${img.url}`}
                                 alt={img.caption || 'Offer item'} 
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 title={img.caption || 'No caption'}

@@ -1395,7 +1395,7 @@ const PersonalPage = () => {
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         {contract?.signedContractFile ? (
-                          <a href={`http://localhost:5000${contract.signedContractFile}`} target="_blank" rel="noopener noreferrer"
+                          <a href={contract.signedContractFile.startsWith('http') ? contract.signedContractFile : `http://localhost:5000${contract.signedContractFile}`} target="_blank" rel="noopener noreferrer"
                             style={{ fontSize: 12, color: 'var(--accent-secondary)', textDecoration: 'none', padding: '5px 12px', border: '1px solid var(--accent-secondary)33', borderRadius: 6, background: 'rgba(99,102,241,0.06)' }}>
                             View Document
                           </a>
@@ -1614,7 +1614,7 @@ const PersonalPage = () => {
                                   <div style={{ fontSize: 11, marginTop: 3 }}>
                                     {docUrl.startsWith('/uploads') ? (
                                       <a
-                                        href={`http://localhost:5000${docUrl}`}
+                                        href={docUrl.startsWith('http') ? docUrl : `http://localhost:5000${docUrl}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         style={{ color: 'var(--accent-secondary)', textDecoration: 'underline' }}
