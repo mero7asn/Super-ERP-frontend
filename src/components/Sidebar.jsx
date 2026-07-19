@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useMatch } from 'react-router-dom';
+import API from '../services/api';
 import logo from '../assets/logo.png';
 import { useAuth } from '../context/AuthContext';
 
@@ -67,7 +68,6 @@ const CRM_NAV_ITEMS = [
 // ERP-level departments that live OUTSIDE the Super CRM section.
 // Visible only when the business model includes 'product'. Each opens the
 // corresponding external ERP app (configurable base URL) in a new tab.
-const ERP_BASE_URL = import.meta.env.VITE_ERP_URL || '';
 const ERP_NAV_ITEMS = [
   { label: 'Super Inventory',   icon: 'inventory',   path: '/inventory',     businessModel: ['product', 'both'], external: true },
   { label: 'Super Supply Chain',icon: 'supplychain', path: '/supply-chain',  businessModel: ['product', 'both'], external: true },
@@ -101,6 +101,17 @@ const Sidebar = () => {
     '/inventory': { open: inventoryOpen, setOpen: setInventoryOpen },
     '/supply-chain': { open: supplyChainOpen, setOpen: setSupplyChainOpen },
   };
+
+  // External ERP base URL — configured in System Settings, falls back to env.
+  const [erpBaseUrl, setErpBaseUrl] = useState(import.meta.env.VITE_ERP_URL || '');
+
+  useEffect(() => {
+    let active = true;
+    API.get('/settings/erp')
+      .then(res => { if (active && res.data?.success && res.data.data?.baseUrl) setErpBaseUrl(res.data.data.baseUrl); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, []);
 
   const handleLogout = () => { logout(); navigate('/login'); };
 
@@ -184,22 +195,29 @@ const Sidebar = () => {
         {/* Super Inventory & Super Supply Chain — ERP level, outside Super CRM */}
         {showERP && (
           <div style={{ marginBottom: 16 }}>
+            {!erpBaseUrl && (
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', padding: '4px 8px 8px', lineHeight: 1.4 }}>
+                External ERP apps not configured. Set the ERP Base URL in System Settings.
+              </div>
+            )}
             {ERP_NAV_ITEMS.filter(canSee).map(item => {
               const state = erpSectionState[item.path];
+              const href = erpBaseUrl ? `${erpBaseUrl.replace(/\/$/, '')}${item.path}` : null;
               return (
                 <div key={item.path} style={{ marginBottom: 12 }}>
                   <SectionHeader label={item.label} open={state.open} onToggle={() => state.setOpen(o => !o)} />
                   {state.open && (
                     <a
-                      href={ERP_BASE_URL ? `${ERP_BASE_URL}${item.path}` : item.path}
-                      target="_blank"
+                      href={href || '#'}
+                      target={href ? '_blank' : undefined}
                       rel="noopener noreferrer"
+                      onClick={(e) => { if (!href) { e.preventDefault(); navigate('/settings'); } }}
                       className="sidebar-link"
-                      style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 8, color: 'var(--text-primary)' }}
+                      style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 8, color: 'var(--text-primary)', opacity: href ? 1 : 0.6 }}
                     >
                       <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
-                      Open {item.label}
-                      <span style={{ marginLeft: 'auto', fontSize: 11, opacity: 0.6 }}>↗</span>
+                      {href ? `Open ${item.label}` : `Configure ${item.label}`}
+                      <span style={{ marginLeft: 'auto', fontSize: 11, opacity: 0.6 }}>{href ? '↗' : '⚙'}</span>
                     </a>
                   )}
                 </div>

@@ -21,6 +21,10 @@ const SettingsPage = () => {
   const [businessModel, setBm] = useState(user?.businessModel || 'service');
   const [savingBm, setSavingBm] = useState(false);
 
+  // ERP integration base URL (external departments: Inventory, Supply Chain)
+  const [erpBaseUrl, setErpBaseUrl] = useState('');
+  const [savingErp, setSavingErp] = useState(false);
+
   // General settings
   const [appName, setAppName] = useState('Super CRM');
   const [companyName, setCompanyName] = useState('Super Enterprise Inc.');
@@ -72,6 +76,16 @@ const SettingsPage = () => {
       }
     };
     fetchBusinessModel();
+
+    const fetchErp = async () => {
+      try {
+        const { data } = await API.get('/settings/erp');
+        if (data.success && data.data?.baseUrl) setErpBaseUrl(data.data.baseUrl);
+      } catch (err) {
+        console.error('Failed to load ERP config:', err);
+      }
+    };
+    fetchErp();
   }, []);
 
   const handleProviderChange = (key) => {
@@ -505,6 +519,51 @@ const SettingsPage = () => {
                     style={{ width: 'auto', padding: '10px 32px' }}
                   >
                     {savingBm ? 'Saving…' : 'Save Business Model'}
+                  </button>
+                </div>
+
+                <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '28px 0' }} />
+
+                <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Icon name="plug" size={18} style={{ color: 'var(--accent-primary)' }} />
+                  ERP Integration
+                </h3>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
+                  Base URL of the external Super ERP (Inventory &amp; Supply Chain apps). When set, the sidebar opens them in a new tab.
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'flex-end' }}>
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label">ERP Base URL</label>
+                    <input
+                      className="form-input"
+                      type="url"
+                      placeholder="https://erp.yourcompany.com"
+                      value={erpBaseUrl}
+                      onChange={(e) => setErpBaseUrl(e.target.value)}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={savingErp}
+                    onClick={async () => {
+                      setSavingErp(true);
+                      setErrorMsg('');
+                      setSuccessMsg('');
+                      try {
+                        await API.put('/settings/erp', { baseUrl: erpBaseUrl });
+                        setSuccessMsg('ERP integration settings saved.');
+                        setTimeout(() => setSuccessMsg(''), 4000);
+                      } catch (err) {
+                        setErrorMsg(err.response?.data?.message || 'Failed to save ERP settings');
+                      } finally {
+                        setSavingErp(false);
+                      }
+                    }}
+                    style={{ width: 'auto', padding: '10px 28px' }}
+                  >
+                    {savingErp ? 'Saving…' : 'Save ERP URL'}
                   </button>
                 </div>
               </div>

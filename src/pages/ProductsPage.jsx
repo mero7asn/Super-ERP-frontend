@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Icon } from '../components/Icons';
+import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const statusBadge = (status) => {
@@ -14,9 +15,11 @@ const statusBadge = (status) => {
 const ProductsPage = () => {
   const { user } = useAuth();
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [editing, setEditing] = useState(null);
 
   const [form, setForm] = useState({
     name: '', sku: '', price: '', description: '', imageUrl: '', status: 'Active',
@@ -24,33 +27,71 @@ const ProductsPage = () => {
 
   const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(user?.role);
 
-  const handleCreate = () => {
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const { data } = await API.get('/products');
+      setProducts(data.data || []);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchProducts(); /* eslint-disable-next-line */ }, []);
+
+  const openCreate = () => {
+    setEditing(null);
+    setError('');
+    setForm({ name: '', sku: '', price: '', description: '', imageUrl: '', status: 'Active' });
+    setShowModal(true);
+  };
+
+  const openEdit = (p) => {
+    setEditing(p);
+    setError('');
+    setForm({
+      name: p.name, sku: p.sku, price: String(p.price),
+      description: p.description || '', imageUrl: p.imageUrl || '', status: p.status,
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = async () => {
     if (!form.name.trim()) return setError('Product name is required');
-    if (!form.price || isNaN(parseFloat(form.price))) return setError('Valid price is required');
     if (!form.sku.trim()) return setError('SKU is required');
+    if (!form.price || isNaN(parseFloat(form.price)) || parseFloat(form.price) < 0) return setError('Valid price is required');
 
     setSaving(true);
     setError('');
     try {
-      const product = {
-        _id: `local-${Date.now()}`,
-        ...form,
-        price: parseFloat(form.price),
-        createdBy: { firstName: user?.firstName, lastName: user?.lastName },
-        createdAt: new Date().toISOString(),
-      };
-      setProducts(prev => [product, ...prev]);
+      if (editing) {
+        await API.put(`/products/${editing._id}`, { ...form, price: parseFloat(form.price) });
+      } else {
+        await API.post('/products', { ...form, price: parseFloat(form.price) });
+      }
       setShowModal(false);
-      setForm({ name: '', sku: '', price: '', description: '', imageUrl: '', status: 'Active' });
+      setEditing(null);
+      await fetchProducts();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to save product');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!confirm('Delete this product?')) return;
-    setProducts(prev => prev.filter(p => p._id !== id));
+    try {
+      await API.delete(`/products/${id}`);
+      await fetchProducts();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete product');
+    }
   };
+
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading products…</div>;
 
   return (
     <div>
@@ -62,7 +103,7 @@ const ProductsPage = () => {
           </h1>
           <p className="page-subtitle">Manage your product catalog used in offers and orders</p>
         </div>
-        <button className="btn btn-primary" onClick={() => { setError(''); setShowModal(true); }} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <button className="btn btn-primary" onClick={openCreate} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <Icon name="plus" size={16} /> New Product
         </button>
       </div>
@@ -111,6 +152,7 @@ const ProductsPage = () => {
                   <td>{p.createdBy ? `${p.createdBy.firstName} ${p.createdBy.lastName}` : '—'}</td>
                   <td>
                     <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                      <button className="btn btn-secondary btn-sm" onClick={() => openEdit(p)}>Edit</button>
                       {isAdmin && (
                         <button className="btn btn-secondary btn-sm" onClick={() => handleDelete(p._id)} style={{ color: 'var(--status-lost)' }}>
                           Delete
@@ -135,7 +177,7 @@ const ProductsPage = () => {
             background: 'var(--bg-card)', borderRadius: 12, padding: 32, maxWidth: 560, width: '100%',
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
           }} onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>New Product</h2>
+            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>{editing ? 'Edit Product' : 'New Product'}</h2>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>Add an item to your catalog</p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -146,7 +188,7 @@ const ProductsPage = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">SKU</label>
-                  <input className="form-input" placeholder="PRD-001" value={form.sku} onChange={e => setForm(p => ({ ...p, sku: e.target.value }))} />
+                  <input className="form-input" placeholder="PRD-001" value={form.sku} onChange={e => setForm(p => ({ ...p, sku: e.target.value }))} disabled={!!editing} />
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Price ($)</label>
@@ -173,8 +215,8 @@ const ProductsPage = () => {
 
             <div style={{ display: 'flex', gap: 10, marginTop: 24, justifyContent: 'flex-end' }}>
               <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} disabled={saving}>Cancel</button>
-              <button type="button" className="btn btn-primary" onClick={handleCreate} disabled={saving}>
-                {saving ? 'Saving...' : 'Create Product'}
+              <button type="button" className="btn btn-primary" onClick={handleSave} disabled={saving}>
+                {saving ? 'Saving...' : (editing ? 'Save Changes' : 'Create Product')}
               </button>
             </div>
           </div>
