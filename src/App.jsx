@@ -35,6 +35,8 @@ import MySchedulePage from './pages/ess/MySchedulePage';
 import MyPayrollPage from './pages/ess/MyPayrollPage';
 import { useAuth } from './context/AuthContext';
 import PaymentPage from './pages/PaymentPage';
+import ProductsPage from './pages/ProductsPage';
+import OnboardingModal from './components/OnboardingModal';
 
 // Layout wrapper: renders Sidebar + content for authenticated pages
 const AppLayout = ({ children }) => {
@@ -115,6 +117,20 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <AppLayout>
               <LeadDetailsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Protected: Products (business-model gated; visible for product/both) */}
+      <Route
+        path="/products"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Sales Agent', 'Sales Manager', 'Executive User'
+          ]}>
+            <AppLayout>
+              <ProductsPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -451,6 +467,7 @@ function App() {
       <AuthProvider>
         <AuxProvider>
           <AppRoutes />
+          <OnboardingModal />
         </AuxProvider>
       </AuthProvider>
     </BrowserRouter>

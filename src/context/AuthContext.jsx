@@ -42,10 +42,16 @@ export const AuthProvider = ({ children }) => {
     setUser(merged);
   };
 
+  // Persist the Super Admin's chosen business model (service | product | both)
+  // and onboarding state to both context and localStorage.
+  const setBusinessModel = (businessModel, onboarded = true) => {
+    updateCurrentUser({ businessModel, onboarded });
+  };
+
   const clearError = () => setError(null);
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, logout, updateCurrentUser, clearError }}>
+    <AuthContext.Provider value={{ user, loading, error, login, logout, updateCurrentUser, setBusinessModel, clearError }}>
       {children}
     </AuthContext.Provider>
   );

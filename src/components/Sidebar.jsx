@@ -53,7 +53,8 @@ const CRM_NAV_ITEMS = [
   { label: 'Teams',              icon: 'teams',     path: '/teams',     roles: ['Super CRM Administrator','System Architect','Sales Manager','Sales Agent','Customer Support Manager','Customer Support Agent','Marketing Manager','Marketing Specialist'] },
   { label: 'Sales Dashboard',    icon: 'kanban',    path: '/kanban',    roles: ['Super CRM Administrator','Sales Agent','Sales Manager','Executive User','System Architect','Business Analyst'] },
   { label: 'Technical Issues',   icon: 'tickets',   path: '/tickets',   roles: null },
-  { label: 'Bookings',           icon: 'bookings',  path: '/bookings',  roles: ['Sales Agent','Sales Manager','Customer Support Agent','Customer Support Manager','CRM Developer','CRM Consultant','System Architect','Super CRM Administrator'] },
+  { label: 'Bookings',           icon: 'bookings',  path: '/bookings',  roles: ['Sales Agent','Sales Manager','Customer Support Agent','Customer Support Manager','CRM Developer','CRM Consultant','System Architect','Super CRM Administrator'], businessModel: ['service', 'both'] },
+  { label: 'Products',           icon: 'box',       path: '/products',  roles: ['Super CRM Administrator','System Architect','Sales Agent','Sales Manager','Executive User'], businessModel: ['product', 'both'] },
   { label: 'Campaigns',          icon: 'campaigns', path: '/campaigns', roles: ['Super CRM Administrator','Marketing Specialist','Marketing Manager','Executive User','Business Analyst','System Architect'] },
   { label: 'Analytics',          icon: 'analytics', path: '/analytics', roles: ['Super CRM Administrator','Executive User','Business Analyst','System Architect'] },
   { label: 'Executive Dashboard',icon: 'executive', path: '/executive', roles: ['Super CRM Administrator','Executive User','Business Analyst','System Architect'] },
@@ -61,6 +62,15 @@ const CRM_NAV_ITEMS = [
   { label: 'System Settings',    icon: 'settings',  path: '/settings',  roles: ['Super CRM Administrator'] },
   { label: 'CRM Dev Tools',      icon: 'devtools',  path: '/devtools',  roles: ['CRM Developer','System Architect','Super CRM Administrator'] },
   { label: 'RTM Monitor',        icon: 'rtm',       path: '/rtm',       roles: ['RTM Team Member','Super CRM Administrator','HRM System Administrator','HR Manager'] },
+];
+
+// ERP-level departments that live OUTSIDE the Super CRM section.
+// Visible only when the business model includes 'product'. Each opens the
+// corresponding external ERP app (configurable base URL) in a new tab.
+const ERP_BASE_URL = import.meta.env.VITE_ERP_URL || '';
+const ERP_NAV_ITEMS = [
+  { label: 'Super Inventory',   icon: 'inventory',   path: '/inventory',     businessModel: ['product', 'both'], external: true },
+  { label: 'Super Supply Chain',icon: 'supplychain', path: '/supply-chain',  businessModel: ['product', 'both'], external: true },
 ];
 
 const HRM_NAV_ITEMS = [
@@ -84,16 +94,32 @@ const Sidebar = () => {
   const [crmOpen, setCrmOpen] = useState(true);
   const [hrmOpen, setHrmOpen] = useState(true);
   const [essOpen, setEssOpen] = useState(true);
+  const [inventoryOpen, setInventoryOpen] = useState(true);
+  const [supplyChainOpen, setSupplyChainOpen] = useState(true);
+
+  const erpSectionState = {
+    '/inventory': { open: inventoryOpen, setOpen: setInventoryOpen },
+    '/supply-chain': { open: supplyChainOpen, setOpen: setSupplyChainOpen },
+  };
 
   const handleLogout = () => { logout(); navigate('/login'); };
 
-  const canSee = (item) => !item.roles || item.roles.includes(user?.role);
+  const canSee = (item) => {
+    if (item.roles && !item.roles.includes(user?.role)) return false;
+    if (item.businessModel) {
+      const bm = user?.businessModel || 'service';
+      if (!item.businessModel.includes(bm)) return false;
+    }
+    return true;
+  };
 
   const isUserProfile = useMatch('/users/:id');
 
   const isSuperAdmin = user?.role === 'Super CRM Administrator';
   const showCRM = isSuperAdmin || CRM_ROLES.includes(user?.role);
   const showHRM = isSuperAdmin || HRM_ROLES.includes(user?.role);
+  const bm = user?.businessModel || 'service';
+  const showERP = ['product', 'both'].includes(bm);
 
   const initials = user
     ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase()
@@ -152,6 +178,33 @@ const Sidebar = () => {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Super Inventory & Super Supply Chain — ERP level, outside Super CRM */}
+        {showERP && (
+          <div style={{ marginBottom: 16 }}>
+            {ERP_NAV_ITEMS.filter(canSee).map(item => {
+              const state = erpSectionState[item.path];
+              return (
+                <div key={item.path} style={{ marginBottom: 12 }}>
+                  <SectionHeader label={item.label} open={state.open} onToggle={() => state.setOpen(o => !o)} />
+                  {state.open && (
+                    <a
+                      href={ERP_BASE_URL ? `${ERP_BASE_URL}${item.path}` : item.path}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="sidebar-link"
+                      style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 8, color: 'var(--text-primary)' }}
+                    >
+                      <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
+                      Open {item.label}
+                      <span style={{ marginLeft: 'auto', fontSize: 11, opacity: 0.6 }}>↗</span>
+                    </a>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
 

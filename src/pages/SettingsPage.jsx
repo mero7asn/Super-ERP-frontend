@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const PROVIDER_PRESETS = {
   gmail: { label: 'Gmail / Google Workspace', host: 'smtp.gmail.com', port: 587, secure: false },
@@ -9,11 +10,16 @@ const PROVIDER_PRESETS = {
 };
 
 const SettingsPage = () => {
+  const { user, setBusinessModel } = useAuth();
   const [activeTab, setActiveTab] = useState('general');
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const [testing, setTesting] = useState(false);
+
+  // Business model (service | product | both)
+  const [businessModel, setBm] = useState(user?.businessModel || 'service');
+  const [savingBm, setSavingBm] = useState(false);
 
   // General settings
   const [appName, setAppName] = useState('Super CRM');
@@ -56,6 +62,16 @@ const SettingsPage = () => {
       }
     };
     fetchSettings();
+
+    const fetchBusinessModel = async () => {
+      try {
+        const { data } = await API.get('/settings/business-model');
+        if (data.success && data.data?.businessModel) setBm(data.data.businessModel);
+      } catch (err) {
+        console.error('Failed to load business model:', err);
+      }
+    };
+    fetchBusinessModel();
   }, []);
 
   const handleProviderChange = (key) => {
@@ -188,6 +204,19 @@ const SettingsPage = () => {
             }}
           >
             Alerts & Webhooks
+          </button>
+          <button
+            onClick={() => setActiveTab('business')}
+            className="sidebar-link"
+            style={{
+              background: activeTab === 'business' ? 'rgba(37, 99, 235, 0.1)' : 'transparent',
+              color: activeTab === 'business' ? 'var(--accent-primary)' : 'var(--text-primary)',
+              borderRadius: 'var(--radius-sm)',
+              fontWeight: activeTab === 'business' ? 600 : 500,
+              padding: '10px 16px',
+            }}
+          >
+            Business Model
           </button>
         </div>
 
@@ -410,6 +439,74 @@ const SettingsPage = () => {
                     />
                   </div>
                 )}
+              </div>
+            )}
+
+            {activeTab === 'business' && (
+              <div>
+                <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Icon name="rocket" size={18} style={{ color: 'var(--accent-primary)' }} />
+                  Business Model
+                </h3>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
+                  Controls which modules appear in your workspace. Changing this updates the sidebar immediately.
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {[
+                    { id: 'service', title: 'Service', desc: 'Bookings module only.' },
+                    { id: 'product', title: 'Product', desc: 'Products module + Super Inventory & Super Supply Chain.' },
+                    { id: 'both', title: 'Both Service & Product', desc: 'Everything: Bookings, Products, Inventory & Supply Chain.' },
+                  ].map(opt => (
+                    <label
+                      key={opt.id}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px',
+                        border: `1px solid ${businessModel === opt.id ? 'var(--accent-primary)' : 'var(--border-color)'}`,
+                        borderRadius: 10, cursor: 'pointer',
+                        background: businessModel === opt.id ? 'rgba(99,102,241,0.08)' : 'transparent',
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="businessModel"
+                        checked={businessModel === opt.id}
+                        onChange={() => setBm(opt.id)}
+                        style={{ width: 18, height: 18, cursor: 'pointer' }}
+                      />
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: 14 }}>{opt.title}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{opt.desc}</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={savingBm || businessModel === (user?.businessModel || 'service')}
+                    onClick={async () => {
+                      setSavingBm(true);
+                      setErrorMsg('');
+                      setSuccessMsg('');
+                      try {
+                        const { data } = await API.put('/settings/business-model', { businessModel });
+                        setBusinessModel(data.data.businessModel, data.data.onboarded);
+                        setSuccessMsg('Business model updated. Sidebar refreshed.');
+                        setTimeout(() => setSuccessMsg(''), 4000);
+                      } catch (err) {
+                        setErrorMsg(err.response?.data?.message || 'Failed to update business model');
+                      } finally {
+                        setSavingBm(false);
+                      }
+                    }}
+                    style={{ width: 'auto', padding: '10px 32px' }}
+                  >
+                    {savingBm ? 'Saving…' : 'Save Business Model'}
+                  </button>
+                </div>
               </div>
             )}
 

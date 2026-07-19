@@ -288,6 +288,28 @@ export const Icon = ({ name, size = 18, className = "", style = {} }) => {
           <path d="M6 12h.01M18 12h.01" />
         </svg>
       );
+    case 'box':
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={defaultStyle}>
+          <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+          <path d="m3.3 7 8.7 5 8.7-5" />
+          <path d="M12 22V12" />
+        </svg>
+      );
+    case 'inventory':
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={defaultStyle}>
+          <path d="M20 7 12 3 4 7l8 4 8-4Z" />
+          <path d="M4 7v10l8 4 8-4V7" />
+          <path d="M12 11v10" />
+        </svg>
+      );
+    case 'supplychain':
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={defaultStyle}>
+          <path d="M3 12h4l3-9 4 18 3-9h4" />
+        </svg>
+      );
     default:
       return null;
   }
