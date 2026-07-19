@@ -34,6 +34,7 @@ import PartnershipsPage from './pages/hrm/PartnershipsPage';
 import MySchedulePage from './pages/ess/MySchedulePage';
 import MyPayrollPage from './pages/ess/MyPayrollPage';
 import { useAuth } from './context/AuthContext';
+import PaymentPage from './pages/PaymentPage';
 
 // Layout wrapper: renders Sidebar + content for authenticated pages
 const AppLayout = ({ children }) => {
@@ -421,6 +422,9 @@ const AppRoutes = () => {
 
       {/* Public: Campaign Lead Form */}
       <Route path="/form/:slug" element={<CampaignFormPage />} />
+
+      {/* Public: Offer Payment Page */}
+      <Route path="/pay/:token" element={<PaymentPage />} />
 
       {/* Unauthorized */}
       <Route
