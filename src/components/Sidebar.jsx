@@ -149,6 +149,7 @@ const Sidebar = () => {
   };
 
   const isUserProfile = useMatch('/users/:id');
+  const isInventoryActive = useMatch('/inventory') || useMatch('/inventory/*');
 
   const isSuperAdmin = user?.role === 'Super CRM Administrator';
   const showCRM = isSuperAdmin || CRM_ROLES.includes(user?.role);
@@ -226,6 +227,28 @@ const Sidebar = () => {
             {ERP_NAV_ITEMS.filter(canSee).map(item => {
               const isExternal = item.external === true;
               const href = isExternal && erpBaseUrl ? `${erpBaseUrl.replace(/\/$/, '')}${item.path}` : null;
+
+              if (item.label === 'Super Inventory') {
+                return (
+                  <div key={item.path} style={{ marginBottom: 12 }}>
+                    <SectionHeader label="Super Inventory" open={inventoryOpen} onToggle={() => setInventoryOpen(o => !o)} accent />
+                    {inventoryOpen && (
+                      <div style={{ paddingLeft: 8, marginTop: 4 }}>
+                        {INVENTORY_SUB_ITEMS.filter(sub => !sub.roles || sub.roles.includes(user?.role)).map(sub => (
+                          <NavLink
+                            key={sub.path}
+                            to={sub.path}
+                            className={({ isActive }) => `sidebar-link${isActive || (sub.path === '/inventory' && isInventoryActive) ? ' active' : ''}`}
+                          >
+                            <span className="sidebar-link-icon"><SidebarIcon name={sub.icon} /></span>
+                            {sub.label}
+                          </NavLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
 
               if (isExternal && !erpBaseUrl) {
                 return (
