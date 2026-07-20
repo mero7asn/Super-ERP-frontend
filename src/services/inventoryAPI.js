@@ -23,6 +23,7 @@ export const inventoryAPI = {
   getReceivingOrders: (params) => API.get('/inventory/receiving-orders', { params }).then(r => r.data),
 
   createShipment: (data) => API.post('/inventory/shipments', data).then(r => r.data),
+  createReturnOrder: (data) => API.post('/inventory/returns', data).then(r => r.data),
   getShipments: (params) => API.get('/inventory/shipments', { params }).then(r => r.data),
 
   createTransfer: (data) => API.post('/inventory/transfers', data).then(r => r.data),
