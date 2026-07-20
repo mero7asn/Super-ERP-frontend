@@ -90,12 +90,30 @@ const PaymentPage = () => {
 
   const isPaid = alreadyPaid || result;
 
+  const brandName = offer?.companyName || 'Super CRM';
+  const brandLogo = offer?.companyLogo || '';
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', padding: '40px 16px' }}>
-      <div style={{ maxWidth: 480, margin: '0 auto' }}>
+      <div style={{ maxWidth: 520, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em' }}>Super CRM</div>
-          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Secure Payment</div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, padding: '18px 24px', borderRadius: 24, background: 'rgba(255,255,255,0.92)', boxShadow: '0 20px 50px rgba(15,23,42,0.08)' }}>
+            {brandLogo ? (
+              <img
+                src={brandLogo}
+                alt={brandName}
+                style={{ width: 52, height: 52, objectFit: 'contain', borderRadius: 12, background: '#fff', border: '1px solid rgba(148,163,184,0.2)' }}
+              />
+            ) : (
+              <div style={{ width: 52, height: 52, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eef2ff', color: '#4338ca', fontWeight: 700, fontSize: 18 }}>
+                {brandName.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em' }}>{brandName}</div>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Secure payment portal</div>
+            </div>
+          </div>
         </div>
 
         <div style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-color)', overflow: 'hidden' }}>

@@ -131,11 +131,6 @@ const Sidebar = () => {
   const [inventoryOpen, setInventoryOpen] = useState(true);
   const [supplyChainOpen, setSupplyChainOpen] = useState(true);
 
-  const erpSectionState = {
-    '/inventory': { open: inventoryOpen, setOpen: setInventoryOpen },
-    '/supply-chain': { open: supplyChainOpen, setOpen: setSupplyChainOpen },
-  };
-
   // External ERP base URL — configured in System Settings, falls back to env.
   const [erpBaseUrl, setErpBaseUrl] = useState(import.meta.env.VITE_ERP_URL || '');
 
@@ -182,8 +177,15 @@ const Sidebar = () => {
     </div>
   );
 
+  const SectionGroup = ({ label, open, onToggle, accent, children }) => (
+    <div className="sidebar-section-group">
+      <SectionHeader label={label} open={open} onToggle={onToggle} accent={accent} />
+      {open && <div className="sidebar-section-body">{children}</div>}
+    </div>
+  );
+
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" aria-label="Workspace navigation">
       <div className="sidebar-header">
         <div className="sidebar-brand">
           <div className="sidebar-logo-icon">
@@ -211,25 +213,20 @@ const Sidebar = () => {
 
         {/* Super CRM */}
         {showCRM && (
-          <div style={{ marginBottom: 16 }}>
-            <SectionHeader label="Super CRM" open={crmOpen} onToggle={() => setCrmOpen(o => !o)} accent />
-            {crmOpen && (
-              <div style={{ paddingLeft: 8 }}>
-                {CRM_NAV_ITEMS.filter(canSee).map(item => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    className={({ isActive }) =>
-                      `sidebar-link${isActive || (item.path === '/users' && isUserProfile) ? ' active' : ''}`
-                    }
-                  >
-                    <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
-                    {item.label}
-                  </NavLink>
-                ))}
-              </div>
-            )}
-          </div>
+          <SectionGroup label="Super CRM" open={crmOpen} onToggle={() => setCrmOpen(o => !o)} accent>
+            {CRM_NAV_ITEMS.filter(canSee).map(item => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `sidebar-link${isActive || (item.path === '/users' && isUserProfile) ? ' active' : ''}`
+                }
+              >
+                <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
+                {item.label}
+              </NavLink>
+            ))}
+          </SectionGroup>
         )}
 
         {/* Super Inventory & Super Supply Chain — ERP level, outside Super CRM */}
@@ -328,43 +325,33 @@ const Sidebar = () => {
 
         {/* Super HRM */}
         {showHRM && (
-          <div style={{ marginBottom: 16 }}>
-            <SectionHeader label="Super HRM" open={hrmOpen} onToggle={() => setHrmOpen(o => !o)} />
-            {hrmOpen && (
-              <div style={{ paddingLeft: 8 }}>
-                {HRM_NAV_ITEMS.filter(canSee).map(item => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
-                  >
-                    <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
-                    {item.label}
-                  </NavLink>
-                ))}
-              </div>
-            )}
-          </div>
+          <SectionGroup label="Super HRM" open={hrmOpen} onToggle={() => setHrmOpen(o => !o)} accent>
+            {HRM_NAV_ITEMS.filter(canSee).map(item => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
+              >
+                <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
+                {item.label}
+              </NavLink>
+            ))}
+          </SectionGroup>
         )}
 
         {/* Employee Self-Service — visible to every authenticated user */}
-        <div style={{ marginBottom: 16 }}>
-          <SectionHeader label="My Workspace" open={essOpen} onToggle={() => setEssOpen(o => !o)} />
-          {essOpen && (
-            <div style={{ paddingLeft: 8 }}>
-              {ESS_NAV_ITEMS.map(item => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
-                >
-                  <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
-          )}
-        </div>
+        <SectionGroup label="My Workspace" open={essOpen} onToggle={() => setEssOpen(o => !o)} accent>
+          {ESS_NAV_ITEMS.map(item => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
+            >
+              <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
+              {item.label}
+            </NavLink>
+          ))}
+        </SectionGroup>
       </nav>
 
       <div className="sidebar-footer">

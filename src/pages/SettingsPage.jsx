@@ -28,6 +28,7 @@ const SettingsPage = () => {
   // General settings
   const [appName, setAppName] = useState('Super CRM');
   const [companyName, setCompanyName] = useState('Super Enterprise Inc.');
+  const [companyLogo, setCompanyLogo] = useState('');
   const [maintenanceMode, setMaintenanceMode] = useState(false);
 
   // Security settings
@@ -65,7 +66,19 @@ const SettingsPage = () => {
         console.error('Failed to load email settings:', err);
       }
     };
+    const fetchBranding = async () => {
+      try {
+        const { data } = await API.get('/settings/branding');
+        if (data.success && data.data) {
+          setCompanyName(data.data.companyName || 'Super CRM');
+          setCompanyLogo(data.data.companyLogo || '');
+        }
+      } catch (err) {
+        console.error('Failed to load branding config:', err);
+      }
+    };
     fetchSettings();
+    fetchBranding();
 
     const fetchBusinessModel = async () => {
       try {
@@ -100,9 +113,24 @@ const SettingsPage = () => {
 
   const handleSaveGeneral = async (e) => {
     e.preventDefault();
-    setSuccessMsg('General settings updated successfully.');
+    setLoading(true);
+    setSuccessMsg('');
     setErrorMsg('');
-    setTimeout(() => setSuccessMsg(''), 4000);
+    try {
+      const payload = {
+        companyName: companyName.trim() || 'Super CRM',
+        companyLogo: companyLogo.trim() || ''
+      };
+      const { data } = await API.put('/settings/branding', payload);
+      if (data.success) {
+        setSuccessMsg('Branding settings updated successfully.');
+      }
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || 'Failed to save branding settings');
+    } finally {
+      setLoading(false);
+      setTimeout(() => setSuccessMsg(''), 4000);
+    }
   };
 
   const handleSaveEmail = async (e) => {
@@ -261,6 +289,22 @@ const SettingsPage = () => {
                     onChange={(e) => setCompanyName(e.target.value)}
                     required
                   />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Company Logo URL</label>
+                  <input
+                    className="form-input"
+                    type="url"
+                    placeholder="https://example.com/logo.png"
+                    value={companyLogo}
+                    onChange={(e) => setCompanyLogo(e.target.value)}
+                  />
+                  {companyLogo && (
+                    <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <img src={companyLogo} alt="Company logo preview" style={{ height: 40, borderRadius: 8, objectFit: 'contain', border: '1px solid var(--border-color)' }} />
+                      <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Logo preview</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 24 }}>
@@ -569,7 +613,7 @@ const SettingsPage = () => {
               </div>
             )}
 
-            {activeTab !== 'integrations' && (
+            {activeTab === 'general' && (
               <>
                 <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '24px 0' }} />
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
