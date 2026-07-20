@@ -51,6 +51,7 @@ import PhysicalInventoryPage from './pages/PhysicalInventoryPage';
 import WarehousesPage from './pages/WarehousesPage';
 import PickTaskPage from './pages/PickTaskPage';
 import InventoryReportsPage from './pages/InventoryReportsPage';
+import SupplyChainPage from './pages/SupplyChainPage';
 
 // Layout wrapper: renders Sidebar + content for authenticated pages
 const AppLayout = ({ children }) => {
@@ -327,6 +328,33 @@ const AppRoutes = () => {
           ]}>
             <AppLayout>
               <InventoryReportsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/supply-chain"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
+          ]}>
+            <AppLayout>
+              <SupplyChainPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/supply-chain/:section"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
+          ]}>
+            <AppLayout>
+              <SupplyChainPage />
             </AppLayout>
           </ProtectedRoute>
         }

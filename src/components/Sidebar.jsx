@@ -97,6 +97,16 @@ const INVENTORY_SUB_ITEMS = [
   { label: 'Reports',           path: '/inventory/reports',            icon: 'analytics',  roles: ['Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Inventory Clerk'] },
 ];
 
+const SUPPLY_CHAIN_SUB_ITEMS = [
+  { label: 'Overview',      path: '/supply-chain',            icon: 'dashboard' },
+  { label: 'Planning',      path: '/supply-chain/planning',   icon: 'analytics' },
+  { label: 'Procurement',   path: '/supply-chain/procurement', icon: 'box' },
+  { label: 'Orders',        path: '/supply-chain/orders',     icon: 'teams' },
+  { label: 'Logistics',     path: '/supply-chain/logistics',  icon: 'supplychain' },
+  { label: 'Vendors',       path: '/supply-chain/vendors',    icon: 'teams' },
+  { label: 'Reports',       path: '/supply-chain/reports',    icon: 'analytics' },
+];
+
 const HRM_NAV_ITEMS = [
   { label: 'HRM Dashboard',             icon: 'dashboard',    path: '/hrm',              roles: null },
   { label: 'Personal',                  icon: 'personal',     path: '/hrm/personal',     roles: ['Super CRM Administrator','HRM System Administrator','HR Manager','HR Specialist (Generalist)','HR Business Partner','Employee (General User)'] },
@@ -150,6 +160,7 @@ const Sidebar = () => {
 
   const isUserProfile = useMatch('/users/:id');
   const isInventoryActive = useMatch('/inventory') || useMatch('/inventory/*');
+  const isSupplyChainActive = useMatch('/supply-chain') || useMatch('/supply-chain/*');
 
   const isSuperAdmin = user?.role === 'Super CRM Administrator';
   const showCRM = isSuperAdmin || CRM_ROLES.includes(user?.role);
@@ -239,6 +250,28 @@ const Sidebar = () => {
                             key={sub.path}
                             to={sub.path}
                             className={({ isActive }) => `sidebar-link${isActive || (sub.path === '/inventory' && isInventoryActive) ? ' active' : ''}`}
+                          >
+                            <span className="sidebar-link-icon"><SidebarIcon name={sub.icon} /></span>
+                            {sub.label}
+                          </NavLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              if (item.label === 'Super Supply Chain') {
+                return (
+                  <div key={item.path} style={{ marginBottom: 12 }}>
+                    <SectionHeader label="Super Supply Chain" open={supplyChainOpen} onToggle={() => setSupplyChainOpen(o => !o)} accent />
+                    {supplyChainOpen && (
+                      <div style={{ paddingLeft: 8, marginTop: 4 }}>
+                        {SUPPLY_CHAIN_SUB_ITEMS.map(sub => (
+                          <NavLink
+                            key={sub.path}
+                            to={sub.path}
+                            className={({ isActive }) => `sidebar-link${isActive || (sub.path === '/supply-chain' && isSupplyChainActive) ? ' active' : ''}`}
                           >
                             <span className="sidebar-link-icon"><SidebarIcon name={sub.icon} /></span>
                             {sub.label}
