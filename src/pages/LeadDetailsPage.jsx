@@ -28,6 +28,7 @@ const LeadDetailsPage = () => {
   const [lead, setLead] = useState(null);
   const [offers, setOffers] = useState([]);
   const [templates, setTemplates] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
@@ -52,7 +53,7 @@ const LeadDetailsPage = () => {
 
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [newOffer, setNewOffer] = useState({
-    title: '', description: '', offerType: 'Service', 
+    title: '', description: '', offerType: 'Service', catalogProduct: '',
     price: '', validUntil: '', notes: ''
   });
 
@@ -86,9 +87,19 @@ const LeadDetailsPage = () => {
     }
   };
 
+  const fetchProducts = async () => {
+    try {
+      const res = await API.get('/products');
+      setProducts(res.data.data || []);
+    } catch (err) {
+      console.error('Failed to load products:', err);
+    }
+  };
+
   useEffect(() => {
     fetchData();
     fetchTemplates();
+    fetchProducts();
   }, [id]);
 
   useEffect(() => {
@@ -132,7 +143,7 @@ const LeadDetailsPage = () => {
       await API.post('/offers', { ...newOffer, lead: id, price: parseFloat(newOffer.price) });
       await fetchData();
       setShowOfferModal(false);
-      setNewOffer({ title: '', description: '', offerType: 'Service', price: '', validUntil: '', notes: '' });
+      setNewOffer({ title: '', description: '', offerType: 'Service', catalogProduct: '', price: '', validUntil: '', notes: '' });
       setSelectedTemplate('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create offer');
@@ -531,12 +542,27 @@ const LeadDetailsPage = () => {
                 <select
                   className="form-input"
                   value={newOffer.offerType}
-                  onChange={e => setNewOffer(p => ({ ...p, offerType: e.target.value }))}
+                  onChange={e => setNewOffer(p => ({ ...p, offerType: e.target.value, catalogProduct: e.target.value === 'Product' ? p.catalogProduct : '' }))}
                 >
                   <option value="Product">Product</option>
                   <option value="Service">Service</option>
                 </select>
               </div>
+              {newOffer.offerType === 'Product' && (
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Catalog Product</label>
+                  <select
+                    className="form-input"
+                    value={newOffer.catalogProduct}
+                    onChange={e => setNewOffer(p => ({ ...p, catalogProduct: e.target.value }))}
+                  >
+                    <option value="">— Select a product —</option>
+                    {products.map(product => (
+                      <option key={product._id} value={product._id}>{product.name} ({product.sku})</option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label">Offer Title</label>
                 <input className="form-input" placeholder="e.g. Premium Package" value={newOffer.title} onChange={e => setNewOffer(p => ({ ...p, title: e.target.value }))} />
