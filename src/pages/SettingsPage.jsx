@@ -305,6 +305,38 @@ const SettingsPage = () => {
                       <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Logo preview</span>
                     </div>
                   )}
+                  <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <label className="btn btn-secondary" style={{ cursor: 'pointer', padding: '8px 16px', fontSize: 13 }}>
+                      Upload Logo
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const formData = new FormData();
+                          formData.append('logo', file);
+                          try {
+                            setLoading(true);
+                            const { data } = await API.post('/settings/branding/logo', formData, {
+                              headers: { 'Content-Type': 'multipart/form-data' }
+                            });
+                            if (data.success) {
+                              setCompanyLogo(data.data?.companyLogo || companyLogo);
+                              setSuccessMsg('Logo uploaded successfully.');
+                              setTimeout(() => setSuccessMsg(''), 4000);
+                            }
+                          } catch (err) {
+                            setErrorMsg(err.response?.data?.message || 'Failed to upload logo');
+                          } finally {
+                            setLoading(false);
+                          }
+                        }}
+                      />
+                    </label>
+                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>PNG, JPG, SVG up to 2MB</span>
+                  </div>
                 </div>
 
                 <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 24 }}>
