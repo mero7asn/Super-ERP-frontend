@@ -19,6 +19,9 @@ const SidebarIcon = ({ name }) => {
     case 'campaigns':   return <svg {...p}><path d="m3 11 18-5v12L3 13v-2Z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>;
     case 'analytics':   return <svg {...p}><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>;
     case 'executive':   return <svg {...p}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>;
+    case 'box':         return <svg {...p}><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>;
+    case 'inventory':   return <svg {...p}><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10"/><path d="M7 12h6"/></svg>;
+    case 'supplychain': return <svg {...p}><path d="M12 2 2 7v10l10 5 10-5V7Z"/><path d="M2 7l10 5 10-5"/><path d="M12 12v10"/></svg>;
     case 'users':       return <svg {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
     case 'settings':    return <svg {...p}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>;
     case 'devtools':    return <svg {...p}><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>;
@@ -157,24 +160,28 @@ const Sidebar = () => {
     ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase()
     : '?';
 
-  const SectionHeader = ({ label, open, onToggle }) => (
+  const SectionHeader = ({ label, open, onToggle, accent }) => (
     <div
-      className="sidebar-section-label"
+      className={`sidebar-section-label ${accent ? 'accent' : ''}`}
       onClick={onToggle}
-      style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 8, userSelect: 'none' }}
     >
       <span>{label}</span>
-      <span style={{ fontSize: 10 }}>{open ? '▼' : '▶'}</span>
+      <span className="sidebar-section-arrow">{open ? '▾' : '▸'}</span>
     </div>
   );
 
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <div className="sidebar-logo-icon">
-          <img src={logo} alt="Super ERP Logo" style={{ width: 38, height: 38, objectFit: 'contain' }} />
+        <div className="sidebar-brand">
+          <div className="sidebar-logo-icon">
+            <img src={logo} alt="Super ERP Logo" style={{ width: 38, height: 38, objectFit: 'contain' }} />
+          </div>
+          <div className="sidebar-brand-meta">
+            <span className="sidebar-logo-text">Super ERP</span>
+            <span className="sidebar-brand-subtitle">Operations Center</span>
+          </div>
         </div>
-        <span className="sidebar-logo-text">Super ERP</span>
       </div>
 
       <nav className="sidebar-nav">
@@ -193,7 +200,7 @@ const Sidebar = () => {
         {/* Super CRM */}
         {showCRM && (
           <div style={{ marginBottom: 16 }}>
-            <SectionHeader label="Super CRM" open={crmOpen} onToggle={() => setCrmOpen(o => !o)} />
+            <SectionHeader label="Super CRM" open={crmOpen} onToggle={() => setCrmOpen(o => !o)} accent />
             {crmOpen && (
               <div style={{ paddingLeft: 8 }}>
                 {CRM_NAV_ITEMS.filter(canSee).map(item => (
