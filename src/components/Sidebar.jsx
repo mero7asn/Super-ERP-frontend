@@ -70,7 +70,7 @@ const CRM_NAV_ITEMS = [
 // corresponding external ERP app (configurable base URL) in a new tab.
 const ERP_NAV_ITEMS = [
   { label: 'Super Inventory',   icon: 'inventory',   path: '/inventory',     businessModel: ['product', 'both'] },
-  { label: 'Super Supply Chain',icon: 'supplychain', path: '/supply-chain',  businessModel: ['product', 'both'], external: true },
+  { label: 'Super Supply Chain',icon: 'supplychain', path: '/supply-chain',  businessModel: ['product', 'both'] },
 ];
 
 const HRM_NAV_ITEMS = [
