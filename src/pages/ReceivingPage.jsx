@@ -21,6 +21,8 @@ const ReceivingPage = () => {
   const [error, setError] = useState('');
   const [warehouses, setWarehouses] = useState([]);
   const [items, setItems] = useState([]);
+  const [putawayHints, setPutawayHints] = useState([]);
+  const [selectedLineIndex, setSelectedLineIndex] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -65,6 +67,23 @@ const ReceivingPage = () => {
       ...p,
       lines: p.lines.map((line, i) => i === idx ? { ...line, [field]: value } : line)
     }));
+  };
+
+  const fetchPutawayHint = async (idx) => {
+    const currentLine = form.lines[idx];
+    if (!currentLine?.item || !form.warehouse) return;
+    try {
+      const { data } = await inventoryAPI.getPutawaySuggestion({
+        item: currentLine.item,
+        warehouse: form.warehouse,
+        quantity: currentLine.acceptedQty || currentLine.receivedQty || currentLine.expectedQty || 0,
+        lotNumber: currentLine.lotNumber || ''
+      });
+      setPutawayHints(data.suggestions || []);
+      setSelectedLineIndex(idx);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleCreate = async () => {
@@ -186,7 +205,10 @@ const ReceivingPage = () => {
                 <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1fr', gap: 12, padding: 12, background: 'var(--bg-primary)', borderRadius: 8 }}>
                   <div className="form-group" style={{ margin: 0 }}>
                     <label className="form-label">Item</label>
-                    <select className="form-input" value={line.item} onChange={e => updateLine(idx, 'item', e.target.value)}>
+                    <select className="form-input" value={line.item} onChange={e => {
+                      updateLine(idx, 'item', e.target.value);
+                      setTimeout(() => fetchPutawayHint(idx), 0);
+                    }}>
                       <option value="">Select item</option>
                       {items.map(it => <option key={it._id} value={it._id}>{it.sku} - {it.name}</option>)}
                     </select>
@@ -213,6 +235,17 @@ const ReceivingPage = () => {
                   </div>
                 </div>
               ))}
+
+              {putawayHints.length > 0 && (
+                <div style={{ padding: 14, borderRadius: 10, background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>Smart putaway guidance</div>
+                  {putawayHints.map((hint, idx) => (
+                    <div key={`${hint.strategy}-${idx}`} style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>
+                      <strong>{hint.strategy}</strong> → {hint.subinventory}{hint.locator ? ` / ${hint.locator}` : ''} · {hint.reason}
+                    </div>
+                  ))}
+                </div>
+              )}
               <button type="button" className="btn btn-secondary" onClick={addLine}>Add Line</button>
             </div>
 

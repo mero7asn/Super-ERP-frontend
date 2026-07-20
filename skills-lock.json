@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "openui-lang": {
+      "source": "ginaphi/skills",
+      "sourceType": "github",
+      "skillPath": "skills/genui/openui-lang/SKILL.md",
+      "computedHash": "93e4e3537acd1fbb6c16f52fc633ae6113d6dad6254ef61cb834867e0dd88999"
+    }
+  }
+}

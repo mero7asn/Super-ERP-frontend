@@ -73,6 +73,27 @@ const ERP_NAV_ITEMS = [
   { label: 'Super Supply Chain',icon: 'supplychain', path: '/supply-chain',  businessModel: ['product', 'both'] },
 ];
 
+const INVENTORY_ROLES = [
+  'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+  'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
+];
+
+const INVENTORY_SUB_ITEMS = [
+  { label: 'Dashboard',         path: '/inventory',                    icon: 'dashboard' },
+  { label: 'Items',             path: '/inventory/items',              icon: 'box' },
+  { label: 'Stock Overview',    path: '/inventory/stock',              icon: 'analytics' },
+  { label: 'Transactions',      path: '/inventory/transactions',       icon: 'teams' },
+  { label: 'Receiving',         path: '/inventory/receiving',          icon: 'box' },
+  { label: 'Shipping',          path: '/inventory/shipping',           icon: 'box' },
+  { label: 'Pick Tasks',        path: '/inventory/pick-tasks',         icon: 'teams' },
+  { label: 'Transfers',         path: '/inventory/transfers',          icon: 'teams' },
+  { label: 'Adjustments',       path: '/inventory/adjustments',       icon: 'analytics' },
+  { label: 'Cycle Counts',      path: '/inventory/cycle-counts',       icon: 'calendar' },
+  { label: 'Physical Inventory',path: '/inventory/physical-inventories', icon: 'analytics' },
+  { label: 'Warehouses',        path: '/inventory/warehouses',         icon: 'dashboard',  roles: ['Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'] },
+  { label: 'Reports',           path: '/inventory/reports',            icon: 'analytics',  roles: ['Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Inventory Clerk'] },
+];
+
 const HRM_NAV_ITEMS = [
   { label: 'HRM Dashboard',             icon: 'dashboard',    path: '/hrm',              roles: null },
   { label: 'Personal',                  icon: 'personal',     path: '/hrm/personal',     roles: ['Super CRM Administrator','HRM System Administrator','HR Manager','HR Specialist (Generalist)','HR Business Partner','Employee (General User)'] },
