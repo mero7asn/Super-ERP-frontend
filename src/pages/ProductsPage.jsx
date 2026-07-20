@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -40,6 +41,8 @@ const ProductsPage = () => {
   };
 
   useEffect(() => { fetchProducts(); /* eslint-disable-next-line */ }, []);
+
+  const navigate = useNavigate();
 
   const openCreate = () => {
     setEditing(null);
@@ -103,9 +106,17 @@ const ProductsPage = () => {
           </h1>
           <p className="page-subtitle">Manage your product catalog used in offers and orders</p>
         </div>
-        <button className="btn btn-primary" onClick={openCreate} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Icon name="plus" size={16} /> New Product
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button className="btn btn-secondary" onClick={() => navigate('/inventory/items')} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Icon name="box" size={16} /> Inventory Items
+          </button>
+          <button className="btn btn-secondary" onClick={() => navigate('/leads')} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Icon name="leads" size={16} /> View Leads
+          </button>
+          <button className="btn btn-primary" onClick={openCreate} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Icon name="plus" size={16} /> New Product
+          </button>
+        </div>
       </div>
 
       {error && <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>}

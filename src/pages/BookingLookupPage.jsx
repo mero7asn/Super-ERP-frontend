@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -14,6 +15,7 @@ const statusBadge = (status) => {
 
 const BookingLookupPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [recordLocator, setRecordLocator] = useState('');
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -60,12 +62,17 @@ const BookingLookupPage = () => {
 
   return (
     <div>
-      <div className="page-header">
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Icon name="search" size={26} style={{ color: 'var(--accent-primary)' }} />
-          Booking Lookup
-        </h1>
-        <p className="page-subtitle">Search for bookings by record locator to view, modify or cancel</p>
+      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Icon name="search" size={26} style={{ color: 'var(--accent-primary)' }} />
+            Booking Lookup
+          </h1>
+          <p className="page-subtitle">Search for bookings by record locator to view, modify or cancel</p>
+        </div>
+        <button className="btn btn-secondary" onClick={() => navigate('/leads')} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Icon name="leads" size={16} /> View Leads
+        </button>
       </div>
 
       <div className="card" style={{ padding: 32, maxWidth: 600 }}>

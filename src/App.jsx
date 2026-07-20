@@ -37,6 +37,18 @@ import { useAuth } from './context/AuthContext';
 import PaymentPage from './pages/PaymentPage';
 import ProductsPage from './pages/ProductsPage';
 import OnboardingModal from './components/OnboardingModal';
+import InventoryDashboard from './pages/InventoryDashboard';
+import InventoryItemsPage from './pages/InventoryItemsPage';
+import InventoryItemDetail from './pages/InventoryItemDetail';
+import StockOverviewPage from './pages/StockOverviewPage';
+import TransactionsPage from './pages/TransactionsPage';
+import ReceivingPage from './pages/ReceivingPage';
+import ShippingPage from './pages/ShippingPage';
+import TransfersPage from './pages/TransfersPage';
+import AdjustmentsPage from './pages/AdjustmentsPage';
+import CycleCountPage from './pages/CycleCountPage';
+import PhysicalInventoryPage from './pages/PhysicalInventoryPage';
+import WarehousesPage from './pages/WarehousesPage';
 
 // Layout wrapper: renders Sidebar + content for authenticated pages
 const AppLayout = ({ children }) => {
@@ -131,6 +143,163 @@ const AppRoutes = () => {
           ]}>
             <AppLayout>
               <ProductsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Protected: Inventory (business-model gated; visible for product/both) */}
+      <Route
+        path="/inventory"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
+          ]}>
+            <AppLayout>
+              <InventoryDashboard />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/items"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
+          ]}>
+            <AppLayout>
+              <InventoryItemsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/items/:id"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
+          ]}>
+            <AppLayout>
+              <InventoryItemDetail />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/stock"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
+          ]}>
+            <AppLayout>
+              <StockOverviewPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/transactions"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
+          ]}>
+            <AppLayout>
+              <TransactionsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/receiving"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Receiving Clerk', 'Quality Inspector'
+          ]}>
+            <AppLayout>
+              <ReceivingPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/shipping"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Shipping Clerk', 'Warehouse Operator'
+          ]}>
+            <AppLayout>
+              <ShippingPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/transfers"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Warehouse Operator'
+          ]}>
+            <AppLayout>
+              <TransfersPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/adjustments"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Inventory Clerk'
+          ]}>
+            <AppLayout>
+              <AdjustmentsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/cycle-counts"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Warehouse Operator', 'Quality Inspector'
+          ]}>
+            <AppLayout>
+              <CycleCountPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/physical-inventories"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'Warehouse Operator'
+          ]}>
+            <AppLayout>
+              <PhysicalInventoryPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/warehouses"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'
+          ]}>
+            <AppLayout>
+              <WarehousesPage />
             </AppLayout>
           </ProtectedRoute>
         }

@@ -69,7 +69,7 @@ const CRM_NAV_ITEMS = [
 // Visible only when the business model includes 'product'. Each opens the
 // corresponding external ERP app (configurable base URL) in a new tab.
 const ERP_NAV_ITEMS = [
-  { label: 'Super Inventory',   icon: 'inventory',   path: '/inventory',     businessModel: ['product', 'both'], external: true },
+  { label: 'Super Inventory',   icon: 'inventory',   path: '/inventory',     businessModel: ['product', 'both'] },
   { label: 'Super Supply Chain',icon: 'supplychain', path: '/supply-chain',  businessModel: ['product', 'both'], external: true },
 ];
 
@@ -195,31 +195,47 @@ const Sidebar = () => {
         {/* Super Inventory & Super Supply Chain — ERP level, outside Super CRM */}
         {showERP && (
           <div style={{ marginBottom: 16 }}>
-            {!erpBaseUrl && (
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', padding: '4px 8px 8px', lineHeight: 1.4 }}>
-                External ERP apps not configured. Set the ERP Base URL in System Settings.
-              </div>
-            )}
             {ERP_NAV_ITEMS.filter(canSee).map(item => {
-              const state = erpSectionState[item.path];
-              const href = erpBaseUrl ? `${erpBaseUrl.replace(/\/$/, '')}${item.path}` : null;
-              return (
-                <div key={item.path} style={{ marginBottom: 12 }}>
-                  <SectionHeader label={item.label} open={state.open} onToggle={() => state.setOpen(o => !o)} />
-                  {state.open && (
+              const isExternal = item.external === true;
+              const href = isExternal && erpBaseUrl ? `${erpBaseUrl.replace(/\/$/, '')}${item.path}` : null;
+
+              if (isExternal && !erpBaseUrl) {
+                return (
+                  <div key={item.path} style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', padding: '4px 8px 8px', lineHeight: 1.4 }}>
+                      External ERP apps not configured. Set the ERP Base URL in System Settings.
+                    </div>
+                  </div>
+                );
+              }
+
+              if (isExternal && erpBaseUrl) {
+                return (
+                  <div key={item.path} style={{ marginBottom: 12 }}>
                     <a
-                      href={href || '#'}
-                      target={href ? '_blank' : undefined}
+                      href={href}
+                      target="_blank"
                       rel="noopener noreferrer"
-                      onClick={(e) => { if (!href) { e.preventDefault(); navigate('/settings'); } }}
                       className="sidebar-link"
-                      style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 8, color: 'var(--text-primary)', opacity: href ? 1 : 0.6 }}
+                      style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 8, color: 'var(--text-primary)' }}
                     >
                       <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
-                      {href ? `Open ${item.label}` : `Configure ${item.label}`}
-                      <span style={{ marginLeft: 'auto', fontSize: 11, opacity: 0.6 }}>{href ? '↗' : '⚙'}</span>
+                      {item.label}
+                      <span style={{ marginLeft: 'auto', fontSize: 11, opacity: 0.6 }}>↗</span>
                     </a>
-                  )}
+                  </div>
+                );
+              }
+
+              return (
+                <div key={item.path} style={{ marginBottom: 12 }}>
+                  <NavLink
+                    to={item.path}
+                    className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
+                  >
+                    <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
+                    {item.label}
+                  </NavLink>
                 </div>
               );
             })}
