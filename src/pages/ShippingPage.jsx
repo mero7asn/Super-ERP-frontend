@@ -42,8 +42,8 @@ const ShippingPage = () => {
   const fetchShipments = async () => {
     setLoading(true);
     try {
-      // Shipments would come from /api/inventory/shipments endpoint
-      setShipments([]);
+      const { data } = await inventoryAPI.getShipments({ limit: 100 });
+      setShipments(data.data || []);
     } catch (err) {
       console.error(err);
     } finally {

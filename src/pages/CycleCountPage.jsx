@@ -36,7 +36,8 @@ const CycleCountPage = () => {
   const fetchCounts = async () => {
     setLoading(true);
     try {
-      setCounts([]);
+      const { data } = await inventoryAPI.getCycleCounts({ limit: 100 });
+      setCounts(data.data || []);
     } catch (err) {
       console.error(err);
     } finally {

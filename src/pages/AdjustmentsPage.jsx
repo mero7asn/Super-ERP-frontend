@@ -42,7 +42,8 @@ const AdjustmentsPage = () => {
   const fetchAdjustments = async () => {
     setLoading(true);
     try {
-      setAdjustments([]);
+      const { data } = await inventoryAPI.getAdjustments({ limit: 100 });
+      setAdjustments(data.data || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -62,17 +63,13 @@ const AdjustmentsPage = () => {
       const variance = Number(form.countedQuantity) - Number(form.systemQuantity);
       const varianceValue = variance * (Number(form.unitCost) || 0);
 
-      const { data } = await fetch('/api/inventory/adjustments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
-        body: JSON.stringify({
-          ...form,
-          adjustmentId: `ADJ-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
-          varianceQuantity: variance,
-          varianceValue,
-          status: 'Pending'
-        })
-      }).then(r => r.json());
+      const { data } = await inventoryAPI.createAdjustment({
+        ...form,
+        adjustmentId: `ADJ-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+        varianceQuantity: variance,
+        varianceValue,
+        status: 'Pending'
+      });
 
       if (!data.success) throw new Error(data.message);
 

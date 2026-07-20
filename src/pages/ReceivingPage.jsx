@@ -42,9 +42,8 @@ const ReceivingPage = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      // Receiving orders are stored in StockTransactions with referenceType 'PO'
-      // For now, we'll just show an empty state until more endpoints are added
-      setOrders([]);
+      const { data } = await inventoryAPI.getReceivingOrders({ limit: 100 });
+      setOrders(data.data || []);
     } catch (err) {
       console.error(err);
     } finally {

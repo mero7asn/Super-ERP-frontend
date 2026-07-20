@@ -43,7 +43,8 @@ const TransfersPage = () => {
   const fetchTransfers = async () => {
     setLoading(true);
     try {
-      setTransfers([]);
+      const { data } = await inventoryAPI.getTransfers({ limit: 100 });
+      setTransfers(data.data || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -60,12 +61,12 @@ const TransfersPage = () => {
     }
 
     try {
-      // For transfers, we'd need a separate create endpoint
-      // For now, show a placeholder
+      const { data } = await inventoryAPI.createTransfer(form);
+      if (!data.success) throw new Error(data.message);
       setShowForm(false);
-      alert('Transfer creation endpoint coming soon');
+      fetchTransfers();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create transfer');
+      setError(err.response?.data?.message || err.message || 'Failed to create transfer');
     }
   };
 

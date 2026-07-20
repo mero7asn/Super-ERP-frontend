@@ -1,3 +1,5 @@
+import API from './api';
+
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const inventoryAPI = {
@@ -18,11 +20,22 @@ export const inventoryAPI = {
 
   createReceivingOrder: (data) => API.post('/inventory/receiving-orders', data).then(r => r.data),
   updateReceivingOrder: (id, data) => API.put(`/inventory/receiving-orders/${id}`, data).then(r => r.data),
+  getReceivingOrders: (params) => API.get('/inventory/receiving-orders', { params }).then(r => r.data),
 
   createShipment: (data) => API.post('/inventory/shipments', data).then(r => r.data),
-  createReturnOrder: (data) => API.post('/inventory/returns', data).then(r => r.data),
+  getShipments: (params) => API.get('/inventory/shipments', { params }).then(r => r.data),
+
+  createTransfer: (data) => API.post('/inventory/transfers', data).then(r => r.data),
+  getTransfers: (params) => API.get('/inventory/transfers', { params }).then(r => r.data),
+
+  createAdjustment: (data) => API.post('/inventory/adjustments', data).then(r => r.data),
+  getAdjustments: (params) => API.get('/inventory/adjustments', { params }).then(r => r.data),
+
   createCycleCount: (data) => API.post('/inventory/cycle-counts', data).then(r => r.data),
+  getCycleCounts: (params) => API.get('/inventory/cycle-counts', { params }).then(r => r.data),
+
   createPhysicalInventory: (data) => API.post('/inventory/physical-inventories', data).then(r => r.data),
+  getPhysicalInventories: (params) => API.get('/inventory/physical-inventories', { params }).then(r => r.data),
 
   getKPIs: () => API.get('/inventory/kpis').then(r => r.data),
   getWarehouses: () => API.get('/inventory/warehouses').then(r => r.data),

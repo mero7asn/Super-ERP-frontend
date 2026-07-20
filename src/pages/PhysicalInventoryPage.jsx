@@ -36,7 +36,8 @@ const PhysicalInventoryPage = () => {
   const fetchInventories = async () => {
     setLoading(true);
     try {
-      setInventories([]);
+      const { data } = await inventoryAPI.getPhysicalInventories({ limit: 100 });
+      setInventories(data.data || []);
     } catch (err) {
       console.error(err);
     } finally {
