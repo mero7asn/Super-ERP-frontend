@@ -57,6 +57,16 @@ const LeadDetailsPage = () => {
     price: '', validUntil: '', notes: ''
   });
 
+  // Email Templates & Send Preview
+  const [emailTemplates, setEmailTemplates] = useState([]);
+  const [showSendPreview, setShowSendPreview] = useState(false);
+  const [sendPreviewOfferId, setSendPreviewOfferId] = useState(null);
+  const [sendPreviewMethod, setSendPreviewMethod] = useState('Email');
+  const [sendPreviewSubject, setSendPreviewSubject] = useState('');
+  const [sendPreviewHtml, setSendPreviewHtml] = useState('');
+  const [sendPreviewLoading, setSendPreviewLoading] = useState(false);
+  const [selectedEmailTemplateId, setSelectedEmailTemplateId] = useState('');
+
   // Image Uploads
   const [showImageModal, setShowImageModal] = useState(false);
   const [imageUploadTarget, setImageUploadTarget] = useState(null);
@@ -87,6 +97,15 @@ const LeadDetailsPage = () => {
     }
   };
 
+  const fetchEmailTemplates = async () => {
+    try {
+      const res = await API.get('/templates');
+      setEmailTemplates(res.data.data || []);
+    } catch (err) {
+      console.error('Failed to load email templates:', err);
+    }
+  };
+
   const fetchProducts = async () => {
     try {
       const res = await API.get('/products');
@@ -99,6 +118,7 @@ const LeadDetailsPage = () => {
   useEffect(() => {
     fetchData();
     fetchTemplates();
+    fetchEmailTemplates();
     fetchProducts();
   }, [id]);
 
@@ -184,14 +204,97 @@ const LeadDetailsPage = () => {
   };
 
   const handleSend = async (offerId, method) => {
-    setSendingId(offerId);
+    const offer = offers.find(o => o._id === offerId);
+    if (!offer) return;
+    
+    setSendPreviewOfferId(offerId);
+    setSendPreviewMethod(method);
+    setSendPreviewLoading(true);
+    setShowSendPreview(true);
+    setSelectedEmailTemplateId('');
+    setSendPreviewSubject('');
+    setSendPreviewHtml('');
+    
     try {
-      await API.post(`/offers/${offerId}/send`, { method });
+      const res = await API.get('/templates');
+      const tpls = res.data.data || [];
+      const defaultTpl = tpls.find(t => t.isDefault) || tpls[0];
+      
+      if (defaultTpl) {
+        setSelectedEmailTemplateId(defaultTpl._id);
+        const renderRes = await API.post(`/templates/${defaultTpl._id}/render`, {
+          sampleData: {
+            companyName: 'Super CRM',
+            companyLogo: '',
+            lead: { name: offer.lead?.name || 'Customer', email: offer.lead?.email || '' },
+            offer: {
+              title: offer.title,
+              description: offer.description,
+              price: offer.price,
+              validUntil: offer.validUntil
+            },
+            payLink: `https://super-erp-frontend.vercel.app/pay/${offer.paymentToken || 'sample-token'}`,
+            sender: { firstName: user?.firstName || 'Admin', lastName: user?.lastName || 'User' }
+          }
+        });
+        setSendPreviewSubject(renderRes.data.data.subject);
+        setSendPreviewHtml(renderRes.data.data.html);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to load template preview');
+    } finally {
+      setSendPreviewLoading(false);
+    }
+  };
+
+  const handleConfirmSend = async () => {
+    if (!sendPreviewOfferId) return;
+    setSendingId(sendPreviewOfferId);
+    setError('');
+    try {
+      await API.post(`/offers/${sendPreviewOfferId}/send`, { 
+        method: sendPreviewMethod, 
+        templateId: selectedEmailTemplateId || undefined 
+      });
       await fetchData();
+      setShowSendPreview(false);
+      setSendPreviewOfferId(null);
+      setSendPreviewHtml('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to send offer');
     } finally {
       setSendingId(null);
+    }
+  };
+
+  const handleTemplateChange = async (templateId) => {
+    setSelectedEmailTemplateId(templateId);
+    if (!templateId || !sendPreviewOfferId) return;
+    
+    const offer = offers.find(o => o._id === sendPreviewOfferId);
+    setSendPreviewLoading(true);
+    try {
+      const renderRes = await API.post(`/templates/${templateId}/render`, {
+        sampleData: {
+          companyName: 'Super CRM',
+          companyLogo: '',
+          lead: { name: offer?.lead?.name || 'Customer', email: offer?.lead?.email || '' },
+          offer: {
+            title: offer?.title || '',
+            description: offer?.description || '',
+            price: offer?.price || 0,
+            validUntil: offer?.validUntil || ''
+          },
+          payLink: `https://super-erp-frontend.vercel.app/pay/${offer?.paymentToken || 'sample-token'}`,
+          sender: { firstName: user?.firstName || 'Admin', lastName: user?.lastName || 'User' }
+        }
+      });
+      setSendPreviewSubject(renderRes.data.data.subject);
+      setSendPreviewHtml(renderRes.data.data.html);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to render template');
+    } finally {
+      setSendPreviewLoading(false);
     }
   };
 
@@ -743,6 +846,118 @@ const LeadDetailsPage = () => {
               <button type="button" className="btn btn-secondary" onClick={() => { setShowImageModal(false); setImageUploadTarget(null); setSelectedFile(null); setImageCaption(''); }} disabled={saving}>Cancel</button>
               <button type="button" className="btn btn-primary" onClick={handleUploadImage} disabled={saving}>
                 {saving ? 'Uploading...' : 'Upload Image'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Send Preview Modal */}
+      {showSendPreview && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000, padding: 20
+        }} onClick={() => { setShowSendPreview(false); setSendPreviewHtml(''); }}>
+          <div style={{
+            background: 'var(--bg-secondary)', borderRadius: 12, width: '100%', maxWidth: 900,
+            maxHeight: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden'
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>Preview & Send Offer Email</h3>
+                <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>Review the email before sending to {offers.find(o => o._id === sendPreviewOfferId)?.lead?.name || 'customer'}</p>
+              </div>
+              <button onClick={() => { setShowSendPreview(false); setSendPreviewHtml(''); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 20 }}>×</button>
+            </div>
+            
+            <div style={{ flex: 1, overflow: 'auto', padding: 24, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              {/* Left: Controls */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Email Template</label>
+                  <select 
+                    className="form-input" 
+                    value={selectedEmailTemplateId} 
+                    onChange={e => handleTemplateChange(e.target.value)}
+                    disabled={sendPreviewLoading}
+                  >
+                    <option value="">-- Select a template --</option>
+                    {emailTemplates.map(t => (
+                      <option key={t._id} value={t._id}>{t.name} {t.isDefault ? '(Default)' : ''}</option>
+                    ))}
+                  </select>
+                  {emailTemplates.length === 0 && (
+                    <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
+                      No templates found. <a href="/templates" target="_blank" style={{ color: 'var(--accent-primary)' }}>Create one</a>
+                    </p>
+                  )}
+                </div>
+                
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Subject Line</label>
+                  <input 
+                    className="form-input" 
+                    value={sendPreviewSubject} 
+                    onChange={e => setSendPreviewSubject(e.target.value)}
+                    disabled={sendPreviewLoading || !selectedEmailTemplateId}
+                  />
+                </div>
+                
+                <div style={{ padding: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+                  <div className="table-title" style={{ marginBottom: 8 }}>Send To</div>
+                  <div style={{ fontSize: 14 }}>
+                    <strong>{offers.find(o => o._id === sendPreviewOfferId)?.lead?.name}</strong>
+                    <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>{offers.find(o => o._id === sendPreviewOfferId)?.lead?.email}</div>
+                  </div>
+                </div>
+                
+                <div style={{ padding: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+                  <div className="table-title" style={{ marginBottom: 8 }}>Offer Summary</div>
+                  {(() => {
+                    const o = offers.find(offer => offer._id === sendPreviewOfferId);
+                    if (!o) return null;
+                    return (
+                      <div style={{ fontSize: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <div><strong>Title:</strong> {o.title}</div>
+                        <div><strong>Price:</strong> ${o.price?.toLocaleString()}</div>
+                        <div><strong>Valid Until:</strong> {new Date(o.validUntil).toLocaleDateString()}</div>
+                        {o.images?.length > 0 && <div><strong>Images:</strong> {o.images.length} attached</div>}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+              
+              {/* Right: Preview */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div className="table-title">Email Preview</div>
+                <div style={{ border: '1px solid var(--border-color)', borderRadius: 8, overflow: 'hidden', background: '#f4f4f4', flex: 1, minHeight: 400 }}>
+                  <div style={{ background: '#111827', padding: '12px 16px', color: '#fff', fontSize: 13, fontWeight: 600 }}>
+                    {sendPreviewSubject || 'Loading...'}
+                  </div>
+                  <div style={{ padding: 20, background: '#ffffff', minHeight: 350, overflow: 'auto' }}>
+                    {sendPreviewLoading ? (
+                      <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
+                        <div className="spinner" style={{ margin: '0 auto 12px' }} />
+                        Rendering preview...
+                      </div>
+                    ) : sendPreviewHtml ? (
+                      <div dangerouslySetInnerHTML={{ __html: sendPreviewHtml }} />
+                    ) : (
+                      <p style={{ color: '#9ca3af', textAlign: 'center' }}>Select a template to preview</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div style={{ padding: '16px 24px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+              <button className="btn btn-secondary" onClick={() => { setShowSendPreview(false); setSendPreviewHtml(''); }} disabled={sendPreviewLoading}>
+                Cancel
+              </button>
+              <button className="btn btn-primary" onClick={handleConfirmSend} disabled={sendPreviewLoading || !selectedEmailTemplateId || !sendPreviewHtml}>
+                {sendPreviewLoading ? 'Rendering...' : sendingId === sendPreviewOfferId ? 'Sending...' : `Send ${sendPreviewMethod}`}
               </button>
             </div>
           </div>
