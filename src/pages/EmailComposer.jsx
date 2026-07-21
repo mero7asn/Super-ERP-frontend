@@ -263,10 +263,19 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
     return editor?.getHTML() || '<p>No content</p>';
   };
 
-  if (!editor) return null;
+  if (!editor) {
+    return (
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
+        <div style={{ background: '#fff', padding: 40, borderRadius: 12, textAlign: 'center' }}>
+          <div className="spinner" style={{ margin: '0 auto 12px' }} />
+          <p>Loading editor...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#f8f9fa' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', height: '100vh', background: '#f8f9fa', zIndex: 1500 }}>
       {/* Top Toolbar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 16px', background: '#fff', borderBottom: '1px solid #e5e7eb' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
