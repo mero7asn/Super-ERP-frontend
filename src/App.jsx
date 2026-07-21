@@ -24,6 +24,7 @@ import DevToolsPage from './pages/DevToolsPage';
 import CampaignFormPage from './pages/CampaignFormPage';
 import EmailsPage from './pages/EmailsPage';
 import SentEmailsPage from './pages/SentEmailsPage';
+import EmailComposer from './pages/EmailComposer';
 import RtmMonitorPage from './pages/RtmMonitorPage';
 import HrmDashboardPage from './pages/hrm/HrmDashboardPage';
 import PersonalPage from './pages/hrm/PersonalPage';
@@ -517,6 +518,20 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <AppLayout>
               <SentEmailsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Protected: Email Composer */}
+      <Route
+        path="/email-composer"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Sales Agent', 'Sales Manager'
+          ]}>
+            <AppLayout>
+              <EmailComposer />
             </AppLayout>
           </ProtectedRoute>
         }
