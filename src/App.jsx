@@ -24,6 +24,7 @@ import DevToolsPage from './pages/DevToolsPage';
 import CampaignFormPage from './pages/CampaignFormPage';
 import EmailsPage from './pages/EmailsPage';
 import SentEmailsPage from './pages/SentEmailsPage';
+import EmailTemplateEditor from './pages/EmailTemplateEditor';
 import RtmMonitorPage from './pages/RtmMonitorPage';
 import HrmDashboardPage from './pages/hrm/HrmDashboardPage';
 import PersonalPage from './pages/hrm/PersonalPage';
@@ -517,6 +518,20 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <AppLayout>
               <SentEmailsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Protected: Email Template Builder */}
+      <Route
+        path="/templates"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Sales Agent', 'Sales Manager'
+          ]}>
+            <AppLayout>
+              <EmailTemplateEditor />
             </AppLayout>
           </ProtectedRoute>
         }
