@@ -66,6 +66,12 @@ const LeadDetailsPage = () => {
   const [sendPreviewHtml, setSendPreviewHtml] = useState('');
   const [sendPreviewLoading, setSendPreviewLoading] = useState(false);
   const [selectedEmailTemplateId, setSelectedEmailTemplateId] = useState('');
+  const [showTemplateEditor, setShowTemplateEditor] = useState(false);
+  const [templateEditorMode, setTemplateEditorMode] = useState('edit'); // 'edit' | 'create'
+  const [editingTemplateId, setEditingTemplateId] = useState(null);
+  const [templateBlocks, setTemplateBlocks] = useState([]);
+  const [templateName, setTemplateName] = useState('');
+  const [templateSubject, setTemplateSubject] = useState('');
 
   // Image Uploads
   const [showImageModal, setShowImageModal] = useState(false);
@@ -295,6 +301,75 @@ const LeadDetailsPage = () => {
       setError(err.response?.data?.message || 'Failed to render template');
     } finally {
       setSendPreviewLoading(false);
+    }
+  };
+
+  const openTemplateEditor = async (mode, templateId) => {
+    setTemplateEditorMode(mode);
+    setShowTemplateEditor(true);
+    
+    if (mode === 'edit' && templateId) {
+      setEditingTemplateId(templateId);
+      try {
+        const { data } = await API.get(`/templates/${templateId}`);
+        const tpl = data.data;
+        setTemplateName(tpl.name);
+        setTemplateSubject(tpl.subject);
+        setTemplateBlocks(tpl.blocks || []);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to load template');
+      }
+    } else {
+      setEditingTemplateId(null);
+      setTemplateName('');
+      setTemplateSubject('New Offer: {{offer.title}}');
+      setTemplateBlocks([
+        { id: 'blk_' + Math.random().toString(36).substr(2, 9), type: 'header', content: '{{offer.title}}', styles: { fontSize: 24, color: '#111827', align: 'left' } },
+        { id: 'blk_' + Math.random().toString(36).substr(2, 9), type: 'text', content: 'Hello {{lead.name}}, we have a special offer for you!', styles: { fontSize: 14, color: '#374151', align: 'left' } },
+        { id: 'blk_' + Math.random().toString(36).substr(2, 9), type: 'offer-details', content: '', styles: {}, settings: {} },
+        { id: 'blk_' + Math.random().toString(36).substr(2, 9), type: 'payment-link', content: 'Pay Now', styles: { backgroundColor: '#2563eb', color: '#ffffff', align: 'center' }, settings: { url: '{{payLink}}' } }
+      ]);
+    }
+  };
+
+  const handleTemplateEditorSave = async () => {
+    if (!templateName.trim()) {
+      setError('Template name is required');
+      return;
+    }
+    if (!templateSubject.trim()) {
+      setError('Subject line is required');
+      return;
+    }
+    setSaving(true);
+    setError('');
+    try {
+      const payload = {
+        name: templateName,
+        subject: templateSubject,
+        blocks: templateBlocks,
+        isDefault: templateEditorMode === 'create'
+      };
+      
+      let data;
+      if (templateEditorMode === 'edit' && editingTemplateId) {
+        const res = await API.put(`/templates/${editingTemplateId}`, payload);
+        data = res.data;
+      } else {
+        const res = await API.post('/templates', payload);
+        data = res.data;
+      }
+      
+      await fetchEmailTemplates();
+      setSelectedEmailTemplateId(data.data._id);
+      await handleTemplateChange(data.data._id);
+      setShowTemplateEditor(false);
+      setSuccess('Template saved successfully');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to save template');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -858,111 +933,441 @@ const LeadDetailsPage = () => {
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center',
           zIndex: 1000, padding: 20
-        }} onClick={() => { setShowSendPreview(false); setSendPreviewHtml(''); }}>
+        }} onClick={() => { setShowSendPreview(false); setSendPreviewHtml(''); setShowTemplateEditor(false); }}>
           <div style={{
-            background: 'var(--bg-secondary)', borderRadius: 12, width: '100%', maxWidth: 900,
+            background: 'var(--bg-secondary)', borderRadius: 12, width: '100%', maxWidth: 1100,
             maxHeight: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden'
           }} onClick={e => e.stopPropagation()}>
             <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>Preview & Send Offer Email</h3>
-                <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>Review the email before sending to {offers.find(o => o._id === sendPreviewOfferId)?.lead?.name || 'customer'}</p>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>
+                  {showTemplateEditor ? 'Edit Email Template' : 'Preview & Send Offer Email'}
+                </h3>
+                <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
+                  {showTemplateEditor 
+                    ? 'Customize your email template blocks below' 
+                    : `Review the email before sending to ${offers.find(o => o._id === sendPreviewOfferId)?.lead?.name || 'customer'}`
+                  }
+                </p>
               </div>
-              <button onClick={() => { setShowSendPreview(false); setSendPreviewHtml(''); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 20 }}>×</button>
+              <button onClick={() => { setShowSendPreview(false); setSendPreviewHtml(''); setShowTemplateEditor(false); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 20 }}>×</button>
             </div>
             
-            <div style={{ flex: 1, overflow: 'auto', padding: 24, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-              {/* Left: Controls */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Email Template</label>
-                  <select 
-                    className="form-input" 
-                    value={selectedEmailTemplateId} 
-                    onChange={e => handleTemplateChange(e.target.value)}
-                    disabled={sendPreviewLoading}
-                  >
-                    <option value="">-- Select a template --</option>
-                    {emailTemplates.map(t => (
-                      <option key={t._id} value={t._id}>{t.name} {t.isDefault ? '(Default)' : ''}</option>
-                    ))}
-                  </select>
-                  {emailTemplates.length === 0 && (
-                    <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
-                      No templates found. <a href="/templates" target="_blank" style={{ color: 'var(--accent-primary)' }}>Create one</a>
-                    </p>
-                  )}
-                </div>
-                
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Subject Line</label>
-                  <input 
-                    className="form-input" 
-                    value={sendPreviewSubject} 
-                    onChange={e => setSendPreviewSubject(e.target.value)}
-                    disabled={sendPreviewLoading || !selectedEmailTemplateId}
-                  />
-                </div>
-                
-                <div style={{ padding: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
-                  <div className="table-title" style={{ marginBottom: 8 }}>Send To</div>
-                  <div style={{ fontSize: 14 }}>
-                    <strong>{offers.find(o => o._id === sendPreviewOfferId)?.lead?.name}</strong>
-                    <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>{offers.find(o => o._id === sendPreviewOfferId)?.lead?.email}</div>
-                  </div>
-                </div>
-                
-                <div style={{ padding: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
-                  <div className="table-title" style={{ marginBottom: 8 }}>Offer Summary</div>
-                  {(() => {
-                    const o = offers.find(offer => offer._id === sendPreviewOfferId);
-                    if (!o) return null;
-                    return (
-                      <div style={{ fontSize: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        <div><strong>Title:</strong> {o.title}</div>
-                        <div><strong>Price:</strong> ${o.price?.toLocaleString()}</div>
-                        <div><strong>Valid Until:</strong> {new Date(o.validUntil).toLocaleDateString()}</div>
-                        {o.images?.length > 0 && <div><strong>Images:</strong> {o.images.length} attached</div>}
+            <div style={{ flex: 1, overflow: 'auto', padding: 24 }}>
+              {!showTemplateEditor ? (
+                /* SEND PREVIEW VIEW */
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                  {/* Left: Controls */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    <div className="form-group" style={{ margin: 0 }}>
+                      <label className="form-label">Email Template</label>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <select 
+                          className="form-input" 
+                          value={selectedEmailTemplateId} 
+                          onChange={e => handleTemplateChange(e.target.value)}
+                          disabled={sendPreviewLoading}
+                          style={{ flex: 1 }}
+                        >
+                          <option value="">-- Select a template --</option>
+                          {emailTemplates.map(t => (
+                            <option key={t._id} value={t._id}>{t.name} {t.isDefault ? '(Default)' : ''}</option>
+                          ))}
+                        </select>
+                        <button 
+                          className="btn btn-secondary btn-sm" 
+                          onClick={() => openTemplateEditor('create', null)}
+                          title="Create new template"
+                        >
+                          + New
+                        </button>
                       </div>
-                    );
-                  })()}
-                </div>
-              </div>
-              
-              {/* Right: Preview */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div className="table-title">Email Preview</div>
-                <div style={{ border: '1px solid var(--border-color)', borderRadius: 8, overflow: 'hidden', background: '#f4f4f4', flex: 1, minHeight: 400 }}>
-                  <div style={{ background: '#111827', padding: '12px 16px', color: '#fff', fontSize: 13, fontWeight: 600 }}>
-                    {sendPreviewSubject || 'Loading...'}
-                  </div>
-                  <div style={{ padding: 20, background: '#ffffff', minHeight: 350, overflow: 'auto' }}>
-                    {sendPreviewLoading ? (
-                      <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
-                        <div className="spinner" style={{ margin: '0 auto 12px' }} />
-                        Rendering preview...
+                      {selectedEmailTemplateId && (
+                        <button 
+                          className="btn btn-secondary btn-sm" 
+                          onClick={() => openTemplateEditor('edit', selectedEmailTemplateId)}
+                          style={{ marginTop: 6 }}
+                        >
+                          ✏️ Edit Current Template
+                        </button>
+                      )}
+                      {emailTemplates.length === 0 && !selectedEmailTemplateId && (
+                        <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
+                          No templates yet. Click + New to create your first email template.
+                        </p>
+                      )}
+                    </div>
+                    
+                    <div className="form-group" style={{ margin: 0 }}>
+                      <label className="form-label">Subject Line</label>
+                      <input 
+                        className="form-input" 
+                        value={sendPreviewSubject} 
+                        onChange={e => setSendPreviewSubject(e.target.value)}
+                        disabled={sendPreviewLoading || !selectedEmailTemplateId}
+                      />
+                    </div>
+                    
+                    <div style={{ padding: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+                      <div className="table-title" style={{ marginBottom: 8 }}>Send To</div>
+                      <div style={{ fontSize: 14 }}>
+                        <strong>{offers.find(o => o._id === sendPreviewOfferId)?.lead?.name}</strong>
+                        <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>{offers.find(o => o._id === sendPreviewOfferId)?.lead?.email}</div>
                       </div>
-                    ) : sendPreviewHtml ? (
-                      <div dangerouslySetInnerHTML={{ __html: sendPreviewHtml }} />
-                    ) : (
-                      <p style={{ color: '#9ca3af', textAlign: 'center' }}>Select a template to preview</p>
-                    )}
+                    </div>
+                    
+                    <div style={{ padding: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+                      <div className="table-title" style={{ marginBottom: 8 }}>Offer Summary</div>
+                      {(() => {
+                        const o = offers.find(offer => offer._id === sendPreviewOfferId);
+                        if (!o) return null;
+                        return (
+                          <div style={{ fontSize: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            <div><strong>Title:</strong> {o.title}</div>
+                            <div><strong>Price:</strong> ${o.price?.toLocaleString()}</div>
+                            <div><strong>Valid Until:</strong> {new Date(o.validUntil).toLocaleDateString()}</div>
+                            {o.images?.length > 0 && <div><strong>Images:</strong> {o.images.length} attached</div>}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                  
+                  {/* Right: Preview */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div className="table-title">Email Preview</div>
+                    <div style={{ border: '1px solid var(--border-color)', borderRadius: 8, overflow: 'hidden', background: '#f4f4f4', flex: 1, minHeight: 400 }}>
+                      <div style={{ background: '#111827', padding: '12px 16px', color: '#fff', fontSize: 13, fontWeight: 600 }}>
+                        {sendPreviewSubject || 'Loading...'}
+                      </div>
+                      <div style={{ padding: 20, background: '#ffffff', minHeight: 350, overflow: 'auto' }}>
+                        {sendPreviewLoading ? (
+                          <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
+                            <div className="spinner" style={{ margin: '0 auto 12px' }} />
+                            Rendering preview...
+                          </div>
+                        ) : sendPreviewHtml ? (
+                          <div dangerouslySetInnerHTML={{ __html: sendPreviewHtml }} />
+                        ) : (
+                          <p style={{ color: '#9ca3af', textAlign: 'center' }}>Select a template to preview</p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                /* TEMPLATE EDITOR VIEW */
+                <TemplateEditorInline
+                  mode={templateEditorMode}
+                  editingTemplateId={editingTemplateId}
+                  blocks={templateBlocks}
+                  setBlocks={setTemplateBlocks}
+                  templateName={templateName}
+                  setTemplateName={setTemplateName}
+                  templateSubject={templateSubject}
+                  setTemplateSubject={setTemplateSubject}
+                  onSave={handleTemplateEditorSave}
+                  onCancel={() => setShowTemplateEditor(false)}
+                  previewData={{
+                    companyName: 'Super CRM',
+                    companyLogo: '',
+                    lead: offers.find(o => o._id === sendPreviewOfferId)?.lead || { name: 'Customer', email: '' },
+                    offer: offers.find(o => o._id === sendPreviewOfferId) || { title: '', description: '', price: 0, validUntil: '' },
+                    payLink: `https://super-erp-frontend.vercel.app/pay/${offers.find(o => o._id === sendPreviewOfferId)?.paymentToken || 'sample-token'}`,
+                    sender: { firstName: user?.firstName || 'Admin', lastName: user?.lastName || 'User' }
+                  }}
+                />
+              )}
             </div>
             
-            <div style={{ padding: '16px 24px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-              <button className="btn btn-secondary" onClick={() => { setShowSendPreview(false); setSendPreviewHtml(''); }} disabled={sendPreviewLoading}>
-                Cancel
-              </button>
-              <button className="btn btn-primary" onClick={handleConfirmSend} disabled={sendPreviewLoading || !selectedEmailTemplateId || !sendPreviewHtml}>
-                {sendPreviewLoading ? 'Rendering...' : sendingId === sendPreviewOfferId ? 'Sending...' : `Send ${sendPreviewMethod}`}
-              </button>
-            </div>
+            {!showTemplateEditor && (
+              <div style={{ padding: '16px 24px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                <button className="btn btn-secondary" onClick={() => { setShowSendPreview(false); setSendPreviewHtml(''); }} disabled={sendPreviewLoading}>
+                  Cancel
+                </button>
+                <button className="btn btn-primary" onClick={handleConfirmSend} disabled={sendPreviewLoading || !selectedEmailTemplateId || !sendPreviewHtml}>
+                  {sendPreviewLoading ? 'Rendering...' : sendingId === sendPreviewOfferId ? 'Sending...' : `Send ${sendPreviewMethod}`}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
+    </div>
+   );
+};
+
+const TemplateEditorInline = ({ mode, editingTemplateId, blocks, setBlocks, templateName, setTemplateName, templateSubject, setTemplateSubject, onSave, onCancel, previewData }) => {
+  const [selectedBlockId, setSelectedBlockId] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  const generateId = () => 'blk_' + Math.random().toString(36).substr(2, 9);
+
+  const addBlock = (type) => {
+    const base = { id: generateId(), type, content: '', styles: {}, settings: {} };
+    switch (type) {
+      case 'header': return { ...base, content: 'Your Offer Title Here', styles: { fontSize: 24, color: '#111827', align: 'left' } };
+      case 'text': return { ...base, content: 'Enter your message here.', styles: { fontSize: 14, color: '#374151', align: 'left' } };
+      case 'image': return { ...base, styles: {}, settings: { url: 'https://via.placeholder.com/600x300', alt: 'Offer image' } };
+      case 'button': return { ...base, content: 'Pay Now', styles: { backgroundColor: '#2563eb', color: '#ffffff', align: 'center' }, settings: { url: '{{payLink}}' } };
+      case 'divider': return { ...base, styles: { color: '#e5e7eb', thickness: 1 } };
+      case 'spacer': return { ...base, styles: {}, settings: { height: 20 } };
+      case 'offer-details': return { ...base, styles: {}, settings: {} };
+      case 'payment-link': return { ...base, content: 'Complete Your Payment', styles: { backgroundColor: '#2563eb', color: '#ffffff', align: 'center' }, settings: { url: '{{payLink}}' } };
+      case 'company-info': return { ...base, styles: {}, settings: {} };
+      default: return base;
+    }
+  };
+
+  const updateBlock = (blockId, updates) => {
+    setBlocks(blocks.map(b => b.id === blockId ? { ...b, ...updates } : b));
+  };
+
+  const deleteBlock = (blockId) => {
+    setBlocks(blocks.filter(b => b.id !== blockId));
+    if (selectedBlockId === blockId) setSelectedBlockId(null);
+  };
+
+  const moveBlock = (fromIndex, toIndex) => {
+    const newBlocks = [...blocks];
+    const [moved] = newBlocks.splice(fromIndex, 1);
+    newBlocks.splice(toIndex, 0, moved);
+    setBlocks(newBlocks);
+  };
+
+  const replacePlaceholders = (text, data) => {
+    if (!text) return '';
+    return text
+      .replace(/\{\{companyName\}\}/g, data.companyName || '')
+      .replace(/\{\{companyLogo\}\}/g, data.companyLogo || '')
+      .replace(/\{\{lead\.name\}\}/g, data.lead?.name || '')
+      .replace(/\{\{lead\.email\}\}/g, data.lead?.email || '')
+      .replace(/\{\{offer\.title\}\}/g, data.offer?.title || '')
+      .replace(/\{\{offer\.description\}\}/g, data.offer?.description || '')
+      .replace(/\{\{offer\.price\}\}/g, data.offer?.price || '')
+      .replace(/\{\{offer\.validUntil\}\}/g, data.offer?.validUntil ? new Date(data.offer.validUntil).toLocaleDateString() : '')
+      .replace(/\{\{payLink\}\}/g, data.payLink || '')
+      .replace(/\{\{sender\.firstName\}\}/g, data.sender?.firstName || '')
+      .replace(/\{\{sender\.lastName\}\}/g, data.sender?.lastName || '');
+  };
+
+  const renderBlockPreview = (block, data) => {
+    const content = replacePlaceholders(block.content, data);
+    switch (block.type) {
+      case 'header':
+        return `<h1 style="margin:0 0 16px;font-size:${block.styles?.fontSize || 24}px;color:${block.styles?.color || '#111827'};text-align:${block.styles?.align || 'left'};font-weight:600;">${content}</h1>`;
+      case 'text':
+        return `<p style="margin:0 0 16px;font-size:${block.styles?.fontSize || 14}px;color:${block.styles?.color || '#374151'};text-align:${block.styles?.align || 'left'};line-height:1.6;">${content}</p>`;
+      case 'image':
+        const url = block.settings?.url || '';
+        if (!url) return '<p style="color:#9ca3af;font-style:italic;">No image URL set</p>';
+        return `<div style="margin:0 0 16px;text-align:center;"><img src="${url}" alt="${block.settings?.alt || ''}" style="max-width:100%;height:auto;border-radius:8px;" /></div>`;
+      case 'button':
+        return `<div style="margin:0 0 16px;text-align:${block.styles?.align || 'center'};"><a href="${block.settings?.url || '#'}" style="display:inline-block;background-color:${block.styles?.backgroundColor || '#2563eb'};color:${block.styles?.color || '#ffffff'};text-decoration:none;padding:14px 24px;border-radius:8px;font-weight:600;">${content || 'Button'}</a></div>`;
+      case 'divider':
+        return `<hr style="border:none;border-top:${block.styles?.thickness || 1}px solid ${block.styles?.color || '#e5e7eb'};margin:0 0 16px;" />`;
+      case 'spacer':
+        return `<div style="height:${block.settings?.height || 20}px;"></div>`;
+      case 'offer-details':
+        return `<div style="margin:0 0 16px;padding:16px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;"><h3 style="margin:0 0 8px;font-size:16px;color:#111827;">${data.offer?.title || 'Offer Title'}</h3><p style="margin:0 0 8px;font-size:14px;color:#374151;line-height:1.5;">${data.offer?.description || 'Offer description goes here.'}</p><p style="margin:0 0 4px;font-size:14px;color:#111827;"><strong>Price:</strong> $${(data.offer?.price || 0).toLocaleString()}</p><p style="margin:0;font-size:14px;color:#6b7280;"><strong>Valid Until:</strong> ${data.offer?.validUntil ? new Date(data.offer.validUntil).toLocaleDateString() : 'N/A'}</p></div>`;
+      case 'payment-link':
+        return `<div style="margin:0 0 16px;text-align:${block.styles?.align || 'center'};"><a href="${data.payLink || '#'}" style="display:inline-block;background-color:${block.styles?.backgroundColor || '#2563eb'};color:${block.styles?.color || '#ffffff'};text-decoration:none;padding:14px 24px;border-radius:8px;font-weight:600;">${content || 'Pay Now'}</a></div>`;
+      case 'company-info':
+        const compName = data.companyName || 'Super CRM';
+        const compLogo = data.companyLogo || '';
+        return `<div style="margin:0 0 16px;display:flex;align-items:center;gap:12px;">${compLogo ? `<img src="${compLogo}" alt="${compName}" width="48" height="48" style="object-fit:contain;border-radius:8px;" />` : ''}<div><h3 style="margin:0;font-size:16px;color:#111827;font-weight:600;">${compName}</h3><p style="margin:4px 0 0;font-size:12px;color:#6b7280;">Offer from ${compName}</p></div></div>`;
+      default: return '';
+    }
+  };
+
+  const selectedBlock = blocks.find(b => b.id === selectedBlockId);
+  const renderedPreview = blocks.map(b => renderBlockPreview(b, previewData)).join('');
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr 380px', gap: 16, maxHeight: '70vh' }}>
+      {/* Left: Block Palette */}
+      <div style={{ overflow: 'auto', paddingRight: 8 }}>
+        <div className="table-title" style={{ marginBottom: 12 }}>Template Name & Subject</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+          <div className="form-group" style={{ margin: 0 }}>
+            <label className="form-label">Template Name</label>
+            <input className="form-input" value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder="My Offer Template" />
+          </div>
+          <div className="form-group" style={{ margin: 0 }}>
+            <label className="form-label">Subject Line</label>
+            <input className="form-input" value={templateSubject} onChange={e => setTemplateSubject(e.target.value)} placeholder="New Offer: {{offer.title}}" />
+          </div>
+        </div>
+
+        <div className="table-title" style={{ marginBottom: 12 }}>Blocks</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {[
+            { type: 'header', label: 'Header', icon: 'H' },
+            { type: 'text', label: 'Text', icon: 'T' },
+            { type: 'image', label: 'Image', icon: '🖼' },
+            { type: 'button', label: 'Button', icon: '🔘' },
+            { type: 'divider', label: 'Divider', icon: '—' },
+            { type: 'spacer', label: 'Spacer', icon: '↕' },
+            { type: 'offer-details', label: 'Offer Details', icon: '📋' },
+            { type: 'payment-link', label: 'Payment Button', icon: '💳' },
+            { type: 'company-info', label: 'Company Info', icon: '🏢' },
+          ].map(bt => (
+            <div
+              key={bt.type}
+              onClick={() => { const newBlock = addBlock(bt.type); setBlocks([...blocks, newBlock]); setSelectedBlockId(newBlock.id); }}
+              style={{
+                padding: '10px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-color)',
+                borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 13
+              }}
+            >
+              <span style={{ fontSize: 16, width: 24, textAlign: 'center' }}>{bt.icon}</span>
+              <span>{bt.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Center: Block List */}
+      <div style={{ overflow: 'auto' }}>
+        <div className="table-title" style={{ marginBottom: 12 }}>Canvas ({blocks.length} blocks)</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {blocks.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
+              <p>Click blocks on the left to add them</p>
+            </div>
+          )}
+          {blocks.map((block, index) => (
+            <div
+              key={block.id}
+              onClick={() => setSelectedBlockId(block.id)}
+              style={{
+                padding: 10, background: selectedBlockId === block.id ? 'rgba(var(--accent-rgb, 99,102,241),0.06)' : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${selectedBlockId === block.id ? 'var(--accent-primary)' : 'var(--border-color)'}`,
+                borderRadius: 6, cursor: 'pointer'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--accent-primary)', textTransform: 'uppercase' }}>
+                  {block.type} #{index + 1}
+                </span>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  <button onClick={(e) => { e.stopPropagation(); if (index > 0) moveBlock(index, index - 1); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12 }}>↑</button>
+                  <button onClick={(e) => { e.stopPropagation(); if (index < blocks.length - 1) moveBlock(index, index + 1); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12 }}>↓</button>
+                  <button onClick={(e) => { e.stopPropagation(); deleteBlock(block.id); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 14 }}>×</button>
+                </div>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)' }} dangerouslySetInnerHTML={{ __html: renderBlockPreview(block, previewData) }} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Right: Edit + Preview */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, overflow: 'auto' }}>
+        {selectedBlock && (
+          <div style={{ padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+            <div className="table-title" style={{ marginBottom: 8 }}>Edit {selectedBlock.type}</div>
+            {(selectedBlock.type === 'header' || selectedBlock.type === 'text') && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Content</label>
+                  <textarea className="form-input" rows={3} value={selectedBlock.content} onChange={e => updateBlock(selectedBlock.id, { content: e.target.value })} />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Font Size (px)</label>
+                  <input className="form-input" type="number" value={selectedBlock.styles?.fontSize || 14} onChange={e => updateBlock(selectedBlock.id, { styles: { ...selectedBlock.styles, fontSize: parseInt(e.target.value) || 14 } })} />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Color</label>
+                  <input className="form-input" type="color" value={selectedBlock.styles?.color || '#374151'} onChange={e => updateBlock(selectedBlock.id, { styles: { ...selectedBlock.styles, color: e.target.value } })} />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Alignment</label>
+                  <select className="form-input" value={selectedBlock.styles?.align || 'left'} onChange={e => updateBlock(selectedBlock.id, { styles: { ...selectedBlock.styles, align: e.target.value } })}>
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                  </select>
+                </div>
+              </div>
+            )}
+            {selectedBlock.type === 'image' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Image URL</label>
+                  <input className="form-input" value={selectedBlock.settings?.url || ''} onChange={e => updateBlock(selectedBlock.id, { settings: { ...selectedBlock.settings, url: e.target.value } })} />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Alt Text</label>
+                  <input className="form-input" value={selectedBlock.settings?.alt || ''} onChange={e => updateBlock(selectedBlock.id, { settings: { ...selectedBlock.settings, alt: e.target.value } })} />
+                </div>
+              </div>
+            )}
+            {(selectedBlock.type === 'button' || selectedBlock.type === 'payment-link') && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Button Text</label>
+                  <input className="form-input" value={selectedBlock.content} onChange={e => updateBlock(selectedBlock.id, { content: e.target.value })} />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Link URL</label>
+                  <input className="form-input" value={selectedBlock.settings?.url || ''} onChange={e => updateBlock(selectedBlock.id, { settings: { ...selectedBlock.settings, url: e.target.value } })} />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Background Color</label>
+                  <input className="form-input" type="color" value={selectedBlock.styles?.backgroundColor || '#2563eb'} onChange={e => updateBlock(selectedBlock.id, { styles: { ...selectedBlock.styles, backgroundColor: e.target.value } })} />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Text Color</label>
+                  <input className="form-input" type="color" value={selectedBlock.styles?.color || '#ffffff'} onChange={e => updateBlock(selectedBlock.id, { styles: { ...selectedBlock.styles, color: e.target.value } })} />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Alignment</label>
+                  <select className="form-input" value={selectedBlock.styles?.align || 'center'} onChange={e => updateBlock(selectedBlock.id, { styles: { ...selectedBlock.styles, align: e.target.value } })}>
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                  </select>
+                </div>
+              </div>
+            )}
+            {selectedBlock.type === 'divider' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Line Color</label>
+                  <input className="form-input" type="color" value={selectedBlock.styles?.color || '#e5e7eb'} onChange={e => updateBlock(selectedBlock.id, { styles: { ...selectedBlock.styles, color: e.target.value } })} />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Thickness (px)</label>
+                  <input className="form-input" type="number" value={selectedBlock.styles?.thickness || 1} onChange={e => updateBlock(selectedBlock.id, { styles: { ...selectedBlock.styles, thickness: parseInt(e.target.value) || 1 } })} />
+                </div>
+              </div>
+            )}
+            {selectedBlock.type === 'spacer' && (
+              <div className="form-group" style={{ margin: 0 }}>
+                <label className="form-label">Height (px)</label>
+                <input className="form-input" type="number" value={selectedBlock.settings?.height || 20} onChange={e => updateBlock(selectedBlock.id, { settings: { ...selectedBlock.settings, height: parseInt(e.target.value) || 20 } })} />
+              </div>
+            )}
+            {(selectedBlock.type === 'offer-details' || selectedBlock.type === 'company-info') && (
+              <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>This block auto-populates with data. No manual content needed.</p>
+            )}
+          </div>
+        )}
+
+        <div style={{ padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+          <div className="table-title" style={{ marginBottom: 8 }}>Live Preview</div>
+          <div style={{ border: '1px solid var(--border-color)', borderRadius: 6, overflow: 'hidden', background: '#f4f4f4' }}>
+            <div style={{ background: '#111827', padding: '10px 14px', color: '#fff', fontSize: 12, fontWeight: 600 }}>
+              {templateSubject.replace(/\{\{.*?\}\}/g, m => m) || 'Subject...'}
+            </div>
+            <div style={{ padding: 16, background: '#fff', minHeight: 200, maxHeight: 300, overflow: 'auto' }}>
+              {renderedPreview ? <div dangerouslySetInnerHTML={{ __html: renderedPreview }} /> : <p style={{ color: '#9ca3af', textAlign: 'center' }}>Add blocks to preview</p>}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
