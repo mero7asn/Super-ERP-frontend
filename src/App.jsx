@@ -53,7 +53,6 @@ import WarehousesPage from './pages/WarehousesPage';
 import PickTaskPage from './pages/PickTaskPage';
 import InventoryReportsPage from './pages/InventoryReportsPage';
 import SupplyChainPage from './pages/SupplyChainPage';
-import SmartEcosystemAssistant from './components/SmartEcosystemAssistant';
 
 // Layout wrapper: renders Sidebar + content for authenticated pages
 const AppLayout = ({ children }) => {
@@ -63,7 +62,6 @@ const AppLayout = ({ children }) => {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <AuxTopBar />
         <main className="main-content" style={{ marginTop: 48 }}>{children}</main>
-        <SmartEcosystemAssistant />
       </div>
     </div>
   );
