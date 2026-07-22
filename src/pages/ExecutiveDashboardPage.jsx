@@ -145,7 +145,7 @@ const ExecutiveDashboardPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Header Banner */}
-      <div className="crm-glass-card" style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', color: '#ffffff', border: 'none' }}>
+      <div className="crm-page-banner">
         <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 4 }}>
           Executive Suite & Strategic KPI Control
         </div>

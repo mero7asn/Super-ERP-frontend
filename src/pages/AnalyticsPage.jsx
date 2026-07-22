@@ -30,15 +30,15 @@ const AnalyticsPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Header Banner */}
-      <div className="crm-glass-card">
-        <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#2563EB', marginBottom: 4 }}>
+      <div className="crm-page-banner">
+        <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 4 }}>
           Enterprise Intelligence
         </div>
-        <h1 style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Icon name="analytics" size={26} style={{ color: '#2563EB' }} />
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: '#ffffff', margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Icon name="analytics" size={26} style={{ color: '#60A5FA' }} />
           System Performance Analytics
         </h1>
-        <p style={{ fontSize: 13, color: '#64748B', marginTop: 4, margin: 0 }}>
+        <p style={{ fontSize: 13, color: '#94A3B8', marginTop: 4, margin: 0 }}>
           Real-time metrics, conversion rates, and module throughput across Super CRM
         </p>
       </div>
@@ -50,9 +50,9 @@ const AnalyticsPage = () => {
       ) : stats ? (
         <>
           {/* Lead Analytics Section */}
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span>🎯</span> Lead Acquisition & Conversion
+          <div className="crm-glass-card" style={{ padding: 24 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>🎯</span> Lead Acquisition &amp; Conversion
             </div>
             <div className="stat-grid" style={{ marginBottom: 0 }}>
               <div className="crm-stat-widget">
@@ -110,9 +110,9 @@ const AnalyticsPage = () => {
           </div>
 
           {/* Support Analytics Section */}
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span>🎫</span> Support & Engineering Operations
+          <div className="crm-glass-card" style={{ padding: 24 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>🎫</span> Support &amp; Engineering Operations
             </div>
             <div className="stat-grid" style={{ marginBottom: 0 }}>
               <div className="crm-stat-widget">
@@ -144,8 +144,8 @@ const AnalyticsPage = () => {
           </div>
 
           {/* Campaign Analytics Section */}
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div className="crm-glass-card" style={{ padding: 24 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
               <span>📢</span> Marketing Campaign Channels
             </div>
             <div className="stat-grid" style={{ marginBottom: 0 }}>

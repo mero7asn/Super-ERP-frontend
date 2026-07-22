@@ -134,7 +134,7 @@ const DashboardPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Header Banner */}
-      <div className="crm-glass-card" style={{ background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)', color: '#ffffff', border: 'none' }}>
+      <div className="crm-page-banner">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 4 }}>
@@ -144,7 +144,7 @@ const DashboardPage = () => {
               {greeting}, {user?.firstName} 👋
             </h1>
             <p style={{ fontSize: 13, color: '#94A3B8', marginTop: 6, margin: 0 }}>
-              Role: <strong style={{ color: '#F1F5F9' }}>{user?.role}</strong> &nbsp;· Real-time operations & pipeline metrics
+              Role: <strong style={{ color: '#F1F5F9' }}>{user?.role}</strong> &nbsp;&middot; Real-time operations & pipeline metrics
             </p>
           </div>
           <div style={{ display: 'flex', gap: 10 }}>

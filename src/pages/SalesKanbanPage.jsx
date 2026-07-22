@@ -128,16 +128,18 @@ const SalesKanbanPage = () => {
                   {/* Column Header */}
                   <div
                     style={{
-                      background: '#ffffff',
-                      border: '1px solid #E2E8F0',
-                      borderTop: `4px solid ${col.color}`,
+                      background: 'rgba(255, 255, 255, 0.9)',
+                      backdropFilter: 'blur(12px)',
+                      WebkitBackdropFilter: 'blur(12px)',
+                      border: `1px solid ${col.color}33`,
+                      borderTop: `3px solid ${col.color}`,
                       borderRadius: 12,
                       padding: '14px 16px',
                       marginBottom: 12,
                       display: 'flex',
                       alignItems: 'center',
-                      justify: 'space-between',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                      justifyContent: 'space-between',
+                      boxShadow: `0 4px 12px rgba(0,0,0,0.04), 0 1px 4px ${col.color}1A`,
                     }}
                   >
                     <span style={{ fontWeight: 700, fontSize: 14, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -184,14 +186,16 @@ const SalesKanbanPage = () => {
                                 {...prov.dragHandleProps}
                                 onClick={() => navigate(`/leads/${lead._id}`)}
                                 style={{
-                                  background: snap.isDragging ? '#FFFFFF' : '#FFFFFF',
-                                  border: snap.isDragging ? `2px solid ${col.color}` : '1px solid #E2E8F0',
+                                  background: snap.isDragging ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,0.95)',
+                                  backdropFilter: 'blur(8px)',
+                                  WebkitBackdropFilter: 'blur(8px)',
+                                  border: snap.isDragging ? `2px solid ${col.color}` : '1px solid rgba(226, 232, 240, 0.8)',
                                   borderRadius: 10,
                                   padding: 14,
                                   marginBottom: 10,
                                   boxShadow: snap.isDragging
-                                    ? '0 12px 24px rgba(0,0,0,0.15)'
-                                    : '0 2px 4px rgba(0,0,0,0.02)',
+                                    ? `0 16px 32px rgba(0,0,0,0.18), 0 4px 8px ${col.color}33`
+                                    : '0 2px 8px rgba(15, 23, 42, 0.05)',
                                   cursor: 'grab',
                                   transition: 'all 0.15s ease',
                                   ...prov.draggableProps.style,
