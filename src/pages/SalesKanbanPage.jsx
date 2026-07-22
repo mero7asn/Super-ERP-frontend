@@ -1,24 +1,27 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
 
 const COLUMNS = [
-  { id: 'New',       label: 'New',       icon: 'plus', color: '#4f6ef7' },
-  { id: 'Contacted', label: 'Contacted', icon: 'phone', color: '#06b6d4' },
-  { id: 'Qualified', label: 'Qualified', icon: 'like', color: '#f59e0b' },
-  { id: 'Converted', label: 'Converted', icon: 'check', color: '#22c55e' },
-  { id: 'Lost',      label: 'Lost',      icon: 'close', color: '#ef4444' },
+  { id: 'New', label: 'New Lead', icon: 'plus', color: '#2563EB', bg: '#EFF6FF' },
+  { id: 'Contacted', label: 'In Outreach', icon: 'phone', color: '#0284C7', bg: '#E0F2FE' },
+  { id: 'Qualified', label: 'Qualified', icon: 'like', color: '#7C3AED', bg: '#F3E8FF' },
+  { id: 'Converted', label: 'Won / Converted', icon: 'check', color: '#059669', bg: '#ECFDF5' },
+  { id: 'Lost', label: 'Lost Lead', icon: 'close', color: '#DC2626', bg: '#FEF2F2' },
 ];
 
 const sourceBadgeStyle = (src) => ({
-  background: src === 'Meta' ? 'rgba(24,119,242,0.15)' : 'rgba(219,68,55,0.15)',
-  color: src === 'Meta' ? '#4e8ef0' : '#e06355',
+  background: src === 'Meta' ? '#DBEAFE' : '#FEF3C7',
+  color: src === 'Meta' ? '#1E40AF' : '#B45309',
+  border: `1px solid ${src === 'Meta' ? '#BFDBFE' : '#FDE68A'}`,
 });
 
 const SalesKanbanPage = () => {
+  const navigate = useNavigate();
   const [board, setBoard] = useState(() =>
-    Object.fromEntries(COLUMNS.map(c => [c.id, []]))
+    Object.fromEntries(COLUMNS.map((c) => [c.id, []]))
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -28,8 +31,8 @@ const SalesKanbanPage = () => {
     const fetchLeads = async () => {
       try {
         const { data } = await API.get('/leads');
-        const grouped = Object.fromEntries(COLUMNS.map(c => [c.id, []]));
-        (data.data || []).forEach(lead => {
+        const grouped = Object.fromEntries(COLUMNS.map((c) => [c.id, []]));
+        (data.data || []).forEach((lead) => {
           if (grouped[lead.status]) grouped[lead.status].push(lead);
           else grouped['New'].push(lead);
         });
@@ -54,7 +57,7 @@ const SalesKanbanPage = () => {
     moved.status = destination.droppableId;
     dstCol.splice(destination.index, 0, moved);
 
-    setBoard(prev => ({
+    setBoard((prev) => ({
       ...prev,
       [source.droppableId]: srcCol,
       [destination.droppableId]: dstCol,
@@ -62,8 +65,8 @@ const SalesKanbanPage = () => {
 
     try {
       await API.put(`/leads/${draggableId}`, { status: destination.droppableId });
-    } catch {
-      // Silently revert would go here in production
+    } catch (err) {
+      console.error('Failed to update stage:', err);
     }
   };
 
@@ -73,62 +76,90 @@ const SalesKanbanPage = () => {
     lead.email?.toLowerCase().includes(search.toLowerCase());
 
   return (
-    <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* Header */}
+      <div className="crm-glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Icon name="kanban" size={26} style={{ color: 'var(--accent-primary)' }} />
-            Sales Dashboard
+          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#2563EB', marginBottom: 4 }}>
+            Visual Sales Pipeline
+          </div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Icon name="kanban" size={26} style={{ color: '#2563EB' }} />
+            Sales Kanban Board
           </h1>
-          <p className="page-subtitle">Drag & drop leads across stages to update their status instantly</p>
+          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4, margin: 0 }}>
+            Drag and drop deals across stages to update status instantly
+          </p>
         </div>
-        <input
-          className="table-search"
-          placeholder="Search leads…"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          style={{ alignSelf: 'center' }}
-        />
+
+        <div style={{ position: 'relative', width: 260 }}>
+          <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}>🔍</span>
+          <input
+            type="text"
+            placeholder="Search deal pipeline..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              width: '100%',
+              paddingLeft: 30,
+              paddingRight: 12,
+              paddingTop: 6,
+              paddingBottom: 6,
+              borderRadius: 8,
+              border: '1px solid #CBD5E1',
+              fontSize: 12,
+              outline: 'none',
+            }}
+          />
+        </div>
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
 
       {loading ? (
-        <div className="loading-state"><div className="spinner" />Loading leads…</div>
+        <div className="loading-state" style={{ padding: 60 }}><div className="spinner" />Loading Sales Kanban Board...</div>
       ) : (
         <DragDropContext onDragEnd={onDragEnd}>
-          <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 16 }}>
-            {COLUMNS.map(col => {
+          <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 20 }}>
+            {COLUMNS.map((col) => {
               const leads = board[col.id].filter(filterLead);
               return (
-                <div key={col.id} style={{ flex: '0 0 260px', display: 'flex', flexDirection: 'column' }}>
+                <div key={col.id} style={{ flex: '0 0 280px', display: 'flex', flexDirection: 'column' }}>
                   {/* Column Header */}
-                  <div style={{
-                    background: 'var(--bg-card)',
-                    border: '1px solid var(--border-color)',
-                    borderTop: `3px solid ${col.color}`,
-                    borderRadius: 'var(--radius-md)',
-                    padding: '14px 16px',
-                    marginBottom: 10,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
-                    <span style={{ fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <Icon name={col.icon} size={16} style={{ color: col.color }} />
+                  <div
+                    style={{
+                      background: '#ffffff',
+                      border: '1px solid #E2E8F0',
+                      borderTop: `4px solid ${col.color}`,
+                      borderRadius: 12,
+                      padding: '14px 16px',
+                      marginBottom: 12,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justify: 'space-between',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                    }}
+                  >
+                    <span style={{ fontWeight: 700, fontSize: 14, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: col.color }} />
                       {col.label}
                     </span>
-                    <span style={{
-                      background: `${col.color}22`,
-                      color: col.color,
-                      borderRadius: 12,
-                      padding: '2px 10px',
-                      fontSize: 12,
-                      fontWeight: 700,
-                    }}>{leads.length}</span>
+                    <span
+                      style={{
+                        background: col.bg,
+                        color: col.color,
+                        border: `1px solid ${col.color}44`,
+                        borderRadius: 12,
+                        padding: '2px 10px',
+                        fontSize: 12,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {leads.length}
+                    </span>
                   </div>
 
-                  {/* Droppable column */}
+                  {/* Droppable Column Body */}
                   <Droppable droppableId={col.id}>
                     {(provided, snapshot) => (
                       <div
@@ -136,15 +167,11 @@ const SalesKanbanPage = () => {
                         {...provided.droppableProps}
                         style={{
                           flex: 1,
-                          minHeight: 200,
-                          background: snapshot.isDraggingOver
-                            ? `${col.color}0d`
-                            : 'transparent',
-                          border: snapshot.isDraggingOver
-                            ? `1px dashed ${col.color}55`
-                            : '1px dashed transparent',
-                          borderRadius: 'var(--radius-md)',
-                          padding: 4,
+                          minHeight: 340,
+                          background: snapshot.isDraggingOver ? `${col.color}0D` : '#F8FAFC',
+                          border: snapshot.isDraggingOver ? `2px dashed ${col.color}` : '1px solid #E2E8F0',
+                          borderRadius: 12,
+                          padding: 8,
                           transition: 'all 0.15s ease',
                         }}
                       >
@@ -155,53 +182,46 @@ const SalesKanbanPage = () => {
                                 ref={prov.innerRef}
                                 {...prov.draggableProps}
                                 {...prov.dragHandleProps}
+                                onClick={() => navigate(`/leads/${lead._id}`)}
                                 style={{
-                                  background: snap.isDragging ? 'var(--bg-card-hover)' : 'var(--bg-card)',
-                                  border: '1px solid var(--border-color)',
-                                  borderRadius: 'var(--radius-sm)',
-                                  padding: '14px',
-                                  marginBottom: 8,
-                                  boxShadow: snap.isDragging ? 'var(--shadow-md)' : 'none',
+                                  background: snap.isDragging ? '#FFFFFF' : '#FFFFFF',
+                                  border: snap.isDragging ? `2px solid ${col.color}` : '1px solid #E2E8F0',
+                                  borderRadius: 10,
+                                  padding: 14,
+                                  marginBottom: 10,
+                                  boxShadow: snap.isDragging
+                                    ? '0 12px 24px rgba(0,0,0,0.15)'
+                                    : '0 2px 4px rgba(0,0,0,0.02)',
                                   cursor: 'grab',
-                                  transition: 'box-shadow 0.15s ease',
+                                  transition: 'all 0.15s ease',
                                   ...prov.draggableProps.style,
                                 }}
                               >
-                                <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>{lead.name}</div>
-                                <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <div style={{ fontWeight: 700, fontSize: 14, color: '#0F172A', marginBottom: 4 }}>
+                                  {lead.name}
+                                </div>
+                                <div style={{ fontSize: 12, color: '#64748B', marginBottom: 10, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {lead.email}
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                  <span style={{
-                                    ...sourceBadgeStyle(lead.source),
-                                    fontSize: 11,
-                                    fontWeight: 600,
-                                    padding: '2px 8px',
-                                    borderRadius: 10,
-                                  }}>{lead.source}</span>
+
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                                  <span style={{ ...sourceBadgeStyle(lead.source), fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>
+                                    {lead.source || 'Direct'}
+                                  </span>
                                   {lead.phone && (
-                                    <span style={{ fontSize: 11, color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                    <span style={{ fontSize: 11, color: '#94A3B8', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                                       <Icon name="phone" size={10} />
                                       {lead.phone}
                                     </span>
                                   )}
                                 </div>
+
                                 {lead.assignedTo && (
-                                  <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 5 }}>
-                                    <span style={{
-                                      width: 18, height: 18,
-                                      background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
-                                      borderRadius: '50%',
-                                      display: 'inline-flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      fontSize: 9,
-                                      color: '#fff',
-                                      fontWeight: 700,
-                                    }}>
-                                      {(lead.assignedTo.firstName?.[0] || '?')}
-                                    </span>
-                                    {lead.assignedTo.firstName} {lead.assignedTo.lastName}
+                                  <div style={{ borderTop: '1px solid #F1F5F9', paddingTop: 8, marginTop: 6, fontSize: 11, color: '#64748B', display: 'flex', alignItems: 'center', gap: 6 }}>
+                                    <div className="crm-avatar-chip" style={{ width: 20, height: 20, fontSize: 9 }}>
+                                      {lead.assignedTo.firstName?.[0] || 'A'}
+                                    </div>
+                                    <span>{lead.assignedTo.firstName} {lead.assignedTo.lastName}</span>
                                   </div>
                                 )}
                               </div>
@@ -210,8 +230,8 @@ const SalesKanbanPage = () => {
                         ))}
                         {provided.placeholder}
                         {leads.length === 0 && !snapshot.isDraggingOver && (
-                          <div style={{ textAlign: 'center', padding: '24px 0', color: 'var(--text-muted)', fontSize: 12 }}>
-                            Drop here
+                          <div style={{ textAlign: 'center', padding: '36px 0', color: '#94A3B8', fontSize: 12 }}>
+                            Drag deals here
                           </div>
                         )}
                       </div>

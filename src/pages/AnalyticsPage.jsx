@@ -28,98 +28,152 @@ const AnalyticsPage = () => {
     : '–';
 
   return (
-    <div>
-      <div className="page-header">
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Icon name="analytics" size={26} style={{ color: 'var(--accent-primary)' }} />
-          System Analytics
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Header Banner */}
+      <div className="crm-glass-card">
+        <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#2563EB', marginBottom: 4 }}>
+          Enterprise Intelligence
+        </div>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Icon name="analytics" size={26} style={{ color: '#2563EB' }} />
+          System Performance Analytics
         </h1>
-        <p className="page-subtitle">Real-time CRM performance metrics across all modules</p>
+        <p style={{ fontSize: 13, color: '#64748B', marginTop: 4, margin: 0 }}>
+          Real-time metrics, conversion rates, and module throughput across Super CRM
+        </p>
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
 
       {loading ? (
-        <div className="loading-state">
-          <div className="spinner" />
-          Loading analytics…
-        </div>
+        <div className="loading-state" style={{ padding: 60 }}><div className="spinner" />Loading system analytics...</div>
       ) : stats ? (
         <>
-          {/* Lead Stats */}
-          <h2 style={{ fontSize: '14px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px' }}>
-            Lead Overview
-          </h2>
-          <div className="stat-grid" style={{ marginBottom: '32px' }}>
-            <div className="stat-card blue">
-              <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-                <Icon name="target" size={24} />
-              </div>
-              <div className="stat-value">{stats.leads.total}</div>
-              <div className="stat-label">Total Leads</div>
+          {/* Lead Analytics Section */}
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>🎯</span> Lead Acquisition & Conversion
             </div>
-            <div className="stat-card cyan">
-              <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-                <Icon name="plus" size={24} />
+            <div className="stat-grid" style={{ marginBottom: 0 }}>
+              <div className="crm-stat-widget">
+                <div className="crm-stat-header">
+                  <div className="crm-stat-icon-bg" style={{ background: '#EFF6FF', color: '#2563EB' }}>
+                    <Icon name="target" size={20} />
+                  </div>
+                  <span className="crm-trend-pill crm-trend-up">Total Leads</span>
+                </div>
+                <div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A' }}>{stats.leads.total}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 2 }}>Gross Prospects</div>
+                </div>
               </div>
-              <div className="stat-value">{stats.leads.new}</div>
-              <div className="stat-label">New Leads</div>
-            </div>
-            <div className="stat-card green">
-              <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-                <Icon name="check" size={24} />
+
+              <div className="crm-stat-widget">
+                <div className="crm-stat-header">
+                  <div className="crm-stat-icon-bg" style={{ background: '#E0F2FE', color: '#0284C7' }}>
+                    <Icon name="plus" size={20} />
+                  </div>
+                  <span className="crm-trend-pill crm-trend-up">New Queue</span>
+                </div>
+                <div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A' }}>{stats.leads.new}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 2 }}>Unassigned / New</div>
+                </div>
               </div>
-              <div className="stat-value">{stats.leads.converted}</div>
-              <div className="stat-label">Converted</div>
-            </div>
-            <div className="stat-card yellow">
-              <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-                <Icon name="trending" size={24} />
+
+              <div className="crm-stat-widget">
+                <div className="crm-stat-header">
+                  <div className="crm-stat-icon-bg" style={{ background: '#ECFDF5', color: '#059669' }}>
+                    <Icon name="check" size={20} />
+                  </div>
+                  <span className="crm-trend-pill crm-trend-up">Won Deals</span>
+                </div>
+                <div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: '#059669' }}>{stats.leads.converted}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 2 }}>Converted Customers</div>
+                </div>
               </div>
-              <div className="stat-value">{conversionRate}%</div>
-              <div className="stat-label">Conversion Rate</div>
+
+              <div className="crm-stat-widget">
+                <div className="crm-stat-header">
+                  <div className="crm-stat-icon-bg" style={{ background: '#FEF3C7', color: '#D97706' }}>
+                    <Icon name="trending" size={20} />
+                  </div>
+                  <span className="crm-trend-pill crm-trend-up">Benchmark 20%+</span>
+                </div>
+                <div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: '#D97706' }}>{conversionRate}%</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 2 }}>Win Conversion Rate</div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Ticket Stats */}
-          <h2 style={{ fontSize: '14px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px' }}>
-            Support Overview
-          </h2>
-          <div className="stat-grid" style={{ marginBottom: '32px' }}>
-            <div className="stat-card blue">
-              <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-                <Icon name="ticket" size={24} />
-              </div>
-              <div className="stat-value">{stats.tickets.total}</div>
-              <div className="stat-label">Total Tickets</div>
+          {/* Support Analytics Section */}
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>🎫</span> Support & Engineering Operations
             </div>
-            <div className="stat-card red">
-              <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-                <Icon name="unlock" size={24} />
+            <div className="stat-grid" style={{ marginBottom: 0 }}>
+              <div className="crm-stat-widget">
+                <div className="crm-stat-header">
+                  <div className="crm-stat-icon-bg" style={{ background: '#EFF6FF', color: '#2563EB' }}>
+                    <Icon name="ticket" size={20} />
+                  </div>
+                  <span className="crm-trend-pill crm-trend-up">Total Tickets</span>
+                </div>
+                <div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A' }}>{stats.tickets.total}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 2 }}>All Submitted Tickets</div>
+                </div>
               </div>
-              <div className="stat-value">{stats.tickets.open}</div>
-              <div className="stat-label">Open Tickets</div>
+
+              <div className="crm-stat-widget">
+                <div className="crm-stat-header">
+                  <div className="crm-stat-icon-bg" style={{ background: '#FEF2F2', color: '#DC2626' }}>
+                    <Icon name="unlock" size={20} />
+                  </div>
+                  <span className="crm-trend-pill crm-trend-down">Pending Resolution</span>
+                </div>
+                <div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: '#DC2626' }}>{stats.tickets.open}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 2 }}>Open Tickets</div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Campaign Stats */}
-          <h2 style={{ fontSize: '14px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px' }}>
-            Campaign Overview
-          </h2>
-          <div className="stat-grid">
-            <div className="stat-card blue">
-              <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-                <Icon name="megaphone" size={24} />
-              </div>
-              <div className="stat-value">{stats.campaigns.total}</div>
-              <div className="stat-label">Total Campaigns</div>
+          {/* Campaign Analytics Section */}
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>📢</span> Marketing Campaign Channels
             </div>
-            <div className="stat-card green">
-              <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-                <Icon name="play" size={24} />
+            <div className="stat-grid" style={{ marginBottom: 0 }}>
+              <div className="crm-stat-widget">
+                <div className="crm-stat-header">
+                  <div className="crm-stat-icon-bg" style={{ background: '#EFF6FF', color: '#2563EB' }}>
+                    <Icon name="megaphone" size={20} />
+                  </div>
+                  <span className="crm-trend-pill crm-trend-up">Total Channels</span>
+                </div>
+                <div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A' }}>{stats.campaigns.total}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 2 }}>Configured Campaigns</div>
+                </div>
               </div>
-              <div className="stat-value">{stats.campaigns.active}</div>
-              <div className="stat-label">Active Campaigns</div>
+
+              <div className="crm-stat-widget">
+                <div className="crm-stat-header">
+                  <div className="crm-stat-icon-bg" style={{ background: '#ECFDF5', color: '#059669' }}>
+                    <Icon name="play" size={20} />
+                  </div>
+                  <span className="crm-trend-pill crm-trend-up">Live Broadcasting</span>
+                </div>
+                <div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: '#059669' }}>{stats.campaigns.active}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 2 }}>Active Campaigns</div>
+                </div>
+              </div>
             </div>
           </div>
         </>

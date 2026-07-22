@@ -21,9 +21,28 @@ const AFFECTED_PAGES = [
   'CRM Dev Tools'
 ];
 
-const userName = (person) => person ? `${person.firstName} ${person.lastName}` : 'System';
+const userName = (person) => (person ? `${person.firstName} ${person.lastName}` : 'System');
 const sameId = (left, right) => Boolean(left && right && left.toString() === right.toString());
-const formatDate = (value) => value ? new Date(value).toLocaleString() : '—';
+const formatDate = (value) => (value ? new Date(value).toLocaleString() : '—');
+
+const priorityBadge = (p) => {
+  switch (p) {
+    case 'Urgent': return { bg: '#FEF2F2', color: '#DC2626', border: '#FCA5A5' };
+    case 'High': return { bg: '#FFF7ED', color: '#EA580C', border: '#FFEDD5' };
+    case 'Medium': return { bg: '#EFF6FF', color: '#2563EB', border: '#BFDBFE' };
+    default: return { bg: '#F8FAFC', color: '#64748B', border: '#E2E8F0' };
+  }
+};
+
+const statusBadge = (s) => {
+  switch (s) {
+    case 'Open': return { bg: '#EFF6FF', color: '#1D4ED8', border: '#BFDBFE' };
+    case 'In Progress': return { bg: '#FEF3C7', color: '#B45309', border: '#FDE68A' };
+    case 'Resolved': return { bg: '#ECFDF5', color: '#047857', border: '#A7F3D0' };
+    case 'Closed': return { bg: '#F1F5F9', color: '#475569', border: '#CBD5E1' };
+    default: return { bg: '#EFF6FF', color: '#1D4ED8', border: '#BFDBFE' };
+  }
+};
 
 const TicketsPage = () => {
   const { user } = useAuth();
@@ -145,7 +164,7 @@ const TicketsPage = () => {
     }
   };
 
-  const filtered = tickets.filter(t =>
+  const filtered = tickets.filter((t) =>
     t.subject?.toLowerCase().includes(search.toLowerCase()) ||
     t.status?.toLowerCase().includes(search.toLowerCase()) ||
     t.priority?.toLowerCase().includes(search.toLowerCase()) ||
@@ -157,272 +176,357 @@ const TicketsPage = () => {
   );
 
   return (
-    <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* Header */}
+      <div className="crm-glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Icon name="tickets" size={26} style={{ color: 'var(--accent-primary)' }} />
-            Technical Issues
+          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#2563EB', marginBottom: 4 }}>
+            System Support & Maintenance
+          </div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Icon name="tickets" size={26} style={{ color: '#2563EB' }} />
+            Technical Issues ({filtered.length})
           </h1>
-          <p className="page-subtitle">
-            {canManage ? 'Viewing all technical issues reported to the Technology team' : 'Report and track technical issues submitted to the Technology team'}
+          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4, margin: 0 }}>
+            {canManage
+              ? 'Viewing all technical support issues reported to the Technology team'
+              : 'Report and track technical issues submitted to the Technology team'}
           </p>
         </div>
+
         {canCreate && (
-          <button className="btn btn-primary btn-sm" onClick={() => setShowModal(true)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14"/><path d="M12 5v14"/>
-            </svg>
-            Report Issue
+          <button
+            onClick={() => setShowModal(true)}
+            style={{
+              background: '#2563EB',
+              color: '#ffffff',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: 8,
+              fontWeight: 600,
+              fontSize: 13,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
+            }}
+          >
+            <span>+</span>
+            <span>Report Technical Issue</span>
           </button>
         )}
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
 
-      <div className="table-wrapper">
-        <div className="table-header">
-          <span className="table-title">
-            {filtered.length} Issue{filtered.length !== 1 ? 's' : ''}
-          </span>
-          <input
-            className="table-search"
-            placeholder="Search by subject, status, priority, requester…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
+      {/* Table Container */}
+      <div className="crm-table-wrapper">
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', background: '#FAFAFA', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>
+            Support Tickets Directory
+          </div>
+          <div style={{ position: 'relative', width: 280 }}>
+            <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}>🔍</span>
+            <input
+              type="text"
+              placeholder="Search by subject, status, or team..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                width: '100%',
+                paddingLeft: 30,
+                paddingRight: 12,
+                paddingTop: 6,
+                paddingBottom: 6,
+                borderRadius: 8,
+                border: '1px solid #CBD5E1',
+                fontSize: 12,
+                outline: 'none',
+              }}
+            />
+          </div>
         </div>
 
         {loading ? (
-          <div className="loading-state">
-            <div className="spinner" />
-            Loading issues…
-          </div>
+          <div className="loading-state" style={{ padding: 40 }}><div className="spinner" />Loading support issues...</div>
         ) : filtered.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-state-icon">
-              <Icon name="tickets" size={48} style={{ opacity: 0.5 }} />
-            </div>
-            <p>No issues found</p>
+          <div className="empty-state" style={{ padding: 48 }}>
+            <div style={{ fontSize: 40, marginBottom: 8 }}>🎫</div>
+            <p style={{ fontWeight: 600, color: '#475569' }}>No support tickets match your search criteria.</p>
           </div>
         ) : (
           <table>
             <thead>
               <tr>
-                <th>Subject</th>
+                <th>Subject & Description</th>
                 <th>Priority</th>
                 <th>Status</th>
                 <th>Affected Page</th>
                 <th>Reporting Team</th>
-                <th>Assigned To</th>
-                <th>Created</th>
-                <th>Details</th>
+                <th>Assigned Developer</th>
+                <th>Created Date</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map(ticket => (
-                <tr key={ticket._id} style={{ opacity: updating === ticket._id ? 0.6 : 1 }}>
-                  <td>
-                    <strong>{ticket.subject}</strong>
-                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{ticket.description}</div>
-                  </td>
-                  <td>
+              {filtered.map((ticket) => {
+                const pb = priorityBadge(ticket.priority);
+                const sb = statusBadge(ticket.status);
+                return (
+                  <tr key={ticket._id} style={{ opacity: updating === ticket._id ? 0.5 : 1 }}>
+                    <td>
+                      <div>
+                        <strong style={{ fontSize: 14, color: '#0F172A' }}>{ticket.subject}</strong>
+                        <div style={{ fontSize: 12, color: '#64748B', marginTop: 2, maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {ticket.description}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <select
+                        value={ticket.priority}
+                        onChange={(e) => handleUpdate(ticket._id, { priority: e.target.value })}
+                        disabled={updating === ticket._id || !canManage}
+                        style={{
+                          background: pb.bg,
+                          color: pb.color,
+                          border: `1px solid ${pb.border}`,
+                          borderRadius: 16,
+                          padding: '3px 10px',
+                          fontSize: 11,
+                          fontWeight: 700,
+                          cursor: canManage ? 'pointer' : 'default',
+                          outline: 'none',
+                        }}
+                      >
+                        <option>Low</option>
+                        <option>Medium</option>
+                        <option>High</option>
+                        <option>Urgent</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select
+                        value={ticket.status}
+                        onChange={(e) => handleUpdate(ticket._id, { status: e.target.value })}
+                        disabled={updating === ticket._id || !canManage}
+                        style={{
+                          background: sb.bg,
+                          color: sb.color,
+                          border: `1px solid ${sb.border}`,
+                          borderRadius: 16,
+                          padding: '3px 10px',
+                          fontSize: 11,
+                          fontWeight: 700,
+                          cursor: canManage ? 'pointer' : 'default',
+                          outline: 'none',
+                        }}
+                      >
+                        <option>Open</option>
+                        <option>In Progress</option>
+                        <option>Resolved</option>
+                        <option>Closed</option>
+                      </select>
+                    </td>
+                    <td style={{ fontSize: 12, color: '#475569' }}>
+                      <span style={{ background: '#F1F5F9', padding: '2px 8px', borderRadius: 4, fontWeight: 500 }}>
+                        {ticket.affectedPage || 'Other'}
+                      </span>
+                    </td>
+                    <td style={{ fontSize: 12, color: '#475569' }}>
+                      {ticket.requesterTeam || ticket.createdBy?.role || '—'}
+                    </td>
+                    <td style={{ fontSize: 12, color: '#475569' }}>
+                      {ticket.assignedTo ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <div className="crm-avatar-chip" style={{ width: 22, height: 22, fontSize: 9 }}>
+                            {ticket.assignedTo.firstName?.[0] || 'D'}
+                          </div>
+                          <span>{ticket.assignedTo.firstName} {ticket.assignedTo.lastName}</span>
+                        </div>
+                      ) : (
+                        <span style={{ color: '#94A3B8' }}>Unassigned</span>
+                      )}
+                    </td>
+                    <td style={{ fontSize: 12, color: '#94A3B8' }}>
+                      {new Date(ticket.createdAt).toLocaleDateString()}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => openTicket(ticket._id)}
+                        style={{
+                          background: '#F1F5F9',
+                          border: '1px solid #CBD5E1',
+                          color: '#334155',
+                          padding: '4px 10px',
+                          borderRadius: 6,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        View Issue
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Report Modal */}
+      {showModal && (
+        <div
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: 20,
+          }}
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            style={{
+              background: '#ffffff', borderRadius: 16, padding: 32, maxWidth: 580, width: '100%', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', margin: '0 0 4px 0' }}>Report Technical Issue</h2>
+            <p style={{ fontSize: 13, color: '#64748B', margin: '0 0 20px 0' }}>Submit bug or feature feedback directly to the CRM Engineering Team.</p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label className="form-label">Issue Subject</label>
+                <input
+                  className="form-input"
+                  placeholder="Brief summary of the issue..."
+                  value={newTicket.subject}
+                  onChange={(e) => setNewTicket((p) => ({ ...p, subject: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Detailed Description</label>
+                <textarea
+                  className="form-input"
+                  rows="4"
+                  placeholder="Steps to reproduce, error text, or expected behavior..."
+                  value={newTicket.description}
+                  onChange={(e) => setNewTicket((p) => ({ ...p, description: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Affected Module / Page</label>
+                <select
+                  className="form-input"
+                  value={newTicket.affectedPage}
+                  onChange={(e) => setNewTicket((p) => ({ ...p, affectedPage: e.target.value }))}
+                >
+                  {AFFECTED_PAGES.map((page) => (
+                    <option key={page}>{page}</option>
+                  ))}
+                </select>
+              </div>
+
+              {canManage && (
+                <>
+                  <div>
+                    <label className="form-label">Priority</label>
                     <select
-                      value={ticket.priority}
-                      onChange={e => handleUpdate(ticket._id, { priority: e.target.value })}
-                      disabled={updating === ticket._id || !canManage}
-                      style={{
-                        background: 'none', border: '1px solid var(--border-color)',
-                        borderRadius: 20, padding: '3px 8px', fontSize: 11,
-                        fontWeight: 600, cursor: canManage ? 'pointer' : 'default', color: 'var(--text-primary)',
-                      }}
+                      className="form-input"
+                      value={newTicket.priority}
+                      onChange={(e) => setNewTicket((p) => ({ ...p, priority: e.target.value }))}
                     >
                       <option>Low</option>
                       <option>Medium</option>
                       <option>High</option>
                       <option>Urgent</option>
                     </select>
-                  </td>
-                  <td>
+                  </div>
+
+                  <div>
+                    <label className="form-label">Assign Developer</label>
                     <select
-                      value={ticket.status}
-                      onChange={e => handleUpdate(ticket._id, { status: e.target.value })}
-                      disabled={updating === ticket._id || !canManage}
-                      style={{
-                        background: 'none', border: '1px solid var(--border-color)',
-                        borderRadius: 20, padding: '3px 8px', fontSize: 11,
-                        fontWeight: 600, cursor: canManage ? 'pointer' : 'default', color: 'var(--text-primary)',
-                      }}
+                      className="form-input"
+                      value={newTicket.assignedTo}
+                      onChange={(e) => setNewTicket((p) => ({ ...p, assignedTo: e.target.value }))}
                     >
-                      <option>Open</option>
-                      <option>In Progress</option>
-                      <option>Resolved</option>
-                      <option>Closed</option>
+                      <option value="">Unassigned</option>
+                      {technologyUsers.map((agent) => (
+                        <option key={agent._id} value={agent._id}>
+                          {agent.firstName} {agent.lastName} ({agent.role})
+                        </option>
+                      ))}
                     </select>
-                  </td>
-                  <td style={{ color: 'var(--text-secondary)', fontSize: 12 }}>
-                    {ticket.affectedPage || 'Other'}
-                  </td>
-                  <td style={{ color: 'var(--text-secondary)', fontSize: 12 }}>
-                    {ticket.requesterTeam || ticket.createdBy?.role || <span style={{ color: 'var(--text-muted)' }}>—</span>}
-                  </td>
-                  <td style={{ color: 'var(--text-secondary)', fontSize: 12 }}>
-                    {ticket.assignedTo
-                      ? `${ticket.assignedTo.firstName} ${ticket.assignedTo.lastName}`
-                      : <span style={{ color: 'var(--text-muted)' }}>Unassigned</span>}
-                  </td>
-                  <td style={{ color: 'var(--text-muted)', fontSize: '12px' }}>
-                    {new Date(ticket.createdAt).toLocaleDateString()}
-                  </td>
-                  <td>
-                    <button className="btn btn-secondary btn-sm" onClick={() => openTicket(ticket._id)}>View</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {showModal && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 1000, padding: 20
-        }} onClick={() => setShowModal(false)}>
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: 12, padding: 32, maxWidth: 600, width: '100%',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-          }} onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>Report Technical Issue</h2>
-            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>Submit a system technical issue to the Technology team</p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div className="form-group" style={{ margin: 0 }}>
-                <label className="form-label">Subject</label>
-                <input className="form-input" placeholder="Brief description of the issue" value={newTicket.subject} onChange={e => setNewTicket(p => ({ ...p, subject: e.target.value }))} />
-              </div>
-
-              <div className="form-group" style={{ margin: 0 }}>
-                <label className="form-label">Description</label>
-                <textarea className="form-input" rows="4" placeholder="Detailed description of the technical issue..." value={newTicket.description} onChange={e => setNewTicket(p => ({ ...p, description: e.target.value }))} />
-              </div>
-
-              <div className="form-group" style={{ margin: 0 }}>
-                <label className="form-label">Affected Page</label>
-                <select className="form-input" value={newTicket.affectedPage} onChange={e => setNewTicket(p => ({ ...p, affectedPage: e.target.value }))}>
-                  {AFFECTED_PAGES.map(page => (
-                    <option key={page}>{page}</option>
-                  ))}
-                </select>
-              </div>
-
-              {!canManage && (
-                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                  Technology team will set the priority after reviewing the issue.
-                </div>
-              )}
-
-              {canManage && (
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Priority</label>
-                  <select className="form-input" value={newTicket.priority} onChange={e => setNewTicket(p => ({ ...p, priority: e.target.value }))}>
-                    <option>Low</option>
-                    <option>Medium</option>
-                    <option>High</option>
-                    <option>Urgent</option>
-                  </select>
-                </div>
-              )}
-
-              <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                Reporting team: <strong>{user?.role || 'Unknown'}</strong>
-              </div>
-
-              {canManage && (
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Assign To</label>
-                  <select className="form-input" value={newTicket.assignedTo} onChange={e => setNewTicket(p => ({ ...p, assignedTo: e.target.value }))}>
-                    <option value="">Unassigned</option>
-                    {technologyUsers.map(agent => (
-                      <option key={agent._id} value={agent._id}>{agent.firstName} {agent.lastName} ({agent.role})</option>
-                    ))}
-                  </select>
-                </div>
+                  </div>
+                </>
               )}
             </div>
 
             <div style={{ display: 'flex', gap: 10, marginTop: 24, justifyContent: 'flex-end' }}>
-              <button className="btn btn-secondary btn-sm" onClick={() => setShowModal(false)} disabled={saving}>Cancel</button>
-              <button className="btn btn-primary btn-sm" onClick={handleCreate} disabled={saving}>
-                {saving ? 'Creating...' : 'Report Issue'}
+              <button className="btn btn-secondary btn-sm" onClick={() => setShowModal(false)} disabled={saving}>
+                Cancel
+              </button>
+              <button className="btn btn-primary btn-sm" onClick={handleCreate} disabled={saving} style={{ background: '#2563EB' }}>
+                {saving ? 'Submitting...' : 'Submit Ticket'}
               </button>
             </div>
           </div>
         </div>
       )}
 
+      {/* Ticket Details & Comments Modal */}
       {showDetailsModal && selectedTicket && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 1000, padding: 20
-        }} onClick={() => setShowDetailsModal(false)}>
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: 12, padding: 32, maxWidth: 760, width: '100%', maxHeight: '90vh', overflow: 'auto',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-          }} onClick={e => e.stopPropagation()}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 20 }}>
+        <div
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: 20,
+          }}
+          onClick={() => setShowDetailsModal(false)}
+        >
+          <div
+            style={{
+              background: '#ffffff', borderRadius: 16, padding: 32, maxWidth: 740, width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 20 }}>
               <div>
-                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>{selectedTicket.subject}</h2>
-                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                  {selectedTicket.affectedPage || 'Other'} · {selectedTicket.status} · {selectedTicket.priority}
+                <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', margin: 0 }}>{selectedTicket.subject}</h2>
+                <div style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>
+                  Page: <strong>{selectedTicket.affectedPage || 'Other'}</strong> · Status: <strong>{selectedTicket.status}</strong> · Priority: <strong>{selectedTicket.priority}</strong>
                 </div>
               </div>
-              <button className="btn btn-secondary btn-sm" onClick={() => setShowDetailsModal(false)}>Close</button>
+              <button onClick={() => setShowDetailsModal(false)} style={{ background: 'none', border: 'none', fontSize: 24, color: '#64748B', cursor: 'pointer' }}>×</button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12, marginBottom: 24 }}>
-              <div style={{ padding: 14, borderRadius: 10, background: 'rgba(37, 99, 235, 0.06)' }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Description</div>
-                <div style={{ whiteSpace: 'pre-wrap' }}>{selectedTicket.description}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
+              <div style={{ padding: 14, borderRadius: 10, background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Issue Details</div>
+                <div style={{ fontSize: 13, color: '#1E293B', marginTop: 6, whiteSpace: 'pre-wrap' }}>{selectedTicket.description}</div>
               </div>
-              <div style={{ padding: 14, borderRadius: 10, background: 'rgba(37, 99, 235, 0.06)' }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Submitted By</div>
-                <div>{userName(selectedTicket.createdBy)} · {selectedTicket.createdBy?.role || selectedTicket.requesterTeam}</div>
-              </div>
-              <div style={{ padding: 14, borderRadius: 10, background: 'rgba(37, 99, 235, 0.06)' }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Assigned To</div>
-                <div>{selectedTicket.assignedTo ? userName(selectedTicket.assignedTo) : 'Unassigned'}</div>
-              </div>
-              <div style={{ padding: 14, borderRadius: 10, background: 'rgba(37, 99, 235, 0.06)' }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Target Team</div>
-                <div>{selectedTicket.targetTeam || 'Technology Team'}</div>
-              </div>
-              <div style={{ padding: 14, borderRadius: 10, background: 'rgba(37, 99, 235, 0.06)' }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Created</div>
-                <div>{formatDate(selectedTicket.createdAt)}</div>
-              </div>
-              <div style={{ padding: 14, borderRadius: 10, background: 'rgba(37, 99, 235, 0.06)' }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Updated</div>
-                <div>{formatDate(selectedTicket.updatedAt)}</div>
+
+              <div style={{ padding: 14, borderRadius: 10, background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Reporter Info</div>
+                <div style={{ fontSize: 13, color: '#1E293B', marginTop: 6 }}>{userName(selectedTicket.createdBy)} ({selectedTicket.createdBy?.role || 'User'})</div>
               </div>
             </div>
 
-            <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 12 }}>Comments</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
-              {(selectedTicket.comments || []).length === 0 && (
-                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>No comments yet.</div>
-              )}
-              {(selectedTicket.comments || []).map(comment => (
-                <div key={comment._id} style={{ padding: 12, borderRadius: 10, background: 'rgba(15, 23, 42, 0.04)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 6 }}>
-                    <strong style={{ fontSize: 13 }}>{userName(comment.author)}</strong>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{formatDate(comment.createdAt)}</span>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 12 }}>Discussion & Activity History</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
+              {(selectedTicket.comments || []).length === 0 ? (
+                <div style={{ fontSize: 13, color: '#94A3B8', fontStyle: 'italic' }}>No discussion notes added yet.</div>
+              ) : (
+                (selectedTicket.comments || []).map((comment) => (
+                  <div key={comment._id} style={{ padding: 12, borderRadius: 8, background: '#F1F5F9', border: '1px solid #E2E8F0' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <strong style={{ fontSize: 12, color: '#1E293B' }}>{userName(comment.author)}</strong>
+                      <span style={{ fontSize: 10, color: '#94A3B8' }}>{formatDate(comment.createdAt)}</span>
+                    </div>
+                    <div style={{ fontSize: 13, color: '#334155' }}>{comment.text}</div>
                   </div>
-                  <div style={{ fontSize: 13, whiteSpace: 'pre-wrap' }}>{comment.text}</div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
 
             {canComment && (
@@ -430,13 +534,17 @@ const TicketsPage = () => {
                 <textarea
                   className="form-input"
                   rows="3"
-                  placeholder="Add an internal note or update…"
+                  placeholder="Type an update or comment..."
                   value={newComment}
-                  onChange={e => setNewComment(e.target.value)}
+                  onChange={(e) => setNewComment(e.target.value)}
                   style={{ flex: 1 }}
                 />
-                <button className="btn btn-primary btn-sm" onClick={handleAddComment} disabled={commentSaving || !newComment.trim()}>
-                  {commentSaving ? 'Adding...' : 'Add Comment'}
+                <button
+                  onClick={handleAddComment}
+                  disabled={commentSaving || !newComment.trim()}
+                  style={{ background: '#2563EB', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
+                >
+                  {commentSaving ? 'Saving...' : 'Add Comment'}
                 </button>
               </div>
             )}
