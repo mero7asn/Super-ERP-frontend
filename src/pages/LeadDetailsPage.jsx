@@ -37,9 +37,8 @@ const LeadDetailsPage = () => {
   const [updatingLead, setUpdatingLead] = useState(false);
   
   // Notes
-  const [editingNotes, setEditingNotes] = useState(false);
-  const [notesText, setNotesText] = useState('');
-  const [savingNotes, setSavingNotes] = useState(false);
+  const [newNoteText, setNewNoteText] = useState('');
+  const [addingNote, setAddingNote] = useState(false);
   
   // Modals & Forms
   const [showOfferModal, setShowOfferModal] = useState(false);
@@ -292,21 +291,17 @@ const LeadDetailsPage = () => {
     }
   };
 
-  const startEditNotes = () => {
-    setNotesText(lead?.notes || '');
-    setEditingNotes(true);
-  };
-
-  const saveNotes = async () => {
-    setSavingNotes(true);
+  const handleAddNote = async () => {
+    if (!newNoteText.trim()) return;
+    setAddingNote(true);
     try {
-      const { data } = await API.put(`/leads/${id}`, { notes: notesText });
+      const { data } = await API.post(`/leads/${id}/notes`, { text: newNoteText });
       setLead(data.data);
-      setEditingNotes(false);
+      setNewNoteText('');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to save notes');
+      setError(err.response?.data?.message || 'Failed to add note');
     } finally {
-      setSavingNotes(false);
+      setAddingNote(false);
     }
   };
 
@@ -383,33 +378,45 @@ const LeadDetailsPage = () => {
               </div>
             )}
             
-            {editingNotes ? (
+            <div style={{ marginTop: 10 }}>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Notes</div>
+              
+              {(() => {
+                const notes = Array.isArray(lead?.notes) ? lead.notes : (lead?.notes ? [{ text: lead.notes, createdAt: new Date(), createdBy: { name: 'System', email: '', role: 'System' } }] : []);
+                return notes.length === 0 ? (
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)', fontStyle: 'italic' }}>No notes yet.</div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {notes.map((note, idx) => (
+                      <div key={idx} style={{ padding: 10, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+                        <div style={{ fontSize: 13, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', marginBottom: 6 }}>{note.text}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                          <span>{note.createdAt ? new Date(note.createdAt).toLocaleString() : ''}</span>
+                          {note.createdBy?.name && <span>by {note.createdBy.name} ({note.createdBy.role})</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+
               <div style={{ marginTop: 10, padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Notes</div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Add Note</div>
                 <textarea
                   className="form-input"
-                  rows={4}
-                  value={notesText}
-                  onChange={e => setNotesText(e.target.value)}
-                  placeholder="Add notes about this lead..."
+                  rows={3}
+                  value={newNoteText}
+                  onChange={e => setNewNoteText(e.target.value)}
+                  placeholder="Type a new note..."
                   style={{ fontSize: 13, marginBottom: 8 }}
                 />
-                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                  <button className="btn btn-secondary btn-sm" onClick={() => setEditingNotes(false)} disabled={savingNotes}>Cancel</button>
-                  <button className="btn btn-primary btn-sm" onClick={saveNotes} disabled={savingNotes}>
-                    {savingNotes ? 'Saving...' : 'Save Notes'}
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <button className="btn btn-primary btn-sm" onClick={handleAddNote} disabled={addingNote || !newNoteText.trim()}>
+                    {addingNote ? 'Adding...' : 'Add Note'}
                   </button>
                 </div>
               </div>
-            ) : (
-              <div style={{ marginTop: 10, padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Notes</div>
-                  <button onClick={startEditNotes} className="btn btn-secondary btn-sm" style={{ padding: '2px 8px', fontSize: 11 }}>Edit</button>
-                </div>
-                <div style={{ fontSize: 13, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>{lead.notes || 'No notes yet.'}</div>
-              </div>
-            )}
+            </div>
           </div>
         </div>
 
