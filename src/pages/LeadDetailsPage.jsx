@@ -131,8 +131,11 @@ const LeadDetailsPage = () => {
     const fetchCurrencies = async () => {
       try {
         const { data } = await API.get('/settings/currencies');
-        setCurrencies(data.data?.currencies || []);
-        setDefaultCurrency(data.data?.defaultCurrency || 'USD');
+        const configuredCurrencies = data.data?.currencies || [];
+        const configuredDefault = data.data?.defaultCurrency || 'USD';
+        setCurrencies(configuredCurrencies);
+        setDefaultCurrency(configuredDefault);
+        setNewOfferCurrency(configuredDefault);
       } catch (err) {
         console.error('Failed to load currencies:', err);
       }
@@ -179,7 +182,14 @@ const LeadDetailsPage = () => {
     setSaving(true);
     setError('');
     try {
-      await API.post('/offers', { ...newOffer, lead: id, price: parseFloat(newOffer.price) });
+      const selectedCurrency = currencies.find(c => c.code === newOfferCurrency) || null;
+      await API.post('/offers', {
+        ...newOffer,
+        lead: id,
+        price: parseFloat(newOffer.price),
+        currency: newOfferCurrency || defaultCurrency || 'USD',
+        currencySymbol: selectedCurrency?.symbol || ''
+      });
       await fetchData();
       setShowOfferModal(false);
       setNewOffer({ title: '', description: '', offerType: 'Service', catalogProduct: '', price: '', validUntil: '', notes: '' });
@@ -201,7 +211,13 @@ const LeadDetailsPage = () => {
     setSaving(true);
     setError('');
     try {
-      await API.put(`/offers/${editingOffer._id}`, { ...editingOffer, price: parseFloat(editingOffer.price) });
+      const selectedCurrency = currencies.find(c => c.code === (editingOffer.currency || newOfferCurrency)) || null;
+      await API.put(`/offers/${editingOffer._id}`, {
+        ...editingOffer,
+        price: parseFloat(editingOffer.price),
+        currency: editingOffer.currency || newOfferCurrency || defaultCurrency || 'USD',
+        currencySymbol: selectedCurrency?.symbol || ''
+      });
       await fetchData();
       setShowEditModal(false);
       setEditingOffer(null);
@@ -217,7 +233,9 @@ const LeadDetailsPage = () => {
     setEditingOffer({
       ...offer,
       price: offer.price.toString(),
-      validUntil: offer.validUntil.split('T')[0]
+      validUntil: offer.validUntil.split('T')[0],
+      currency: offer.currency || newOfferCurrency || defaultCurrency || 'USD',
+      currencySymbol: offer.currencySymbol || ''
     });
     setShowEditModal(true);
   };
@@ -566,7 +584,13 @@ const LeadDetailsPage = () => {
                       )}
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                     <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--accent-primary)' }}>${offer.price.toLocaleString()}</div>
+                     <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--accent-primary)' }}>
+                       {(() => {
+                         const currency = currencies.find(c => c.code === offer.currency) || null;
+                         const symbol = currency?.symbol || offer.currencySymbol || '$';
+                         return `${symbol}${Number(offer.price || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                       })()}
+                     </div>
                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Valid until {new Date(offer.validUntil).toLocaleDateString()}</div>
                      {offer.discountType && (
                        <div style={{ fontSize: 13, color: 'var(--status-lost)', marginTop: 4 }}>
@@ -729,7 +753,7 @@ const LeadDetailsPage = () => {
 
                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
                  <div className="form-group" style={{ margin: 0 }}>
-                   <label className="form-label">Price ($)</label>
+                   <label className="form-label">Price</label>
                    <input className="form-input" type="number" step="0.01" placeholder="0.00" value={newOffer.price} onChange={e => setNewOffer(p => ({ ...p, price: e.target.value }))} />
                  </div>
                  <div className="form-group" style={{ margin: 0 }}>
@@ -842,15 +866,15 @@ const LeadDetailsPage = () => {
 
                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
                  <div className="form-group" style={{ margin: 0 }}>
-                   <label className="form-label">Price ($)</label>
+                   <label className="form-label">Price</label>
                    <input className="form-input" type="number" step="0.01" placeholder="0.00" value={editingOffer.price} onChange={e => setEditingOffer(p => ({ ...p, price: e.target.value }))} />
                  </div>
                  <div className="form-group" style={{ margin: 0 }}>
                    <label className="form-label">Currency</label>
                    <select
                      className="form-input"
-                     value={newOfferCurrency}
-                     onChange={e => setNewOfferCurrency(e.target.value)}
+                     value={editingOffer?.currency || newOfferCurrency}
+                     onChange={e => setEditingOffer(p => ({ ...p, currency: e.target.value, currencySymbol: currencies.find(c => c.code === e.target.value)?.symbol || '' }))}
                    >
                      {currencies.map(c => (
                        <option key={c.code} value={c.code}>{c.code} - {c.name} ({c.symbol})</option>
