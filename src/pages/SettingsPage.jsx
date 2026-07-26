@@ -48,6 +48,14 @@ const SettingsPage = () => {
   const [smtpUser, setSmtpUser] = useState('');
   const [smtpPass, setSmtpPass] = useState('');
 
+  // Pricing & Currency settings
+  const [pricingSettings, setPricingSettings] = useState({ minOfferPrice: '', minProductPrice: '', allowDiscountOverride: false });
+  const [currencies, setCurrencies] = useState([]);
+  const [defaultCurrency, setDefaultCurrency] = useState('USD');
+  const [newCurrency, setNewCurrency] = useState({ code: '', name: '', symbol: '', rate: '' });
+  const [savingPricing, setSavingPricing] = useState(false);
+  const [savingCurrencies, setSavingCurrencies] = useState(false);
+
   useEffect(() => {
     const fetchSettings = async () => {
       try {
@@ -99,6 +107,34 @@ const SettingsPage = () => {
       }
     };
     fetchErp();
+
+    const fetchPricing = async () => {
+      try {
+        const { data } = await API.get('/settings/pricing');
+        if (data.success && data.data) {
+          setPricingSettings({
+            minOfferPrice: data.data.minOfferPrice || '',
+            minProductPrice: data.data.minProductPrice || '',
+            allowDiscountOverride: data.data.allowDiscountOverride || false
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load pricing settings:', err);
+      }
+    };
+    const fetchCurrencies = async () => {
+      try {
+        const { data } = await API.get('/settings/currencies');
+        if (data.success && data.data) {
+          setCurrencies(data.data.currencies || []);
+          setDefaultCurrency(data.data.defaultCurrency || 'USD');
+        }
+      } catch (err) {
+        console.error('Failed to load currencies:', err);
+      }
+    };
+    fetchPricing();
+    fetchCurrencies();
   }, []);
 
   const handleProviderChange = (key) => {
@@ -260,6 +296,21 @@ const SettingsPage = () => {
           >
             Business Model
           </button>
+          {user?.role === 'Super CRM Administrator' && (
+            <button
+              onClick={() => setActiveTab('pricing')}
+              className="sidebar-link"
+              style={{
+                background: activeTab === 'pricing' ? 'rgba(37, 99, 235, 0.1)' : 'transparent',
+                color: activeTab === 'pricing' ? 'var(--accent-primary)' : 'var(--text-primary)',
+                borderRadius: 'var(--radius-sm)',
+                fontWeight: activeTab === 'pricing' ? 600 : 500,
+                padding: '10px 16px',
+              }}
+            >
+              Pricing & Currency
+            </button>
+          )}
         </div>
 
         <div className="card" style={{ flex: '3 0 450px', padding: 32 }}>
@@ -641,6 +692,212 @@ const SettingsPage = () => {
                   >
                     {savingErp ? 'Saving…' : 'Save ERP URL'}
                   </button>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'pricing' && user?.role === 'Super CRM Administrator' && (
+              <div>
+                <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Icon name="dollar" size={18} style={{ color: 'var(--accent-primary)' }} />
+                  Pricing & Currency Settings
+                </h3>
+
+                <div style={{ marginBottom: 24 }}>
+                  <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Minimum Prices</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                    <div className="form-group" style={{ margin: 0 }}>
+                      <label className="form-label">Minimum Offer Price ($)</label>
+                      <input
+                        className="form-input"
+                        type="number"
+                        step="0.01"
+                        value={pricingSettings.minOfferPrice}
+                        onChange={(e) => setPricingSettings(p => ({ ...p, minOfferPrice: e.target.value }))}
+                      />
+                    </div>
+                    <div className="form-group" style={{ margin: 0 }}>
+                      <label className="form-label">Minimum Product Price ($)</label>
+                      <input
+                        className="form-input"
+                        type="number"
+                        step="0.01"
+                        value={pricingSettings.minProductPrice}
+                        onChange={(e) => setPricingSettings(p => ({ ...p, minProductPrice: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: 24 }}>
+                  <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <input
+                      type="checkbox"
+                      id="allowDiscountOverride"
+                      checked={pricingSettings.allowDiscountOverride}
+                      onChange={(e) => setPricingSettings(p => ({ ...p, allowDiscountOverride: e.target.checked }))}
+                      style={{ width: 18, height: 18, cursor: 'pointer' }}
+                    />
+                    <label htmlFor="allowDiscountOverride" style={{ fontWeight: 500, fontSize: 13, cursor: 'pointer' }}>
+                      Allow supervisors to apply discounts below minimum price
+                    </label>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 12, marginTop: 20, marginBottom: 32 }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={savingPricing}
+                    onClick={async () => {
+                      setSavingPricing(true);
+                      setErrorMsg('');
+                      setSuccessMsg('');
+                      try {
+                        await API.put('/settings/pricing', pricingSettings);
+                        setSuccessMsg('Pricing settings saved successfully.');
+                        setTimeout(() => setSuccessMsg(''), 4000);
+                      } catch (err) {
+                        setErrorMsg(err.response?.data?.message || 'Failed to save pricing settings');
+                      } finally {
+                        setSavingPricing(false);
+                      }
+                    }}
+                    style={{ width: 'auto', padding: '10px 32px' }}
+                  >
+                    {savingPricing ? 'Saving…' : 'Save Pricing Settings'}
+                  </button>
+                </div>
+
+                <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '28px 0' }} />
+
+                <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Currencies</h4>
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+                    <input
+                      className="form-input"
+                      placeholder="Code (e.g. USD)"
+                      value={newCurrency.code}
+                      onChange={(e) => setNewCurrency(p => ({ ...p, code: e.target.value.toUpperCase() }))}
+                      style={{ width: 120 }}
+                    />
+                    <input
+                      className="form-input"
+                      placeholder="Name (e.g. US Dollar)"
+                      value={newCurrency.name}
+                      onChange={(e) => setNewCurrency(p => ({ ...p, name: e.target.value }))}
+                      style={{ flex: 1, minWidth: 160 }}
+                    />
+                    <input
+                      className="form-input"
+                      placeholder="Symbol (e.g. $)"
+                      value={newCurrency.symbol}
+                      onChange={(e) => setNewCurrency(p => ({ ...p, symbol: e.target.value }))}
+                      style={{ width: 100 }}
+                    />
+                    <input
+                      className="form-input"
+                      type="number"
+                      step="0.0001"
+                      placeholder="Rate"
+                      value={newCurrency.rate}
+                      onChange={(e) => setNewCurrency(p => ({ ...p, rate: e.target.value }))}
+                      style={{ width: 100 }}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={async () => {
+                        if (!newCurrency.code || !newCurrency.name) return;
+                        setSavingCurrencies(true);
+                        setErrorMsg('');
+                        setSuccessMsg('');
+                        try {
+                          await API.post('/settings/currencies', newCurrency);
+                          setNewCurrency({ code: '', name: '', symbol: '', rate: '' });
+                          const { data } = await API.get('/settings/currencies');
+                          setCurrencies(data.data?.currencies || []);
+                          setSuccessMsg('Currency added successfully.');
+                          setTimeout(() => setSuccessMsg(''), 4000);
+                        } catch (err) {
+                          setErrorMsg(err.response?.data?.message || 'Failed to add currency');
+                        } finally {
+                          setSavingCurrencies(false);
+                        }
+                      }}
+                      style={{ width: 'auto', padding: '10px 16px' }}
+                    >
+                      Add
+                    </button>
+                  </div>
+
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Code</th>
+                        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Name</th>
+                        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Symbol</th>
+                        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Rate</th>
+                        <th style={{ textAlign: 'right', padding: '8px 12px' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currencies.map((c) => (
+                        <tr key={c.code} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                          <td style={{ padding: '8px 12px' }}>{c.code}</td>
+                          <td style={{ padding: '8px 12px' }}>{c.name}</td>
+                          <td style={{ padding: '8px 12px' }}>{c.symbol}</td>
+                          <td style={{ padding: '8px 12px' }}>{c.rate}</td>
+                          <td style={{ padding: '8px 12px', textAlign: 'right' }}>
+                            <button
+                              type="button"
+                              className="btn btn-secondary btn-sm"
+                              onClick={async () => {
+                                if (!confirm(`Delete currency ${c.code}?`)) return;
+                                try {
+                                  await API.delete(`/settings/currencies/${c.code}`);
+                                  const { data } = await API.get('/settings/currencies');
+                                  setCurrencies(data.data?.currencies || []);
+                                } catch (err) {
+                                  setErrorMsg(err.response?.data?.message || 'Failed to delete currency');
+                                }
+                              }}
+                            >
+                              Remove
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {currencies.length === 0 && (
+                        <tr>
+                          <td colSpan="5" style={{ padding: '16px 12px', textAlign: 'center', color: 'var(--text-muted)' }}>No currencies configured.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+
+                  <div style={{ marginTop: 16 }}>
+                    <label className="form-label">Default Currency</label>
+                    <select
+                      className="form-input"
+                      value={defaultCurrency}
+                      onChange={async (e) => {
+                        setDefaultCurrency(e.target.value);
+                        try {
+                          await API.put('/settings/currencies', { defaultCurrency: e.target.value });
+                          setSuccessMsg('Default currency updated.');
+                          setTimeout(() => setSuccessMsg(''), 4000);
+                        } catch (err) {
+                          setErrorMsg(err.response?.data?.message || 'Failed to update default currency');
+                        }
+                      }}
+                      style={{ maxWidth: 200 }}
+                    >
+                      {currencies.map(c => (
+                        <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
             )}

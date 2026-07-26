@@ -104,7 +104,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
   const [bcc, setBcc] = useState('');
   const [showCc, setShowCc] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
-  const [from, setFrom] = useState(user?.smtpUser || user?.email || 'sales@company.com');
+  const [from, setFrom] = useState('');
   
   // UI Panels & Modes
   const [showFormatting, setShowFormatting] = useState(true);
@@ -224,6 +224,21 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
   useEffect(() => {
     fetchTemplates();
   }, []);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        if (user?._id) {
+          const { data } = await API.get('/auth/users/' + user._id);
+          setFrom(data.data?.smtpUser || user?.email || 'sales@company.com');
+        }
+      } catch (err) {
+        console.error('Failed to load user profile:', err);
+        setFrom(user?.email || 'sales@company.com');
+      }
+    };
+    fetchUserProfile();
+  }, [user]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -376,6 +391,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
         subject,
         from,
         html: editor?.getHTML() || '',
+        attachments,
       };
       await onSend?.(emailPayload);
       setSuccess('Email sent successfully!');

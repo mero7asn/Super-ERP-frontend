@@ -44,6 +44,7 @@ const LeadDetailsPage = () => {
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const [sendingId, setSendingId] = useState(null);
+  const [success, setSuccess] = useState('');
   
   // Email Composer
   const [showEmailComposer, setShowEmailComposer] = useState(false);
@@ -65,6 +66,13 @@ const LeadDetailsPage = () => {
     title: '', description: '', offerType: 'Service', catalogProduct: '',
     price: '', validUntil: '', notes: ''
   });
+
+  // Settings & Currency
+  const [settings, setSettings] = useState({});
+  const [currencies, setCurrencies] = useState([]);
+  const [defaultCurrency, setDefaultCurrency] = useState('USD');
+  const [newOfferCurrency, setNewOfferCurrency] = useState('USD');
+  const [discountingId, setDiscountingId] = useState(null);
 
   // Image Uploads
   const [showImageModal, setShowImageModal] = useState(false);
@@ -109,6 +117,28 @@ const LeadDetailsPage = () => {
     fetchData();
     fetchTemplates();
     fetchProducts();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const pricingRes = await API.get('/settings/pricing');
+        setSettings(pricingRes.data.data || {});
+      } catch (err) {
+        console.error('Failed to load pricing settings:', err);
+      }
+    };
+    const fetchCurrencies = async () => {
+      try {
+        const { data } = await API.get('/settings/currencies');
+        setCurrencies(data.data?.currencies || []);
+        setDefaultCurrency(data.data?.defaultCurrency || 'USD');
+      } catch (err) {
+        console.error('Failed to load currencies:', err);
+      }
+    };
+    fetchSettings();
+    fetchCurrencies();
   }, [id]);
 
   useEffect(() => {
@@ -199,11 +229,12 @@ const LeadDetailsPage = () => {
     setShowEmailComposer(true);
   };
 
-  const handleEmailSent = async () => {
+  const handleEmailSent = async (emailPayload = {}) => {
     setSendingId(composerOffer._id);
     setError('');
+    setSuccess('');
     try {
-      await API.post(`/offers/${composerOffer._id}/send`, { method: 'Email' });
+      await API.post(`/offers/${composerOffer._id}/send`, { method: 'Email', ...emailPayload });
       await fetchData();
       setSuccess('Email sent successfully');
       setTimeout(() => {
@@ -219,6 +250,29 @@ const LeadDetailsPage = () => {
       setError(msg);
     } finally {
       setSendingId(null);
+    }
+  };
+
+  const handleDiscount = async (offer) => {
+    setDiscountingId(offer._id);
+    setError('');
+    const discountType = prompt('Discount type (Percentage or Fixed):', 'Percentage');
+    if (!discountType || !['Percentage', 'Fixed'].includes(discountType)) {
+      setDiscountingId(null);
+      return;
+    }
+    const discountValue = prompt('Discount value:');
+    if (!discountValue || isNaN(parseFloat(discountValue))) {
+      setDiscountingId(null);
+      return;
+    }
+    try {
+      await API.post(`/offers/${offer._id}/discount`, { discountType, discountValue: parseFloat(discountValue) });
+      await fetchData();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to apply discount');
+    } finally {
+      setDiscountingId(null);
     }
   };
 
@@ -502,8 +556,14 @@ const LeadDetailsPage = () => {
                       )}
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--accent-primary)' }}>${offer.price.toLocaleString()}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Valid until {new Date(offer.validUntil).toLocaleDateString()}</div>
+                     <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--accent-primary)' }}>${offer.price.toLocaleString()}</div>
+                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Valid until {new Date(offer.validUntil).toLocaleDateString()}</div>
+                     {offer.discountType && (
+                       <div style={{ fontSize: 13, color: 'var(--status-lost)', marginTop: 4 }}>
+                         {offer.discountType} -{offer.discountValue}{offer.discountType === 'Percentage' ? '%' : ''}
+                         {offer.finalPrice && <span> → Final: ${Number(offer.finalPrice).toLocaleString()}</span>}
+                       </div>
+                     )}
                     </div>
                   </div>
 
@@ -523,15 +583,20 @@ const LeadDetailsPage = () => {
 
                   {/* Action Buttons */}
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', paddingTop: 8, borderTop: '1px solid var(--border-color)' }}>
-                    {offer.status === 'Draft' && (
-                      <>
-                        <button className="btn btn-secondary btn-sm" onClick={() => handleSend(offer._id, 'Email')} disabled={sendingId === offer._id}>
-                          {sendingId === offer._id ? 'Sending...' : '📧 Send Email'}
-                        </button>
-                        <button className="btn btn-secondary btn-sm" onClick={() => handleSend(offer._id, 'SMS')} disabled={sendingId === offer._id}>
-                          💬 Send SMS
-                        </button>
-                        {offer.createdBy._id === user._id && (
+                     {offer.status === 'Draft' && (
+                       <>
+                         <button className="btn btn-secondary btn-sm" onClick={() => handleSend(offer._id, 'Email')} disabled={sendingId === offer._id}>
+                           {sendingId === offer._id ? 'Sending...' : '📧 Send Email'}
+                         </button>
+                         <button className="btn btn-secondary btn-sm" onClick={() => handleSend(offer._id, 'SMS')} disabled={sendingId === offer._id}>
+                           💬 Send SMS
+                         </button>
+                         {['Super CRM Administrator', 'System Architect', 'Sales Manager'].includes(user?.role) && (
+                           <button className="btn btn-secondary btn-sm" onClick={() => handleDiscount(offer)} disabled={discountingId === offer._id}>
+                             {discountingId === offer._id ? 'Applying...' : '🏷️ Discount'}
+                           </button>
+                         )}
+                         {offer.createdBy._id === user._id && (
                           <>
                             <button className="btn btn-secondary btn-sm" onClick={() => { setImageUploadTarget(offer._id); setShowImageModal(true); }}>
                               📷 Add Photo
@@ -630,7 +695,10 @@ const LeadDetailsPage = () => {
                   <select
                     className="form-input"
                     value={newOffer.catalogProduct}
-                    onChange={e => setNewOffer(p => ({ ...p, catalogProduct: e.target.value }))}
+                     onChange={e => {
+                       const selectedProduct = products.find(p => p._id === e.target.value);
+                       setNewOffer(prev => ({ ...prev, catalogProduct: e.target.value, price: selectedProduct ? selectedProduct.price : '' }));
+                     }}
                   >
                     <option value="">— Select a product —</option>
                     {products.map(product => (
@@ -649,16 +717,28 @@ const LeadDetailsPage = () => {
                 <textarea className="form-input" rows="3" placeholder="Describe what's included..." value={newOffer.description} onChange={e => setNewOffer(p => ({ ...p, description: e.target.value }))} />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Price ($)</label>
-                  <input className="form-input" type="number" step="0.01" placeholder="0.00" value={newOffer.price} onChange={e => setNewOffer(p => ({ ...p, price: e.target.value }))} />
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Valid Until</label>
-                  <input className="form-input" type="date" value={newOffer.validUntil} onChange={e => setNewOffer(p => ({ ...p, validUntil: e.target.value }))} />
-                </div>
-              </div>
+               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+                 <div className="form-group" style={{ margin: 0 }}>
+                   <label className="form-label">Price ($)</label>
+                   <input className="form-input" type="number" step="0.01" placeholder="0.00" value={newOffer.price} onChange={e => setNewOffer(p => ({ ...p, price: e.target.value }))} />
+                 </div>
+                 <div className="form-group" style={{ margin: 0 }}>
+                   <label className="form-label">Currency</label>
+                   <select
+                     className="form-input"
+                     value={newOfferCurrency}
+                     onChange={e => setNewOfferCurrency(e.target.value)}
+                   >
+                     {currencies.map(c => (
+                       <option key={c.code} value={c.code}>{c.code} - {c.name} ({c.symbol})</option>
+                     ))}
+                   </select>
+                 </div>
+                 <div className="form-group" style={{ margin: 0 }}>
+                   <label className="form-label">Valid Until</label>
+                   <input className="form-input" type="date" value={newOffer.validUntil} onChange={e => setNewOffer(p => ({ ...p, validUntil: e.target.value }))} />
+                 </div>
+               </div>
 
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label">Internal Notes</label>
@@ -750,16 +830,28 @@ const LeadDetailsPage = () => {
                 <textarea className="form-input" rows="3" placeholder="Describe what's included..." value={editingOffer.description} onChange={e => setEditingOffer(p => ({ ...p, description: e.target.value }))} />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Price ($)</label>
-                  <input className="form-input" type="number" step="0.01" placeholder="0.00" value={editingOffer.price} onChange={e => setEditingOffer(p => ({ ...p, price: e.target.value }))} />
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Valid Until</label>
-                  <input className="form-input" type="date" value={editingOffer.validUntil} onChange={e => setEditingOffer(p => ({ ...p, validUntil: e.target.value }))} />
-                </div>
-              </div>
+               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+                 <div className="form-group" style={{ margin: 0 }}>
+                   <label className="form-label">Price ($)</label>
+                   <input className="form-input" type="number" step="0.01" placeholder="0.00" value={editingOffer.price} onChange={e => setEditingOffer(p => ({ ...p, price: e.target.value }))} />
+                 </div>
+                 <div className="form-group" style={{ margin: 0 }}>
+                   <label className="form-label">Currency</label>
+                   <select
+                     className="form-input"
+                     value={newOfferCurrency}
+                     onChange={e => setNewOfferCurrency(e.target.value)}
+                   >
+                     {currencies.map(c => (
+                       <option key={c.code} value={c.code}>{c.code} - {c.name} ({c.symbol})</option>
+                     ))}
+                   </select>
+                 </div>
+                 <div className="form-group" style={{ margin: 0 }}>
+                   <label className="form-label">Valid Until</label>
+                   <input className="form-input" type="date" value={editingOffer.validUntil} onChange={e => setEditingOffer(p => ({ ...p, validUntil: e.target.value }))} />
+                 </div>
+               </div>
 
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label">Internal Notes</label>
