@@ -9,6 +9,24 @@ const PROVIDER_PRESETS = {
   custom: { label: 'Custom / Other', host: '', port: 587, secure: false },
 };
 
+const COMMON_CURRENCIES = [
+  { code: 'USD', name: 'US Dollar', symbol: '$', rate: 1 },
+  { code: 'EUR', name: 'Euro', symbol: '€', rate: 0.92 },
+  { code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.79 },
+  { code: 'EGP', name: 'Egyptian Pound', symbol: 'E£', rate: 48.5 },
+  { code: 'SAR', name: 'Saudi Riyal', symbol: '﷼', rate: 3.75 },
+  { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ', rate: 3.67 },
+  { code: 'KWD', name: 'Kuwaiti Dinar', symbol: 'KD', rate: 0.31 },
+  { code: 'QAR', name: 'Qatari Riyal', symbol: '﷼', rate: 3.64 },
+  { code: 'BHD', name: 'Bahraini Dinar', symbol: 'BD', rate: 0.38 },
+  { code: 'OMR', name: 'Omani Rial', symbol: '﷼', rate: 0.38 },
+  { code: 'JOD', name: 'Jordanian Dinar', symbol: 'JD', rate: 0.71 },
+  { code: 'LBP', name: 'Lebanese Pound', symbol: 'L£', rate: 89500 },
+  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', rate: 1.36 },
+  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', rate: 1.53 },
+  { code: 'JPY', name: 'Japanese Yen', symbol: '¥', rate: 149.5 },
+];
+
 const SettingsPage = () => {
   const { user, setBusinessModel } = useAuth();
   const [activeTab, setActiveTab] = useState('general');
@@ -774,20 +792,24 @@ const SettingsPage = () => {
                 <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Currencies</h4>
                 <div style={{ marginBottom: 16 }}>
                   <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
-                    <input
+                    <select
                       className="form-input"
-                      placeholder="Code (e.g. USD)"
                       value={newCurrency.code}
-                      onChange={(e) => setNewCurrency(p => ({ ...p, code: e.target.value.toUpperCase() }))}
-                      style={{ width: 120 }}
-                    />
-                    <input
-                      className="form-input"
-                      placeholder="Name (e.g. US Dollar)"
-                      value={newCurrency.name}
-                      onChange={(e) => setNewCurrency(p => ({ ...p, name: e.target.value }))}
-                      style={{ flex: 1, minWidth: 160 }}
-                    />
+                      onChange={(e) => {
+                        const selected = COMMON_CURRENCIES.find(c => c.code === e.target.value);
+                        if (selected) {
+                          setNewCurrency({ code: selected.code, name: selected.name, symbol: selected.symbol, rate: String(selected.rate) });
+                        } else {
+                          setNewCurrency({ code: '', name: '', symbol: '', rate: '' });
+                        }
+                      }}
+                      style={{ width: 180 }}
+                    >
+                      <option value="">Select currency...</option>
+                      {COMMON_CURRENCIES.map(c => (
+                        <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
+                      ))}
+                    </select>
                     <input
                       className="form-input"
                       placeholder="Symbol (e.g. $)"
@@ -813,7 +835,8 @@ const SettingsPage = () => {
                         setErrorMsg('');
                         setSuccessMsg('');
                         try {
-                          await API.post('/settings/currencies', newCurrency);
+                          const updated = [...currencies, { code: newCurrency.code, name: newCurrency.name, symbol: newCurrency.symbol, rate: Number(newCurrency.rate) || 0 }];
+                          await API.put('/settings/currencies', { currencies: updated, defaultCurrency });
                           setNewCurrency({ code: '', name: '', symbol: '', rate: '' });
                           const { data } = await API.get('/settings/currencies');
                           setCurrencies(data.data?.currencies || []);
