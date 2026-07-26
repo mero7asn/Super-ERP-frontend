@@ -462,7 +462,24 @@ const LeadDetailsPage = () => {
             
             <div style={{ marginTop: 10 }}>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Notes</div>
-              
+
+              <div style={{ marginBottom: 10, padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Add Note</div>
+                <textarea
+                  className="form-input"
+                  rows={3}
+                  value={newNoteText}
+                  onChange={e => setNewNoteText(e.target.value)}
+                  placeholder="Type a new note..."
+                  style={{ fontSize: 13, marginBottom: 8 }}
+                />
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <button className="btn btn-primary btn-sm" onClick={handleAddNote} disabled={addingNote || !newNoteText.trim()}>
+                    {addingNote ? 'Adding...' : 'Add Note'}
+                  </button>
+                </div>
+              </div>
+
               {(() => {
                 const notes = Array.isArray(lead?.notes) ? lead.notes : (lead?.notes ? [{ text: lead.notes, createdAt: new Date(), createdBy: { name: 'System', email: '', role: 'System' } }] : []);
                 return notes.length === 0 ? (
@@ -481,23 +498,6 @@ const LeadDetailsPage = () => {
                   </div>
                 );
               })()}
-
-              <div style={{ marginTop: 10, padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Add Note</div>
-                <textarea
-                  className="form-input"
-                  rows={3}
-                  value={newNoteText}
-                  onChange={e => setNewNoteText(e.target.value)}
-                  placeholder="Type a new note..."
-                  style={{ fontSize: 13, marginBottom: 8 }}
-                />
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <button className="btn btn-primary btn-sm" onClick={handleAddNote} disabled={addingNote || !newNoteText.trim()}>
-                    {addingNote ? 'Adding...' : 'Add Note'}
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
