@@ -381,7 +381,6 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
     setError('');
     try {
       const formData = new FormData();
-      formData.append('method', 'Email');
       formData.append('to', to);
       if (cc) formData.append('cc', cc);
       if (bcc) formData.append('bcc', bcc);
