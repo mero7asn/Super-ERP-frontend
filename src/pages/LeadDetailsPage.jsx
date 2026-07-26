@@ -354,8 +354,9 @@ const LeadDetailsPage = () => {
     if (!newNoteText.trim()) return;
     setAddingNote(true);
     try {
-      const { data } = await API.post(`/leads/${id}/notes`, { text: newNoteText });
-      setLead(data.data);
+      const response = await API.post(`/leads/${id}/notes`, { text: newNoteText });
+      const updatedLead = response.data?.lead || response.data?.data || lead;
+      setLead(updatedLead);
       setNewNoteText('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to add note');
