@@ -36,6 +36,11 @@ const LeadDetailsPage = () => {
   // Lead Update
   const [updatingLead, setUpdatingLead] = useState(false);
   
+  // Notes
+  const [editingNotes, setEditingNotes] = useState(false);
+  const [notesText, setNotesText] = useState('');
+  const [savingNotes, setSavingNotes] = useState(false);
+  
   // Modals & Forms
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -195,11 +200,15 @@ const LeadDetailsPage = () => {
     setShowEmailComposer(true);
   };
 
-  const handleEmailSent = async () => {
+  const handleEmailSent = async (emailPayload = {}) => {
     setSendingId(composerOffer._id);
     setError('');
     try {
-      await API.post(`/offers/${composerOffer._id}/send`, { method: 'Email' });
+      await API.post(`/offers/${composerOffer._id}/send`, { 
+        method: 'Email',
+        templateId: emailPayload.templateId,
+        attachments: emailPayload.attachments || [],
+      });
       await fetchData();
       setSuccess('Email sent successfully');
       setTimeout(() => {
@@ -283,6 +292,24 @@ const LeadDetailsPage = () => {
     }
   };
 
+  const startEditNotes = () => {
+    setNotesText(lead?.notes || '');
+    setEditingNotes(true);
+  };
+
+  const saveNotes = async () => {
+    setSavingNotes(true);
+    try {
+      const { data } = await API.put(`/leads/${id}`, { notes: notesText });
+      setLead(data.data);
+      setEditingNotes(false);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to save notes');
+    } finally {
+      setSavingNotes(false);
+    }
+  };
+
   if (loading) return <div className="loading-state"><div className="spinner" />Loading lead details…</div>;
   if (!lead) return <div className="empty-state"><p>Lead not found</p></div>;
 
@@ -356,10 +383,31 @@ const LeadDetailsPage = () => {
               </div>
             )}
             
-            {lead.notes && (
+            {editingNotes ? (
               <div style={{ marginTop: 10, padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Notes</div>
-                <div style={{ fontSize: 13, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>{lead.notes}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Notes</div>
+                <textarea
+                  className="form-input"
+                  rows={4}
+                  value={notesText}
+                  onChange={e => setNotesText(e.target.value)}
+                  placeholder="Add notes about this lead..."
+                  style={{ fontSize: 13, marginBottom: 8 }}
+                />
+                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                  <button className="btn btn-secondary btn-sm" onClick={() => setEditingNotes(false)} disabled={savingNotes}>Cancel</button>
+                  <button className="btn btn-primary btn-sm" onClick={saveNotes} disabled={savingNotes}>
+                    {savingNotes ? 'Saving...' : 'Save Notes'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div style={{ marginTop: 10, padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Notes</div>
+                  <button onClick={startEditNotes} className="btn btn-secondary btn-sm" style={{ padding: '2px 8px', fontSize: 11 }}>Edit</button>
+                </div>
+                <div style={{ fontSize: 13, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>{lead.notes || 'No notes yet.'}</div>
               </div>
             )}
           </div>
@@ -410,12 +458,12 @@ const LeadDetailsPage = () => {
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 14 }}>
                           {offer.images.map(img => img && img.url && (
                             <div key={img._id || img.url} style={{ position: 'relative', width: 100, height: 100, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#000' }}>
-                              <img 
-                                src={img.url.startsWith('http') ? img.url : `http://localhost:5000${img.url}`}
-                                alt={img.caption || 'Offer item'} 
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                title={img.caption || 'No caption'}
-                              />
+                               <img 
+                                 src={img.url && (img.url.startsWith('http') || img.url.startsWith('data:')) ? img.url : `http://localhost:5000${img.url}`}
+                                 alt={img.caption || 'Offer item'} 
+                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                 title={img.caption || 'No caption'}
+                               />
                               {(isAdmin || (offer.createdBy && offer.createdBy._id === user._id)) && (
                                 <button 
                                   type="button"

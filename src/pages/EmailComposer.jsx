@@ -167,6 +167,17 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
         </div>
       </div>
 
+      ${offer?.images && offer.images.length > 0 ? `
+        <div style="margin: 0 0 20px;">
+          ${offer.images.map(img => `
+            <div style="margin-bottom: 12px;">
+              <img src="${img.url && (img.url.startsWith('http') || img.url.startsWith('data:')) ? img.url : 'http://localhost:5000' + img.url}" alt="${img.caption || 'Offer image'}" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e5e7eb;" />
+              ${img.caption ? `<p style="margin: 4px 0 0; font-size: 12px; color: #6b7280;">${img.caption}</p>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
       <p style="font-size: 15px; margin-bottom: 20px;">
         Should you have any questions or require custom adjustments, please reply directly to this email or contact us at any time.
       </p>
@@ -246,7 +257,9 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
       case 'text':
         return '<p style="font-size: 15px; color: #374151; margin: 12px 0;">Insert your text detailed notes here...</p>';
       case 'image':
-        return '<div style="text-align: center; margin: 16px 0;"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="Proposal Image" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" /></div>';
+        const offerImage = offer?.images && offer.images.length > 0 ? offer.images[0].url : '';
+        const imageSrc = offerImage && (offerImage.startsWith('http') || offerImage.startsWith('data:')) ? offerImage : (offerImage ? 'http://localhost:5000' + offerImage : 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80');
+        return `<div style="text-align: center; margin: 16px 0;"><img src="${imageSrc}" alt="Proposal Image" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" /></div>`;
       case 'button':
         return '<div style="text-align: center; margin: 20px 0;"><a href="{{payLink}}" style="display: inline-block; background: #2563EB; color: #ffffff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">Accept & Proceed</a></div>';
       case 'divider':
