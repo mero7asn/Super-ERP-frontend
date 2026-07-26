@@ -234,7 +234,12 @@ const LeadDetailsPage = () => {
     setError('');
     setSuccess('');
     try {
-      await API.post(`/offers/${composerOffer._id}/send`, { method: 'Email', ...emailPayload });
+      if (emailPayload instanceof FormData) {
+        emailPayload.append('method', 'Email');
+      } else {
+        emailPayload = { method: 'Email', ...emailPayload };
+      }
+      await API.post(`/offers/${composerOffer._id}/send`, emailPayload);
       await fetchData();
       setSuccess('Email sent successfully');
       setTimeout(() => {

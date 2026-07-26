@@ -309,14 +309,10 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files || []);
     files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setAttachments((prev) => [
-          ...prev,
-          { name: file.name, size: file.size, type: file.type, url: event.target.result },
-        ]);
-      };
-      reader.readAsDataURL(file);
+      setAttachments((prev) => [
+        ...prev,
+        { file, name: file.name, size: file.size, type: file.type },
+      ]);
     });
   };
 
@@ -384,16 +380,20 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
     setSending(true);
     setError('');
     try {
-      const emailPayload = {
-        to,
-        cc,
-        bcc,
-        subject,
-        from,
-        html: editor?.getHTML() || '',
-        attachments,
-      };
-      await onSend?.(emailPayload);
+      const formData = new FormData();
+      formData.append('method', 'Email');
+      formData.append('to', to);
+      if (cc) formData.append('cc', cc);
+      if (bcc) formData.append('bcc', bcc);
+      formData.append('subject', subject);
+      formData.append('from', from);
+      formData.append('html', editor?.getHTML() || '');
+      attachments.forEach((att, idx) => {
+        if (att.file) {
+          formData.append('attachments', att.file);
+        }
+      });
+      await onSend?.(formData);
       setSuccess('Email sent successfully!');
       setTimeout(() => {
         onClose?.();
