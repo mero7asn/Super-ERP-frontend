@@ -199,15 +199,11 @@ const LeadDetailsPage = () => {
     setShowEmailComposer(true);
   };
 
-  const handleEmailSent = async (emailPayload = {}) => {
+  const handleEmailSent = async () => {
     setSendingId(composerOffer._id);
     setError('');
     try {
-      await API.post(`/offers/${composerOffer._id}/send`, { 
-        method: 'Email',
-        templateId: emailPayload.templateId,
-        attachments: emailPayload.attachments || [],
-      });
+      await API.post(`/offers/${composerOffer._id}/send`, { method: 'Email' });
       await fetchData();
       setSuccess('Email sent successfully');
       setTimeout(() => {

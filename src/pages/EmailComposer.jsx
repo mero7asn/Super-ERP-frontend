@@ -376,7 +376,6 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
         subject,
         from,
         html: editor?.getHTML() || '',
-        attachments,
       };
       await onSend?.(emailPayload);
       setSuccess('Email sent successfully!');
