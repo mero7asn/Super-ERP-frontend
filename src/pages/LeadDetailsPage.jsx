@@ -212,7 +212,11 @@ const LeadDetailsPage = () => {
         setSuccess('');
       }, 1500);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send email');
+      const data = err.response?.data;
+      const msg = data?.hint 
+        ? `${data.message}: ${data.hint}` 
+        : (data?.message || data?.error || 'Failed to send email');
+      setError(msg);
     } finally {
       setSendingId(null);
     }
