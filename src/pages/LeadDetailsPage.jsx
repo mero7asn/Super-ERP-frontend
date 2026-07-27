@@ -228,8 +228,10 @@ const LeadDetailsPage = () => {
       setNewOffer({ title: '', description: '', offerType: 'Service', catalogProduct: '', price: '', validUntil: '', notes: '' });
       setSelectedTemplate('');
     } catch (err) {
-      const msg = err.response?.data?.error || err.response?.data?.message || 'Failed to create offer';
-      setError(msg);
+      const payload = err.response?.data;
+      const msg = payload?.message || payload?.error || payload?.detail || 'Failed to create offer';
+      setError(msg || 'The offer could not be created. Please check the price and try again.');
+      setShowOfferModal(true);
     } finally {
       setSaving(false);
     }
@@ -255,8 +257,10 @@ const LeadDetailsPage = () => {
       setShowEditModal(false);
       setEditingOffer(null);
     } catch (err) {
-      const msg = err.response?.data?.error || err.response?.data?.message || 'Failed to update offer';
-      setError(msg);
+      const payload = err.response?.data;
+      const msg = payload?.message || payload?.error || payload?.detail || 'Failed to update offer';
+      setError(msg || 'The offer could not be updated. Please try again.');
+      setShowEditModal(true);
     } finally {
       setSaving(false);
     }
