@@ -74,6 +74,7 @@ const LeadDetailsPage = () => {
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const [sendingId, setSendingId] = useState(null);
+  const [callingLead, setCallingLead] = useState(false);
   const [success, setSuccess] = useState('');
   
   // Email Composer
@@ -313,6 +314,26 @@ const LeadDetailsPage = () => {
     }
   };
 
+  const handleCallLead = async () => {
+    const primaryOffer = offers.find(o => o._id) || offers[0];
+    if (!primaryOffer) {
+      setError('Create an offer first so the lead can be called from this page.');
+      return;
+    }
+    setCallingLead(true);
+    setError('');
+    setSuccess('');
+    try {
+      await API.post(`/offers/${primaryOffer._id}/call`, { provider: 'avaya', phone: lead?.phone });
+      setSuccess(`Call initiated for ${lead?.name || 'the lead'}`);
+      setTimeout(() => setSuccess(''), 2500);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to initiate call');
+    } finally {
+      setCallingLead(false);
+    }
+  };
+
   const handleDiscount = async (offer) => {
     setDiscountingId(offer._id);
     setError('');
@@ -465,7 +486,12 @@ const LeadDetailsPage = () => {
             {lead.phone && (
               <div>
                 <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phone</div>
-                <div style={{ fontSize: 14, color: 'var(--text-primary)' }}>{lead.phone}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                  <div style={{ fontSize: 14, color: 'var(--text-primary)' }}>{lead.phone}</div>
+                  <button className="btn btn-secondary btn-sm" onClick={handleCallLead} disabled={callingLead || offers.length === 0}>
+                    {callingLead ? 'Calling...' : '📞 Call'}
+                  </button>
+                </div>
               </div>
             )}
             
@@ -651,6 +677,8 @@ const LeadDetailsPage = () => {
                       <div style={{ flex: 1 }}>Revision Req: <strong>{offer.revisionNote}</strong></div>
                     )}
                   </div>
+
+                  <OfferCommunicationPanel offer={offer} user={user} onError={setError} onSuccess={setSuccess} />
 
                   {/* Action Buttons */}
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', paddingTop: 8, borderTop: '1px solid var(--border-color)' }}>
@@ -1006,6 +1034,103 @@ const LeadDetailsPage = () => {
       )}
     </div>
    );
+};
+
+const OfferCommunicationPanel = ({ offer, user, onError, onSuccess }) => {
+  const [communications, setCommunications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [replyText, setReplyText] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    let isActive = true;
+    const loadThread = async () => {
+      try {
+        const { data } = await API.get(`/offers/${offer._id}/communications`);
+        if (isActive) {
+          setCommunications(data?.data || []);
+        }
+      } catch (err) {
+        if (isActive) {
+          setCommunications([]);
+        }
+      } finally {
+        if (isActive) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadThread();
+    return () => { isActive = false; };
+  }, [offer._id]);
+
+  const handleReply = async (e) => {
+    e.preventDefault();
+    const text = replyText.trim();
+    if (!text) return;
+
+    setSubmitting(true);
+    try {
+      const { data } = await API.post(`/offers/${offer._id}/communications/reply`, { body: text, subject: 'Customer reply' });
+      setCommunications(prev => [data?.data, ...prev]);
+      setReplyText('');
+      onSuccess?.('Reply logged for this offer');
+      setTimeout(() => onSuccess?.(''), 1800);
+    } catch (err) {
+      onError?.(err.response?.data?.message || 'Failed to save reply');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div style={{ border: '1px solid var(--border-color)', borderRadius: 10, padding: 12, background: 'var(--bg-primary)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>Offer communication</div>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{communications.length} item{communications.length === 1 ? '' : 's'}</div>
+      </div>
+
+      <form onSubmit={handleReply} style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 10 }}>
+        <textarea
+          className="form-input"
+          rows={2}
+          placeholder="Add a quick reply or note for this offer"
+          value={replyText}
+          onChange={(e) => setReplyText(e.target.value)}
+          style={{ fontSize: 13 }}
+        />
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button type="submit" className="btn btn-primary btn-sm" disabled={submitting || !replyText.trim()}>
+            {submitting ? 'Saving...' : 'Log reply'}
+          </button>
+        </div>
+      </form>
+
+      {loading ? (
+        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Loading communications…</div>
+      ) : communications.length === 0 ? (
+        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>No communications yet for this offer.</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {communications.map((entry) => (
+            <div key={entry._id || `${entry.direction}-${entry.createdAt}`} style={{ padding: 10, borderRadius: 8, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center', marginBottom: 4 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
+                  {entry.direction === 'outbound' ? 'Outbound' : 'Inbound'}
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  {entry.createdAt ? new Date(entry.createdAt).toLocaleString() : ''}
+                </div>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>{entry.subject || 'Offer update'}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-primary)', whiteSpace: 'pre-wrap' }}>{entry.body}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
 
 const TemplateEditorInline = ({ mode, editingTemplateId, blocks, setBlocks, templateName, setTemplateName, templateSubject, setTemplateSubject, onSave, onCancel, previewData }) => {
