@@ -601,6 +601,7 @@ const LeadDetailsPage = () => {
                 const offerPrice = Number(offer.price || 0);
                 const currencyMeta = currencies.find(c => c.code === offer.currency) || null;
                 const offerSymbol = currencyMeta?.symbol || offer.currencySymbol || '$';
+                const formattedPrice = offerPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 const offerImages = Array.isArray(offer.images) ? offer.images.filter(Boolean) : [];
                 const internalNotes = offer.notes ? [{ title: 'Internal note', text: offer.notes, author: offer.createdBy?.firstName || 'Employee', date: offer.updatedAt || offer.createdAt }] : [];
                 const activityTimeline = [
