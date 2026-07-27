@@ -460,6 +460,8 @@ const LeadDetailsPage = () => {
   if (loading) return <div className="loading-state"><div className="spinner" />Loading lead details…</div>;
   if (!lead) return <div className="empty-state"><p>Lead not found</p></div>;
 
+  const leadInitials = String(lead.name || 'Lead').split(' ').slice(0, 2).map(part => part[0] || '').join('').toUpperCase() || 'L';
+
   return (
     <div>
       <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
@@ -475,71 +477,66 @@ const LeadDetailsPage = () => {
 
       {error && <div className="alert alert-error" style={{ marginBottom: 20 }}>{error}</div>}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 24, alignItems: 'start' }}>
-        
-        {/* Left Column: Lead Information */}
-        <div className="table-wrapper" style={{ padding: 24 }}>
-          <div style={{
-            width: 64, height: 64, borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 24, fontWeight: 700, color: '#fff', marginBottom: 16,
-          }}>
-            {lead.name.substring(0, 2).toUpperCase()}
-          </div>
-          
-          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{lead.name}</h2>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 20 }}>
-            <div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email</div>
-              <div style={{ fontSize: 14, color: 'var(--text-primary)', wordBreak: 'break-all' }}>{lead.email}</div>
-            </div>
-            {lead.phone && (
-              <div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phone</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
-                  <div style={{ fontSize: 14, color: 'var(--text-primary)' }}>{lead.phone}</div>
-                  <button className="btn btn-secondary btn-sm" onClick={handleCallLead} disabled={callingLead || offers.length === 0}>
-                    {callingLead ? 'Calling...' : '📞 Call'}
-                  </button>
-                </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 24, alignItems: 'start' }}>
+        <div className="table-wrapper" style={{ padding: 0, overflow: 'hidden', borderRadius: 18, boxShadow: '0 20px 45px rgba(15, 23, 42, 0.10)' }}>
+          <div style={{ padding: '24px 24px 18px', background: 'linear-gradient(135deg, rgba(99,102,241,0.18), rgba(16,185,129,0.16))', borderBottom: '1px solid var(--border-color)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+              <div style={{
+                width: 58, height: 58, borderRadius: '50%',
+                background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 22, fontWeight: 700, color: '#fff',
+              }}>
+                {leadInitials}
               </div>
-            )}
-            
-            <div style={{ marginTop: 10, padding: '12px 0', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Lead Status</div>
+              <span className={`badge ${lead.source === 'Meta' ? 'badge-meta' : lead.source === 'Google' ? 'badge-google' : 'badge-new'}`} style={{ padding: '6px 10px' }}>{lead.source || 'Unknown'}</span>
+            </div>
+            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{lead.name}</h2>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>Lead profile and activity snapshot</p>
+          </div>
+
+          <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'grid', gap: 12 }}>
+              <div style={{ padding: '12px 14px', background: 'var(--bg-primary)', borderRadius: 12, border: '1px solid var(--border-color)' }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Email</div>
+                <div style={{ fontSize: 14, color: 'var(--text-primary)', wordBreak: 'break-all' }}>{lead.email}</div>
+              </div>
+              {lead.phone && (
+                <div style={{ padding: '12px 14px', background: 'var(--bg-primary)', borderRadius: 12, border: '1px solid var(--border-color)' }}>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Phone</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
+                    <div style={{ fontSize: 14, color: 'var(--text-primary)' }}>{lead.phone}</div>
+                    <button className="btn btn-secondary btn-sm" onClick={handleCallLead} disabled={callingLead || offers.length === 0}>
+                      {callingLead ? 'Calling...' : '📞 Call'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div style={{ padding: '12px 14px', background: 'var(--bg-primary)', borderRadius: 12, border: '1px solid var(--border-color)' }}>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Lead status</div>
               <select
                 value={lead.status}
                 onChange={e => updateLeadStatus(e.target.value)}
                 disabled={updatingLead}
-                style={{
-                  width: '100%', background: 'var(--bg-primary)', border: '1px solid var(--border-color)',
-                  borderRadius: 6, padding: '8px 12px', fontSize: 13,
-                  fontWeight: 600, cursor: 'pointer', color: 'var(--text-primary)'
-                }}
+                style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '8px 12px', fontSize: 13, fontWeight: 600, cursor: 'pointer', color: 'var(--text-primary)' }}
               >
                 {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
 
-            <div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Source</div>
-              <div style={{ marginTop: 4 }}><span className={`badge ${lead.source === 'Meta' ? 'badge-meta' : lead.source === 'Google' ? 'badge-google' : 'badge-new'}`}>{lead.source}</span></div>
-            </div>
-            
             {lead.assignedTo && (
-              <div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Assigned Agent</div>
+              <div style={{ padding: '12px 14px', background: 'var(--bg-primary)', borderRadius: 12, border: '1px solid var(--border-color)' }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Assigned agent</div>
                 <div style={{ fontSize: 14, color: 'var(--text-primary)' }}>{lead.assignedTo.firstName} {lead.assignedTo.lastName}</div>
               </div>
             )}
-            
-            <div style={{ marginTop: 10 }}>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Notes</div>
 
-              <div style={{ marginBottom: 10, padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Add Note</div>
+            <div style={{ padding: '14px', background: 'rgba(99, 102, 241, 0.05)', borderRadius: 12, border: '1px solid rgba(99,102,241,0.15)' }}>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Notes</div>
+              <div style={{ marginBottom: 10, padding: 12, background: 'var(--bg-card)', borderRadius: 10, border: '1px solid var(--border-color)' }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Add note</div>
                 <textarea
                   className="form-input"
                   rows={3}
@@ -562,7 +559,7 @@ const LeadDetailsPage = () => {
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {notes.map((note, idx) => (
-                      <div key={idx} style={{ padding: 10, background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+                      <div key={idx} style={{ padding: 10, background: 'var(--bg-card)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
                         <div style={{ fontSize: 13, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', marginBottom: 6 }}>{note.text}</div>
                         <div style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                           <span>{note.createdAt ? new Date(note.createdAt).toLocaleString() : ''}</span>
@@ -577,18 +574,14 @@ const LeadDetailsPage = () => {
           </div>
         </div>
 
-        {/* Right Column: Offers & Tabs */}
         <div>
-          {/* Tab Headers */}
-          <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)', marginBottom: 20 }}>
-            <div style={{ padding: '12px 24px', borderBottom: '2px solid var(--accent-primary)', color: 'var(--text-primary)', fontWeight: 600, cursor: 'pointer' }}>
-              Offers ({offers.length})
+          <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)', marginBottom: 18, alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ padding: '12px 24px', borderBottom: '2px solid var(--accent-primary)', color: 'var(--text-primary)', fontWeight: 600, cursor: 'pointer' }}>
+                Offers ({offers.length})
+              </div>
             </div>
-            {/* Future tabs can go here */}
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 20 }}>
-            <button className="btn btn-primary" onClick={() => setShowOfferModal(true)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <button className="btn btn-primary" onClick={() => setShowOfferModal(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14"/><path d="M12 5v14"/>
               </svg>
@@ -596,7 +589,6 @@ const LeadDetailsPage = () => {
             </button>
           </div>
 
-          {/* Offers List */}
           {offers.length === 0 ? (
             <div className="empty-state">
               <div className="empty-state-icon">💼</div>
@@ -605,95 +597,79 @@ const LeadDetailsPage = () => {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {offers.map(offer => (
-                <div key={offer._id} className="table-wrapper" style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  {/* Header Row */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>{offer.title}</h3>
-                        <span className={`badge ${statusBadge(offer.status)}`}>{offer.status}</span>
-                        <span className={`badge ${offer.offerType === 'Product' ? 'badge-contacted' : 'badge-qualified'}`}>{offer.offerType}</span>
-                        <span className="badge badge-meta" style={{ fontSize: 10, padding: '2px 8px', fontWeight: 700 }}>v{offer.version || 1}</span>
-                      </div>
-                      <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--text-secondary)' }}>{offer.description}</p>
-                      
-                      {/* Offer Images Gallery */}
-                      {offer.images && offer.images.length > 0 && (
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 14 }}>
-                          {offer.images.map(img => img && img.url && (
-                            <div key={img._id || img.url} style={{ position: 'relative', width: 100, height: 100, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#000' }}>
-                               <img 
-                                 src={img.url && (img.url.startsWith('http') || img.url.startsWith('data:')) ? img.url : `http://localhost:5000${img.url}`}
-                                 alt={img.caption || 'Offer item'} 
-                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                 title={img.caption || 'No caption'}
-                               />
-                              {(isAdmin || (offer.createdBy && offer.createdBy._id === user._id)) && (
-                                <button 
-                                  type="button"
-                                  onClick={() => handleDeleteImage(offer._id, img._id)}
-                                  style={{
-                                    position: 'absolute', top: 4, right: 4, 
-                                    background: 'rgba(239, 68, 68, 0.85)', color: '#fff',
-                                    border: 'none', borderRadius: '50%', width: 20, height: 20,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    cursor: 'pointer', fontSize: 10, padding: 0
-                                  }}
-                                  title="Delete photo"
-                                >
-                                  ✕
-                                </button>
-                              )}
-                              {img.caption && (
-                                <div style={{
-                                  position: 'absolute', bottom: 0, left: 0, right: 0,
-                                  background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: 9,
-                                  padding: '2px 4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
-                                }}>
-                                  {img.caption}
-                                </div>
-                              )}
-                            </div>
-                          ))}
+                <div key={offer._id} className="table-wrapper" style={{ padding: 0, display: 'flex', flexDirection: 'column', borderRadius: 18, overflow: 'hidden', boxShadow: '0 12px 30px rgba(15, 23, 42, 0.07)' }}>
+                  <div style={{ padding: '18px 20px', background: 'linear-gradient(90deg, rgba(99,102,241,0.10), rgba(16,185,129,0.08))', borderBottom: '1px solid var(--border-color)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                          <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>{offer.title}</h3>
+                          <span className={`badge ${statusBadge(offer.status)}`}>{offer.status}</span>
+                          <span className={`badge ${offer.offerType === 'Product' ? 'badge-contacted' : 'badge-qualified'}`}>{offer.offerType}</span>
+                          <span className="badge badge-meta" style={{ fontSize: 10, padding: '2px 8px', fontWeight: 700 }}>v{offer.version || 1}</span>
                         </div>
-                      )}
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                     <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--accent-primary)' }}>
-                       {(() => {
-                         const currency = currencies.find(c => c.code === offer.currency) || null;
-                         const symbol = currency?.symbol || offer.currencySymbol || '$';
-                         return `${symbol}${Number(offer.price || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                       })()}
-                     </div>
-                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Valid until {new Date(offer.validUntil).toLocaleDateString()}</div>
-                     {offer.discountType && (
-                       <div style={{ fontSize: 13, color: 'var(--status-lost)', marginTop: 4 }}>
-                         {offer.discountType} -{offer.discountValue}{offer.discountType === 'Percentage' ? '%' : ''}
-                         {offer.finalPrice && <span> → Final: ${Number(offer.finalPrice).toLocaleString()}</span>}
-                       </div>
-                     )}
+                        <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--text-secondary)' }}>{offer.description}</p>
+                      </div>
+                      <div style={{ textAlign: 'right', minWidth: 160 }}>
+                        <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--accent-primary)' }}>
+                          {(() => {
+                            const currency = currencies.find(c => c.code === offer.currency) || null;
+                            const symbol = currency?.symbol || offer.currencySymbol || '$';
+                            return `${symbol}${Number(offer.price || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                          })()}
+                        </div>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Valid until {new Date(offer.validUntil).toLocaleDateString()}</div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Metadata Row */}
-                  <div style={{ display: 'flex', gap: 24, fontSize: 13, color: 'var(--text-muted)', background: 'var(--bg-primary)', padding: 12, borderRadius: 8 }}>
-                    <div>Created By: <strong style={{ color: 'var(--text-secondary)' }}>{offer.createdBy.firstName} {offer.createdBy.lastName}</strong></div>
-                    {offer.recordLocator && (
-                      <div>Locator: <strong style={{ color: 'var(--accent-primary)' }}>{offer.recordLocator}</strong></div>
-                    )}
-                    {offer.sentAt && (
-                      <div>Sent: <strong>{new Date(offer.sentAt).toLocaleDateString()}</strong> via {offer.sentVia}</div>
-                    )}
-                    {offer.revisionNote && (
-                      <div style={{ flex: 1 }}>Revision Req: <strong>{offer.revisionNote}</strong></div>
-                    )}
+                  <div style={{ padding: '18px 20px 6px', display: 'grid', gap: 14 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+                      <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
+                        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 4 }}>Customer</div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{lead.name}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{lead.email}</div>
+                        {lead.phone && <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{lead.phone}</div>}
+                      </div>
+                      <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
+                        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 4 }}>Reference</div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{offer.recordLocator || '—'}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{offer.createdBy?.firstName} {offer.createdBy?.lastName}</div>
+                      </div>
+                      <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
+                        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 4 }}>Status</div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{offer.status}</div>
+                        {offer.sentAt && <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>Sent {new Date(offer.sentAt).toLocaleString()}</div>}
+                      </div>
+                    </div>
+
+                    <div style={{ padding: '14px 14px 12px', borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(99,102,241,0.04)' }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Body — customer handling & internal notes</div>
+                      <p style={{ margin: '0 0 10px', fontSize: 13, color: 'var(--text-secondary)' }}>
+                        This section is for confirming details with the customer, handling changes, cancellations, refunds, returns, or documenting internal actions for the order.
+                      </p>
+                      <OfferCommunicationPanel offer={offer} user={user} onError={setError} onSuccess={setSuccess} />
+                    </div>
+
+                    <div style={{ padding: '14px 14px 12px', borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(16,185,129,0.04)' }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Bottom — payments, documentation & logs</div>
+                      <div style={{ display: 'grid', gap: 10 }}>
+                        <div style={{ padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Payment method</div>
+                          <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Last 4 digits will appear here once the payment method is associated with this booking.</div>
+                        </div>
+                        <div style={{ padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Employee documentation</div>
+                          <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Employee notes, timestamps, names, email, and position title will appear here.</div>
+                        </div>
+                        <div style={{ padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Booking logs</div>
+                          <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Actions taken by staff, including who performed them and their role, will be recorded here.</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <OfferCommunicationPanel offer={offer} user={user} onError={setError} onSuccess={setSuccess} />
-
-                  {/* Action Buttons */}
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', paddingTop: 8, borderTop: '1px solid var(--border-color)' }}>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', padding: '14px 20px 20px', borderTop: '1px solid var(--border-color)', background: 'rgba(255,255,255,0.03)' }}>
                      {offer.status === 'Draft' && (
                        <>
                          <button className="btn btn-secondary btn-sm" onClick={() => handleSend(offer._id, 'Email')} disabled={sendingId === offer._id}>
