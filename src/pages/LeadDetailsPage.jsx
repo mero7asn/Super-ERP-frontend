@@ -617,219 +617,24 @@ const LeadDetailsPage = () => {
 
                 return (
                   <div key={offer._id} onClick={() => navigate(`/offers/${offer._id}`)} style={{ cursor: 'pointer', padding: 0, display: 'flex', flexDirection: 'column', borderRadius: 18, overflow: 'hidden', boxShadow: '0 12px 30px rgba(15, 23, 42, 0.07)' }}>
-                    <div style={{ padding: '20px 22px', background: 'linear-gradient(90deg, rgba(99,102,241,0.10), rgba(16,185,129,0.08))', borderBottom: '1px solid var(--border-color)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
-                        <div style={{ flex: 1 }}>
+                    <div style={{ padding: '18px 20px', background: 'linear-gradient(90deg, rgba(99,102,241,0.10), rgba(16,185,129,0.08))', borderBottom: '1px solid var(--border-color)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+                        <div style={{ flex: 1, minWidth: 200 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{offer.title}</h3>
+                            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>{offer.title}</h3>
                             <span className={`badge ${statusBadge(offer.status)}`}>{offer.status || 'Draft'}</span>
                             <span className="badge badge-meta" style={{ fontSize: 10, padding: '2px 8px', fontWeight: 700 }}>v{offer.version || 1}</span>
                             <span className="badge badge-qualified" style={{ fontSize: 10, padding: '2px 8px', fontWeight: 700 }}>{offerNumber}</span>
                           </div>
-                          <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--text-secondary)' }}>{offer.description || 'Proposal details will appear here once the offer is prepared.'}</p>
-                          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
-                            <span style={{ padding: '4px 8px', borderRadius: 999, background: 'rgba(99,102,241,0.10)', color: 'var(--accent-primary)', fontSize: 12, fontWeight: 600 }}>Created {offer.createdAt ? new Date(offer.createdAt).toLocaleDateString() : '—'}</span>
-                            <span style={{ padding: '4px 8px', borderRadius: 999, background: 'rgba(16,185,129,0.10)', color: 'var(--status-completed)', fontSize: 12, fontWeight: 600 }}>Expires {offer.validUntil ? new Date(offer.validUntil).toLocaleDateString() : '—'}</span>
-                            <span style={{ padding: '4px 8px', borderRadius: 999, background: 'rgba(245,158,11,0.12)', color: 'var(--warning)', fontSize: 12, fontWeight: 600 }}>Created by {offer.createdBy?.firstName || 'Employee'} {offer.createdBy?.lastName || ''}</span>
+                          <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--text-secondary)' }}>{offer.description || 'Proposal details will appear here once the offer is prepared.'}</p>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--accent-primary)' }}>{offerSymbol}{formattedPrice}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{offer.currency || 'USD'}</div>
                           </div>
+                          <div style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>View details →</div>
                         </div>
-                        <div style={{ textAlign: 'right', minWidth: 180 }}>
-                          <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--accent-primary)' }}>{offerSymbol}{offerPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>{offer.currency || 'USD'}</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={{ padding: '18px 20px 6px', display: 'grid', gap: 14 }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-                        <div style={{ padding: 14, borderRadius: 12, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Offer details</div>
-                          <div style={{ display: 'grid', gap: 7, fontSize: 13, color: 'var(--text-secondary)' }}>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Offer no.:</strong> {offerNumber}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Version:</strong> {offer.version || 1}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Status:</strong> {offer.status || 'Draft'}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Type:</strong> {offer.offerType || 'Service'}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Valid until:</strong> {offer.validUntil ? new Date(offer.validUntil).toLocaleDateString() : '—'}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Payment terms:</strong> {offer.paymentTerms || 'Net 30'}</div>
-                          </div>
-                        </div>
-                        <div style={{ padding: 14, borderRadius: 12, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Products & pricing</div>
-                          <div style={{ display: 'grid', gap: 7, fontSize: 13, color: 'var(--text-secondary)' }}>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Product/service:</strong> {offer.title}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Subtotal:</strong> {offerSymbol}{offerPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Discount:</strong> {offerSymbol}{Number(offer.discount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Tax:</strong> {offerSymbol}{Number(offer.tax || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Grand total:</strong> {offerSymbol}{(offerPrice + Number(offer.tax || 0) - Number(offer.discount || 0)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                          </div>
-                        </div>
-                        <div style={{ padding: 14, borderRadius: 12, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Payment & booking</div>
-                          <div style={{ display: 'grid', gap: 7, fontSize: 13, color: 'var(--text-secondary)' }}>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Booking ref:</strong> {offer.recordLocator || offer.bookingRef || 'Pending'}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Payment:</strong> {offer.status === 'Paid' || offer.status === 'Accepted' ? 'Paid / in progress' : 'Awaiting payment'}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Amount paid:</strong> {offerSymbol}{Number(offer.paidAmount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Remaining:</strong> {offerSymbol}{Math.max(offerPrice - Number(offer.paidAmount || 0), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div style={{ padding: 14, borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(99,102,241,0.04)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Offer images</div>
-                          <button className="btn btn-secondary btn-sm" onClick={() => { setImageUploadTarget(offer._id); setShowImageModal(true); }}>
-                            📷 Add image
-                          </button>
-                        </div>
-                        {offerImages.length > 0 ? (
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 10 }}>
-                            {offerImages.map(img => img && img.url && (
-                              <div key={img._id || img.url} style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#000', minHeight: 110 }}>
-                                <img src={img.url && (img.url.startsWith('http') || img.url.startsWith('data:')) ? img.url : `http://localhost:5000${img.url}`} alt={img.caption || 'Offer image'} style={{ width: '100%', height: 110, objectFit: 'cover' }} />
-                                {(isAdmin || (offer.createdBy && offer.createdBy._id === user?._id)) && (
-                                  <button type="button" onClick={() => handleDeleteImage(offer._id, img._id)} style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(239,68,68,0.9)', color: '#fff', border: 'none', borderRadius: 999, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 10 }} title="Delete photo">✕</button>
-                                )}
-                                {img.caption && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 10, padding: '4px 6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{img.caption}</div>}
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div style={{ padding: 16, borderRadius: 10, border: '1px dashed var(--border-color)', color: 'var(--text-muted)', fontSize: 13, textAlign: 'center' }}>No images have been added to this offer yet.</div>
-                        )}
-                      </div>
-
-                      <div style={{ padding: '14px 14px 12px', borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(16,185,129,0.04)' }}>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Offer inbox</div>
-                        <OfferCommunicationPanel offer={offer} user={user} onError={setError} onSuccess={setSuccess} />
-                      </div>
-
-                      <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-                        <div style={{ padding: 14, borderRadius: 12, border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Payment</div>
-                          <div style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'grid', gap: 6 }}>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Pay now:</strong> {offer.status === 'Accepted' || offer.status === 'Paid' ? 'Payment ready' : 'Pending customer action'}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Status:</strong> {offer.status === 'Paid' ? 'Paid' : 'Pending'}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Amount due:</strong> {offerSymbol}{Math.max(offerPrice - Number(offer.paidAmount || 0), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                          </div>
-                        </div>
-                        <div style={{ padding: 14, borderRadius: 12, border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Customer activity timeline</div>
-                          <div style={{ display: 'grid', gap: 8 }}>
-                            {activityTimeline.map((item, idx) => (
-                              <div key={idx} style={{ padding: 10, borderRadius: 10, border: '1px solid var(--border-color)', background: 'var(--bg-card)' }}>
-                                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{item.title}</div>
-                                <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{item.description}</div>
-                                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{item.time}</div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        <div style={{ padding: 14, borderRadius: 12, border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Analytics</div>
-                          <div style={{ display: 'grid', gap: 7, fontSize: 13, color: 'var(--text-secondary)' }}>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Views:</strong> {offer.views || 0}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Email opens:</strong> {offer.emailOpens || 0}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>CTA clicks:</strong> {offer.ctaClicks || 0}</div>
-                            <div><strong style={{ color: 'var(--text-primary)' }}>Last viewed:</strong> {offer.lastViewedAt ? new Date(offer.lastViewedAt).toLocaleString() : 'Not viewed yet'}</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-                        <div style={{ padding: 14, borderRadius: 12, border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Documents</div>
-                          <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Proposal, invoice, and contract files can be attached here for this offer.</div>
-                        </div>
-                        <div style={{ padding: 14, borderRadius: 12, border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Internal notes</div>
-                          {internalNotes.length > 0 ? (
-                            <div style={{ display: 'grid', gap: 8 }}>
-                              {internalNotes.map((note, idx) => (
-                                <div key={idx} style={{ padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
-                                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{note.title}</div>
-                                  <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{note.text}</div>
-                                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{note.author} • {note.date ? new Date(note.date).toLocaleString() : 'Pending'}</div>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>No internal notes yet.</div>
-                          )}
-                        </div>
-                        <div style={{ padding: 14, borderRadius: 12, border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Audit log</div>
-                          <div style={{ display: 'grid', gap: 8 }}>
-                            {auditEntries.map((entry, idx) => (
-                              <div key={idx} style={{ padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
-                                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{entry.action}</div>
-                                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{entry.time}</div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', padding: '14px 20px 20px', borderTop: '1px solid var(--border-color)', background: 'rgba(255,255,255,0.03)' }}>
-                      {offer.status === 'Draft' && (
-                        <>
-                          <button className="btn btn-secondary btn-sm" onClick={() => handleSend(offer._id, 'Email')} disabled={sendingId === offer._id}>
-                            {sendingId === offer._id ? 'Sending...' : '📧 Send Email'}
-                          </button>
-                          <button className="btn btn-secondary btn-sm" onClick={() => handleSend(offer._id, 'SMS')} disabled={sendingId === offer._id}>
-                            💬 Send SMS
-                          </button>
-                          {['Super CRM Administrator', 'System Architect', 'Sales Manager'].includes(user?.role) && (
-                            <button className="btn btn-secondary btn-sm" onClick={() => handleDiscount(offer)} disabled={discountingId === offer._id}>
-                              {discountingId === offer._id ? 'Applying...' : '🏷️ Discount'}
-                            </button>
-                          )}
-                          {offer.createdBy?._id === user?._id && (
-                            <>
-                              <button className="btn btn-secondary btn-sm" onClick={() => { setImageUploadTarget(offer._id); setShowImageModal(true); }}>
-                                📷 Add Photo
-                              </button>
-                              <button className="btn btn-primary btn-sm" onClick={() => openEditModal(offer)}>
-                                ✏️ Edit
-                              </button>
-                              <button className="btn btn-secondary btn-sm" onClick={() => handleDelete(offer._id)} style={{ color: 'var(--status-lost)' }}>
-                                🗑️ Delete
-                              </button>
-                            </>
-                          )}
-                        </>
-                      )}
-
-                      {offer.status === 'Sent' && (
-                        <>
-                          <button className="btn btn-secondary btn-sm" onClick={() => handleSend(offer._id, 'Email')} disabled={sendingId === offer._id}>
-                            {sendingId === offer._id ? 'Sending...' : '🔄 Resend Email'}
-                          </button>
-                          <button className="btn btn-primary btn-sm" onClick={() => { setReviseOpenId(offer._id); setShowReviseModal(true); setRevisionRequirement(''); }}>
-                            ✏️ Revise Offer
-                          </button>
-                          <button className="btn btn-secondary btn-sm" onClick={() => { setImageUploadTarget(offer._id); setShowImageModal(true); }}>
-                            📷 Add Photo
-                          </button>
-                        </>
-                      )}
-
-                      {offer.status === 'Accepted' && (
-                        <button className="btn btn-primary btn-sm" onClick={() => handleUpdateOfferStatus(offer._id, 'Completed')}>
-                          ✅ Complete Sale
-                        </button>
-                      )}
-
-                      <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-                        <button className="btn btn-secondary btn-sm" onClick={() => { setHistoryOpenId(offer._id); setShowHistoryModal(true); }}>
-                          📋 History
-                        </button>
-                        <button className="btn btn-secondary btn-sm" onClick={() => { setVersionsOpenId(offer._id); setShowVersionsModal(true); }}>
-                          📑 Versions
-                        </button>
-                        <button className="btn btn-secondary btn-sm" onClick={() => setSuccess('Preview ready for this offer')}>
-                          👁️ Preview
-                        </button>
                       </div>
                     </div>
                   </div>
