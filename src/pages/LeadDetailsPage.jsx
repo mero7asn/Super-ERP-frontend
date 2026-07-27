@@ -608,6 +608,10 @@ const LeadDetailsPage = () => {
                           <span className="badge badge-meta" style={{ fontSize: 10, padding: '2px 8px', fontWeight: 700 }}>v{offer.version || 1}</span>
                         </div>
                         <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--text-secondary)' }}>{offer.description}</p>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
+                          <span style={{ padding: '4px 8px', borderRadius: 999, background: 'rgba(99,102,241,0.10)', color: 'var(--accent-primary)', fontSize: 12, fontWeight: 600 }}>Created {offer.createdAt ? new Date(offer.createdAt).toLocaleDateString() : '—'}</span>
+                          <span style={{ padding: '4px 8px', borderRadius: 999, background: 'rgba(16,185,129,0.10)', color: 'var(--status-completed)', fontSize: 12, fontWeight: 600 }}>{offer.recordLocator || offer.bookingRef ? `Booking: ${offer.recordLocator || offer.bookingRef}` : 'No booking created yet'}</span>
+                        </div>
                       </div>
                       <div style={{ textAlign: 'right', minWidth: 160 }}>
                         <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--accent-primary)' }}>
@@ -623,31 +627,71 @@ const LeadDetailsPage = () => {
                   </div>
 
                   <div style={{ padding: '18px 20px 6px', display: 'grid', gap: 14 }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
-                      <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
-                        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 4 }}>Customer</div>
-                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{lead.name}</div>
-                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{lead.email}</div>
-                        {lead.phone && <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{lead.phone}</div>}
+                    <div style={{ display: 'grid', gap: 12 }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+                        <div style={{ padding: 14, borderRadius: 12, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Offer details</div>
+                          <div style={{ display: 'grid', gap: 7, fontSize: 13, color: 'var(--text-secondary)' }}>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Offer name:</strong> {offer.title}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Description:</strong> {offer.description}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Type:</strong> {offer.offerType}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Status:</strong> {offer.status}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Version:</strong> {offer.version || 1}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Currency:</strong> {offer.currency || 'USD'}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Valid until:</strong> {new Date(offer.validUntil).toLocaleDateString()}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Created by:</strong> {offer.createdBy?.firstName || '—'} {offer.createdBy?.lastName || ''}</div>
+                          </div>
+                        </div>
+                        <div style={{ padding: 14, borderRadius: 12, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Customer</div>
+                          <div style={{ display: 'grid', gap: 7, fontSize: 13, color: 'var(--text-secondary)' }}>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Name:</strong> {lead.name}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Email:</strong> {lead.email || '—'}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Phone:</strong> {lead.phone || '—'}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Lead reference:</strong> {lead.referenceNumber || lead._id || '—'}</div>
+                          </div>
+                        </div>
+                        <div style={{ padding: 14, borderRadius: 12, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Booking information</div>
+                          <div style={{ display: 'grid', gap: 7, fontSize: 13, color: 'var(--text-secondary)' }}>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Booking reference:</strong> {offer.recordLocator || offer.bookingRef || 'No booking created yet.'}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Payment status:</strong> {offer.status === 'Paid' || offer.status === 'Completed' ? 'Paid' : 'Waiting for customer payment'}</div>
+                            <div><strong style={{ color: 'var(--text-primary)' }}>Sent:</strong> {offer.sentAt ? new Date(offer.sentAt).toLocaleString() : 'Not sent yet'}</div>
+                          </div>
+                        </div>
                       </div>
-                      <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
-                        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 4 }}>Reference</div>
-                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{offer.recordLocator || '—'}</div>
-                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{offer.createdBy?.firstName} {offer.createdBy?.lastName}</div>
-                      </div>
-                      <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
-                        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 4 }}>Status</div>
-                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{offer.status}</div>
-                        {offer.sentAt && <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>Sent {new Date(offer.sentAt).toLocaleString()}</div>}
-                      </div>
-                    </div>
 
-                    <div style={{ padding: '14px 14px 12px', borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(99,102,241,0.04)' }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Offer activity</div>
-                      <p style={{ margin: '0 0 10px', fontSize: 13, color: 'var(--text-secondary)' }}>
-                        Use this section for offer follow-up, communication, and tracking.
-                      </p>
-                      <OfferCommunicationPanel offer={offer} user={user} onError={setError} onSuccess={setSuccess} />
+                      <div style={{ padding: 14, borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(99,102,241,0.04)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Offer images</div>
+                          <button className="btn btn-secondary btn-sm" onClick={() => { setImageUploadTarget(offer._id); setShowImageModal(true); }}>
+                            📷 Add image
+                          </button>
+                        </div>
+                        {(Array.isArray(offer.images) && offer.images.length > 0) ? (
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 10 }}>
+                            {offer.images.map(img => img && img.url && (
+                              <div key={img._id || img.url} style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#000', minHeight: 110 }}>
+                                <img src={img.url && (img.url.startsWith('http') || img.url.startsWith('data:')) ? img.url : `http://localhost:5000${img.url}`} alt={img.caption || 'Offer image'} style={{ width: '100%', height: 110, objectFit: 'cover' }} />
+                                {(isAdmin || (offer.createdBy && offer.createdBy._id === user._id)) && (
+                                  <button type="button" onClick={() => handleDeleteImage(offer._id, img._id)} style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(239,68,68,0.9)', color: '#fff', border: 'none', borderRadius: 999, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 10 }} title="Delete photo">✕</button>
+                                )}
+                                {img.caption && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 10, padding: '4px 6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{img.caption}</div>}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div style={{ padding: 16, borderRadius: 10, border: '1px dashed var(--border-color)', color: 'var(--text-muted)', fontSize: 13, textAlign: 'center' }}>No images have been added to this offer yet.</div>
+                        )}
+                      </div>
+
+                      <div style={{ padding: '14px 14px 12px', borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(16,185,129,0.04)' }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Offer inbox</div>
+                        <p style={{ margin: '0 0 10px', fontSize: 13, color: 'var(--text-secondary)' }}>
+                          Customer replies and employee replies stay in one threaded conversation for this offer.
+                        </p>
+                        <OfferCommunicationPanel offer={offer} user={user} onError={setError} onSuccess={setSuccess} />
+                      </div>
                     </div>
                   </div>
 
