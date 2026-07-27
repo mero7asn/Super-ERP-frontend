@@ -596,7 +596,10 @@ const LeadDetailsPage = () => {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {offers.map(offer => (
+              {offers.map(offer => {
+                const isBookingRecord = Boolean(offer.recordLocator || offer.bookingRef);
+
+                return (
                 <div key={offer._id} className="table-wrapper" style={{ padding: 0, display: 'flex', flexDirection: 'column', borderRadius: 18, overflow: 'hidden', boxShadow: '0 12px 30px rgba(15, 23, 42, 0.07)' }}>
                   <div style={{ padding: '18px 20px', background: 'linear-gradient(90deg, rgba(99,102,241,0.10), rgba(16,185,129,0.08))', borderBottom: '1px solid var(--border-color)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
@@ -627,46 +630,62 @@ const LeadDetailsPage = () => {
                       <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
                         <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 4 }}>Customer</div>
                         <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{lead.name}</div>
-                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{lead.email}</div>
-                        {lead.phone && <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{lead.phone}</div>}
+                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{lead.email || 'No email on file'}</div>
+                        {lead.phone ? <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{lead.phone}</div> : <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>No phone number on file</div>}
                       </div>
                       <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
                         <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 4 }}>Reference</div>
-                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{offer.recordLocator || '—'}</div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{offer.recordLocator || offer.bookingRef || '—'}</div>
                         <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{offer.createdBy?.firstName} {offer.createdBy?.lastName}</div>
                       </div>
                       <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
                         <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 4 }}>Status</div>
                         <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{offer.status}</div>
-                        {offer.sentAt && <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>Sent {new Date(offer.sentAt).toLocaleString()}</div>}
+                        {offer.sentAt ? <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>Sent {new Date(offer.sentAt).toLocaleString()}</div> : <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>Awaiting next action</div>}
                       </div>
                     </div>
 
-                    <div style={{ padding: '14px 14px 12px', borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(99,102,241,0.04)' }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Body — customer handling & internal notes</div>
-                      <p style={{ margin: '0 0 10px', fontSize: 13, color: 'var(--text-secondary)' }}>
-                        This section is for confirming details with the customer, handling changes, cancellations, refunds, returns, or documenting internal actions for the order.
-                      </p>
-                      <OfferCommunicationPanel offer={offer} user={user} onError={setError} onSuccess={setSuccess} />
-                    </div>
+                    {isBookingRecord ? (
+                      <>
+                        <div style={{ padding: '14px 14px 12px', borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(99,102,241,0.04)' }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Body — confirm details, changes, cancellations, refunds & returns</div>
+                          <p style={{ margin: '0 0 10px', fontSize: 13, color: 'var(--text-secondary)' }}>
+                            This section is used to confirm booking details with the customer, help with updates or cancellations, start a refund flow, or begin the return process when needed.
+                          </p>
+                          <OfferCommunicationPanel offer={offer} user={user} onError={setError} onSuccess={setSuccess} />
+                          <div style={{ marginTop: 10, padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Employee documentation</div>
+                            <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Employees can leave notes here with date, time, name, email address, and job title.</div>
+                          </div>
+                        </div>
 
-                    <div style={{ padding: '14px 14px 12px', borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(16,185,129,0.04)' }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Bottom — payments, documentation & logs</div>
-                      <div style={{ display: 'grid', gap: 10 }}>
-                        <div style={{ padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Payment method</div>
-                          <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Last 4 digits will appear here once the payment method is associated with this booking.</div>
+                        <div style={{ padding: '14px 14px 12px', borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(16,185,129,0.04)' }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Bottom — payments, documentation & logs</div>
+                          <div style={{ display: 'grid', gap: 10 }}>
+                            <div style={{ padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Payment method</div>
+                              <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Only the last 4 digits of the card will appear here, and the invoice can be sent from this section. Payment status: pending / completed. Refund status appears here if one is created.</div>
+                            </div>
+                            <div style={{ padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Documentation history</div>
+                              <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Each staff note will display the date, time, staff member name, email address, and position title.</div>
+                            </div>
+                            <div style={{ padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Booking logs</div>
+                              <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Every action taken by staff will be recorded with the person who performed it, along with their email address and job title.</div>
+                            </div>
+                          </div>
                         </div>
-                        <div style={{ padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Employee documentation</div>
-                          <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Employee notes, timestamps, names, email, and position title will appear here.</div>
-                        </div>
-                        <div style={{ padding: 10, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Booking logs</div>
-                          <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Actions taken by staff, including who performed them and their role, will be recorded here.</div>
-                        </div>
+                      </>
+                    ) : (
+                      <div style={{ padding: '14px 14px 12px', borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(99,102,241,0.04)' }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Offer activity</div>
+                        <p style={{ margin: '0 0 10px', fontSize: 13, color: 'var(--text-secondary)' }}>
+                          Use this section for offer follow-up and communication.
+                        </p>
+                        <OfferCommunicationPanel offer={offer} user={user} onError={setError} onSuccess={setSuccess} />
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', padding: '14px 20px 20px', borderTop: '1px solid var(--border-color)', background: 'rgba(255,255,255,0.03)' }}>
@@ -729,7 +748,8 @@ const LeadDetailsPage = () => {
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
