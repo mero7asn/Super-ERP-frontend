@@ -50,6 +50,7 @@ const normalizeCurrencies = (values = []) => {
 
 const SettingsPage = () => {
   const { user, setBusinessModel } = useAuth();
+  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(user?.role);
   const [activeTab, setActiveTab] = useState('general');
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -88,6 +89,10 @@ const SettingsPage = () => {
   const [smtpPass, setSmtpPass] = useState('');
 
   // Pricing & Currency settings
+  // Telephony settings
+  const [telephonyProvider, setTelephonyProvider] = useState('avaya');
+  const [savingTelephony, setSavingTelephony] = useState(false);
+
   const [pricingSettings, setPricingSettings] = useState({ offerPriceMin: '', productPriceMin: '', discountOverride: false });
   const [currencies, setCurrencies] = useState([]);
   const [defaultCurrency, setDefaultCurrency] = useState('USD');
@@ -147,6 +152,16 @@ const SettingsPage = () => {
     };
     fetchErp();
 
+    const fetchTelephony = async () => {
+      try {
+        const { data } = await API.get('/settings/telephony');
+        if (data.success && data.data?.provider) {
+          setTelephonyProvider(data.data.provider);
+        }
+      } catch (err) {
+        console.error('Failed to load telephony settings:', err);
+      }
+    };
     const fetchPricing = async () => {
       try {
         const { data } = await API.get('/settings/pricing');
@@ -173,6 +188,7 @@ const SettingsPage = () => {
         console.error('Failed to load currencies:', err);
       }
     };
+    fetchTelephony();
     fetchPricing();
     fetchCurrencies();
   }, []);
@@ -249,6 +265,23 @@ const SettingsPage = () => {
       setErrorMsg(err.response?.data?.message || 'Test connection failed');
     } finally {
       setTesting(false);
+    }
+  };
+
+  const handleSaveTelephony = async () => {
+    setSavingTelephony(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+    try {
+      const { data } = await API.put('/settings/telephony', { provider: telephonyProvider });
+      if (data.success) {
+        setSuccessMsg('Phone call provider settings saved successfully.');
+        setTimeout(() => setSuccessMsg(''), 4000);
+      }
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || 'Failed to save phone call settings');
+    } finally {
+      setSavingTelephony(false);
     }
   };
 
@@ -572,6 +605,29 @@ const SettingsPage = () => {
                     {testing ? 'Testing…' : 'Test Connection'}
                   </button>
                 </div>
+
+                {isAdmin && (
+                  <div style={{ marginTop: 28, padding: '16px 18px', border: '1px solid var(--border-color)', borderRadius: 10, background: 'rgba(99, 102, 241, 0.04)' }}>
+                    <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>Phone Call Configuration</h4>
+                    <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 12 }}>
+                      Choose the telephony provider used when a sales rep initiates a call from a lead or offer.
+                    </p>
+                    <div className="form-group" style={{ margin: 0 }}>
+                      <label className="form-label">Telephony Provider</label>
+                      <select
+                        className="form-input"
+                        value={telephonyProvider}
+                        onChange={(e) => setTelephonyProvider(e.target.value)}
+                      >
+                        <option value="avaya">Avaya</option>
+                        <option value="cisco">Cisco</option>
+                      </select>
+                    </div>
+                    <button type="button" className="btn btn-primary" onClick={handleSaveTelephony} disabled={savingTelephony} style={{ width: 'auto', padding: '10px 28px', marginTop: 14 }}>
+                      {savingTelephony ? 'Saving…' : 'Save Phone Call Settings'}
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
