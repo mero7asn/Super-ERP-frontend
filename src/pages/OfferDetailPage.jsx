@@ -65,12 +65,15 @@ const OfferDetailPage = () => {
 
   const fetchOffer = async () => {
     try {
-      const [offerRes, leadRes] = await Promise.all([
-        API.get(`/offers/${id}`),
-        API.get(`/leads/${id}`)
-      ]);
-      setOffer(offerRes.data.data);
-      setLead(leadRes.data.data);
+      const offerRes = await API.get(`/offers/${id}`);
+      const offer = offerRes.data.data;
+      setOffer(offer);
+
+      const leadId = offer?.lead?._id || offer?.lead;
+      if (leadId) {
+        const leadRes = await API.get(`/leads/${leadId}`);
+        setLead(leadRes.data.data);
+      }
     } catch (err) {
       const apiMsg = err.response?.data?.message;
       const apiError = err.response?.data?.error;
