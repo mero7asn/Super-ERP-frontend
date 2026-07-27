@@ -91,6 +91,10 @@ const SettingsPage = () => {
   // Pricing & Currency settings
   // Telephony settings
   const [telephonyProvider, setTelephonyProvider] = useState('avaya');
+  const [telephonyServerUrl, setTelephonyServerUrl] = useState('');
+  const [telephonyUsername, setTelephonyUsername] = useState('');
+  const [telephonyPassword, setTelephonyPassword] = useState('');
+  const [telephonyExtension, setTelephonyExtension] = useState('');
   const [savingTelephony, setSavingTelephony] = useState(false);
 
   const [pricingSettings, setPricingSettings] = useState({ offerPriceMin: '', productPriceMin: '', discountOverride: false });
@@ -155,8 +159,12 @@ const SettingsPage = () => {
     const fetchTelephony = async () => {
       try {
         const { data } = await API.get('/settings/telephony');
-        if (data.success && data.data?.provider) {
-          setTelephonyProvider(data.data.provider);
+        if (data.success && data.data) {
+          setTelephonyProvider(data.data.provider || 'avaya');
+          setTelephonyServerUrl(data.data.serverUrl || '');
+          setTelephonyUsername(data.data.username || '');
+          setTelephonyPassword(data.data.password || '');
+          setTelephonyExtension(data.data.extension || '');
         }
       } catch (err) {
         console.error('Failed to load telephony settings:', err);
@@ -273,7 +281,13 @@ const SettingsPage = () => {
     setErrorMsg('');
     setSuccessMsg('');
     try {
-      const { data } = await API.put('/settings/telephony', { provider: telephonyProvider });
+      const { data } = await API.put('/settings/telephony', {
+        provider: telephonyProvider,
+        serverUrl: telephonyServerUrl,
+        username: telephonyUsername,
+        password: telephonyPassword,
+        extension: telephonyExtension,
+      });
       if (data.success) {
         setSuccessMsg('Phone call provider settings saved successfully.');
         setTimeout(() => setSuccessMsg(''), 4000);
@@ -610,7 +624,7 @@ const SettingsPage = () => {
                   <div style={{ marginTop: 28, padding: '16px 18px', border: '1px solid var(--border-color)', borderRadius: 10, background: 'rgba(99, 102, 241, 0.04)' }}>
                     <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>Phone Call Configuration</h4>
                     <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 12 }}>
-                      Choose the telephony provider used when a sales rep initiates a call from a lead or offer.
+                      Choose the telephony connector used when a sales rep initiates a call from a lead or offer. Avaya and Cisco can route to a CTI endpoint, while SIP/WebRTC builds a dial URI for a softphone or gateway.
                     </p>
                     <div className="form-group" style={{ margin: 0 }}>
                       <label className="form-label">Telephony Provider</label>
@@ -619,9 +633,28 @@ const SettingsPage = () => {
                         value={telephonyProvider}
                         onChange={(e) => setTelephonyProvider(e.target.value)}
                       >
-                        <option value="avaya">Avaya</option>
-                        <option value="cisco">Cisco</option>
+                        <option value="avaya">Avaya CTI</option>
+                        <option value="cisco">Cisco Finesse/CUCM</option>
+                        <option value="sip">SIP/WebRTC Softphone</option>
                       </select>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 12 }}>
+                      <div className="form-group" style={{ margin: 0 }}>
+                        <label className="form-label">Connector URL</label>
+                        <input className="form-input" placeholder="https://pbx.example.com/api" value={telephonyServerUrl} onChange={(e) => setTelephonyServerUrl(e.target.value)} />
+                      </div>
+                      <div className="form-group" style={{ margin: 0 }}>
+                        <label className="form-label">Agent Extension</label>
+                        <input className="form-input" placeholder="1001" value={telephonyExtension} onChange={(e) => setTelephonyExtension(e.target.value)} />
+                      </div>
+                      <div className="form-group" style={{ margin: 0 }}>
+                        <label className="form-label">Username</label>
+                        <input className="form-input" placeholder="crm-connector" value={telephonyUsername} onChange={(e) => setTelephonyUsername(e.target.value)} />
+                      </div>
+                      <div className="form-group" style={{ margin: 0 }}>
+                        <label className="form-label">Password</label>
+                        <input className="form-input" type="password" placeholder="••••••••" value={telephonyPassword} onChange={(e) => setTelephonyPassword(e.target.value)} />
+                      </div>
                     </div>
                     <button type="button" className="btn btn-primary" onClick={handleSaveTelephony} disabled={savingTelephony} style={{ width: 'auto', padding: '10px 28px', marginTop: 14 }}>
                       {savingTelephony ? 'Saving…' : 'Save Phone Call Settings'}

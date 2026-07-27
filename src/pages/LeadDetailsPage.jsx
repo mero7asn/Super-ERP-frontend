@@ -75,6 +75,7 @@ const LeadDetailsPage = () => {
   const [saving, setSaving] = useState(false);
   const [sendingId, setSendingId] = useState(null);
   const [callingLead, setCallingLead] = useState(false);
+  const [callProvider, setCallProvider] = useState('avaya');
   const [success, setSuccess] = useState('');
   
   // Email Composer
@@ -159,6 +160,16 @@ const LeadDetailsPage = () => {
         console.error('Failed to load pricing settings:', err);
       }
     };
+    const fetchTelephonySettings = async () => {
+      try {
+        const { data } = await API.get('/settings/telephony');
+        if (data.success) {
+          setCallProvider(data.data?.provider || 'avaya');
+        }
+      } catch (err) {
+        console.error('Failed to load telephony settings:', err);
+      }
+    };
     const fetchCurrencies = async () => {
       try {
         const { data } = await API.get('/settings/currencies');
@@ -175,6 +186,7 @@ const LeadDetailsPage = () => {
       }
     };
     fetchSettings();
+    fetchTelephonySettings();
     fetchCurrencies();
   }, [id]);
 
@@ -324,7 +336,7 @@ const LeadDetailsPage = () => {
     setError('');
     setSuccess('');
     try {
-      await API.post(`/offers/${primaryOffer._id}/call`, { provider: 'avaya', phone: lead?.phone });
+      await API.post(`/offers/${primaryOffer._id}/call`, { provider: callProvider, phone: lead?.phone });
       setSuccess(`Call initiated for ${lead?.name || 'the lead'}`);
       setTimeout(() => setSuccess(''), 2500);
     } catch (err) {
