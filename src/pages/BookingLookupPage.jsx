@@ -97,46 +97,84 @@ const BookingLookupPage = () => {
         {error && <div className="alert alert-error" style={{ marginTop: 16 }}>{error}</div>}
 
         {booking && (
-          <div style={{ marginTop: 24, borderTop: '1px solid var(--border-color)', paddingTop: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Booking Details</h3>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={{ marginTop: 24, borderTop: '1px solid var(--border-color)', paddingTop: 24, display: 'grid', gap: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
               <div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Record Locator</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--accent-primary)' }}>
-                  {booking.recordLocator}
-                </div>
+                <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>Booking / Order Details</h3>
+                <p style={{ margin: 0, fontSize: 13, color: 'var(--text-secondary)' }}>
+                  Review the booking summary, manage customer-facing actions, and inspect the full history and financial trail.
+                </p>
               </div>
-              <div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Customer</div>
-                <div style={{ fontSize: 14 }}>{booking.lead?.name}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Offer</div>
-                <div style={{ fontSize: 14 }}>{booking.title}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Amount</div>
-                <div style={{ fontSize: 14, fontWeight: 600 }}>${booking.price?.toLocaleString()}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Status</div>
-                <span className={`badge ${statusBadge(booking.status)}`}>{booking.status}</span>
-              </div>
-              <div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Valid Until</div>
-                <div style={{ fontSize: 14 }}>{new Date(booking.validUntil).toLocaleDateString()}</div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <span className={`badge ${statusBadge(booking.status)}`}>{booking.status || 'Pending'}</span>
+                <span className="badge badge-meta">{booking.recordLocator || booking.bookingRef || 'REC-000'}</span>
               </div>
             </div>
 
-            <div style={{ marginTop: 20 }}>
-              <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>{booking.description}</div>
+            <div style={{ display: 'grid', gap: 12 }}>
+              <div style={{ padding: 16, borderRadius: 12, border: '1px solid var(--border-color)', background: 'var(--bg-card)' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Header — booking summary</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+                  <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>Customer information</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{booking.lead?.name || 'Customer name not listed'}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{booking.lead?.email || 'Email not listed'}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{booking.lead?.phone || 'Phone not listed'}</div>
+                  </div>
+                  <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>Booking information</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}><strong style={{ color: 'var(--text-primary)' }}>Booking / Order:</strong> {booking.recordLocator || booking.bookingRef || 'REC-000'}</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}><strong style={{ color: 'var(--text-primary)' }}>Date:</strong> {booking.createdAt ? new Date(booking.createdAt).toLocaleString() : 'Not available'}</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}><strong style={{ color: 'var(--text-primary)' }}>Status:</strong> {booking.status || 'Pending'}</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>Amount:</strong> {booking.price ? `$${Number(booking.price).toLocaleString()}` : 'Not available'} {booking.currency || 'USD'}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ padding: 16, borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(99,102,241,0.04)' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Body — customer actions and employee documentation</div>
+                <div style={{ display: 'grid', gap: 10 }}>
+                  <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Customer actions</div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <button className="btn btn-secondary btn-sm">Confirm details</button>
+                      <button className="btn btn-secondary btn-sm">Request change</button>
+                      <button className="btn btn-secondary btn-sm">Cancel booking</button>
+                      <button className="btn btn-secondary btn-sm">Request refund</button>
+                      <button className="btn btn-secondary btn-sm">Start return</button>
+                    </div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 8 }}>{booking.description || 'Booking details and customer instructions will appear here.'}</div>
+                  </div>
+                  <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Internal employee documentation</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Employees can leave private notes, call summaries, observations, and attachments here. These entries should carry the employee name, email, position, department, and timestamps.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ padding: 16, borderRadius: 12, border: '1px solid var(--border-color)', background: 'rgba(16,185,129,0.04)' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Footer — payments, documentation history, and audit log</div>
+                <div style={{ display: 'grid', gap: 10 }}>
+                  <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Payment information</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Payment method: Card ending in 4242 • Status: Pending / Completed • Invoice actions and refund status will appear here.</div>
+                  </div>
+                  <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Employee documentation history</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>All internal documentation entries will be shown here with date, time, employee name, email, position, and department.</div>
+                  </div>
+                  <div style={{ padding: 12, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>Booking activity log</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Every action taken on this booking will be recorded in the audit trail with the employee name, email, role, and timestamp.</div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {(user.role === 'Customer Support Agent' || user.role === 'Customer Support Manager' ||
               user.role === 'CRM Developer' || user.role === 'CRM Consultant' ||
               user.role === 'System Architect' || user.role === 'Super CRM Administrator') && (
-              <div style={{ marginTop: 20, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                 {booking.status !== 'Canceled' && (
                   <button className="btn btn-secondary btn-sm" onClick={() => handleStatusChange('Canceled')}>
                     Cancel Booking
