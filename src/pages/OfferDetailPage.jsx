@@ -61,6 +61,7 @@ const OfferDetailPage = () => {
   const [success, setSuccess] = useState('');
   const [emails, setEmails] = useState([]);
   const [emailsLoading, setEmailsLoading] = useState(false);
+  const [errRaw, setErrRaw] = useState('');
 
   const fetchOffer = async () => {
     try {
@@ -71,7 +72,11 @@ const OfferDetailPage = () => {
       setOffer(offerRes.data.data);
       setLead(leadRes.data.data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load offer');
+      const apiMsg = err.response?.data?.message;
+      const apiError = err.response?.data?.error;
+      const raw = err.message || err.toString();
+      setError([apiMsg, apiError].filter(Boolean).join(' | ') || 'Failed to load offer');
+      setErrRaw(raw);
     } finally {
       setLoading(false);
     }
@@ -82,8 +87,11 @@ const OfferDetailPage = () => {
     try {
       const res = await API.get(`/offers/${id}/communications`);
       setEmails(res.data.data || []);
-    } catch {
+    } catch (err) {
       setEmails([]);
+      if (err.response?.status !== 404) {
+        setError(err.response?.data?.message || 'Failed to load offer communications');
+      }
     } finally {
       setEmailsLoading(false);
     }
@@ -200,7 +208,12 @@ const OfferDetailPage = () => {
         </div>
       </div>
 
-      {error && <div className="alert alert-error" style={{ marginBottom: 20 }}>{error}</div>}
+      {error && (
+        <div className="alert alert-error" style={{ marginBottom: 20 }}>
+          <div>{error}</div>
+          {errRaw && <div style={{ fontSize: 11, marginTop: 6, opacity: .85 }}>Raw error: {String(errRaw)}</div>}
+        </div>
+      )}
       {success && <div className="alert alert-success" style={{ marginBottom: 20 }}>{success}</div>}
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 20, overflowX: 'auto', borderBottom: '1px solid var(--border-color)', paddingBottom: 0 }}>
