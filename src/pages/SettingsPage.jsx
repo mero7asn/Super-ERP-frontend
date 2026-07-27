@@ -67,7 +67,7 @@ const SettingsPage = () => {
   const [smtpPass, setSmtpPass] = useState('');
 
   // Pricing & Currency settings
-  const [pricingSettings, setPricingSettings] = useState({ minOfferPrice: '', minProductPrice: '', allowDiscountOverride: false });
+  const [pricingSettings, setPricingSettings] = useState({ offerPriceMin: '', productPriceMin: '', discountOverride: false });
   const [currencies, setCurrencies] = useState([]);
   const [defaultCurrency, setDefaultCurrency] = useState('USD');
   const [newCurrency, setNewCurrency] = useState({ code: '', name: '', symbol: '', rate: '' });
@@ -131,9 +131,9 @@ const SettingsPage = () => {
         const { data } = await API.get('/settings/pricing');
         if (data.success && data.data) {
           setPricingSettings({
-            minOfferPrice: data.data.minOfferPrice || '',
-            minProductPrice: data.data.minProductPrice || '',
-            allowDiscountOverride: data.data.allowDiscountOverride || false
+            offerPriceMin: data.data.offerPriceMin ?? data.data.minOfferPrice ?? '',
+            productPriceMin: data.data.productPriceMin ?? data.data.minProductPrice ?? '',
+            discountOverride: data.data.discountOverride ?? data.data.allowDiscountOverride ?? false
           });
         }
       } catch (err) {
@@ -730,8 +730,8 @@ const SettingsPage = () => {
                         className="form-input"
                         type="number"
                         step="0.01"
-                        value={pricingSettings.minOfferPrice}
-                        onChange={(e) => setPricingSettings(p => ({ ...p, minOfferPrice: e.target.value }))}
+                        value={pricingSettings.offerPriceMin}
+                        onChange={(e) => setPricingSettings(p => ({ ...p, offerPriceMin: e.target.value }))}
                       />
                     </div>
                     <div className="form-group" style={{ margin: 0 }}>
@@ -740,8 +740,8 @@ const SettingsPage = () => {
                         className="form-input"
                         type="number"
                         step="0.01"
-                        value={pricingSettings.minProductPrice}
-                        onChange={(e) => setPricingSettings(p => ({ ...p, minProductPrice: e.target.value }))}
+                        value={pricingSettings.productPriceMin}
+                        onChange={(e) => setPricingSettings(p => ({ ...p, productPriceMin: e.target.value }))}
                       />
                     </div>
                   </div>
@@ -752,8 +752,8 @@ const SettingsPage = () => {
                     <input
                       type="checkbox"
                       id="allowDiscountOverride"
-                      checked={pricingSettings.allowDiscountOverride}
-                      onChange={(e) => setPricingSettings(p => ({ ...p, allowDiscountOverride: e.target.checked }))}
+                      checked={pricingSettings.discountOverride}
+                      onChange={(e) => setPricingSettings(p => ({ ...p, discountOverride: e.target.checked }))}
                       style={{ width: 18, height: 18, cursor: 'pointer' }}
                     />
                     <label htmlFor="allowDiscountOverride" style={{ fontWeight: 500, fontSize: 13, cursor: 'pointer' }}>
@@ -772,7 +772,11 @@ const SettingsPage = () => {
                       setErrorMsg('');
                       setSuccessMsg('');
                       try {
-                        await API.put('/settings/pricing', pricingSettings);
+                        await API.put('/settings/pricing', {
+                          offerPriceMin: pricingSettings.offerPriceMin,
+                          productPriceMin: pricingSettings.productPriceMin,
+                          discountOverride: pricingSettings.discountOverride,
+                        });
                         setSuccessMsg('Pricing settings saved successfully.');
                         setTimeout(() => setSuccessMsg(''), 4000);
                       } catch (err) {

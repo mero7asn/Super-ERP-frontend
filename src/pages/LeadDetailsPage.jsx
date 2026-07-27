@@ -136,6 +136,10 @@ const LeadDetailsPage = () => {
         setCurrencies(configuredCurrencies);
         setDefaultCurrency(configuredDefault);
         setNewOfferCurrency(configuredDefault);
+        if (!configuredCurrencies.length) {
+          setCurrencies([{ code: 'USD', name: 'US Dollar', symbol: '$', rate: 1 }]);
+          setNewOfferCurrency('USD');
+        }
       } catch (err) {
         console.error('Failed to load currencies:', err);
       }
