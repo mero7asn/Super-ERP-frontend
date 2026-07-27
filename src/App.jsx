@@ -53,6 +53,7 @@ import WarehousesPage from './pages/WarehousesPage';
 import PickTaskPage from './pages/PickTaskPage';
 import InventoryReportsPage from './pages/InventoryReportsPage';
 import SupplyChainPage from './pages/SupplyChainPage';
+import OfferDetailPage from './pages/OfferDetailPage';
 
 // Layout wrapper: renders Sidebar + content for authenticated pages
 const AppLayout = ({ children }) => {
@@ -389,6 +390,16 @@ const AppRoutes = () => {
           }
         />
 
+      <Route
+        path="/offers/:id"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <OfferDetailPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
       {/* Protected: Analytics */}
       <Route
         path="/analytics"

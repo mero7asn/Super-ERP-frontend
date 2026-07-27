@@ -616,7 +616,7 @@ const LeadDetailsPage = () => {
                 ];
 
                 return (
-                  <div key={offer._id} className="table-wrapper" style={{ padding: 0, display: 'flex', flexDirection: 'column', borderRadius: 18, overflow: 'hidden', boxShadow: '0 12px 30px rgba(15, 23, 42, 0.07)' }}>
+                  <div key={offer._id} onClick={() => navigate(`/offers/${offer._id}`)} style={{ cursor: 'pointer', padding: 0, display: 'flex', flexDirection: 'column', borderRadius: 18, overflow: 'hidden', boxShadow: '0 12px 30px rgba(15, 23, 42, 0.07)' }}>
                     <div style={{ padding: '20px 22px', background: 'linear-gradient(90deg, rgba(99,102,241,0.10), rgba(16,185,129,0.08))', borderBottom: '1px solid var(--border-color)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
                         <div style={{ flex: 1 }}>
