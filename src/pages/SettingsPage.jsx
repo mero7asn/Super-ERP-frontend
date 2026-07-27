@@ -27,6 +27,27 @@ const COMMON_CURRENCIES = [
   { code: 'JPY', name: 'Japanese Yen', symbol: '¥', rate: 149.5 },
 ];
 
+const normalizeCurrencies = (values = []) => {
+  const seen = new Set();
+  const merged = [];
+  const source = [...(Array.isArray(values) ? values : []), ...COMMON_CURRENCIES];
+
+  source.forEach((currency) => {
+    if (!currency || !currency.code) return;
+    const code = String(currency.code).trim().toUpperCase();
+    if (seen.has(code)) return;
+    seen.add(code);
+    merged.push({
+      code,
+      name: currency.name || code,
+      symbol: currency.symbol || '',
+      rate: currency.rate ?? 1,
+    });
+  });
+
+  return merged;
+};
+
 const SettingsPage = () => {
   const { user, setBusinessModel } = useAuth();
   const [activeTab, setActiveTab] = useState('general');
@@ -144,8 +165,9 @@ const SettingsPage = () => {
       try {
         const { data } = await API.get('/settings/currencies');
         if (data.success && data.data) {
-          setCurrencies(data.data.currencies || []);
-          setDefaultCurrency(data.data.defaultCurrency || 'USD');
+          const configuredCurrencies = normalizeCurrencies(data.data.currencies || []);
+          setCurrencies(configuredCurrencies);
+          setDefaultCurrency(data.data.defaultCurrency || configuredCurrencies[0]?.code || 'USD');
         }
       } catch (err) {
         console.error('Failed to load currencies:', err);
@@ -839,11 +861,18 @@ const SettingsPage = () => {
                         setErrorMsg('');
                         setSuccessMsg('');
                         try {
-                          const updated = [...currencies, { code: newCurrency.code, name: newCurrency.name, symbol: newCurrency.symbol, rate: Number(newCurrency.rate) || 0 }];
-                          await API.put('/settings/currencies', { currencies: updated, defaultCurrency });
+                          const updated = normalizeCurrencies([
+                            ...currencies,
+                            { code: newCurrency.code, name: newCurrency.name, symbol: newCurrency.symbol, rate: Number(newCurrency.rate) || 0 },
+                          ]);
+                          await API.put('/settings/currencies', { currencies: updated, defaultCurrency: defaultCurrency || newCurrency.code });
                           setNewCurrency({ code: '', name: '', symbol: '', rate: '' });
                           const { data } = await API.get('/settings/currencies');
-                          setCurrencies(data.data?.currencies || []);
+                          const reloaded = normalizeCurrencies(data.data?.currencies || []);
+                          setCurrencies(reloaded);
+                          if (!defaultCurrency && reloaded.length) {
+                            setDefaultCurrency(reloaded[0].code);
+                          }
                           setSuccessMsg('Currency added successfully.');
                           setTimeout(() => setSuccessMsg(''), 4000);
                         } catch (err) {
@@ -884,7 +913,7 @@ const SettingsPage = () => {
                                 try {
                                   await API.delete(`/settings/currencies/${c.code}`);
                                   const { data } = await API.get('/settings/currencies');
-                                  setCurrencies(data.data?.currencies || []);
+                                  setCurrencies(normalizeCurrencies(data.data?.currencies || []));
                                 } catch (err) {
                                   setErrorMsg(err.response?.data?.message || 'Failed to delete currency');
                                 }

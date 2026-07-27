@@ -20,6 +20,36 @@ const statusBadge = (status) => {
 
 const STATUSES = ['New', 'Contacted', 'Qualified', 'Lost', 'Converted'];
 
+const FALLBACK_CURRENCIES = [
+  { code: 'USD', name: 'US Dollar', symbol: '$', rate: 1 },
+  { code: 'EUR', name: 'Euro', symbol: '€', rate: 0.92 },
+  { code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.79 },
+  { code: 'EGP', name: 'Egyptian Pound', symbol: 'E£', rate: 48.5 },
+  { code: 'SAR', name: 'Saudi Riyal', symbol: '﷼', rate: 3.75 },
+  { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ', rate: 3.67 },
+];
+
+const normalizeCurrencies = (values = []) => {
+  const seen = new Set();
+  const merged = [];
+  const source = [...(Array.isArray(values) ? values : []), ...FALLBACK_CURRENCIES];
+
+  source.forEach((currency) => {
+    if (!currency || !currency.code) return;
+    const code = String(currency.code).trim().toUpperCase();
+    if (seen.has(code)) return;
+    seen.add(code);
+    merged.push({
+      code,
+      name: currency.name || code,
+      symbol: currency.symbol || '',
+      rate: currency.rate ?? 1,
+    });
+  });
+
+  return merged;
+};
+
 const LeadDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -131,17 +161,16 @@ const LeadDetailsPage = () => {
     const fetchCurrencies = async () => {
       try {
         const { data } = await API.get('/settings/currencies');
-        const configuredCurrencies = data.data?.currencies || [];
-        const configuredDefault = data.data?.defaultCurrency || 'USD';
+        const configuredCurrencies = normalizeCurrencies(data.data?.currencies || []);
+        const configuredDefault = data.data?.defaultCurrency || configuredCurrencies[0]?.code || 'USD';
         setCurrencies(configuredCurrencies);
         setDefaultCurrency(configuredDefault);
         setNewOfferCurrency(configuredDefault);
-        if (!configuredCurrencies.length) {
-          setCurrencies([{ code: 'USD', name: 'US Dollar', symbol: '$', rate: 1 }]);
-          setNewOfferCurrency('USD');
-        }
       } catch (err) {
         console.error('Failed to load currencies:', err);
+        setCurrencies(normalizeCurrencies());
+        setDefaultCurrency('USD');
+        setNewOfferCurrency('USD');
       }
     };
     fetchSettings();
@@ -700,6 +729,10 @@ const LeadDetailsPage = () => {
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>Create New Offer</h2>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>Build a custom offer for {lead.name}</p>
 
+            {error && (
+              <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>
+            )}
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {templates.length > 0 && (
                 <div className="form-group" style={{ margin: 0 }}>
@@ -845,6 +878,10 @@ const LeadDetailsPage = () => {
           }} onClick={e => e.stopPropagation()}>
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>Edit Offer</h2>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>Update this draft offer before sending.</p>
+
+            {error && (
+              <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>
+            )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div className="form-group" style={{ margin: 0 }}>
