@@ -62,6 +62,10 @@ const OfferDetailPage = () => {
   const [emails, setEmails] = useState([]);
   const [emailsLoading, setEmailsLoading] = useState(false);
   const [errRaw, setErrRaw] = useState('');
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imageCaption, setImageCaption] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const fetchOffer = async () => {
     try {
@@ -155,6 +159,39 @@ const OfferDetailPage = () => {
       fetchEmails();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to add reply');
+    }
+  };
+
+  const handleUploadImage = async (e) => {
+    if (e) e.preventDefault();
+    if (!selectedFile) return setError('Please select an image file first');
+    setSaving(true);
+    setError('');
+    const formData = new FormData();
+    formData.append('image', selectedFile);
+    if (imageCaption) formData.append('caption', imageCaption);
+    try {
+      await API.post(`/offers/${offer._id}/images`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      await fetchOffer();
+      setShowImageModal(false);
+      setSelectedFile(null);
+      setImageCaption('');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to upload image');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteImage = async (imageId) => {
+    if (!confirm('Are you sure you want to delete this image?')) return;
+    try {
+      await API.delete(`/offers/${offer._id}/images/${imageId}`);
+      await fetchOffer();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete image');
     }
   };
 
@@ -311,7 +348,12 @@ const OfferDetailPage = () => {
 
         {activeTab === 'images' && (
           <div>
-            <h3 style={{ margin: '0 0 12px', fontSize: 16 }}>Offer Images</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <h3 style={{ margin: 0, fontSize: 16 }}>Offer Images</h3>
+              <button className="btn btn-primary btn-sm" onClick={() => setShowImageModal(true)}>
+                <Icon name="image" size={14} /> Add Image
+              </button>
+            </div>
             {(!offer.images || offer.images.length === 0) ? (
               <div style={{ padding: 24, textAlign: 'center', color: 'var(--text-muted)', border: '1px dashed var(--border-color)', borderRadius: 10 }}>
                 No images have been added to this offer yet.
@@ -321,6 +363,10 @@ const OfferDetailPage = () => {
                 {offer.images.map(img => img && img.url && (
                   <div key={img._id || img.url} style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#000', minHeight: 110 }}>
                     <img src={img.url && (img.url.startsWith('http') || img.url.startsWith('data:')) ? img.url : `http://localhost:5000${img.url}`} alt={img.caption || 'Offer image'} style={{ width: '100%', height: 110, objectFit: 'cover' }} />
+                    {(isAdmin || (offer.createdBy && offer.createdBy._id === user?._id)) && (
+                      <button type="button" onClick={() => handleDeleteImage(img._id)} style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(239,68,68,0.9)', color: '#fff', border: 'none', borderRadius: 999, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 10 }} title="Delete photo">✕</button>
+                    )}
+                    {img.caption && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 10, padding: '4px 6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{img.caption}</div>}
                   </div>
                 ))}
               </div>
@@ -419,6 +465,41 @@ const OfferDetailPage = () => {
           onClose={() => setShowEmailComposer(false)}
           onSend={handleEmailSent}
         />
+      )}
+
+      {showImageModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000, padding: 20
+        }} onClick={() => { setShowImageModal(false); setSelectedFile(null); setImageCaption(''); }}>
+          <div style={{
+            background: 'var(--bg-card)', borderRadius: 12, padding: 24, maxWidth: 520, width: '100%',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>Add Offer Image</h3>
+              <button onClick={() => { setShowImageModal(false); setSelectedFile(null); setImageCaption(''); }} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>×</button>
+            </div>
+            {error && <div className="alert alert-error" style={{ marginBottom: 12 }}>{error}</div>}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div className="form-group" style={{ margin: 0 }}>
+                <label className="form-label">Image</label>
+                <input className="form-input" type="file" accept="image/*" onChange={e => setSelectedFile(e.target.files?.[0] || null)} />
+              </div>
+              <div className="form-group" style={{ margin: 0 }}>
+                <label className="form-label">Caption (optional)</label>
+                <input className="form-input" value={imageCaption} onChange={e => setImageCaption(e.target.value)} placeholder="Image caption" />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+                <button className="btn btn-secondary" onClick={() => { setShowImageModal(false); setSelectedFile(null); setImageCaption(''); }} disabled={saving}>Cancel</button>
+                <button className="btn btn-primary" onClick={handleUploadImage} disabled={saving || !selectedFile}>
+                  {saving ? 'Uploading...' : 'Upload Image'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
