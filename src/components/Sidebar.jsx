@@ -255,7 +255,7 @@ const Sidebar = () => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredCrmItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: crmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>?</span>
+                <span className="mini-sidebar-arrow" style={{ transform: crmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
               </div>
             </div>
 
@@ -292,7 +292,7 @@ const Sidebar = () => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredInventoryItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: inventoryOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>?</span>
+                <span className="mini-sidebar-arrow" style={{ transform: inventoryOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
               </div>
             </div>
 
@@ -329,7 +329,7 @@ const Sidebar = () => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredSupplyChainItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: supplyChainOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>?</span>
+                <span className="mini-sidebar-arrow" style={{ transform: supplyChainOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
               </div>
             </div>
 
@@ -366,7 +366,7 @@ const Sidebar = () => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredHrmItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: hrmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>?</span>
+                <span className="mini-sidebar-arrow" style={{ transform: hrmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
               </div>
             </div>
 
@@ -400,7 +400,7 @@ const Sidebar = () => {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span className="mini-sidebar-badge">{filteredWorkspaceItems.length}</span>
-              <span className="mini-sidebar-arrow" style={{ transform: workspaceOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>?</span>
+              <span className="mini-sidebar-arrow" style={{ transform: workspaceOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
             </div>
           </div>
 
