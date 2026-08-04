@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import API from '../services/api';
+import { Icon } from './Icons';
 
 const OfferVersionsModal = ({ offerId, onClose }) => {
   const [versions, setVersions] = useState([]);
@@ -118,7 +119,7 @@ const OfferVersionsModal = ({ offerId, onClose }) => {
                       {selected.emailRef ? (
                         <>
                           From: {selected.emailRef.fromEmail || '—'} • To: {selected.emailRef.toEmail || '—'} •{' '}
-                          {selected.emailRef.sentAt ? new Date(selected.emailRef.sentAt).toLocaleString() : ''} â€¢ Status: {selected.emailRef.status}
+                          {selected.emailRef.sentAt ? new Date(selected.emailRef.sentAt).toLocaleString() : ''} • Status: {selected.emailRef.status}
                         </>
                       ) : (
                         'Snapshot only (no email artifact)'

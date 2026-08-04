@@ -416,7 +416,7 @@ const EmailsPage = () => {
                     flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: 'var(--text-muted)', flexDirection: 'column', gap: 12
                   }}>
-                    <span style={{ fontSize: 40 }}>âœ‰ï¸</span>
+                    <Icon name="mail" size={40} />
                     <span style={{ fontSize: 14 }}>Select an email to read it</span>
                   </div>
                 ) : (
@@ -451,7 +451,7 @@ const EmailsPage = () => {
                           onClick={() => { setShowReplyBox(true); setReplyMsg({ type: '', text: '' }); }}
                           style={{ flexShrink: 0, padding: '7px 16px', display: 'flex', alignItems: 'center', gap: 6 }}
                         >
-                          â†© Reply
+                          ↩ Reply
                         </button>
                       </div>
                     </div>
@@ -479,7 +479,7 @@ const EmailsPage = () => {
                       {/* Reply bubbles */}
                       {loadingThread ? (
                         <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', padding: 16 }}>
-                          Loading threadâ€¦
+                          Loading thread…
                         </div>
                       ) : (
                         thread.map(reply => (
@@ -519,7 +519,7 @@ const EmailsPage = () => {
                             <textarea
                               className="form-input"
                               rows={3}
-                              placeholder="Write your replyâ€¦"
+                              placeholder="Write your reply…"
                               value={replyBody}
                               onChange={e => setReplyBody(e.target.value)}
                               style={{ resize: 'none', fontSize: 13 }}
@@ -530,7 +530,7 @@ const EmailsPage = () => {
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flexShrink: 0 }}>
                             <button type="submit" className="btn btn-primary btn-sm" disabled={sendingReply}
                               style={{ padding: '9px 18px' }}>
-                              {sendingReply ? 'Sendingâ€¦' : 'â†© Send'}
+                              {sendingReply ? 'Sending…' : '↩ Send'}
                             </button>
                             <button type="button" className="btn btn-secondary btn-sm"
                               onClick={() => { setShowReplyBox(false); setReplyBody(''); }}
@@ -558,7 +558,7 @@ const EmailsPage = () => {
                             color: 'var(--text-muted)', fontSize: 13, justifyContent: 'flex-start'
                           }}
                         >
-                          â†© Click to reply to this threadâ€¦
+                          ↩ Click to reply to this thread…
                         </button>
                       </div>
                     )}

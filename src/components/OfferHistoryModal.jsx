@@ -48,9 +48,9 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
         {Object.keys(changes).map(field => {
           const { from, to } = changes[field];
           const fmt = (v) => {
-            if (field === 'price') return v != null ? '$' + Number(v).toLocaleString() : 'â€”';
-            if (field === 'validUntil') return v ? new Date(v).toLocaleDateString() : 'â€”';
-            if (v == null) return 'â€”';
+            if (field === 'price') return v != null ? '$' + Number(v).toLocaleString() : '—';
+            if (field === 'validUntil') return v ? new Date(v).toLocaleDateString() : '—';
+            if (v == null) return '—';
             return String(v);
           };
           return (

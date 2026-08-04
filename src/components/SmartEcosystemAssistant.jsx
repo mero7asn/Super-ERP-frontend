@@ -169,8 +169,7 @@ const SmartEcosystemAssistant = () => {
         onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
         onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
       >
-        <span style={{ fontSize: 18 }}>ðŸ¤–</span>
-        <span>AI Assistant</span>
+        <span style={{ fontSize: 18 }}>🤖</span>
         <span
           style={{
             background: 'rgba(255, 255, 255, 0.2)',
@@ -250,7 +249,7 @@ const SmartEcosystemAssistant = () => {
                 onClick={() => setIsOpen(false)}
                 style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: 24, cursor: 'pointer' }}
               >
-                Ã—
+                ×
               </button>
             </div>
 
@@ -286,7 +285,7 @@ const SmartEcosystemAssistant = () => {
             {/* Quick Actions Shortcuts */}
             <div style={{ padding: '12px 20px', borderBottom: '1px solid #E2E8F0' }}>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: '#64748B', marginBottom: 8 }}>
-                âš¡ Quick Ecosystem Actions
+                ⚡ Quick Ecosystem Actions
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {QUICK_ACTIONS.map((action, idx) => (
