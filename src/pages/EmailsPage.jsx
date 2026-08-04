@@ -326,7 +326,7 @@ const EmailsPage = () => {
                     style={{ resize: 'vertical' }} required />
                 </div>
                 <button type="submit" className="btn btn-primary" disabled={sending} style={{ alignSelf: 'flex-start' }}>
-                  {sending ? 'Sending…' : '<Icon name="send" size={18} /> Send Message'}
+                  {sending ? 'Sending…' : (<><Icon name="send" size={18} /> Send Message</>)}
                 </button>
               </form>
             </div>

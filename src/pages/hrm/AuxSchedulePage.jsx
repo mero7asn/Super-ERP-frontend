@@ -168,8 +168,8 @@ const AuxSchedulePage = () => {
       {/* Tab bar */}
       <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--border-color)' }}>
         {[
-          { id: 'report', label: '<Icon name="analytics" size={18} /> Compliance Report' },
-          ...(isHR ? [{ id: 'schedule', label: '<Icon name="calendar" size={18} /> Schedule Editor' }] : []),
+          { id: 'report', label: (<><Icon name="analytics" size={18} /> Compliance Report</>) },
+          ...(isHR ? [{ id: 'schedule', label: (<><Icon name="calendar" size={18} /> Schedule Editor</>) }] : []),
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
             padding: '10px 20px', border: 'none', background: 'transparent', cursor: 'pointer',

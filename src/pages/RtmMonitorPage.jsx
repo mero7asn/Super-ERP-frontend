@@ -225,7 +225,7 @@ const RtmMonitorPage = () => {
             { key: 'Training', label: 'Training', color: AUX_COLORS.Training },
             { key: 'Coaching', label: 'Coaching', color: AUX_COLORS.Coaching },
             { key: 'Logged out', label: 'Logged Out', color: AUX_COLORS['Logged out'] },
-            { key: 'Flagged', label: '<Icon name="siren" size={18} /> Flagged', color: '#EF4444' },
+            { key: 'Flagged', label: (<><Icon name="siren" size={18} /> Flagged</>), color: '#EF4444' },
           ].map(({ key, label, color }) => (
             <button
               key={key}
@@ -267,7 +267,7 @@ const RtmMonitorPage = () => {
             className={groupByTeam ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'}
             style={{ fontSize: 12, padding: '6px 14px' }}
           >
-            {groupByTeam ? '<Icon name="users" size={18} /> Grouped by Team' : '<Icon name="users" size={18} /> Group by Team'}
+            {groupByTeam ? (<><Icon name="users" size={18} /> Grouped by Team</>) : (<><Icon name="users" size={18} /> Group by Team</>)}
           </button>
         </div>
 

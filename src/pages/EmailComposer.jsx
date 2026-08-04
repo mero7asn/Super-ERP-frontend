@@ -56,12 +56,12 @@ const Icons = {
 
 const BLOCK_TYPES = [
   { type: 'header', label: 'Title Header', icon: 'H', description: 'Styled title banner' },
-  { type: 'offer-details', label: 'Offer Summary Card', icon: '<Icon name="kanban" size={18} />', description: 'Interactive proposal box' },
-  { type: 'payment-link', label: 'Pay Now Button', icon: '<Icon name="money" size={18} />', description: 'Direct checkout action' },
-  { type: 'company-info', label: 'Company Branding', icon: '<Icon name="settings" size={18} />', description: 'Logo & signature header' },
   { type: 'text', label: 'Text Paragraph', icon: '¶', description: 'Standard body text' },
-  { type: 'button', label: 'Custom CTA Button', icon: '<Icon name="target" size={18} />', description: 'Clickable action button' },
-  { type: 'image', label: 'Image Box', icon: '<Icon name="kanban" size={18} />', description: 'Image placeholder or URL' },
+  { type: 'offer-details', label: 'Offer Summary Card', icon: <Icon name="kanban" size={18} />, description: 'Interactive proposal box' },
+  { type: 'payment-link', label: 'Pay Now Button', icon: <Icon name="money" size={18} />, description: 'Direct checkout action' },
+  { type: 'company-info', label: 'Company Branding', icon: <Icon name="settings" size={18} />, description: 'Logo & signature header' },
+    { type: 'button', label: 'Custom CTA Button', icon: <Icon name="target" size={18} />, description: 'Clickable action button' },
+    { type: 'image', label: 'Image Box', icon: <Icon name="kanban" size={18} />, description: 'Image placeholder or URL' },
   { type: 'divider', label: 'Divider Line', icon: '—', description: 'Clean separator line' },
   { type: 'spacer', label: 'Spacer', icon: '↕', description: 'Vertical spacing gap' },
 ];
@@ -96,7 +96,7 @@ const VARIABLES = [
   },
 ];
 
-const EMOJIS = ['😊', '<Icon name="like" size={18} />', '💼', '<Icon name="analytics" size={18} />', '<Icon name="handshake" size={18} />', '<Icon name="rocket" size={18} />', '<Icon name="check" size={18} />', '<Icon name="star" size={18} />', '✉', '<Icon name="flag" size={18} />', '<Icon name="bulb" size={18} />', '<Icon name="play" size={18} />'];
+const EMOJIS = ['😊', '👍', '💼', '📊', '🤝', '🚀', '✅', '⭐', '✉️', '🚩', '💡', '▶️'];
 
 const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
   const [subject, setSubject] = useState(`Offer Proposal: ${offer?.title || 'Custom Service'}`);

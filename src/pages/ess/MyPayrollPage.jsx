@@ -242,10 +242,10 @@ const MyPayrollPage = () => {
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 0, overflowX: 'auto' }}>
         {[
-          { id: 'payslips', label: '<Icon name="kanban" size={18} /> Payslips' },
+          { id: 'payslips', label: (<><Icon name="kanban" size={18} /> Payslips</>) },
           { id: 'history', label: '🧾 Payment History' },
-          { id: 'bank', label: '<Icon name="money" size={18} /> Bank Account' },
-          { id: 'payment', label: '<Icon name="money" size={18} /> Payment Method' },
+          { id: 'bank', label: (<><Icon name="money" size={18} /> Bank Account</>) },
+          { id: 'payment', label: (<><Icon name="money" size={18} /> Payment Method</>) },
         ].map(t => (
           <button
             key={t.id}
@@ -507,7 +507,7 @@ const MyPayrollPage = () => {
                   <div style={{ fontSize: 13 }}><strong>Method:</strong> {myBank.disbursementMethod}</div>
                   <div style={{ fontSize: 13 }}><strong>Bank:</strong> {myBank.bankName}</div>
                   <div style={{ fontSize: 13 }}><strong>Account:</strong> <span style={{ fontFamily: 'monospace' }}>{myBank.accountNumber || myBank.iban || '—'}</span></div>
-                  <div style={{ fontSize: 13, marginTop: 6, color: myBank.isVerified ? '#047857' : '#B45309' }}>{myBank.isVerified ? '✓ Verified by HR' : '<Icon name="clock" size={18} /> Pending HR verification'}</div>
+                  <div style={{ fontSize: 13, marginTop: 6, color: myBank.isVerified ? '#047857' : '#B45309' }}>{myBank.isVerified ? '✓ Verified by HR' : (<><Icon name="clock" size={18} /> Pending HR verification</>)}</div>
                 </div>
               ) : <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>No bank account on file yet.</div>}
             </div>

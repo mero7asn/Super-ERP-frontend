@@ -1140,13 +1140,13 @@ const TemplateEditorInline = ({ mode, editingTemplateId, blocks, setBlocks, temp
           {[
             { type: 'header', label: 'Header', icon: 'H' },
             { type: 'text', label: 'Text', icon: 'T' },
-            { type: 'image', label: 'Image', icon: '<Icon name="kanban" size={18} />' },
-            { type: 'button', label: 'Button', icon: '<Icon name="target" size={18} />' },
+            { type: 'image', label: 'Image', icon: <Icon name="kanban" size={18} /> },
+            { type: 'button', label: 'Button', icon: <Icon name="target" size={18} /> },
             { type: 'divider', label: 'Divider', icon: '—' },
             { type: 'spacer', label: 'Spacer', icon: '↕' },
-            { type: 'offer-details', label: 'Offer Details', icon: '<Icon name="kanban" size={18} />' },
-            { type: 'payment-link', label: 'Payment Button', icon: '<Icon name="money" size={18} />' },
-            { type: 'company-info', label: 'Company Info', icon: '<Icon name="settings" size={18} />' },
+            { type: 'offer-details', label: 'Offer Details', icon: <Icon name="kanban" size={18} /> },
+            { type: 'payment-link', label: 'Payment Button', icon: <Icon name="money" size={18} /> },
+            { type: 'company-info', label: 'Company Info', icon: <Icon name="settings" size={18} /> },
           ].map(bt => (
             <div
               key={bt.type}

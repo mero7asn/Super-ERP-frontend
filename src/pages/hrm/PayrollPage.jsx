@@ -45,10 +45,10 @@ const sev = {
 };
 
 const alertTypeClr = {
-  Fraud:          { icon: '<Icon name="siren" size={18} />', color: '#EF4444' },
-  Anomaly:        { icon: '<Icon name="warning" size={18} />',  color: '#F59E0B' },
+  Fraud:          { icon: <Icon name="siren" size={18} />, color: '#EF4444' },
+  Anomaly:        { icon: <Icon name="warning" size={18} />,  color: '#F59E0B' },
   Compliance:     { icon: '⚖',  color: '#2563EB' },
-  Recommendation: { icon: '<Icon name="bulb" size={18} />', color: '#10B981' },
+  Recommendation: { icon: <Icon name="bulb" size={18} />, color: '#10B981' },
   Info:           { icon: 'ℹ',  color: '#64748B' },
 };
 
@@ -839,7 +839,7 @@ const PayrollPage = () => {
                         <td style={{ fontWeight: 600 }}>{r.period}</td>
                         <td>
                           <span style={{ padding: '3px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600, background: isBonus ? 'rgba(245,158,11,0.12)' : 'rgba(37,99,235,0.10)', color: isBonus ? '#B45309' : '#2563EB' }}>
-                            {isBonus ? '🎁 Bonus' : '<Icon name="money" size={18} /> Salary'}
+                            {isBonus ? '🎁 Bonus' : (<><Icon name="money" size={18} /> Salary</>)}
                           </span>
                         </td>
                         <td><Badge label={r.status} bg={s.bg} color={s.text} border={s.border} /></td>
@@ -942,9 +942,9 @@ const PayrollPage = () => {
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
           {[
             { icon: '', label: 'Open Alerts', value: openCount },
-            { icon: '<Icon name="siren" size={18} />', label: 'Critical', value: criticalCount },
+            { icon: <Icon name="siren" size={18} />, label: 'Critical', value: criticalCount },
             { icon: '👻', label: 'Fraud Flags', value: fraudCount },
-            { icon: '<Icon name="check" size={18} />', label: 'Resolved', value: alerts.filter(a => a.status === 'Resolved').length },
+            { icon: <Icon name="check" size={18} />, label: 'Resolved', value: alerts.filter(a => a.status === 'Resolved').length },
           ].map(({ icon, label, value }) => (
             <MetricCard key={label} icon={icon} label={label} value={value} />
           ))}
@@ -1252,7 +1252,7 @@ const PayrollPage = () => {
             <div style={{ marginTop: 12, maxWidth: 280 }}>
               <Field label="Disbursement Method">
                 <select className="form-input" value={baForm.method} onChange={e => setBaForm({ ...baForm, method: e.target.value })}>
-                  {cap.methods.map(m => <option key={m} value={m}>{m === 'BankAccount' ? '<Icon name="money" size={18} /> Bank Account' : m === 'FawryWallet' ? '<Icon name="phone" size={18} /> Fawry Wallet' : m === 'PayMobWallet' ? '<Icon name="money" size={18} /> PayMob Wallet' : m}</option>)}
+                  {cap.methods.map(m => <option key={m} value={m}>{m === 'BankAccount' ? (<><Icon name="money" size={18} /> Bank Account</>) : m === 'FawryWallet' ? (<><Icon name="phone" size={18} /> Fawry Wallet</>) : m === 'PayMobWallet' ? (<><Icon name="money" size={18} /> PayMob Wallet</>) : m}</option>)}
                 </select>
               </Field>
             </div>
@@ -1446,7 +1446,7 @@ const PayrollPage = () => {
                 disabled={releaseModal.loading || !releaseModal.sourceAccountId}
                 onClick={confirmRelease}
               >
-                {releaseModal.loading ? 'Processing…' : (releaseModal.isPending ? 'Request Release' : (releaseModal.mode === 'live' ? '<Icon name="warning" size={18} /> RELEASE — LIVE' : 'Release (Simulation)'))}
+                {releaseModal.loading ? 'Processing…' : (releaseModal.isPending ? 'Request Release' : (releaseModal.mode === 'live' ? (<><Icon name="warning" size={18} /> RELEASE — LIVE</>) : 'Release (Simulation)'))}
               </button>
             </div>
           </div>

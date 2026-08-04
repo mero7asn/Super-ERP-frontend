@@ -458,7 +458,7 @@ const TrainingPage = () => {
                         <td>
                           <strong>{tr.topic}</strong>
                           <div style={{ fontSize: 11, color: tr.type === 'Technical' ? '#818CF8' : '#6EE7B7' }}>
-                            {tr.type === 'Technical' ? '<Icon name="settings" size={18} /> Technical' : '<Icon name="kanban" size={18} /> HR / General'}
+                            {tr.type === 'Technical' ? (<><Icon name="settings" size={18} /> Technical</>) : (<><Icon name="kanban" size={18} /> HR / General</>)}
                           </div>
                           {tr.scheduledDate && (
                             <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
@@ -554,7 +554,7 @@ const TrainingPage = () => {
                 <label className="form-label" style={{ marginBottom: 8 }}>Performance Rating</label>
                 <StarRatingInput value={reportStars} onChange={setReportStars} />
                 <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
-                  {reportStars === 0 ? 'No rating' : reportStars === 1 ? '<Icon name="warning" size={18} /> Poor' : reportStars === 2 ? '<Icon name="trending" size={18} /> Below Average' : reportStars === 3 ? '<Icon name="check" size={18} /> Satisfactory' : reportStars === 4 ? '<Icon name="like" size={18} /> Good' : '🌟 Exceptional'}
+                  {reportStars === 0 ? 'No rating' : reportStars === 1 ? (<><Icon name="warning" size={18} /> Poor</>) : reportStars === 2 ? (<><Icon name="trending" size={18} /> Below Average</>) : reportStars === 3 ? (<><Icon name="check" size={18} /> Satisfactory</>) : reportStars === 4 ? (<><Icon name="like" size={18} /> Good</>) : '🌟 Exceptional'}
                 </div>
               </div>
 

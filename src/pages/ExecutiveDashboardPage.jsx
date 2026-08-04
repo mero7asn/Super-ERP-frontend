@@ -166,7 +166,7 @@ const ExecutiveDashboardPage = () => {
   const leadTrend = stats?.leadsByPlatform ? processLeadTrend(stats.leadsByPlatform) : [];
   
   if (stats) {
-    console.log('<Icon name="trending" size={18} /> Chart Data:', { 
+    console.log('📈 Chart Data:', { 
       leadTrendLength: leadTrend.length, 
       hasLeadsByPlatform: !!stats.leadsByPlatform,
       leadsByPlatformLength: stats.leadsByPlatform?.length || 0

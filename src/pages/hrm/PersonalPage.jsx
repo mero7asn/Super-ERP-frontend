@@ -1184,7 +1184,7 @@ const PersonalPage = () => {
                             disabled={copyingSchedule || !detailedSchedule}
                             style={{ fontSize: 11 }}
                           >
-                            {copyingSchedule ? 'Copying...' : '<Icon name="kanban" size={18} /> Copy to Next Month'}
+                            {copyingSchedule ? 'Copying...' : (<><Icon name="kanban" size={18} /> Copy to Next Month</>)}
                           </button>
                         </div>
                       </div>
@@ -1661,7 +1661,7 @@ const PersonalPage = () => {
                                       cursor: 'pointer', fontWeight: 600
                                     }}
                                   >
-                                    {uploadingDoc === doc.key ? '<Icon name="clock" size={18} /> Uploading...' : '<Icon name="send" size={18} /> Upload Soft Copy'}
+                                    {uploadingDoc === doc.key ? (<><Icon name="clock" size={18} /> Uploading...</>) : (<><Icon name="send" size={18} /> Upload Soft Copy</>)}
                                   </label>
                                   <input
                                     id={`file-${doc.key}`}

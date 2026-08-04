@@ -173,7 +173,7 @@ const PartnershipsPage = () => {
       {/* Tab Navigation */}
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 0 }}>
         {[
-          { id: 'benefits', label: '<Icon name="handshake" size={18} /> Employee Benefits & Deals' },
+          { id: 'benefits', label: (<><Icon name="handshake" size={18} /> Employee Benefits & Deals</>) },
           { id: 'suggestions', label: `<Icon name="bulb" size={18} /> Improvement Suggestions (${suggestions.length})` },
         ].map((tab) => (
           <button
