@@ -40,8 +40,8 @@ const CandidateCard = ({ candidate, isTA, onMove, onOpenFeedback }) => {
       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>
         {candidate.vacancyId?.title || 'Unknown Position'}
       </div>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>? {candidate.email}</div>
-      {candidate.phone && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>?? {candidate.phone}</div>}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>✉ {candidate.email}</div>
+      {candidate.phone && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>📞 {candidate.phone}</div>}
       {lastNote && (
         <div
           style={{
@@ -55,7 +55,7 @@ const CandidateCard = ({ candidate, isTA, onMove, onOpenFeedback }) => {
             lineHeight: 1.4,
           }}
         >
-          ?? {lastNote.note.length > 80 ? lastNote.note.slice(0, 80) + '…' : lastNote.note}
+          💬 {lastNote.note.length > 80 ? lastNote.note.slice(0, 80) + '…' : lastNote.note}
           <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
             — {lastNote.addedBy?.firstName} {lastNote.addedBy?.lastName}
           </div>
@@ -317,10 +317,10 @@ const TalentAcquisitionPage = () => {
         {isTA && (
           <div style={{ display: 'flex', gap: 10 }}>
             <button className="btn btn-secondary btn-sm" onClick={() => setShowVacancyForm((v) => !v)}>
-              {showVacancyForm ? '? Close' : '+ Post Vacancy'}
+              {showVacancyForm ? '✕ Close' : '+ Post Vacancy'}
             </button>
             <button className="btn btn-primary btn-sm" onClick={() => setShowCandForm((v) => !v)}>
-              {showCandForm ? '? Close' : '+ Add Candidate'}
+              {showCandForm ? '✕ Close' : '+ Add Candidate'}
             </button>
           </div>
         )}
@@ -447,14 +447,14 @@ const TalentAcquisitionPage = () => {
             className={`btn ${viewMode === 'kanban' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
             style={{ fontSize: 12 }}
           >
-            ? Kanban Board
+            ⬡ Kanban Board
           </button>
           <button
             onClick={() => setViewMode('table')}
             className={`btn ${viewMode === 'table' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
             style={{ fontSize: 12 }}
           >
-            = Table View
+            ≡ Table View
           </button>
         </div>
         <select

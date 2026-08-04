@@ -22,7 +22,7 @@ const StarRatingInput = ({ value, onChange, max = 5 }) => (
           transition: 'color 0.15s',
         }}
       >
-        ?
+        ★
       </button>
     ))}
   </div>
@@ -32,7 +32,7 @@ const StarRatingInput = ({ value, onChange, max = 5 }) => (
 const StarRatingDisplay = ({ value, max = 5 }) => (
   <span>
     {Array.from({ length: max }).map((_, i) => (
-      <span key={i} style={{ color: i < value ? '#F59E0B' : 'rgba(255,255,255,0.18)', fontSize: 13 }}>?</span>
+      <span key={i} style={{ color: i < value ? '#F59E0B' : 'rgba(255,255,255,0.18)', fontSize: 13 }}>★</span>
     ))}
     <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 5 }}>({value}/{max})</span>
   </span>
@@ -47,7 +47,7 @@ const AUX_COLORS = {
   Break: '#6366F1',
   Coaching: '#3B82F6',
 };
-const AUX_ICONS = { Live: '??', Training: '??', 'Logged out': '??', Break: '??', Coaching: '??' };
+const AUX_ICONS = { Live: '🟢', Training: '🟡', 'Logged out': '🔴', Break: '🟣', Coaching: '🔵' };
 
 const TrainingPage = () => {
   const { user } = useAuth();
@@ -203,9 +203,9 @@ const TrainingPage = () => {
   }, [trainings, listSearch, listDeptFilter, listStatusFilter, listTypeFilter]);
 
   const STATUS_BADGE = {
-    Completed: { bg: '#10B981', label: '? Completed' },
-    'In Progress': { bg: '#3B82F6', label: '? In Progress' },
-    Assigned: { bg: '#6B7280', label: '? Assigned' },
+    Completed: { bg: '#10B981', label: '✓ Completed' },
+    'In Progress': { bg: '#3B82F6', label: '↻ In Progress' },
+    Assigned: { bg: '#6B7280', label: '○ Assigned' },
   };
 
   return (
@@ -226,7 +226,7 @@ const TrainingPage = () => {
         </div>
       )}
 
-      {/* -- AUX Presence Section -- */}
+      {/* ── AUX Presence Section ── */}
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
         {/* My Status Switcher */}
         <div className="card" style={{ flex: '0 0 260px' }}>
@@ -330,7 +330,7 @@ const TrainingPage = () => {
         </div>
       </div>
 
-      {/* -- Training Management -- */}
+      {/* ── Training Management ── */}
       <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
         {/* Assign Training Form */}
         {isHR && (
@@ -386,7 +386,7 @@ const TrainingPage = () => {
               </div>
               {trainingType === 'Technical' && (
                 <div style={{ padding: '8px 12px', borderRadius: 6, background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)', fontSize: 12, color: '#818CF8' }}>
-                  ?? Supervisor will receive an internal email notification automatically.
+                  💡 Supervisor will receive an internal email notification automatically.
                 </div>
               )}
               <button type="submit" className="btn btn-primary" disabled={submitting}>
@@ -455,11 +455,11 @@ const TrainingPage = () => {
                         <td>
                           <strong>{tr.topic}</strong>
                           <div style={{ fontSize: 11, color: tr.type === 'Technical' ? '#818CF8' : '#6EE7B7' }}>
-                            {tr.type === 'Technical' ? '? Technical' : '?? HR / General'}
+                            {tr.type === 'Technical' ? '⚙ Technical' : '📋 HR / General'}
                           </div>
                           {tr.scheduledDate && (
                             <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
-                              ?? {new Date(tr.scheduledDate).toLocaleDateString()}
+                              📅 {new Date(tr.scheduledDate).toLocaleDateString()}
                             </div>
                           )}
                         </td>
@@ -551,7 +551,7 @@ const TrainingPage = () => {
                 <label className="form-label" style={{ marginBottom: 8 }}>Performance Rating</label>
                 <StarRatingInput value={reportStars} onChange={setReportStars} />
                 <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
-                  {reportStars === 0 ? 'No rating' : reportStars === 1 ? '? Poor' : reportStars === 2 ? '?? Below Average' : reportStars === 3 ? '? Satisfactory' : reportStars === 4 ? '?? Good' : '?? Exceptional'}
+                  {reportStars === 0 ? 'No rating' : reportStars === 1 ? '⚠ Poor' : reportStars === 2 ? '📉 Below Average' : reportStars === 3 ? '✅ Satisfactory' : reportStars === 4 ? '👍 Good' : '🌟 Exceptional'}
                 </div>
               </div>
 

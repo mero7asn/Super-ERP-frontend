@@ -77,7 +77,7 @@ const InventoryDashboard = () => {
 
       {kpis && (
         <>
-          {/* -- Operational Stock Counts -- */}
+          {/* ── Operational Stock Counts ── */}
           <div style={{ marginBottom: 8 }}>
             <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
               Stock Overview
@@ -96,7 +96,7 @@ const InventoryDashboard = () => {
             <KPICard label="Total Transactions" value={fmtNum(kpis.totalTransactions)} />
           </div>
 
-          {/* -- Enterprise Performance KPIs -- */}
+          {/* ── Enterprise Performance KPIs ── */}
           <div style={{ marginBottom: 8 }}>
             <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
               Performance KPIs
@@ -129,7 +129,7 @@ const InventoryDashboard = () => {
             />
           </div>
 
-          {/* -- Alerts -- */}
+          {/* ── Alerts ── */}
           <div style={{ marginBottom: 8 }}>
             <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
               Active Alerts
@@ -168,7 +168,7 @@ const InventoryDashboard = () => {
             />
           </div>
 
-          {/* -- Adjustments by Status -- */}
+          {/* ── Adjustments by Status ── */}
           {kpis.adjustmentsByStatus?.length > 0 && (
             <div style={{ marginBottom: 24 }}>
               <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
@@ -190,7 +190,7 @@ const InventoryDashboard = () => {
         </>
       )}
 
-      {/* -- Recent Transactions -- */}
+      {/* ── Recent Transactions ── */}
       {kpis?.recentTransactions?.length > 0 && (
         <div className="card" style={{ padding: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>

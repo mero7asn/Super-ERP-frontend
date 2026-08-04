@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { Icon } from '../components/Icons';
 
 // â”€â”€ Avatar helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const Avatar = ({ person, size = 34 }) => {
@@ -251,7 +252,7 @@ const EmailsPage = () => {
       <div className="page-header">
         <div>
           <h1 className="page-title">Internal Communications</h1>
-          <p className="page-subtitle">Secure, threaded internal messaging â€” all messages are permanent and auditable</p>
+          <p className="page-subtitle">Secure, threaded internal messaging — all messages are permanent and auditable</p>
         </div>
       </div>
 
@@ -263,7 +264,7 @@ const EmailsPage = () => {
             onClick={() => setActiveTab('inbox')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px', position: 'relative' }}
           >
-            ðŸ“¥ Inbox
+            <Icon name="inbox" size={16} /> Inbox
             {unreadCount > 0 && (
               <span style={{
                 position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
@@ -277,14 +278,14 @@ const EmailsPage = () => {
             onClick={() => setActiveTab('sent')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px' }}
           >
-            ðŸ“¤ Sent
+            <Icon name="send" size={16} /> Sent
           </button>
           <button
             className={`btn ${activeTab === 'compose' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setActiveTab('compose')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px' }}
           >
-            âœï¸ New Email
+            <Icon name="mail" size={16} /> New Email
           </button>
         </div>
 
@@ -325,7 +326,7 @@ const EmailsPage = () => {
                     style={{ resize: 'vertical' }} required />
                 </div>
                 <button type="submit" className="btn btn-primary" disabled={sending} style={{ alignSelf: 'flex-start' }}>
-                  {sending ? 'Sendingâ€¦' : 'ðŸ“¨ Send Message'}
+                  {sending ? 'Sending…' : (<><Icon name="send" size={16} /> Send Message</>)}
                 </button>
               </form>
             </div>
@@ -342,9 +343,9 @@ const EmailsPage = () => {
               }}>
                 {/* Search */}
                 <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-color)' }}>
-                  <input
+                    <input
                     className="form-input"
-                    placeholder="ðŸ” Searchâ€¦"
+                    placeholder="Search…"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     style={{ fontSize: 12, padding: '7px 12px' }}
@@ -354,7 +355,7 @@ const EmailsPage = () => {
                 {/* List */}
                 <div style={{ overflowY: 'auto', flexGrow: 1 }}>
                   {loading ? (
-                    <div className="loading-state" style={{ padding: 24 }}>Loadingâ€¦</div>
+                    <div className="loading-state" style={{ padding: 24 }}>Loading…</div>
                   ) : filteredEmails.length === 0 ? (
                     <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 40, fontSize: 13 }}>
                       No messages found
@@ -396,11 +397,11 @@ const EmailsPage = () => {
                             {e.subject}
                           </div>
                           <div style={{
-                            fontSize: 11, color: 'var(--text-muted)', marginTop: 2,
-                            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
-                          }}>
-                            {e.body.substring(0, 60)}â€¦
-                          </div>
+                                  fontSize: 11, color: 'var(--text-muted)', marginTop: 2,
+                                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
+                                }}>
+                                  {e.body.substring(0, 60)}…
+                                </div>
                         </div>
                       );
                     })

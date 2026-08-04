@@ -123,7 +123,7 @@ const ProductsPage = () => {
 
       {products.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">??</div>
+          <div className="empty-state-icon">📦</div>
           <p>No products yet. Add your first product to start building offers.</p>
         </div>
       ) : (

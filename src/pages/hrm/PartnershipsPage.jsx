@@ -4,14 +4,14 @@ import { useAuth } from '../../context/AuthContext';
 
 // Category definitions
 const BENEFIT_CATEGORIES = [
-  { id: 'All', label: 'All', emoji: '??' },
-  { id: 'Health', label: 'Health & Wellness', emoji: '??' },
-  { id: 'Financial', label: 'Financial', emoji: '??' },
-  { id: 'Lifestyle', label: 'Lifestyle & Leisure', emoji: '??' },
-  { id: 'Education', label: 'Education & Training', emoji: '??' },
-  { id: 'Insurance', label: 'Insurance', emoji: '??' },
-  { id: 'Transport', label: 'Transportation', emoji: '??' },
-  { id: 'Other', label: 'Other', emoji: '??' },
+  { id: 'All', label: 'All', emoji: '🗂' },
+  { id: 'Health', label: 'Health & Wellness', emoji: '🏥' },
+  { id: 'Financial', label: 'Financial', emoji: '💰' },
+  { id: 'Lifestyle', label: 'Lifestyle & Leisure', emoji: '🌴' },
+  { id: 'Education', label: 'Education & Training', emoji: '📚' },
+  { id: 'Insurance', label: 'Insurance', emoji: '🛡' },
+  { id: 'Transport', label: 'Transportation', emoji: '🚌' },
+  { id: 'Other', label: 'Other', emoji: '📦' },
 ];
 
 const CATEGORY_COLORS = {
@@ -25,7 +25,7 @@ const CATEGORY_COLORS = {
 };
 
 const getCategoryColor = (cat) => CATEGORY_COLORS[cat] || CATEGORY_COLORS.Other;
-const getCategoryEmoji = (cat) => BENEFIT_CATEGORIES.find((c) => c.id === cat)?.emoji || '??';
+const getCategoryEmoji = (cat) => BENEFIT_CATEGORIES.find((c) => c.id === cat)?.emoji || '📦';
 
 const PartnershipsPage = () => {
   const { user } = useAuth();
@@ -172,8 +172,8 @@ const PartnershipsPage = () => {
       {/* Tab Navigation */}
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 0 }}>
         {[
-          { id: 'benefits', label: '?? Employee Benefits & Deals' },
-          { id: 'suggestions', label: `?? Improvement Suggestions (${suggestions.length})` },
+          { id: 'benefits', label: '🤝 Employee Benefits & Deals' },
+          { id: 'suggestions', label: `💡 Improvement Suggestions (${suggestions.length})` },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -196,7 +196,7 @@ const PartnershipsPage = () => {
         ))}
       </div>
 
-      {/* -- Benefits Tab -- */}
+      {/* ── Benefits Tab ── */}
       {activeTab === 'benefits' && (
         <>
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
@@ -330,12 +330,12 @@ const PartnershipsPage = () => {
                         </p>
                         {p.contactInfo && (
                           <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                            ?? {p.contactInfo}
+                            📞 {p.contactInfo}
                           </div>
                         )}
                         {p.expiryDate && (
                           <div style={{ fontSize: 11, color: isExpired ? '#FCA5A5' : 'var(--text-muted)' }}>
-                            ?? Valid until: {new Date(p.expiryDate).toLocaleDateString()}
+                            📅 Valid until: {new Date(p.expiryDate).toLocaleDateString()}
                           </div>
                         )}
                       </div>
@@ -348,7 +348,7 @@ const PartnershipsPage = () => {
         </>
       )}
 
-      {/* -- Suggestions Tab -- */}
+      {/* ── Suggestions Tab ── */}
       {activeTab === 'suggestions' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* Stats */}
@@ -405,7 +405,7 @@ const PartnershipsPage = () => {
                     required />
                 </div>
                 <button type="submit" className="btn btn-primary" disabled={submittingSugg}>
-                  {submittingSugg ? 'Submitting…' : '? Submit Suggestion'}
+                  {submittingSugg ? 'Submitting…' : '→ Submit Suggestion'}
                 </button>
               </form>
             </div>
@@ -472,14 +472,14 @@ const PartnershipsPage = () => {
                                   style={{ padding: '3px 10px', fontSize: 11, background: '#10B98122', color: '#6EE7B7', border: '1px solid #10B98144' }}
                                   onClick={() => handleUpdateSuggestion(s._id, 'Approved')}
                                 >
-                                  ? Approve
+                                  ✓ Approve
                                 </button>
                                 <button
                                   className="btn btn-sm"
                                   style={{ padding: '3px 10px', fontSize: 11, background: '#EF444422', color: '#FCA5A5', border: '1px solid #EF444444' }}
                                   onClick={() => handleUpdateSuggestion(s._id, 'Declined')}
                                 >
-                                  ? Decline
+                                  ✗ Decline
                                 </button>
                               </div>
                             )}

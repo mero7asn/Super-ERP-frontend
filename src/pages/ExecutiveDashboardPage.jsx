@@ -6,7 +6,7 @@ import {
 import API from '../services/api';
 import { Icon } from '../components/Icons';
 
-// -- Colour tokens ----------------------------------------------
+// ── Colour tokens ──────────────────────────────────────────────
 const C = {
   blue:   '#4f6ef7',
   cyan:   '#06b6d4',
@@ -16,7 +16,7 @@ const C = {
   purple: '#a855f7',
 };
 
-// -- Custom tooltip ---------------------------------------------
+// ── Custom tooltip ─────────────────────────────────────────────
 const ChartTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
@@ -37,7 +37,7 @@ const ChartTooltip = ({ active, payload, label }) => {
   );
 };
 
-// -- Section heading --------------------------------------------
+// ── Section heading ────────────────────────────────────────────
 const SectionHeading = ({ children }) => (
   <h2 style={{
     fontSize: 11, fontWeight: 700, color: 'var(--text-muted)',
@@ -46,7 +46,7 @@ const SectionHeading = ({ children }) => (
   }}>{children}</h2>
 );
 
-// -- Stat card -------------------------------------------------
+// ── Stat card ─────────────────────────────────────────────────
 const KpiCard = ({ icon, value, label, color, delta }) => (
   <div className={`stat-card ${color}`}>
     <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
@@ -57,7 +57,7 @@ const KpiCard = ({ icon, value, label, color, delta }) => (
       {label}
       {delta !== undefined && (
         <span style={{ fontSize: 11, color: delta >= 0 ? C.green : C.red, fontWeight: 700 }}>
-          {delta >= 0 ? '?' : '?'} {Math.abs(delta)}%
+          {delta >= 0 ? '▲' : '▼'} {Math.abs(delta)}%
         </span>
       )}
     </div>
@@ -133,7 +133,7 @@ const processRoleDistribution = (data) => {
   return Object.entries(grouped).map(([name, value]) => ({ name, value }));
 };
 
-// -- Main page -------------------------------------------------
+// ── Main page ─────────────────────────────────────────────────
 const ExecutiveDashboardPage = () => {
   const [stats, setStats] = useState(null);
   const [marketingData, setMarketingData] = useState(null);
@@ -166,7 +166,7 @@ const ExecutiveDashboardPage = () => {
   const leadTrend = stats?.leadsByPlatform ? processLeadTrend(stats.leadsByPlatform) : [];
   
   if (stats) {
-    console.log('?? Chart Data:', { 
+    console.log('📈 Chart Data:', { 
       leadTrendLength: leadTrend.length, 
       hasLeadsByPlatform: !!stats.leadsByPlatform,
       leadsByPlatformLength: stats.leadsByPlatform?.length || 0
@@ -197,7 +197,7 @@ const ExecutiveDashboardPage = () => {
         <div className="loading-state"><div className="spinner" />Loading analytics…</div>
       ) : (
         <>
-          {/* -- KPI Row -- */}
+          {/* ── KPI Row ── */}
           <SectionHeading>Key Performance Indicators</SectionHeading>
           <div className="stat-grid">
             <KpiCard icon="target" value={stats?.leads.total ?? '–'}     label="Total Leads"       color="blue"   delta={stats?.leads.deltas?.total} />
@@ -210,7 +210,7 @@ const ExecutiveDashboardPage = () => {
             <KpiCard icon="play" value={stats?.campaigns.active ?? '–'} label="Active Campaigns" color="green"  />
           </div>
 
-          {/* -- Lead Platform Trend -- */}
+          {/* ── Lead Platform Trend ── */}
           <SectionHeading>Lead Pipeline — Marketing Platforms Performance</SectionHeading>
           <div className="card" style={{ marginBottom: 20 }}>
             {leadTrend.length > 0 ? (
@@ -255,7 +255,7 @@ const ExecutiveDashboardPage = () => {
             )}
           </div>
 
-          {/* -- Marketing Platforms Performance -- */}
+          {/* ── Marketing Platforms Performance ── */}
           {marketingData && (
             <div className="card" style={{ marginBottom: 20 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }}>
@@ -283,7 +283,7 @@ const ExecutiveDashboardPage = () => {
                       boxShadow: 'var(--shadow-sm)'
                     }}>
                       <p style={{ fontSize: 13, lineHeight: 1.6, margin: 0 }}>
-                        ?? <strong>{marketingData.winningPlatform.platform}</strong> is currently performing better with a <strong>{marketingData.winningPlatform.conversionRate}%</strong> conversion rate compared to <strong>{marketingData.losingPlatform.platform}</strong>'s <strong>{marketingData.losingPlatform.conversionRate}%</strong>. We recommend prioritizing <strong>{marketingData.winningPlatform.platform}</strong> for upcoming campaign budgets.
+                        💡 <strong>{marketingData.winningPlatform.platform}</strong> is currently performing better with a <strong>{marketingData.winningPlatform.conversionRate}%</strong> conversion rate compared to <strong>{marketingData.losingPlatform.platform}</strong>'s <strong>{marketingData.losingPlatform.conversionRate}%</strong>. We recommend prioritizing <strong>{marketingData.winningPlatform.platform}</strong> for upcoming campaign budgets.
                       </p>
                     </div>
                   ) : (
@@ -294,7 +294,7 @@ const ExecutiveDashboardPage = () => {
             </div>
           )}
 
-          {/* -- Bottom row: ticket bar + role pie -- */}
+          {/* ── Bottom row: ticket bar + role pie ── */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
             {/* Ticket Resolution Bar */}
             <div className="card">
@@ -353,7 +353,7 @@ const ExecutiveDashboardPage = () => {
             </div>
           </div>
 
-          {/* -- Team Performance Table -- */}
+          {/* ── Team Performance Table ── */}
           <SectionHeading>Team Performance Snapshot</SectionHeading>
           <div className="table-wrapper">
             {stats?.teamPerformance && stats.teamPerformance.length > 0 ? (

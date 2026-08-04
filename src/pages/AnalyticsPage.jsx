@@ -52,7 +52,7 @@ const AnalyticsPage = () => {
           {/* Lead Analytics Section */}
           <div className="crm-glass-card" style={{ padding: 24 }}>
             <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span>??</span> Lead Acquisition &amp; Conversion
+              <span>🎯</span> Lead Acquisition &amp; Conversion
             </div>
             <div className="stat-grid" style={{ marginBottom: 0 }}>
               <div className="crm-stat-widget">
@@ -112,7 +112,7 @@ const AnalyticsPage = () => {
           {/* Support Analytics Section */}
           <div className="crm-glass-card" style={{ padding: 24 }}>
             <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span>??</span> Support &amp; Engineering Operations
+              <span>🎫</span> Support &amp; Engineering Operations
             </div>
             <div className="stat-grid" style={{ marginBottom: 0 }}>
               <div className="crm-stat-widget">
@@ -146,7 +146,7 @@ const AnalyticsPage = () => {
           {/* Campaign Analytics Section */}
           <div className="crm-glass-card" style={{ padding: 24 }}>
             <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span>??</span> Marketing Campaign Channels
+              <span>📢</span> Marketing Campaign Channels
             </div>
             <div className="stat-grid" style={{ marginBottom: 0 }}>
               <div className="crm-stat-widget">

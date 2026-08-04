@@ -779,11 +779,11 @@ const BookingLookupPage = () => {
                         <div>
                           {log.signType === 'System' ? (
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 999, background: 'rgba(147, 51, 234, 0.1)', color: '#9333ea', fontSize: 12, fontWeight: 700, border: '1px solid rgba(147, 51, 234, 0.2)' }}>
-                              ?? [System Sign: {log.signature || 'Core 360'}]
+                              🤖 [System Sign: {log.signature || 'Core 360'}]
                             </span>
                           ) : (
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 999, background: 'rgba(16, 185, 129, 0.1)', color: '#059669', fontSize: 12, fontWeight: 700, border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                              ?? [Agent Sign: {log.signature || currentAgentEmail}]
+                              👤 [Agent Sign: {log.signature || currentAgentEmail}]
                             </span>
                           )}
                         </div>

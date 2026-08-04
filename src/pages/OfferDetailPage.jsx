@@ -364,7 +364,7 @@ const OfferDetailPage = () => {
                   <div key={img._id || img.url} style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#000', minHeight: 110 }}>
                     <img src={img.url && (img.url.startsWith('http') || img.url.startsWith('data:')) ? img.url : `http://localhost:5000${img.url}`} alt={img.caption || 'Offer image'} style={{ width: '100%', height: 110, objectFit: 'cover' }} />
                     {(isAdmin || (offer.createdBy && offer.createdBy._id === user?._id)) && (
-                      <button type="button" onClick={() => handleDeleteImage(img._id)} style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(239,68,68,0.9)', color: '#fff', border: 'none', borderRadius: 999, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 10 }} title="Delete photo">?</button>
+                      <button type="button" onClick={() => handleDeleteImage(img._id)} style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(239,68,68,0.9)', color: '#fff', border: 'none', borderRadius: 999, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 10 }} title="Delete photo">✕</button>
                     )}
                     {img.caption && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 10, padding: '4px 6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{img.caption}</div>}
                   </div>

@@ -69,13 +69,13 @@ const CampaignFormPage = () => {
           </div>
         ) : error ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>??</div>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>🚫</div>
             <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: '#1F2937' }}>Form Unavailable</h2>
             <p style={{ color: '#6B7280', fontSize: 14 }}>{error}</p>
           </div>
         ) : submitted ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>?</div>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
             <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8, color: '#1F2937' }}>Thank You!</h2>
             <p style={{ color: '#6B7280', fontSize: 14 }}>Your information has been received. We'll be in touch shortly.</p>
           </div>

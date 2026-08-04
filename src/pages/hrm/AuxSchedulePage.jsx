@@ -167,8 +167,8 @@ const AuxSchedulePage = () => {
       {/* Tab bar */}
       <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--border-color)' }}>
         {[
-          { id: 'report', label: '?? Compliance Report' },
-          ...(isHR ? [{ id: 'schedule', label: '?? Schedule Editor' }] : []),
+          { id: 'report', label: '📊 Compliance Report' },
+          ...(isHR ? [{ id: 'schedule', label: '📅 Schedule Editor' }] : []),
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
             padding: '10px 20px', border: 'none', background: 'transparent', cursor: 'pointer',
@@ -179,7 +179,7 @@ const AuxSchedulePage = () => {
         ))}
       </div>
 
-      {/* -- REPORT TAB -- */}
+      {/* ── REPORT TAB ── */}
       {tab === 'report' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {loading ? (
@@ -233,7 +233,7 @@ const AuxSchedulePage = () => {
 
                   {!entry.planned?.liveMinutes && (
                     <div style={{ fontSize: 12, color: 'var(--text-muted)', fontStyle: 'italic' }}>
-                      ? No schedule set for this employee in {month}. Set one in the Schedule Editor.
+                      ⚠ No schedule set for this employee in {month}. Set one in the Schedule Editor.
                     </div>
                   )}
                 </div>
@@ -243,7 +243,7 @@ const AuxSchedulePage = () => {
         </div>
       )}
 
-      {/* -- SCHEDULE EDITOR TAB -- */}
+      {/* ── SCHEDULE EDITOR TAB ── */}
       {tab === 'schedule' && isHR && (
         <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-start' }}>
           {/* Employee selector */}
@@ -260,7 +260,7 @@ const AuxSchedulePage = () => {
                   }}>
                     <div style={{ fontWeight: 600, fontSize: 13 }}>{emp.firstName} {emp.lastName}</div>
                     <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{emp.role}</div>
-                    {hasSched && <div style={{ fontSize: 10, color: '#10B981', marginTop: 2 }}>? Schedule set</div>}
+                    {hasSched && <div style={{ fontSize: 10, color: '#10B981', marginTop: 2 }}>✓ Schedule set</div>}
                   </div>
                 );
               })}

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
 
@@ -43,7 +43,7 @@ const TicketRow = ({ ticket, onStatusChange }) => {
       <td>
         <div style={{ fontWeight: 600, fontSize: 13 }}>{ticket.subject}</div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
-          {ticket.description?.slice(0, 60)}{ticket.description?.length > 60 ? 'â€¦' : ''}
+          {ticket.description?.slice(0, 60)}{ticket.description?.length > 60 ? '…' : ''}
         </div>
       </td>
       <td>
@@ -85,7 +85,7 @@ const TicketRow = ({ ticket, onStatusChange }) => {
         {ticket.affectedPage || 'Other'}
       </td>
       <td style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-        {ticket.requesterTeam || ticket.createdBy?.role || 'â€”'}
+        {ticket.requesterTeam || ticket.createdBy?.role || '—'}
       </td>
       <td style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
         {ticket.assignedTo
@@ -107,7 +107,7 @@ const TicketRow = ({ ticket, onStatusChange }) => {
             {elapsed}
           </span>
         ) : (
-          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>â€”</span>
+          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>—</span>
         )}
       </td>
     </tr>
@@ -229,7 +229,7 @@ const SupportTicketsPage = () => {
             </select>
             <input
               className="table-search"
-              placeholder="Search subject or customerâ€¦"
+              placeholder="Search subject or customer…"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
@@ -237,7 +237,7 @@ const SupportTicketsPage = () => {
         </div>
 
         {loading ? (
-          <div className="loading-state"><div className="spinner" />Loading ticketsâ€¦</div>
+          <div className="loading-state"><div className="spinner" />Loading tickets…</div>
         ) : filtered.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state-icon">

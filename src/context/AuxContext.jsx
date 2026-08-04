@@ -13,11 +13,11 @@ export const AUX_COLORS = {
 };
 
 export const AUX_ICONS = {
-  Live: 'ðŸŸ¢',
-  Training: 'ðŸŸ¡',
-  Break: 'ðŸŸ£',
-  Coaching: 'ðŸ”µ',
-  'Logged out': 'ðŸ”´',
+  Live: '🟢',
+  Training: '📚',
+  Break: '☕',
+  Coaching: '🎯',
+  'Logged out': '🔴',
 };
 
 export const AuxProvider = ({ children }) => {
