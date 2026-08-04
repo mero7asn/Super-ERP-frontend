@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Icon } from '../components/Icons';
@@ -90,7 +90,7 @@ const PaymentPage = () => {
 
   const isPaid = alreadyPaid || result;
 
-  const brandName = offer?.companyName || 'Super CRM';
+  const brandName = offer?.companyName || 'Core 360';
   const brandLogo = offer?.companyLogo || '';
 
   return (

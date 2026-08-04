@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
@@ -6,7 +6,7 @@ import { DEPARTMENTS, getRolesByDepartment, getDepartmentByRole } from '../servi
 
 const roleBadge = (role) => {
   const map = {
-    'Super CRM Administrator': 'badge-urgent',
+    'Core 360 Administrator': 'badge-urgent',
     'System Architect': 'badge-urgent',
     'Sales Manager': 'badge-qualified',
     'Customer Support Manager': 'badge-qualified',
@@ -131,7 +131,6 @@ const UsersPage = () => {
                 <th>User Details</th>
                 <th>Role Designation</th>
                 <th>Status</th>
-                <th>Email (SMTP)</th>
                 <th>Permissions Enabled</th>
                 <th>Joined</th>
               </tr>
@@ -169,16 +168,6 @@ const UsersPage = () => {
                       <span className={`badge ${user.isActive ? 'badge-qualified' : 'badge-lost'}`}>
                         {user.isActive ? 'Active' : 'Suspended'}
                       </span>
-                    </td>
-                    <td>
-                      {user.smtpUser ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <span className="badge badge-qualified" style={{ fontSize: 10 }}>✓ Configured</span>
-                          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{user.smtpUser}</span>
-                        </div>
-                      ) : (
-                        <span className="badge badge-lost" style={{ fontSize: 10 }}>✗ Not Set</span>
-                      )}
                     </td>
                     <td>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, maxWidth: 300 }}>

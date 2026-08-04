@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
@@ -58,7 +58,7 @@ const createDefaultBooking = (locator = 'BK-PPL5H9') => {
     priority: 'Normal',
     channel: 'Website',
     createdAt: '2026-07-26T10:38:05.000Z',
-    assignedEmployee: 'Super CRM Administrator',
+    assignedEmployee: 'Core 360 Administrator',
     assignedEmail: defaultAgentEmail,
     price: 50.00,
     currency: 'USD',
@@ -84,12 +84,12 @@ const createDefaultBooking = (locator = 'BK-PPL5H9') => {
     // 3b. Documentations with guaranteed unique copyable IDs
     documentations: [
       { id: 'DOC-89A12B4C', author: 'Omar Hassan', authorEmail: 'asherjobs@outlook.com', category: 'Customer Preference', date: '2026-07-26T10:38:05.000Z', text: 'Customer requested SMS notification prior to booking start time.' },
-      { id: 'DOC-3F91A20D', author: 'Super CRM Administrator', authorEmail: 'admin@supercrm.com', category: 'Internal Note', date: '2026-07-27T11:20:00.000Z', text: 'Verified customer details and confirmed reservation eligibility.' }
+      { id: 'DOC-3F91A20D', author: 'Core 360 Administrator', authorEmail: 'admin@supercrm.com', category: 'Internal Note', date: '2026-07-27T11:20:00.000Z', text: 'Verified customer details and confirmed reservation eligibility.' }
     ],
     // 3c. Audit Logs with explicit System Sign vs Agent Sign
     auditLogs: [
-      { id: 'LOG-001', action: 'Booking created', details: 'A new booking was opened and indexed.', signType: 'System', signature: 'Super ERP', timestamp: '2026-07-26T10:38:05.000Z' },
-      { id: 'LOG-002', action: 'Offer sent', details: 'The offer package was prepared for the customer.', signType: 'System', signature: 'Super ERP', timestamp: '2026-07-26T10:38:05.000Z' },
+      { id: 'LOG-001', action: 'Booking created', details: 'A new booking was opened and indexed.', signType: 'System', signature: 'Core 360', timestamp: '2026-07-26T10:38:05.000Z' },
+      { id: 'LOG-002', action: 'Offer sent', details: 'The offer package was prepared for the customer.', signType: 'System', signature: 'Core 360', timestamp: '2026-07-26T10:38:05.000Z' },
       { id: 'LOG-003', action: 'Payment verified', details: 'Payment status marked as Paid by finance system.', signType: 'Agent', signature: defaultAgentEmail, timestamp: '2026-07-26T10:40:00.000Z' }
     ]
   };
@@ -124,7 +124,7 @@ const BookingLookupPage = () => {
   const [smsBody, setSmsBody] = useState('Hi Omar, your booking BK-PPL5H9 is confirmed for 7/26/2026.');
 
   const currentAgentEmail = user?.email || 'admin@supercrm.com';
-  const currentRole = user?.role || 'Super CRM Administrator';
+  const currentRole = user?.role || 'Core 360 Administrator';
 
   const handleLookup = async (e) => {
     if (e) e.preventDefault();
@@ -761,7 +761,7 @@ const BookingLookupPage = () => {
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Action Logs & Audit History</div>
                   <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
-                    Every action is attributed with either a System Sign (e.g. Super ERP) or an Agent Sign (agent login email).
+                    Every action is attributed with either a System Sign (e.g. Core 360) or an Agent Sign (agent login email).
                   </div>
                 </div>
 
@@ -779,7 +779,7 @@ const BookingLookupPage = () => {
                         <div>
                           {log.signType === 'System' ? (
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 999, background: 'rgba(147, 51, 234, 0.1)', color: '#9333ea', fontSize: 12, fontWeight: 700, border: '1px solid rgba(147, 51, 234, 0.2)' }}>
-                              🤖 [System Sign: {log.signature || 'Super ERP'}]
+                              🤖 [System Sign: {log.signature || 'Core 360'}]
                             </span>
                           ) : (
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 999, background: 'rgba(16, 185, 129, 0.1)', color: '#059669', fontSize: 12, fontWeight: 700, border: '1px solid rgba(16, 185, 129, 0.2)' }}>

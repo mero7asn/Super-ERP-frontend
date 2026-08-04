@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 
 const roleBadge = (role) => {
   const map = {
-    'Super CRM Administrator': 'badge-urgent',
+    'Core 360 Administrator': 'badge-urgent',
     'System Architect': 'badge-urgent',
     'Sales Manager': 'badge-qualified',
     'Customer Support Manager': 'badge-qualified',
@@ -22,7 +22,7 @@ const roleBadge = (role) => {
 };
 
 const ALL_ROLES = [
-  'Super CRM Administrator', 'Sales Agent', 'Sales Manager',
+  'Core 360 Administrator', 'Sales Agent', 'Sales Manager',
   'Customer Support Agent', 'Customer Support Manager',
   'Marketing Specialist', 'Marketing Manager', 'Business Analyst',
   'CRM Developer', 'CRM Consultant', 'System Architect', 'Executive User'
@@ -50,19 +50,11 @@ const UserProfilePage = () => {
   const [success, setSuccess] = useState('');
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({});
-  const [smtpTesting, setSmtpTesting] = useState(false);
-  const [smtpTestResult, setSmtpTestResult] = useState(null);
 
-  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(currentUser?.role);
+  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(currentUser?.role);
   const isOwnProfile = currentUser?._id === id;
   const canEdit = isOwnProfile || isAdmin;
   const [managers, setManagers] = useState([]);
-
-  const PROVIDER_PRESETS = {
-    custom: { label: 'Custom / Other', host: '', port: 587, secure: false },
-    gmail: { label: 'Gmail / Google Workspace', host: 'smtp.gmail.com', port: 465, secure: true },
-    outlook: { label: 'Outlook / Microsoft 365', host: 'smtp.office365.com', port: 587, secure: false },
-  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -81,12 +73,12 @@ const UserProfilePage = () => {
           if (role === 'Marketing Specialist') return u.role === 'Marketing Manager';
           if (role === 'CRM Developer' || role === 'CRM Consultant') return u.role === 'System Architect';
           
-          // All managers report to Super CRM Administrator
+          // All managers report to Core 360 Administrator
           if (['Sales Manager', 'Customer Support Manager', 'Marketing Manager', 'System Architect'].includes(role))
-            return u.role === 'Super CRM Administrator';
+            return u.role === 'Core 360 Administrator';
           
-          // Super CRM Administrator and Business Analyst report to Executive User
-          if (['Super CRM Administrator', 'Business Analyst'].includes(role))
+          // Core 360 Administrator and Business Analyst report to Executive User
+          if (['Core 360 Administrator', 'Business Analyst'].includes(role))
             return u.role === 'Executive User';
           
           return false;
@@ -101,11 +93,6 @@ const UserProfilePage = () => {
   }, [id]);
 
   const startEditing = () => {
-    let smtpProvider = 'custom';
-    const host = user.smtpHost || '';
-    if (host === 'smtp.gmail.com') smtpProvider = 'gmail';
-    else if (host === 'smtp.office365.com') smtpProvider = 'outlook';
-    
     setForm({
       firstName: user.firstName,
       lastName: user.lastName,
@@ -116,16 +103,9 @@ const UserProfilePage = () => {
       isActive: user.isActive,
       supervisor: user.supervisor?._id || user.supervisor || '',
       permissions: { ...user.permissions },
-      smtpHost: user.smtpHost || '',
-      smtpPort: user.smtpPort || 587,
-      smtpSecure: user.smtpSecure || false,
-      smtpUser: user.smtpUser || '',
-      smtpPass: '',
-      smtpProvider,
     });
     setSuccess('');
     setError('');
-    setSmtpTestResult(null);
     setEditing(true);
   };
 
@@ -139,11 +119,6 @@ const UserProfilePage = () => {
         lastName: form.lastName,
         email: form.email,
         ...(form.password ? { password: form.password } : {}),
-        smtpHost: form.smtpHost || null,
-        smtpPort: form.smtpPort,
-        smtpSecure: form.smtpSecure,
-        smtpUser: form.smtpUser || null,
-        ...(form.smtpPass ? { smtpPass: form.smtpPass } : {}),
         ...(isAdmin ? { title: form.title, role: form.role, isActive: form.isActive, supervisor: form.supervisor || null, permissions: form.permissions } : {}),
       };
       const { data } = await API.put(`/auth/users/${id}`, payload);
@@ -158,10 +133,6 @@ const UserProfilePage = () => {
           role: data.data.role,
           isActive: data.data.isActive,
           permissions: data.data.permissions,
-          smtpHost: data.data.smtpHost,
-          smtpPort: data.data.smtpPort,
-          smtpSecure: data.data.smtpSecure,
-          smtpUser: data.data.smtpUser,
         });
       }
     } catch (err) {
@@ -271,130 +242,6 @@ const UserProfilePage = () => {
                 </div>
               </div>
 
-              {/* SMTP Settings */}
-              <div className="table-wrapper" style={{ padding: 24 }}>
-                <div className="table-title" style={{ marginBottom: 20 }}>
-                  Email Sending Settings (SMTP)
-                  {!isOwnProfile && isAdmin && (
-                    <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--accent-primary)', marginLeft: 8 }}>
-                      Admin: Configuring {user?.firstName}'s email
-                    </span>
-                  )}
-                </div>
-                {/* Sender email info banner */}
-                {user?.smtpUser && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'rgba(var(--accent-rgb, 99,102,241),0.08)', borderRadius: 8, marginBottom: 14, fontSize: 13 }}>
-                    <span style={{ fontSize: 16 }}>📤</span>
-                    <span>Offers will be sent <strong>from</strong>: <strong style={{ color: 'var(--accent-primary)' }}>{user.smtpUser}</strong></span>
-                  </div>
-                )}
-                <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
-                  {isOwnProfile
-                    ? 'The sender address on outgoing offer emails will be your SMTP email below — not your CRM login email.'
-                    : `Configure ${user?.firstName} ${user?.lastName}'s SMTP so they can send offer emails directly from their account. Use their personal Gmail App Password or company SMTP credentials.`}
-                </p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <div className="form-group" style={{ margin: 0, gridColumn: '1 / -1' }}>
-                    <label className="form-label">Provider Preset</label>
-                    <select
-                      className="form-input"
-                      value={(() => {
-                        const entry = Object.entries(PROVIDER_PRESETS).find(([, p]) => p.host === form.smtpHost && p.port === form.smtpPort);
-                        return entry ? entry[0] : 'custom';
-                      })()}
-                      onChange={(e) => {
-                        const preset = PROVIDER_PRESETS[e.target.value];
-                        setForm(f => ({ ...f, smtpHost: preset.host, smtpPort: preset.port, smtpSecure: preset.secure }));
-                      }}
-                    >
-                      {Object.entries(PROVIDER_PRESETS).map(([key, preset]) => (
-                        <option key={key} value={key}>{preset.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label">SMTP Host</label>
-                    <input className="form-input" placeholder="smtp.gmail.com" value={form.smtpHost} onChange={e => setForm(f => ({ ...f, smtpHost: e.target.value }))} />
-                  </div>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label">SMTP Port</label>
-                    <input className="form-input" type="number" placeholder="587" value={form.smtpPort} onChange={e => setForm(f => ({ ...f, smtpPort: parseInt(e.target.value) || 587 }))} />
-                  </div>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label">SMTP Username / Email</label>
-                    <input className="form-input" type="email" placeholder="you@gmail.com" value={form.smtpUser} onChange={e => setForm(f => ({ ...f, smtpUser: e.target.value }))} />
-                  </div>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label">SMTP Password / App Password</label>
-                    <input
-                      className="form-input"
-                      type="password"
-                      placeholder={user?.smtpUser ? '🔒 Password saved — enter new one to change' : 'App password or SMTP password'}
-                      value={form.smtpPass}
-                      onChange={e => setForm(f => ({ ...f, smtpPass: e.target.value }))}
-                    />
-                    <div style={{ fontSize: 11, color: user?.smtpUser ? 'var(--accent-primary)' : 'var(--text-muted)', marginTop: 4 }}>
-                      {user?.smtpUser
-                        ? '✓ A password is already saved. Leave blank to keep it, or type a new one to update.'
-                        : 'Enter your App Password (Gmail/Outlook) or SMTP password. It will be encrypted and stored securely.'}
-                    </div>
-                  </div>
-                  <div className="form-group" style={{ margin: 0, gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <input
-                      type="checkbox"
-                      id="smtpSecure"
-                      checked={form.smtpSecure}
-                      onChange={e => setForm(f => ({ ...f, smtpSecure: e.target.checked }))}
-                      style={{ width: 18, height: 18, cursor: 'pointer' }}
-                    />
-                    <label htmlFor="smtpSecure" style={{ fontWeight: 500, fontSize: 13, cursor: 'pointer' }}>
-                      Use SSL/TLS (port 465). Uncheck for STARTTLS (port 587).
-                    </label>
-                  </div>
-                </div>
-
-                {/* Test Connection Button */}
-                <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                  <button
-                    type="button"
-                    className="btn btn-secondary btn-sm"
-                    disabled={smtpTesting || (!form.smtpHost && !user?.smtpUser)}
-                    onClick={async () => {
-                      setSmtpTesting(true);
-                      setSmtpTestResult(null);
-                      try {
-                        // Send current form values so test works even before saving
-                        const testPayload = {};
-                        if (form.smtpHost) testPayload.smtpHost = form.smtpHost;
-                        if (form.smtpPort) testPayload.smtpPort = form.smtpPort;
-                        if (form.smtpSecure !== undefined) testPayload.smtpSecure = form.smtpSecure;
-                        if (form.smtpUser) testPayload.smtpUser = form.smtpUser;
-                        if (form.smtpPass) testPayload.smtpPass = form.smtpPass;
-                        const { data } = await API.post(`/auth/users/${id}/verify-smtp`, testPayload);
-                        setSmtpTestResult({ success: data.success, message: data.message });
-                      } catch (err) {
-                        setSmtpTestResult({ success: false, message: err.response?.data?.message || 'Connection failed' });
-                      } finally {
-                        setSmtpTesting(false);
-                      }
-                    }}
-                  >
-                    {smtpTesting ? '⏳ Testing...' : '🔌 Test Connection'}
-                  </button>
-                  {!form.smtpHost && !user?.smtpUser && (
-                    <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Fill in your SMTP settings above to test.</span>
-                  )}
-                  {smtpTestResult && (
-                    <span style={{
-                      fontSize: 13, fontWeight: 600,
-                      color: smtpTestResult.success ? 'var(--status-won, #22c55e)' : 'var(--status-lost, #ef4444)'
-                    }}>
-                      {smtpTestResult.success ? '✅' : '❌'} {smtpTestResult.message}
-                    </span>
-                  )}
-                </div>
-              </div>
-
               {/* Admin-only fields */}
               {isAdmin && (
                 <>
@@ -415,7 +262,7 @@ const UserProfilePage = () => {
                         </select>
                       </div>
                     </div>
-                    {(['Sales Agent', 'Customer Support Agent', 'Marketing Specialist', 'CRM Developer', 'CRM Consultant', 'Sales Manager', 'Customer Support Manager', 'Marketing Manager', 'System Architect', 'Super CRM Administrator', 'Business Analyst'].includes(form.role)) && (
+                    {(['Sales Agent', 'Customer Support Agent', 'Marketing Specialist', 'CRM Developer', 'CRM Consultant', 'Sales Manager', 'Customer Support Manager', 'Marketing Manager', 'System Architect', 'Core 360 Administrator', 'Business Analyst'].includes(form.role)) && (
                       <div className="form-group" style={{ margin: '16px 0 0' }}>
                         <label className="form-label">Supervisor</label>
                         <select className="form-input" value={form.supervisor} onChange={e => setForm(f => ({ ...f, supervisor: e.target.value }))}>

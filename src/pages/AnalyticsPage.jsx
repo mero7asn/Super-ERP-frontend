@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
 
@@ -39,7 +39,7 @@ const AnalyticsPage = () => {
           System Performance Analytics
         </h1>
         <p style={{ fontSize: 13, color: '#94A3B8', marginTop: 4, margin: 0 }}>
-          Real-time metrics, conversion rates, and module throughput across Super CRM
+          Real-time metrics, conversion rates, and module throughput across Core 360
         </p>
       </div>
 

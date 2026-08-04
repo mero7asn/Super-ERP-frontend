@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -54,7 +54,7 @@ const LeadDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(user?.role);
   
   const [lead, setLead] = useState(null);
   const [offers, setOffers] = useState([]);
@@ -1109,7 +1109,7 @@ const TemplateEditorInline = ({ mode, editingTemplateId, blocks, setBlocks, temp
       case 'payment-link':
         return `<div style="margin:0 0 16px;text-align:${block.styles?.align || 'center'};"><a href="${data.payLink || '#'}" style="display:inline-block;background-color:${block.styles?.backgroundColor || '#2563eb'};color:${block.styles?.color || '#ffffff'};text-decoration:none;padding:14px 24px;border-radius:8px;font-weight:600;">${content || 'Pay Now'}</a></div>`;
       case 'company-info':
-        const compName = data.companyName || 'Super CRM';
+        const compName = data.companyName || 'Core 360';
         const compLogo = data.companyLogo || '';
         return `<div style="margin:0 0 16px;display:flex;align-items:center;gap:12px;">${compLogo ? `<img src="${compLogo}" alt="${compName}" width="48" height="48" style="object-fit:contain;border-radius:8px;" />` : ''}<div><h3 style="margin:0;font-size:16px;color:#111827;font-weight:600;">${compName}</h3><p style="margin:4px 0 0;font-size:12px;color:#6b7280;">Offer from ${compName}</p></div></div>`;
       default: return '';

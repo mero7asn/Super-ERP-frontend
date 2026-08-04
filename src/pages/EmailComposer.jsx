@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -185,7 +185,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
       <div style="margin-top: 32px; border-top: 1px solid #E2E8F0; padding-top: 16px; font-size: 14px; color: #4B5563;">
         <p style="margin: 0;">Best regards,</p>
         <p style="margin: 4px 0 0 0; font-weight: 700; color: #1F2937;">${user?.firstName || 'Sales'} ${user?.lastName || 'Team'}</p>
-        <p style="margin: 2px 0 0 0; font-size: 13px; color: #64748B;">Super CRM Solutions</p>
+        <p style="margin: 2px 0 0 0; font-size: 13px; color: #64748B;">Core 360 Solutions</p>
       </div>
     </div>
   `;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -50,7 +50,7 @@ const normalizeCurrencies = (values = []) => {
 
 const SettingsPage = () => {
   const { user, setBusinessModel } = useAuth();
-  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(user?.role);
   const [activeTab, setActiveTab] = useState('general');
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -66,7 +66,7 @@ const SettingsPage = () => {
   const [savingErp, setSavingErp] = useState(false);
 
   // General settings
-  const [appName, setAppName] = useState('Super CRM');
+  const [appName, setAppName] = useState('Core 360');
   const [companyName, setCompanyName] = useState('Super Enterprise Inc.');
   const [companyLogo, setCompanyLogo] = useState('');
   const [maintenanceMode, setMaintenanceMode] = useState(false);
@@ -126,7 +126,7 @@ const SettingsPage = () => {
       try {
         const { data } = await API.get('/settings/branding');
         if (data.success && data.data) {
-          setCompanyName(data.data.companyName || 'Super CRM');
+          setCompanyName(data.data.companyName || 'Core 360');
           setCompanyLogo(data.data.companyLogo || '');
         }
       } catch (err) {
@@ -218,7 +218,7 @@ const SettingsPage = () => {
     setErrorMsg('');
     try {
       const payload = {
-        companyName: companyName.trim() || 'Super CRM',
+        companyName: companyName.trim() || 'Core 360',
         companyLogo: companyLogo.trim() || ''
       };
       const { data } = await API.put('/settings/branding', payload);
@@ -383,7 +383,7 @@ const SettingsPage = () => {
           >
             Business Model
           </button>
-          {user?.role === 'Super CRM Administrator' && (
+          {user?.role === 'Core 360 Administrator' && (
             <button
               onClick={() => setActiveTab('pricing')}
               className="sidebar-link"
@@ -785,7 +785,7 @@ const SettingsPage = () => {
                   ERP Integration
                 </h3>
                 <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
-                  Base URL of the external Super ERP (Inventory &amp; Supply Chain apps). When set, the sidebar opens them in a new tab.
+                  Base URL of the external Core 360 (Inventory &amp; Supply Chain apps). When set, the sidebar opens them in a new tab.
                 </p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'flex-end' }}>
@@ -825,7 +825,7 @@ const SettingsPage = () => {
               </div>
             )}
 
-            {activeTab === 'pricing' && user?.role === 'Super CRM Administrator' && (
+            {activeTab === 'pricing' && user?.role === 'Core 360 Administrator' && (
               <div>
                 <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Icon name="dollar" size={18} style={{ color: 'var(--accent-primary)' }} />

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 
@@ -97,7 +97,7 @@ const TeamsPage = () => {
   const [success, setSuccess] = useState('');
   const [activeTab, setActiveTab] = useState('All');
 
-  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(user?.role);
 
   const fetchTeams = useCallback(async () => {
     setLoading(true);

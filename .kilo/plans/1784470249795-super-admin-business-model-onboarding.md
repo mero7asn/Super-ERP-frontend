@@ -1,15 +1,15 @@
-# Plan: Super Admin Business-Model Onboarding & ERP Module Visibility
+﻿# Plan: Super Admin Business-Model Onboarding & ERP Module Visibility
 
 ## Goal
-On the **first login of a Super CRM Administrator**, ask whether the organization provides a
+On the **first login of a Core 360 Administrator**, ask whether the organization provides a
 **Service** (sees Bookings), sells a **Product** (sees an in-CRM Products module + two external
 ERP departments: Super Inventory, Super Supply Chain), or does **Both** (sees everything). The
 choice is stored, drives sidebar/access visibility, and can be changed later in System Settings.
 
 ## Decisions (confirmed with user)
-- **External departments** = two new sidebar sections at the **ERP level, outside Super CRM**:
+- **External departments** = two new sidebar sections at the **ERP level, outside Core 360**:
   `Super Inventory` and `Super Supply Chain`. Shown only for `product` / `both`.
-- **"Product page inside CRM"** = a new **Products module** under the Super CRM section.
+- **"Product page inside CRM"** = a new **Products module** under the Core 360 section.
 - **Storage** = `SystemSetting` document with key `businessModel`. Sidebar + guards read it.
   Admin can change it from System Settings (requirement: "super admin can change his choice").
 
@@ -20,8 +20,8 @@ forces a choice before the admin can use the app).
 Visibility matrix:
 | Section | service | product | both |
 |---|---|---|---|
-| Bookings (Super CRM) | ✅ | ❌ | ✅ |
-| Products (Super CRM) | ❌ | ✅ | ✅ |
+| Bookings (Core 360) | ✅ | ❌ | ✅ |
+| Products (Core 360) | ❌ | ✅ | ✅ |
 | Super Inventory (ERP) | ❌ | ✅ | ✅ |
 | Super Supply Chain (ERP) | ❌ | ✅ | ✅ |
 
@@ -31,7 +31,7 @@ Visibility matrix:
 - `authController.loginUser` returns `{ _id, firstName, lastName, email, role, permissions, token }`
   (no "needsOnboarding"/businessModel). `User` model has no onboarding flag.
 - `frontend/src/context/AuthContext.jsx` stores the raw login payload in `localStorage.crmUser`.
-- `frontend/src/components/Sidebar.jsx` renders three groups: Global, **Super CRM** (`CRM_NAV_ITEMS`),
+- `frontend/src/components/Sidebar.jsx` renders three groups: Global, **Core 360** (`CRM_NAV_ITEMS`),
   **Super HRM** (`HRM_NAV_ITEMS`), My Workspace. Super Admin currently sees all CRM items.
 - `frontend/src/pages/SettingsPage.jsx` has tabs but **no businessModel control** and only persists
   SMTP (and "Save General" is a fake no-op). Needs a real endpoint.
@@ -64,7 +64,7 @@ Visibility matrix:
 
 ### 4. Frontend — first-login onboarding modal (Super Admin only)
 - New component `components/OnboardingModal.jsx`: shown automatically when
-  `user.role === 'Super CRM Administrator' && !user.onboarded`.
+  `user.role === 'Core 360 Administrator' && !user.onboarded`.
 - Three cards: **Service** / **Product** / **Both** with icons + description (Bookings vs
   Products + Super Inventory + Super Supply Chain).
 - On select → `PUT /settings/business-model` → update `businessModel`, set `onboarded=true`
@@ -74,7 +74,7 @@ Visibility matrix:
 - In `Sidebar.jsx` add `ERP_NAV_ITEMS` array:
   - `{ label: 'Super Inventory', icon: 'inventory', path: '/inventory', external: true }`
   - `{ label: 'Super Supply Chain', icon: 'supplychain', path: '/supply-chain', external: true }`
-- Render a new **Super Inventory** and **Super Supply Chain** group (ERP level, outside Super CRM),
+- Render a new **Super Inventory** and **Super Supply Chain** group (ERP level, outside Core 360),
   visible only when `businessModel === 'product' || 'both'`.
 - For `external: true` items, navigate via `window.open(path, '_blank')` or render as `<a>` to the
   configured ERP base URL (define `ERP_BASE_URL = import.meta.env.VITE_ERP_URL || '/'`; paths are
@@ -82,7 +82,7 @@ Visibility matrix:
 - Apply visibility matrix: Bookings item shown when `service||both`; new Products item shown when
   `product||both`.
 
-### 6. Frontend — Products module (Super CRM)
+### 6. Frontend — Products module (Core 360)
 - New `pages/ProductsPage.jsx` (list/create/edit product catalog: name, SKU, price, description,
   image). Stub-first but functional in-CRM page. Add route `/products` (Super Admin + roles with
   permission). Add `{ label: 'Products', icon: 'box', path: '/products', roles:[...] }` to

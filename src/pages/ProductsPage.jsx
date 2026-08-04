@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
@@ -26,7 +26,7 @@ const ProductsPage = () => {
     name: '', sku: '', price: '', description: '', imageUrl: '', status: 'Active',
   });
 
-  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(user?.role);
 
   const fetchProducts = async () => {
     setLoading(true);

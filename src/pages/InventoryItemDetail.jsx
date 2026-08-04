@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
 
 const INVENTORY_ROLES = [
-  'Super CRM Administrator', 'System Architect', 'Inventory Manager',
+  'Core 360 Administrator', 'System Architect', 'Inventory Manager',
   'Warehouse Manager', 'Receiving Clerk', 'Shipping Clerk',
   'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
 ];
