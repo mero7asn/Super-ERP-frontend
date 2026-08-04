@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+﻿import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAux, AUX_COLORS, AUX_ICONS } from '../context/AuxContext';
 import { useAuth } from '../context/AuthContext';
@@ -14,7 +14,7 @@ const fmtSecs = (secs) => {
 };
 
 const fmtMins = (mins) => {
-  if (!mins && mins !== 0) return '—';
+  if (!mins && mins !== 0) return 'â€”';
   const h = Math.floor(mins / 60);
   const m = mins % 60;
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
@@ -100,7 +100,7 @@ const AuxTopBar = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, flex: 1, maxWidth: 520 }}>
         {/* Omni Search Bar */}
         <form onSubmit={handleOmniSearch} style={{ flex: 1, position: 'relative' }}>
-          <span style={{ position: 'absolute', left: 12, top: 10, fontSize: 13, color: '#94A3B8' }}>🔍</span>
+          <span style={{ position: 'absolute', left: 12, top: 10, fontSize: 13, color: '#94A3B8' }}>ðŸ”</span>
           <input
             type="text"
             value={searchQuery}
@@ -164,25 +164,25 @@ const AuxTopBar = () => {
                 onClick={() => { navigate('/leads'); setOpenQuickAdd(false); }}
                 style={{ width: '100%', padding: '8px 12px', border: 'none', background: 'none', textAlign: 'left', fontSize: 12, cursor: 'pointer', display: 'flex', gap: 8 }}
               >
-                <span>👤</span> New Lead
+                <span>ðŸ‘¤</span> New Lead
               </button>
               <button
                 onClick={() => { navigate('/email-composer'); setOpenQuickAdd(false); }}
                 style={{ width: '100%', padding: '8px 12px', border: 'none', background: 'none', textAlign: 'left', fontSize: 12, cursor: 'pointer', display: 'flex', gap: 8 }}
               >
-                <span>✉️</span> Compose Email
+                <span>âœ‰ï¸</span> Compose Email
               </button>
               <button
                 onClick={() => { navigate('/tickets'); setOpenQuickAdd(false); }}
                 style={{ width: '100%', padding: '8px 12px', border: 'none', background: 'none', textAlign: 'left', fontSize: 12, cursor: 'pointer', display: 'flex', gap: 8 }}
               >
-                <span>🎫</span> New Support Ticket
+                <span>ðŸŽ«</span> New Support Ticket
               </button>
               <button
                 onClick={() => { navigate('/inventory/items'); setOpenQuickAdd(false); }}
                 style={{ width: '100%', padding: '8px 12px', border: 'none', background: 'none', textAlign: 'left', fontSize: 12, cursor: 'pointer', display: 'flex', gap: 8 }}
               >
-                <span>📦</span> Add Inventory Item
+                <span>ðŸ“¦</span> Add Inventory Item
               </button>
             </div>
           )}
@@ -254,7 +254,7 @@ const AuxTopBar = () => {
           >
             {fmtSecs(elapsed)}
           </span>
-          <span style={{ fontSize: 10, opacity: 0.7 }}>▾</span>
+          <span style={{ fontSize: 10, opacity: 0.7 }}>â–¾</span>
         </button>
 
         {openAux && (

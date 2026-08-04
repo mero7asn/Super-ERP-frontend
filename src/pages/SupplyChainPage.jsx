@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+﻿import { useLocation } from 'react-router-dom';
 
 const SupplyChainPage = () => {
   const location = useLocation();
@@ -62,7 +62,7 @@ const SupplyChainPage = () => {
       </div>
 
       <div className="card" style={{ padding: 24 }}>
-        <h3 style={{ marginBottom: 8 }}>What’s included</h3>
+        <h3 style={{ marginBottom: 8 }}>Whatâ€™s included</h3>
         <p style={{ color: 'var(--text-secondary)' }}>
           This workspace is ready for planning, purchasing, fulfillment, partner management, and reporting workflows as the supply chain module expands.
         </p>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
 
@@ -94,7 +94,7 @@ const PickTaskPage = () => {
             <Icon name="teams" size={26} style={{ color: 'var(--accent-primary)' }} />
             Pick Tasks
           </h1>
-          <p className="page-subtitle">Manage picking operations — discrete, wave, zone, and batch picking</p>
+          <p className="page-subtitle">Manage picking operations â€” discrete, wave, zone, and batch picking</p>
         </div>
         <button className="btn btn-primary" onClick={() => setShowWaveModal(true)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <Icon name="plus" size={16} /> Release Wave
@@ -104,7 +104,7 @@ const PickTaskPage = () => {
       {error && (
         <div className="alert alert-error" style={{ marginBottom: 16, padding: '10px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, color: '#dc2626' }}>
           {error}
-          <button onClick={() => setError('')} style={{ marginLeft: 12, background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626' }}>×</button>
+          <button onClick={() => setError('')} style={{ marginLeft: 12, background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626' }}>Ã—</button>
         </div>
       )}
 
@@ -129,7 +129,7 @@ const PickTaskPage = () => {
         {/* Task list */}
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           {loading ? (
-            <div style={{ padding: 40, textAlign: 'center' }}><div className="spinner" /> Loading…</div>
+            <div style={{ padding: 40, textAlign: 'center' }}><div className="spinner" /> Loadingâ€¦</div>
           ) : tasks.length === 0 ? (
             <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>No pick tasks found.</div>
           ) : (
@@ -152,13 +152,13 @@ const PickTaskPage = () => {
                     <tr key={task._id} style={{ cursor: 'pointer', background: selectedTask?._id === task._id ? 'var(--bg-hover)' : undefined }}
                       onClick={() => setSelectedTask(task)}>
                       <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{task.pickTaskId}</td>
-                      <td style={{ fontSize: 13 }}>{task.shipmentId?.shipmentId || '—'}</td>
+                      <td style={{ fontSize: 13 }}>{task.shipmentId?.shipmentId || 'â€”'}</td>
                       <td>
                         <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 12, background: '#ede9fe', color: '#7c3aed', fontWeight: 600 }}>
                           {STRATEGY_LABELS[task.pickingStrategy] || task.pickingStrategy}
                         </span>
                       </td>
-                      <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{task.waveNumber || '—'}</td>
+                      <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{task.waveNumber || 'â€”'}</td>
                       <td style={{ fontWeight: 600 }}>{task.lines?.length || 0}</td>
                       <td style={{ fontSize: 13 }}>{task.assignedTo ? `${task.assignedTo.firstName} ${task.assignedTo.lastName}` : <span style={{ color: 'var(--text-muted)' }}>Unassigned</span>}</td>
                       <td>
@@ -171,7 +171,7 @@ const PickTaskPage = () => {
                           <button className="btn btn-secondary" style={{ fontSize: 12, padding: '4px 10px' }}
                             disabled={saving}
                             onClick={() => handleStatusChange(task, nextStatus(task.status))}>
-                            → {nextStatus(task.status)}
+                            â†’ {nextStatus(task.status)}
                           </button>
                         )}
                       </td>
@@ -188,7 +188,7 @@ const PickTaskPage = () => {
           <div className="card" style={{ padding: 20 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0 }}>{selectedTask.pickTaskId}</h3>
-              <button onClick={() => setSelectedTask(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>×</button>
+              <button onClick={() => setSelectedTask(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>Ã—</button>
             </div>
             <div style={{ display: 'grid', gap: 10, fontSize: 13 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -237,7 +237,7 @@ const PickTaskPage = () => {
               <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Pick Lines ({selectedTask.lines?.length})</h4>
               {selectedTask.lines?.map((line, i) => (
                 <div key={i} style={{ background: 'var(--bg-secondary)', borderRadius: 8, padding: '10px 12px', marginBottom: 8 }}>
-                  <div style={{ fontWeight: 600, fontSize: 13 }}>{line.item?.sku} — {line.item?.name}</div>
+                  <div style={{ fontWeight: 600, fontSize: 13 }}>{line.item?.sku} â€” {line.item?.name}</div>
                   <div style={{ display: 'flex', gap: 16, marginTop: 4, fontSize: 12, color: 'var(--text-muted)' }}>
                     <span>Ordered: <strong style={{ color: 'var(--text-primary)' }}>{line.orderedQty}</strong></span>
                     <span>Picked: <strong style={{ color: line.pickedQty >= line.orderedQty ? '#22c55e' : '#f59e0b' }}>{line.pickedQty}</strong></span>
@@ -265,7 +265,7 @@ const PickTaskPage = () => {
           <div className="card" style={{ width: 480, padding: 28, maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>Release Pick Wave</h2>
-              <button onClick={() => setShowWaveModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20 }}>×</button>
+              <button onClick={() => setShowWaveModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20 }}>Ã—</button>
             </div>
 
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20 }}>
@@ -281,8 +281,8 @@ const PickTaskPage = () => {
               <div>
                 <label className="form-label">Warehouse *</label>
                 <select className="form-control" value={waveForm.warehouse} onChange={e => setWaveForm(f => ({ ...f, warehouse: e.target.value }))}>
-                  <option value="">Select warehouse…</option>
-                  {warehouses.map(w => <option key={w._id} value={w._id}>{w.code} — {w.name}</option>)}
+                  <option value="">Select warehouseâ€¦</option>
+                  {warehouses.map(w => <option key={w._id} value={w._id}>{w.code} â€” {w.name}</option>)}
                 </select>
               </div>
               <div>
@@ -301,7 +301,7 @@ const PickTaskPage = () => {
             <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
               <button className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setShowWaveModal(false)}>Cancel</button>
               <button className="btn btn-primary" style={{ flex: 1 }} disabled={saving} onClick={handleReleaseWave}>
-                {saving ? 'Releasing…' : 'Release Wave'}
+                {saving ? 'Releasingâ€¦' : 'Release Wave'}
               </button>
             </div>
           </div>

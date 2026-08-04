@@ -1,4 +1,4 @@
-const fs = require('fs');
+﻿const fs = require('fs');
 const path = 'C:\\Users\\Admin\\Desktop\\Core 360\\frontend\\src\\pages\\BookingLookupPage.jsx';
 
 const header = `import { useState } from 'react';

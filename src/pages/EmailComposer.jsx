@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+ï»¿import { useState, useEffect, useRef, useCallback } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -58,10 +58,10 @@ const BLOCK_TYPES = [
   { type: 'offer-details', label: 'Offer Summary Card', icon: '??', description: 'Interactive proposal box' },
   { type: 'payment-link', label: 'Pay Now Button', icon: '??', description: 'Direct checkout action' },
   { type: 'company-info', label: 'Company Branding', icon: '??', description: 'Logo & signature header' },
-  { type: 'text', label: 'Text Paragraph', icon: '¶', description: 'Standard body text' },
+  { type: 'text', label: 'Text Paragraph', icon: 'Â¶', description: 'Standard body text' },
   { type: 'button', label: 'Custom CTA Button', icon: '??', description: 'Clickable action button' },
   { type: 'image', label: 'Image Box', icon: '??', description: 'Image placeholder or URL' },
-  { type: 'divider', label: 'Divider Line', icon: '—', description: 'Clean separator line' },
+  { type: 'divider', label: 'Divider Line', icon: 'â€”', description: 'Clean separator line' },
   { type: 'spacer', label: 'Spacer', icon: '?', description: 'Vertical spacing gap' },
 ];
 
@@ -468,7 +468,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
           </div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: '-0.2px' }}>
-              {offer?.title ? `New Offer Email — ${offer.title}` : 'Compose New Offer Email'}
+              {offer?.title ? `New Offer Email â€” ${offer.title}` : 'Compose New Offer Email'}
             </div>
             <div style={{ fontSize: 11, color: '#94A3B8', display: 'flex', alignItems: 'center', gap: 6 }}>
               <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#10B981' }} />
@@ -551,13 +551,13 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
       {error && (
         <div style={{ background: '#FEF2F2', color: '#991B1B', borderBottom: '1px solid #FCA5A5', padding: '8px 16px', fontSize: 13, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span>?? {error}</span>
-          <button onClick={() => setError('')} style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 'bold' }}>×</button>
+          <button onClick={() => setError('')} style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 'bold' }}>Ã—</button>
         </div>
       )}
       {success && (
         <div style={{ background: '#ECFDF5', color: '#065F46', borderBottom: '1px solid #6EE7B7', padding: '8px 16px', fontSize: 13, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span>? {success}</span>
-          <button onClick={() => setSuccess('')} style={{ background: 'none', border: 'none', color: '#065F46', cursor: 'pointer', fontWeight: 'bold' }}>×</button>
+          <button onClick={() => setSuccess('')} style={{ background: 'none', border: 'none', color: '#065F46', cursor: 'pointer', fontWeight: 'bold' }}>Ã—</button>
         </div>
       )}
 
@@ -632,7 +632,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               placeholder="cc@example.com"
               style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontSize: 14, color: '#0F172A' }}
             />
-            <button onClick={() => { setCc(''); setShowCc(false); }} style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}>×</button>
+            <button onClick={() => { setCc(''); setShowCc(false); }} style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}>Ã—</button>
           </div>
         )}
 
@@ -647,7 +647,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               placeholder="bcc@example.com"
               style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontSize: 14, color: '#0F172A' }}
             />
-            <button onClick={() => { setBcc(''); setShowBcc(false); }} style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}>×</button>
+            <button onClick={() => { setBcc(''); setShowBcc(false); }} style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}>Ã—</button>
           </div>
         )}
 
@@ -926,7 +926,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
                     onClick={() => removeAttachment(i)}
                     style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', padding: 2, fontSize: 14, fontWeight: 'bold' }}
                   >
-                    ×
+                    Ã—
                   </button>
                 </div>
               ))}
@@ -1360,7 +1360,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
                 <Icon path={Icons.Template} size={18} color="#2563EB" />
                 <span>Email Templates</span>
               </div>
-              <button onClick={() => setShowTemplates(false)} style={{ background: 'none', border: 'none', fontSize: 20, color: '#64748B', cursor: 'pointer' }}>×</button>
+              <button onClick={() => setShowTemplates(false)} style={{ background: 'none', border: 'none', fontSize: 20, color: '#64748B', cursor: 'pointer' }}>Ã—</button>
             </div>
 
             <div style={{ padding: 16, flex: 1, overflowY: 'auto' }}>
@@ -1496,7 +1496,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
                     <Icon path={Icons.Smartphone} size={14} /> Mobile
                   </button>
                 </div>
-                <button onClick={() => setShowPreview(false)} style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: 24, cursor: 'pointer' }}>×</button>
+                <button onClick={() => setShowPreview(false)} style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: 24, cursor: 'pointer' }}>Ã—</button>
               </div>
             </div>
 

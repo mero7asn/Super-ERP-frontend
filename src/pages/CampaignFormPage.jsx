@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import API from '../services/api';
 import logo from '../assets/logo.png';
@@ -65,7 +65,7 @@ const CampaignFormPage = () => {
         {loading ? (
           <div style={{ textAlign: 'center', padding: '40px 0', color: '#9CA3AF' }}>
             <div className="spinner" style={{ margin: '0 auto 16px' }} />
-            Loading form…
+            Loading formâ€¦
           </div>
         ) : error ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
@@ -126,7 +126,7 @@ const CampaignFormPage = () => {
                 <label className="form-label">Message <span style={{ color: '#9CA3AF', fontWeight: 400 }}>(optional)</span></label>
                 <textarea
                   className="form-input"
-                  placeholder="Tell us how we can help…"
+                  placeholder="Tell us how we can helpâ€¦"
                   rows={3}
                   value={form.notes}
                   onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
@@ -139,7 +139,7 @@ const CampaignFormPage = () => {
                 disabled={submitting}
                 style={{ marginTop: 8 }}
               >
-                {submitting ? 'Submitting…' : 'Submit'}
+                {submitting ? 'Submittingâ€¦' : 'Submit'}
               </button>
             </form>
           </>

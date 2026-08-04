@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 export const Icon = ({ name, size = 18, className = "", style = {} }) => {
   const defaultStyle = {

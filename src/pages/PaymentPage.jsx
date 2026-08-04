@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Icon } from '../components/Icons';
@@ -198,7 +198,7 @@ const PaymentPage = () => {
               )}
 
               <button type="submit" className="btn btn-primary" disabled={processing} style={{ width: '100%', padding: '14px', fontSize: 15 }}>
-                {processing ? 'Processing�' : `Pay $${Number(offer.price).toLocaleString()}`}
+                {processing ? 'Processing…' : `Pay $${Number(offer.price).toLocaleString()}`}
               </button>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center', marginTop: 14, fontSize: 12, color: 'var(--text-muted)' }}>
                 <Icon name="lock" size={14} />

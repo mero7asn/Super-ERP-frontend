@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -11,9 +11,9 @@ const PROVIDER_PRESETS = {
 
 const COMMON_CURRENCIES = [
   { code: 'USD', name: 'US Dollar', symbol: '$', rate: 1 },
-  { code: 'EUR', name: 'Euro', symbol: '€', rate: 0.92 },
-  { code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.79 },
-  { code: 'EGP', name: 'Egyptian Pound', symbol: 'E£', rate: 48.5 },
+  { code: 'EUR', name: 'Euro', symbol: 'â‚¬', rate: 0.92 },
+  { code: 'GBP', name: 'British Pound', symbol: 'Â£', rate: 0.79 },
+  { code: 'EGP', name: 'Egyptian Pound', symbol: 'EÂ£', rate: 48.5 },
   { code: 'SAR', name: 'Saudi Riyal', symbol: '?', rate: 3.75 },
   { code: 'AED', name: 'UAE Dirham', symbol: '?.?', rate: 3.67 },
   { code: 'KWD', name: 'Kuwaiti Dinar', symbol: 'KD', rate: 0.31 },
@@ -21,10 +21,10 @@ const COMMON_CURRENCIES = [
   { code: 'BHD', name: 'Bahraini Dinar', symbol: 'BD', rate: 0.38 },
   { code: 'OMR', name: 'Omani Rial', symbol: '?', rate: 0.38 },
   { code: 'JOD', name: 'Jordanian Dinar', symbol: 'JD', rate: 0.71 },
-  { code: 'LBP', name: 'Lebanese Pound', symbol: 'L£', rate: 89500 },
+  { code: 'LBP', name: 'Lebanese Pound', symbol: 'LÂ£', rate: 89500 },
   { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', rate: 1.36 },
   { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', rate: 1.53 },
-  { code: 'JPY', name: 'Japanese Yen', symbol: '¥', rate: 149.5 },
+  { code: 'JPY', name: 'Japanese Yen', symbol: 'Â¥', rate: 149.5 },
 ];
 
 const normalizeCurrencies = (values = []) => {
@@ -591,7 +591,7 @@ const SettingsPage = () => {
                     <input
                       className="form-input"
                       type="password"
-                      placeholder="••••••••"
+                      placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                       value={smtpPass}
                       onChange={(e) => setSmtpPass(e.target.value)}
                       required
@@ -613,10 +613,10 @@ const SettingsPage = () => {
 
                 <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
                   <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: 'auto', padding: '10px 32px' }}>
-                    {loading ? 'Saving…' : 'Save SMTP Settings'}
+                    {loading ? 'Savingâ€¦' : 'Save SMTP Settings'}
                   </button>
                   <button type="button" className="btn btn-secondary" onClick={handleTestConnection} disabled={testing || !smtpHost} style={{ width: 'auto', padding: '10px 32px' }}>
-                    {testing ? 'Testing…' : 'Test Connection'}
+                    {testing ? 'Testingâ€¦' : 'Test Connection'}
                   </button>
                 </div>
 
@@ -653,11 +653,11 @@ const SettingsPage = () => {
                       </div>
                       <div className="form-group" style={{ margin: 0 }}>
                         <label className="form-label">Password</label>
-                        <input className="form-input" type="password" placeholder="••••••••" value={telephonyPassword} onChange={(e) => setTelephonyPassword(e.target.value)} />
+                        <input className="form-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" value={telephonyPassword} onChange={(e) => setTelephonyPassword(e.target.value)} />
                       </div>
                     </div>
                     <button type="button" className="btn btn-primary" onClick={handleSaveTelephony} disabled={savingTelephony} style={{ width: 'auto', padding: '10px 28px', marginTop: 14 }}>
-                      {savingTelephony ? 'Saving…' : 'Save Phone Call Settings'}
+                      {savingTelephony ? 'Savingâ€¦' : 'Save Phone Call Settings'}
                     </button>
                   </div>
                 )}
@@ -774,7 +774,7 @@ const SettingsPage = () => {
                     }}
                     style={{ width: 'auto', padding: '10px 32px' }}
                   >
-                    {savingBm ? 'Saving…' : 'Save Business Model'}
+                    {savingBm ? 'Savingâ€¦' : 'Save Business Model'}
                   </button>
                 </div>
 
@@ -819,7 +819,7 @@ const SettingsPage = () => {
                     }}
                     style={{ width: 'auto', padding: '10px 28px' }}
                   >
-                    {savingErp ? 'Saving…' : 'Save ERP URL'}
+                    {savingErp ? 'Savingâ€¦' : 'Save ERP URL'}
                   </button>
                 </div>
               </div>
@@ -898,7 +898,7 @@ const SettingsPage = () => {
                     }}
                     style={{ width: 'auto', padding: '10px 32px' }}
                   >
-                    {savingPricing ? 'Saving…' : 'Save Pricing Settings'}
+                    {savingPricing ? 'Savingâ€¦' : 'Save Pricing Settings'}
                   </button>
                 </div>
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+ï»¿import { useState, useEffect, useMemo } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
@@ -223,7 +223,7 @@ const PartnershipsPage = () => {
                     <label className="form-label">Benefit Details *</label>
                     <textarea className="form-input" rows={3} value={benefitDetails}
                       onChange={(e) => setBenefitDetails(e.target.value)}
-                      placeholder="e.g. 15% discount on memberships for all employees…" required />
+                      placeholder="e.g. 15% discount on memberships for all employeesâ€¦" required />
                   </div>
                   <div className="form-group" style={{ margin: 0 }}>
                     <label className="form-label">Contact Info</label>
@@ -236,7 +236,7 @@ const PartnershipsPage = () => {
                     <input className="form-input" type="date" value={benefitExpiry} onChange={(e) => setBenefitExpiry(e.target.value)} />
                   </div>
                   <button type="submit" className="btn btn-primary" disabled={submitting}>
-                    {submitting ? 'Saving…' : 'Save Deal'}
+                    {submitting ? 'Savingâ€¦' : 'Save Deal'}
                   </button>
                 </form>
               </div>
@@ -249,7 +249,7 @@ const PartnershipsPage = () => {
                 <input
                   className="form-input"
                   style={{ flex: '1 1 180px', padding: '6px 12px', fontSize: 12 }}
-                  placeholder="Search benefits…"
+                  placeholder="Search benefitsâ€¦"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -282,7 +282,7 @@ const PartnershipsPage = () => {
 
               {/* Benefits Grid */}
               {loading ? (
-                <div className="loading-state">Loading deals…</div>
+                <div className="loading-state">Loading dealsâ€¦</div>
               ) : filteredPartnerships.length === 0 ? (
                 <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 32 }}>
                   No partnerships match the selected filters.
@@ -376,7 +376,7 @@ const PartnershipsPage = () => {
           </div>
 
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-            {/* Submit Suggestion Form — all employees */}
+            {/* Submit Suggestion Form â€” all employees */}
             <div className="card" style={{ flex: '1 1 300px' }}>
               <h3 style={{ margin: '0 0 16px 0', fontSize: 15 }}>Submit a Suggestion</h3>
               <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
@@ -401,11 +401,11 @@ const PartnershipsPage = () => {
                   <label className="form-label">Details *</label>
                   <textarea className="form-input" rows={4} value={suggDetails}
                     onChange={(e) => setSuggDetails(e.target.value)}
-                    placeholder="Describe the benefit idea, how it would work, and why it would help employees…"
+                    placeholder="Describe the benefit idea, how it would work, and why it would help employeesâ€¦"
                     required />
                 </div>
                 <button type="submit" className="btn btn-primary" disabled={submittingSugg}>
-                  {submittingSugg ? 'Submitting…' : '? Submit Suggestion'}
+                  {submittingSugg ? 'Submittingâ€¦' : '? Submit Suggestion'}
                 </button>
               </form>
             </div>
@@ -414,7 +414,7 @@ const PartnershipsPage = () => {
             <div className="card" style={{ flex: '2 1 440px' }}>
               <h3 style={{ margin: '0 0 16px 0', fontSize: 15 }}>Submitted Suggestions</h3>
               {loading ? (
-                <div className="loading-state">Loading suggestions…</div>
+                <div className="loading-state">Loading suggestionsâ€¦</div>
               ) : suggestions.length === 0 ? (
                 <div style={{ color: 'var(--text-muted)', padding: 24, textAlign: 'center' }}>
                   No suggestions have been submitted yet. Be the first!
@@ -446,8 +446,8 @@ const PartnershipsPage = () => {
                             </p>
                             {s.submittedBy && (
                               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
-                                Submitted by: {s.submittedBy.firstName} {s.submittedBy.lastName} ·{' '}
-                                {s.createdAt ? new Date(s.createdAt).toLocaleDateString() : '—'}
+                                Submitted by: {s.submittedBy.firstName} {s.submittedBy.lastName} Â·{' '}
+                                {s.createdAt ? new Date(s.createdAt).toLocaleDateString() : 'â€”'}
                               </div>
                             )}
                           </div>

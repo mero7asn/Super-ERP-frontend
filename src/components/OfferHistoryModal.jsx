@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import API from '../services/api';
 
 const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
@@ -21,23 +21,23 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
 
   const getActionIcon = (action) => {
     const icons = {
-      created: '➕',
-      sent: '📤',
-      viewed: '👁️',
-      accepted: '✅',
-      rejected: '❌',
-      expired: '⏰',
-      completed: '🎉',
-      canceled: '🚫',
-      refunded: '💸',
-      updated: '✏️',
-      resend: '🔄',
-      revised: '🔁',
-      version_sent: '📨',
-      image_added: '🖼️',
-      image_removed: '🗑️'
+      created: 'âž•',
+      sent: 'ðŸ“¤',
+      viewed: 'ðŸ‘ï¸',
+      accepted: 'âœ…',
+      rejected: 'âŒ',
+      expired: 'â°',
+      completed: 'ðŸŽ‰',
+      canceled: 'ðŸš«',
+      refunded: 'ðŸ’¸',
+      updated: 'âœï¸',
+      resend: 'ðŸ”„',
+      revised: 'ðŸ”',
+      version_sent: 'ðŸ“¨',
+      image_added: 'ðŸ–¼ï¸',
+      image_removed: 'ðŸ—‘ï¸'
     };
-    return icons[action] || '📋';
+    return icons[action] || 'ðŸ“‹';
   };
 
   const renderChanges = (changes) => {
@@ -47,9 +47,9 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
         {Object.keys(changes).map(field => {
           const { from, to } = changes[field];
           const fmt = (v) => {
-            if (field === 'price') return v != null ? '$' + Number(v).toLocaleString() : '—';
-            if (field === 'validUntil') return v ? new Date(v).toLocaleDateString() : '—';
-            if (v == null) return '—';
+            if (field === 'price') return v != null ? '$' + Number(v).toLocaleString() : 'â€”';
+            if (field === 'validUntil') return v ? new Date(v).toLocaleDateString() : 'â€”';
+            if (v == null) return 'â€”';
             return String(v);
           };
           return (
@@ -59,7 +59,7 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
             }}>
               <span style={{ fontWeight: 600, textTransform: 'capitalize' }}>{field.replace(/([A-Z])/g, ' $1')}</span>:
               <span style={{ color: 'var(--status-lost)', textDecoration: 'line-through', margin: '0 4px' }}>{fmt(from)}</span>
-              <span>→</span>
+              <span>â†’</span>
               <span style={{ color: 'var(--status-converted)', fontWeight: 600, margin: '0 4px' }}>{fmt(to)}</span>
             </div>
           );
@@ -86,10 +86,10 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
                 onClick={onViewVersions}
                 style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '4px 10px', fontSize: 12, cursor: 'pointer', color: 'var(--accent-primary)' }}
               >
-                🗂️ Sent Versions
+                ðŸ—‚ï¸ Sent Versions
               </button>
             )}
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>×</button>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>Ã—</button>
           </div>
         </div>
         {loading ? (
@@ -111,7 +111,7 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
                   <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 2 }}>{entry.details}</div>
                   {renderChanges(entry.changes)}
                   <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
-                    {entry.performedBy ? `${entry.performedBy.firstName} ${entry.performedBy.lastName}` : 'System'} • {new Date(entry.timestamp).toLocaleString()}
+                    {entry.performedBy ? `${entry.performedBy.firstName} ${entry.performedBy.lastName}` : 'System'} â€¢ {new Date(entry.timestamp).toLocaleString()}
                   </div>
                 </div>
               </div>

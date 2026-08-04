@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
@@ -94,7 +94,7 @@ const ProductsPage = () => {
     }
   };
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading products…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading productsâ€¦</div>;
 
   return (
     <div>
@@ -160,7 +160,7 @@ const ProductsPage = () => {
                   <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{p.sku}</td>
                   <td style={{ fontWeight: 600, color: 'var(--accent-primary)' }}>${Number(p.price).toLocaleString()}</td>
                   <td><span className={`badge ${statusBadge(p.status)}`}>{p.status}</span></td>
-                  <td>{p.createdBy ? `${p.createdBy.firstName} ${p.createdBy.lastName}` : '—'}</td>
+                  <td>{p.createdBy ? `${p.createdBy.firstName} ${p.createdBy.lastName}` : 'â€”'}</td>
                   <td>
                     <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                       <button className="btn btn-secondary btn-sm" onClick={() => openEdit(p)}>Edit</button>

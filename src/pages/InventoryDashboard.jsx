@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
@@ -16,7 +16,7 @@ const KPICard = ({ label, value, sub, color, alert, onClick }) => (
       <div style={{ position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: '50%', background: '#ef4444', boxShadow: '0 0 0 3px #fecaca' }} />
     )}
     <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 26, fontWeight: 700, color: color || 'var(--text-primary)' }}>{value ?? '—'}</div>
+    <div style={{ fontSize: 26, fontWeight: 700, color: color || 'var(--text-primary)' }}>{value ?? 'â€”'}</div>
     {sub && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{sub}</div>}
   </div>
 );
@@ -40,11 +40,11 @@ const InventoryDashboard = () => {
     fetchKPIs();
   }, []);
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading inventory dashboard…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading inventory dashboardâ€¦</div>;
 
-  const fmtCurrency = (n) => n != null ? `$${Number(n).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : '—';
-  const fmtPct = (n) => n != null ? `${n}%` : '—';
-  const fmtNum = (n) => n != null ? Number(n).toLocaleString() : '—';
+  const fmtCurrency = (n) => n != null ? `$${Number(n).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : 'â€”';
+  const fmtPct = (n) => n != null ? `${n}%` : 'â€”';
+  const fmtNum = (n) => n != null ? Number(n).toLocaleString() : 'â€”';
 
   return (
     <div>
@@ -91,7 +91,7 @@ const InventoryDashboard = () => {
             <KPICard label="Allocated" value={fmtNum(kpis.totalAllocated)} color="#f59e0b" />
             <KPICard label="Blocked" value={fmtNum(kpis.totalBlocked)} color="#ef4444" />
             <KPICard label="Inventory Value" value={fmtCurrency(kpis.totalInventoryValue)} color="var(--accent-primary)"
-              sub="On-hand × unit cost"
+              sub="On-hand Ã— unit cost"
               onClick={() => navigate('/inventory/reports')} />
             <KPICard label="Total Transactions" value={fmtNum(kpis.totalTransactions)} />
           </div>
@@ -105,13 +105,13 @@ const InventoryDashboard = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginBottom: 24 }}>
             <KPICard
               label="Inventory Turnover"
-              value={kpis.inventoryTurnover != null ? `${kpis.inventoryTurnover}x` : '—'}
+              value={kpis.inventoryTurnover != null ? `${kpis.inventoryTurnover}x` : 'â€”'}
               color={kpis.inventoryTurnover > 6 ? '#22c55e' : kpis.inventoryTurnover > 3 ? '#f59e0b' : '#ef4444'}
               sub="Annualized (90-day COGS)"
             />
             <KPICard
               label="Days on Hand"
-              value={kpis.daysOnHand != null ? `${kpis.daysOnHand}d` : '—'}
+              value={kpis.daysOnHand != null ? `${kpis.daysOnHand}d` : 'â€”'}
               color={kpis.daysOnHand < 30 ? '#22c55e' : kpis.daysOnHand < 60 ? '#f59e0b' : '#ef4444'}
               sub="Avg days stock will last"
             />
@@ -216,7 +216,7 @@ const InventoryDashboard = () => {
                   <tr key={txn._id}>
                     <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{txn.transactionId}</td>
                     <td><span className="badge badge-new">{txn.type}</span></td>
-                    <td>{txn.item?.sku} — {txn.item?.name}</td>
+                    <td>{txn.item?.sku} â€” {txn.item?.name}</td>
                     <td>{txn.warehouse?.code}</td>
                     <td style={{ fontWeight: 600 }}>{txn.quantity}</td>
                     <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(txn.createdAt).toLocaleDateString()}</td>

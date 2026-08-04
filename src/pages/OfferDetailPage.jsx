@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -199,7 +199,7 @@ const OfferDetailPage = () => {
   const symbol = currency?.symbol || offer?.currencySymbol || '$';
   const price = Number(offer?.price || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading offer…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading offerâ€¦</div>;
   if (!offer) return <div className="empty-state"><p>Offer not found</p></div>;
 
   return (
@@ -219,7 +219,7 @@ const OfferDetailPage = () => {
             <span className="badge badge-meta" style={{ fontSize: 10, padding: '2px 8px', fontWeight: 700 }}>v{offer.version || 1}</span>
           </div>
           <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
-            {lead?.name} • {symbol}{price} • Expires {new Date(offer.validUntil).toLocaleDateString()}
+            {lead?.name} â€¢ {symbol}{price} â€¢ Expires {new Date(offer.validUntil).toLocaleDateString()}
           </div>
         </div>
 
@@ -294,9 +294,9 @@ const OfferDetailPage = () => {
               <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Customer</div>
               <div style={{ display: 'grid', gap: 6, fontSize: 13 }}>
                 <div><strong>Name:</strong> {lead?.name}</div>
-                <div><strong>Email:</strong> {lead?.email || '—'}</div>
-                <div><strong>Phone:</strong> {lead?.phone || '—'}</div>
-                <div><strong>Lead ref:</strong> {lead?.referenceNumber || lead?._id || '—'}</div>
+                <div><strong>Email:</strong> {lead?.email || 'â€”'}</div>
+                <div><strong>Phone:</strong> {lead?.phone || 'â€”'}</div>
+                <div><strong>Lead ref:</strong> {lead?.referenceNumber || lead?._id || 'â€”'}</div>
               </div>
             </div>
             <div style={{ padding: 16, borderRadius: 10, border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
@@ -319,7 +319,7 @@ const OfferDetailPage = () => {
               </button>
             </div>
             {emailsLoading ? (
-              <div className="loading-state"><div className="spinner" />Loading emails…</div>
+              <div className="loading-state"><div className="spinner" />Loading emailsâ€¦</div>
             ) : emails.length === 0 ? (
               <div style={{ padding: 24, textAlign: 'center', color: 'var(--text-muted)' }}>No communications yet.</div>
             ) : (
@@ -479,7 +479,7 @@ const OfferDetailPage = () => {
           }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>Add Offer Image</h3>
-              <button onClick={() => { setShowImageModal(false); setSelectedFile(null); setImageCaption(''); }} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>×</button>
+              <button onClick={() => { setShowImageModal(false); setSelectedFile(null); setImageCaption(''); }} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>Ã—</button>
             </div>
             {error && <div className="alert alert-error" style={{ marginBottom: 12 }}>{error}</div>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

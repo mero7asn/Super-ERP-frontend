@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+ï»¿import { useState, useEffect, useMemo } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { AUX_COLORS } from '../../context/AuxContext';
 
 const fmt = (mins) => {
-  if (mins === null || mins === undefined) return '—';
+  if (mins === null || mins === undefined) return 'â€”';
   const h = Math.floor(mins / 60);
   const m = mins % 60;
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
@@ -36,7 +36,7 @@ const getWeeksOfMonth = (month) => {
     weekEnd.setDate(weekEnd.getDate() + 6);
     if (weekEnd.getMonth() !== m - 1) weekEnd.setDate(new Date(y, m, 0).getDate());
     weeks.push({
-      weekLabel: `Week ${wNum} (${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}–${weekEnd.toLocaleDateString('en-US', { day: 'numeric' })})`,
+      weekLabel: `Week ${wNum} (${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}â€“${weekEnd.toLocaleDateString('en-US', { day: 'numeric' })})`,
       weekStart: weekStart.toISOString(),
       weekEnd: weekEnd.toISOString(),
     });
@@ -146,7 +146,7 @@ const AuxSchedulePage = () => {
       <div className="page-header">
         <div>
           <h1 className="page-title">AUX Schedule & Compliance</h1>
-          <p className="page-subtitle">Monitor AUX time vs planned schedule — monthly targets with weekly overrides</p>
+          <p className="page-subtitle">Monitor AUX time vs planned schedule â€” monthly targets with weekly overrides</p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <label style={{ fontSize: 12, color: 'var(--text-muted)' }}>Month:</label>
@@ -183,7 +183,7 @@ const AuxSchedulePage = () => {
       {tab === 'report' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {loading ? (
-            <div className="loading-state">Loading report…</div>
+            <div className="loading-state">Loading reportâ€¦</div>
           ) : report.length === 0 ? (
             <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 40 }}>
               No AUX activity recorded for {month}. Make sure employees are logging their status.
@@ -198,7 +198,7 @@ const AuxSchedulePage = () => {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
                     <div>
                       <div style={{ fontWeight: 700, fontSize: 15 }}>{name}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{entry.user?.role} · {entry.workDays} working days</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{entry.user?.role} Â· {entry.workDays} working days</div>
                     </div>
                     <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                       {['Live', 'Coaching', 'Break', 'Training', 'Logged out'].map(s => (
@@ -271,7 +271,7 @@ const AuxSchedulePage = () => {
           {selectedEmpId && (
             <div className="card" style={{ flex: '1 1 480px' }}>
               <h3 style={{ margin: '0 0 18px 0', fontSize: 14 }}>
-                Monthly Schedule — {employees.find(e => e._id === selectedEmpId)?.firstName} · {month}
+                Monthly Schedule â€” {employees.find(e => e._id === selectedEmpId)?.firstName} Â· {month}
               </h3>
               <form onSubmit={handleSaveSchedule} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 {/* Monthly base plan */}
@@ -336,7 +336,7 @@ const AuxSchedulePage = () => {
                 </div>
 
                 <button type="submit" className="btn btn-primary" disabled={saving}>
-                  {saving ? 'Saving…' : 'Save Schedule'}
+                  {saving ? 'Savingâ€¦' : 'Save Schedule'}
                 </button>
               </form>
             </div>

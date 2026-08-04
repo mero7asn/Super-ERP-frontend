@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
@@ -60,7 +60,7 @@ const TransactionsPage = () => {
       </div>
 
       {loading ? (
-        <div className="loading-state"><div className="spinner" />Loading transactions…</div>
+        <div className="loading-state"><div className="spinner" />Loading transactionsâ€¦</div>
       ) : (
         <div className="card" style={{ padding: 0 }}>
           <div className="table-wrapper" style={{ overflowX: 'auto' }}>
@@ -90,16 +90,16 @@ const TransactionsPage = () => {
                   <tr key={txn._id}>
                     <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{txn.transactionId}</td>
                     <td><span className="badge badge-new">{txn.type}</span></td>
-                    <td style={{ fontSize: 12 }}>{txn.subtype || '—'}</td>
+                    <td style={{ fontSize: 12 }}>{txn.subtype || 'â€”'}</td>
                     <td>{txn.item?.name}</td>
                     <td style={{ fontFamily: 'monospace' }}>{txn.warehouse?.code}</td>
                     <td>{txn.subinventory}</td>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{txn.locator || '—'}</td>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{txn.lotNumber || '—'}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{txn.locator || 'â€”'}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{txn.lotNumber || 'â€”'}</td>
                     <td style={{ fontWeight: 600, color: txn.quantity > 0 ? '#22c55e' : '#ef4444' }}>{txn.quantity}</td>
                     <td style={{ fontFamily: 'monospace' }}>{txn.unitOfMeasure}</td>
                     <td>${txn.totalValue?.toLocaleString()}</td>
-                    <td style={{ fontSize: 12 }}>{txn.referenceNumber || '—'}</td>
+                    <td style={{ fontSize: 12 }}>{txn.referenceNumber || 'â€”'}</td>
                     <td>{txn.performedBy?.firstName} {txn.performedBy?.lastName}</td>
                     <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(txn.createdAt).toLocaleDateString()}</td>
                   </tr>

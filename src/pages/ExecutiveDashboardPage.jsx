@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
@@ -154,7 +154,7 @@ const ExecutiveDashboardPage = () => {
         if (status === 403) {
           setError('Access denied. Your role does not have permission to view analytics.');
         } else if (status === 401) {
-          setError('Session expired. Redirecting to login…');
+          setError('Session expired. Redirecting to loginâ€¦');
         } else {
           setError(msg || 'Failed to load analytics. Please check your connection and try again.');
         }
@@ -194,24 +194,24 @@ const ExecutiveDashboardPage = () => {
       {error && <div className="alert alert-error">{error}</div>}
 
       {loading ? (
-        <div className="loading-state"><div className="spinner" />Loading analytics…</div>
+        <div className="loading-state"><div className="spinner" />Loading analyticsâ€¦</div>
       ) : (
         <>
           {/* -- KPI Row -- */}
           <SectionHeading>Key Performance Indicators</SectionHeading>
           <div className="stat-grid">
-            <KpiCard icon="target" value={stats?.leads.total ?? '–'}     label="Total Leads"       color="blue"   delta={stats?.leads.deltas?.total} />
-            <KpiCard icon="plus" value={stats?.leads.new ?? '–'}       label="New This Period"   color="cyan"   delta={stats?.leads.deltas?.new}  />
-            <KpiCard icon="check" value={stats?.leads.converted ?? '–'} label="Converted"         color="green"  delta={stats?.leads.deltas?.converted}  />
+            <KpiCard icon="target" value={stats?.leads.total ?? 'â€“'}     label="Total Leads"       color="blue"   delta={stats?.leads.deltas?.total} />
+            <KpiCard icon="plus" value={stats?.leads.new ?? 'â€“'}       label="New This Period"   color="cyan"   delta={stats?.leads.deltas?.new}  />
+            <KpiCard icon="check" value={stats?.leads.converted ?? 'â€“'} label="Converted"         color="green"  delta={stats?.leads.deltas?.converted}  />
             <KpiCard icon="trending" value={`${convRate}%`}                label="Conversion Rate"   color="yellow" />
-            <KpiCard icon="ticket" value={stats?.tickets.total ?? '–'}   label="Total Tickets"     color="blue"   delta={stats?.tickets.deltas?.total} />
-            <KpiCard icon="unlock" value={stats?.tickets.open ?? '–'}    label="Open Tickets"      color="red"    delta={stats?.tickets.deltas?.open} />
-            <KpiCard icon="megaphone" value={stats?.campaigns.total ?? '–'} label="Total Campaigns"   color="cyan"   />
-            <KpiCard icon="play" value={stats?.campaigns.active ?? '–'} label="Active Campaigns" color="green"  />
+            <KpiCard icon="ticket" value={stats?.tickets.total ?? 'â€“'}   label="Total Tickets"     color="blue"   delta={stats?.tickets.deltas?.total} />
+            <KpiCard icon="unlock" value={stats?.tickets.open ?? 'â€“'}    label="Open Tickets"      color="red"    delta={stats?.tickets.deltas?.open} />
+            <KpiCard icon="megaphone" value={stats?.campaigns.total ?? 'â€“'} label="Total Campaigns"   color="cyan"   />
+            <KpiCard icon="play" value={stats?.campaigns.active ?? 'â€“'} label="Active Campaigns" color="green"  />
           </div>
 
           {/* -- Lead Platform Trend -- */}
-          <SectionHeading>Lead Pipeline — Marketing Platforms Performance</SectionHeading>
+          <SectionHeading>Lead Pipeline â€” Marketing Platforms Performance</SectionHeading>
           <div className="card" style={{ marginBottom: 20 }}>
             {leadTrend.length > 0 ? (
               <ResponsiveContainer width="100%" height={260}>
@@ -385,8 +385,8 @@ const ExecutiveDashboardPage = () => {
                         </div>
                       </td>
                       <td style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{m.role}</td>
-                      <td style={{ fontWeight: 600 }}>{m.leads || '—'}</td>
-                      <td style={{ fontWeight: 600 }}>{m.tickets || '—'}</td>
+                      <td style={{ fontWeight: 600 }}>{m.leads || 'â€”'}</td>
+                      <td style={{ fontWeight: 600 }}>{m.tickets || 'â€”'}</td>
                       <td style={{ color: 'var(--accent-success)', fontWeight: 600 }}>{m.conversionRate}</td>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

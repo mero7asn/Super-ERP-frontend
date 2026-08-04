@@ -1,4 +1,4 @@
-import { useState } from 'react';
+ï»¿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
@@ -434,7 +434,7 @@ const BookingLookupPage = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Section 1 • Customer Information
+                  Section 1 â€¢ Customer Information
                 </div>
                 <h2 style={{ margin: '6px 0 4px', fontSize: 22, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}>
                   <Icon name="leads" size={24} style={{ color: 'var(--accent-primary)' }} />
@@ -481,7 +481,7 @@ const BookingLookupPage = () => {
               <div style={{ padding: 14, borderRadius: 14, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Location & Preference</div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginTop: 4 }}>
-                  {booking.lead?.address || 'Cairo, Egypt'} • {booking.lead?.contactPreference || 'Email / SMS'}
+                  {booking.lead?.address || 'Cairo, Egypt'} â€¢ {booking.lead?.contactPreference || 'Email / SMS'}
                 </div>
               </div>
             </div>
@@ -494,7 +494,7 @@ const BookingLookupPage = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--status-completed)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Section 2 • Booking / Order Details & Processing
+                  Section 2 â€¢ Booking / Order Details & Processing
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4, flexWrap: 'wrap' }}>
                   <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>{booking.recordLocator}</h2>
@@ -603,7 +603,7 @@ const BookingLookupPage = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 18 }}>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--warning)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Section 3 • Billing, Documentation & Log Workspace
+                  Section 3 â€¢ Billing, Documentation & Log Workspace
                 </div>
                 <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-secondary)' }}>
                   View financial transactions, unique agent documentations, and signed system/agent audit logs.
@@ -674,7 +674,7 @@ const BookingLookupPage = () => {
                         <div key={idx} style={{ padding: 16, borderRadius: 14, background: 'var(--bg-primary)', border: '1px solid var(--border-color)', display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr auto', gap: 12, alignItems: 'center' }}>
                           <div>
                             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{txn.type}</div>
-                            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>ID: {txn.id} • Ref: {txn.reference}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>ID: {txn.id} â€¢ Ref: {txn.reference}</div>
                           </div>
                           <div>
                             <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Payment Method</div>

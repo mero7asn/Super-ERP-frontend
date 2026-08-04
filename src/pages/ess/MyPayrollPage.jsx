@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
@@ -99,8 +99,8 @@ const MyPayrollPage = () => {
     // Frontend validations
     const cleaned = pmForm.cardNumber.replace(/\s/g, '');
     if (!/^\d+$/.test(cleaned)) return setPmMsg({ type: 'error', text: 'Card number must contain digits only.' });
-    if (cleaned.length < 13 || cleaned.length > 19) return setPmMsg({ type: 'error', text: 'Card number must be 13–19 digits.' });
-    if (!/^\d{1,2}$/.test(pmForm.expiryMonth)) return setPmMsg({ type: 'error', text: 'Expiry month must be numbers only (01–12).' });
+    if (cleaned.length < 13 || cleaned.length > 19) return setPmMsg({ type: 'error', text: 'Card number must be 13â€“19 digits.' });
+    if (!/^\d{1,2}$/.test(pmForm.expiryMonth)) return setPmMsg({ type: 'error', text: 'Expiry month must be numbers only (01â€“12).' });
     if (!/^\d{4}$/.test(pmForm.expiryYear)) return setPmMsg({ type: 'error', text: 'Expiry year must be 4 digits.' });
     const month = parseInt(pmForm.expiryMonth, 10);
     if (month < 1 || month > 12) return setPmMsg({ type: 'error', text: 'Expiry month must be between 01 and 12.' });
@@ -213,7 +213,7 @@ const MyPayrollPage = () => {
       <div className="page-header">
         <div>
           <h1 className="page-title">My Payroll</h1>
-          <p className="page-subtitle">Your payslips and payment history — private to you</p>
+          <p className="page-subtitle">Your payslips and payment history â€” private to you</p>
         </div>
       </div>
 
@@ -221,7 +221,7 @@ const MyPayrollPage = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
         <div className="card">
           <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Latest Net</div>
-          <div style={{ fontWeight: 700, fontSize: 20, marginTop: 4 }}>{latest ? fmt(latest.netSalary) : '—'}</div>
+          <div style={{ fontWeight: 700, fontSize: 20, marginTop: 4 }}>{latest ? fmt(latest.netSalary) : 'â€”'}</div>
           <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{latest?.period || 'No payslips'}</div>
         </div>
         <div className="card">
@@ -241,10 +241,10 @@ const MyPayrollPage = () => {
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 0, overflowX: 'auto' }}>
         {[
-          { id: 'payslips', label: '📄 Payslips' },
-          { id: 'history', label: '🧾 Payment History' },
-          { id: 'bank', label: '🏦 Bank Account' },
-          { id: 'payment', label: '💳 Payment Method' },
+          { id: 'payslips', label: 'ðŸ“„ Payslips' },
+          { id: 'history', label: 'ðŸ§¾ Payment History' },
+          { id: 'bank', label: 'ðŸ¦ Bank Account' },
+          { id: 'payment', label: 'ðŸ’³ Payment Method' },
         ].map(t => (
           <button
             key={t.id}
@@ -263,13 +263,13 @@ const MyPayrollPage = () => {
       </div>
 
       {loading && tab !== 'payment' ? (
-        <div className="loading-state"><div className="spinner" /> Loading payroll…</div>
+        <div className="loading-state"><div className="spinner" /> Loading payrollâ€¦</div>
       ) : tab === 'payment' ? (
         <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-start' }}>
           {/* Add / Edit Card Form */}
           <div style={{ flex: '1 1 320px' }}>
             <div className="card">
-              <h3 style={{ margin: '0 0 12px', fontSize: 15 }}>{editingId ? '✏️ Edit Card' : 'Add Payment Card'}</h3>
+              <h3 style={{ margin: '0 0 12px', fontSize: 15 }}>{editingId ? 'âœï¸ Edit Card' : 'Add Payment Card'}</h3>
               <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
                 {editingId ? 'Update your card details. It will be resubmitted for payroll team approval.' : 'Your card details will be reviewed and approved by the payroll team before use.'}
               </p>
@@ -292,7 +292,7 @@ const MyPayrollPage = () => {
                     className="form-input"
                     value={pmForm.cardNumber}
                     onChange={e => setPmForm(f => ({ ...f, cardNumber: e.target.value.replace(/\D/g, '').slice(0, 19) }))}
-                    placeholder="Numbers only, 13–19 digits"
+                    placeholder="Numbers only, 13â€“19 digits"
                     inputMode="numeric"
                     required
                   />
@@ -330,7 +330,7 @@ const MyPayrollPage = () => {
                 )}
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button type="submit" className="btn btn-primary" disabled={pmSubmitting} style={{ flex: 1 }}>
-                    {pmSubmitting ? 'Submitting…' : editingId ? 'Update & Resubmit' : 'Submit for Approval'}
+                    {pmSubmitting ? 'Submittingâ€¦' : editingId ? 'Update & Resubmit' : 'Submit for Approval'}
                   </button>
                   {editingId && (
                     <button type="button" className="btn btn-secondary" onClick={cancelEdit}>Cancel</button>
@@ -344,7 +344,7 @@ const MyPayrollPage = () => {
           <div style={{ flex: '1 1 320px' }}>
             <h3 style={{ margin: '0 0 14px', fontSize: 15 }}>My Cards</h3>
             {pmLoading ? (
-              <div className="loading-state"><div className="spinner" /> Loading…</div>
+              <div className="loading-state"><div className="spinner" /> Loadingâ€¦</div>
             ) : paymentMethods.length === 0 ? (
               <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 32 }}>No cards added yet.</div>
             ) : (
@@ -356,15 +356,15 @@ const MyPayrollPage = () => {
                     <div key={pm._id} style={{ background: isBeingEdited ? 'rgba(37,99,235,0.06)' : 'var(--bg-card)', border: isBeingEdited ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '14px 18px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                          <div style={{ fontWeight: 600, fontSize: 14 }}>{pm.cardType} •••• {pm.lastFour}</div>
-                          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{pm.cardholderName} · Exp {pm.expiryMonth}/{pm.expiryYear}</div>
+                          <div style={{ fontWeight: 600, fontSize: 14 }}>{pm.cardType} â€¢â€¢â€¢â€¢ {pm.lastFour}</div>
+                          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{pm.cardholderName} Â· Exp {pm.expiryMonth}/{pm.expiryYear}</div>
                           {pm.status === 'Rejected' && pm.rejectionReason && (
                             <div style={{ fontSize: 12, color: '#B91C1C', marginTop: 4 }}>Reason: {pm.rejectionReason}</div>
                           )}
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
                           <span style={{ padding: '3px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600, background: sc.bg, color: sc.color }}>{pm.status}</span>
-                          {pm.isActive && <span style={{ fontSize: 11, color: '#047857' }}>✓ Active</span>}
+                          {pm.isActive && <span style={{ fontSize: 11, color: '#047857' }}>âœ“ Active</span>}
                           <div style={{ display: 'flex', gap: 6 }}>
                             {!isBeingEdited && (
                               <button onClick={() => startEdit(pm)} className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '3px 8px' }}>Edit</button>
@@ -426,7 +426,7 @@ const MyPayrollPage = () => {
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Payslip</div>
                     <div style={{ fontWeight: 700, fontSize: 20 }}>{selected.period}</div>
                   </div>
-                  <button onClick={() => window.print()} className="btn btn-secondary btn-sm" style={{ fontSize: 11 }}>🖨️ Print</button>
+                  <button onClick={() => window.print()} className="btn btn-secondary btn-sm" style={{ fontSize: 11 }}>ðŸ–¨ï¸ Print</button>
                 </div>
 
                 <Section title="Earnings" color="var(--accent-success)" rows={EARNINGS} data={selected} />
@@ -444,7 +444,7 @@ const MyPayrollPage = () => {
                 {selected.paymentDate && (
                   <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>
                     Paid on {new Date(selected.paymentDate).toLocaleDateString()}
-                    {selected.paymentRef ? ` · Ref ${selected.paymentRef}` : ''}
+                    {selected.paymentRef ? ` Â· Ref ${selected.paymentRef}` : ''}
                   </div>
                 )}
               </div>
@@ -457,7 +457,7 @@ const MyPayrollPage = () => {
             <div className="card">
               <h3 style={{ margin: '0 0 12px', fontSize: 15 }}>{myBank ? 'Update Your Bank Account' : 'Add Your Bank Account'}</h3>
               <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
-                Choose the payment vendor your salary is paid through. Required details depend on the vendor (Fawry, PayMob, InstaPay, …). HR must verify before use.
+                Choose the payment vendor your salary is paid through. Required details depend on the vendor (Fawry, PayMob, InstaPay, â€¦). HR must verify before use.
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
@@ -487,26 +487,26 @@ const MyPayrollPage = () => {
               </div>
               {baErrors.length > 0 && (
                 <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 8, padding: 10, marginTop: 12 }}>
-                  {baErrors.map((err, i) => <div key={i} style={{ fontSize: 12, color: '#B91C1C' }}>⚠️ {err}</div>)}
+                  {baErrors.map((err, i) => <div key={i} style={{ fontSize: 12, color: '#B91C1C' }}>âš ï¸ {err}</div>)}
                 </div>
               )}
               {baMsg.text && (
                 <div style={{ padding: '8px 12px', borderRadius: 8, fontSize: 12, marginTop: 12, background: baMsg.type === 'error' ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)', color: baMsg.type === 'error' ? '#B91C1C' : '#047857' }}>{baMsg.text}</div>
               )}
-              <button className="btn btn-primary" style={{ marginTop: 14 }} onClick={handleBaSave} disabled={baLoading}>💾 Save Bank Account</button>
+              <button className="btn btn-primary" style={{ marginTop: 14 }} onClick={handleBaSave} disabled={baLoading}>ðŸ’¾ Save Bank Account</button>
             </div>
           </div>
           <div style={{ flex: '1 1 320px' }}>
             <div className="card">
               <h3 style={{ margin: '0 0 12px', fontSize: 15 }}>Current Status</h3>
-              {baLoading ? <div className="loading-state">Loading…</div>
+              {baLoading ? <div className="loading-state">Loadingâ€¦</div>
               : myBank ? (
                 <div>
                   <div style={{ fontSize: 13 }}><strong>Vendor:</strong> {myBank.preferredGateway}</div>
                   <div style={{ fontSize: 13 }}><strong>Method:</strong> {myBank.disbursementMethod}</div>
                   <div style={{ fontSize: 13 }}><strong>Bank:</strong> {myBank.bankName}</div>
-                  <div style={{ fontSize: 13 }}><strong>Account:</strong> <span style={{ fontFamily: 'monospace' }}>{myBank.accountNumber || myBank.iban || '—'}</span></div>
-                  <div style={{ fontSize: 13, marginTop: 6, color: myBank.isVerified ? '#047857' : '#B45309' }}>{myBank.isVerified ? '✓ Verified by HR' : '⏳ Pending HR verification'}</div>
+                  <div style={{ fontSize: 13 }}><strong>Account:</strong> <span style={{ fontFamily: 'monospace' }}>{myBank.accountNumber || myBank.iban || 'â€”'}</span></div>
+                  <div style={{ fontSize: 13, marginTop: 6, color: myBank.isVerified ? '#047857' : '#B45309' }}>{myBank.isVerified ? 'âœ“ Verified by HR' : 'â³ Pending HR verification'}</div>
                 </div>
               ) : <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>No bank account on file yet.</div>}
             </div>
@@ -535,7 +535,7 @@ const MyPayrollPage = () => {
                           {h.status}
                         </span>
                       </td>
-                      <td style={{ color: 'var(--text-muted)' }}>{h.paymentDate ? new Date(h.paymentDate).toLocaleDateString() : '—'}</td>
+                      <td style={{ color: 'var(--text-muted)' }}>{h.paymentDate ? new Date(h.paymentDate).toLocaleDateString() : 'â€”'}</td>
                     </tr>
                   ))}
                 </tbody>

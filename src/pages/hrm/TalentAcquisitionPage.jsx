@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+ï»¿import { useState, useEffect, useMemo } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { DEPARTMENTS } from '../../services/departmentJobs';
@@ -55,9 +55,9 @@ const CandidateCard = ({ candidate, isTA, onMove, onOpenFeedback }) => {
             lineHeight: 1.4,
           }}
         >
-          ?? {lastNote.note.length > 80 ? lastNote.note.slice(0, 80) + '…' : lastNote.note}
+          ?? {lastNote.note.length > 80 ? lastNote.note.slice(0, 80) + 'â€¦' : lastNote.note}
           <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
-            — {lastNote.addedBy?.firstName} {lastNote.addedBy?.lastName}
+            â€” {lastNote.addedBy?.firstName} {lastNote.addedBy?.lastName}
           </div>
         </div>
       )}
@@ -365,7 +365,7 @@ const TalentAcquisitionPage = () => {
             </div>
             <div className="form-group" style={{ margin: 0 }}>
               <label className="form-label">Salary Range</label>
-              <input className="form-input" placeholder="e.g. 15,000 – 20,000 EGP" value={vacancySalary} onChange={(e) => setVacancySalary(e.target.value)} />
+              <input className="form-input" placeholder="e.g. 15,000 â€“ 20,000 EGP" value={vacancySalary} onChange={(e) => setVacancySalary(e.target.value)} />
             </div>
             <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
               <label className="form-label">Job Description *</label>
@@ -376,7 +376,7 @@ const TalentAcquisitionPage = () => {
               <input className="form-input" placeholder="e.g. 3+ years, Node.js, CRM experience" value={vacancyReq} onChange={(e) => setVacancyReq(e.target.value)} />
             </div>
             <div style={{ gridColumn: '1/-1' }}>
-              <button type="submit" className="btn btn-primary btn-sm" disabled={submitting}>{submitting ? 'Posting…' : 'Post Job'}</button>
+              <button type="submit" className="btn btn-primary btn-sm" disabled={submitting}>{submitting ? 'Postingâ€¦' : 'Post Job'}</button>
             </div>
           </form>
         </div>
@@ -389,7 +389,7 @@ const TalentAcquisitionPage = () => {
             <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
               <label className="form-label">Job Vacancy *</label>
               <select className="form-input" value={selectedVacancyId} onChange={(e) => setSelectedVacancyId(e.target.value)} required>
-                <option value="">Select vacancy…</option>
+                <option value="">Select vacancyâ€¦</option>
                 {vacancies.map((v) => <option key={v._id} value={v._id}>{v.title}</option>)}
               </select>
             </div>
@@ -410,7 +410,7 @@ const TalentAcquisitionPage = () => {
               <input className="form-input" placeholder="CV_JohnDoe.pdf" value={candResume} onChange={(e) => setCandResume(e.target.value)} />
             </div>
             <div style={{ gridColumn: '1/-1' }}>
-              <button type="submit" className="btn btn-primary btn-sm" disabled={submitting}>{submitting ? 'Adding…' : 'Add Candidate'}</button>
+              <button type="submit" className="btn btn-primary btn-sm" disabled={submitting}>{submitting ? 'Addingâ€¦' : 'Add Candidate'}</button>
             </div>
           </form>
         </div>
@@ -506,7 +506,7 @@ const TalentAcquisitionPage = () => {
       {viewMode === 'table' && (
         <div className="card">
           {loading ? (
-            <div className="loading-state">Loading candidates…</div>
+            <div className="loading-state">Loading candidatesâ€¦</div>
           ) : filteredCandidates.length === 0 ? (
             <div style={{ color: 'var(--text-muted)', padding: 24, textAlign: 'center' }}>No candidates found.</div>
           ) : (
@@ -529,7 +529,7 @@ const TalentAcquisitionPage = () => {
                     return (
                       <tr key={c._id}>
                         <td><strong>{c.fullName}</strong></td>
-                        <td style={{ fontSize: 13 }}>{c.vacancyId?.title || '—'}</td>
+                        <td style={{ fontSize: 13 }}>{c.vacancyId?.title || 'â€”'}</td>
                         <td>
                           <div style={{ fontSize: 13 }}>{c.email}</div>
                           {c.phone && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.phone}</div>}
@@ -547,7 +547,7 @@ const TalentAcquisitionPage = () => {
                         <td style={{ maxWidth: 200 }}>
                           {lastNote ? (
                             <div style={{ fontSize: 11, color: '#A5B4FC' }}>
-                              {lastNote.note.slice(0, 70)}{lastNote.note.length > 70 ? '…' : ''}
+                              {lastNote.note.slice(0, 70)}{lastNote.note.length > 70 ? 'â€¦' : ''}
                             </div>
                           ) : (
                             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>No notes yet</span>
@@ -596,7 +596,7 @@ const TalentAcquisitionPage = () => {
           >
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>Interviewer Feedback</h2>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20 }}>
-              <strong>{feedbackCandidate.fullName}</strong> · {feedbackCandidate.vacancyId?.title || 'Unknown Position'} ·{' '}
+              <strong>{feedbackCandidate.fullName}</strong> Â· {feedbackCandidate.vacancyId?.title || 'Unknown Position'} Â·{' '}
               <span style={{ color: STAGE_COLORS[feedbackCandidate.status]?.text }}>
                 {feedbackCandidate.status}
               </span>
@@ -622,7 +622,7 @@ const TalentAcquisitionPage = () => {
                     >
                       <div style={{ color: 'var(--text-primary)', lineHeight: 1.5 }}>{n.note}</div>
                       <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
-                        {n.addedBy?.firstName} {n.addedBy?.lastName} · {n.addedAt ? new Date(n.addedAt).toLocaleDateString() : '—'}
+                        {n.addedBy?.firstName} {n.addedBy?.lastName} Â· {n.addedAt ? new Date(n.addedAt).toLocaleDateString() : 'â€”'}
                       </div>
                     </div>
                   ))}
@@ -639,14 +639,14 @@ const TalentAcquisitionPage = () => {
                   rows={4}
                   value={feedbackNote}
                   onChange={(e) => setFeedbackNote(e.target.value)}
-                  placeholder="Document interview observations, strengths, concerns, or follow-up actions…"
+                  placeholder="Document interview observations, strengths, concerns, or follow-up actionsâ€¦"
                   required
                 />
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
                 <button type="button" className="btn btn-secondary btn-sm" onClick={() => setFeedbackCandidate(null)}>Cancel</button>
                 <button type="submit" className="btn btn-primary btn-sm" disabled={savingFeedback}>
-                  {savingFeedback ? 'Saving…' : 'Save Note'}
+                  {savingFeedback ? 'Savingâ€¦' : 'Save Note'}
                 </button>
               </div>
             </form>

@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
-// ── Avatar helper ──────────────────────────────────────────────────────────────
+// â”€â”€ Avatar helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const Avatar = ({ person, size = 34 }) => {
   const initials = person
     ? `${person.firstName?.[0] || ''}${person.lastName?.[0] || ''}`.toUpperCase()
@@ -21,7 +21,7 @@ const Avatar = ({ person, size = 34 }) => {
   );
 };
 
-// ── Time formatter ─────────────────────────────────────────────────────────────
+// â”€â”€ Time formatter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const fmtTime = (dateStr) => {
   const d = new Date(dateStr);
   const now = new Date();
@@ -34,7 +34,7 @@ const fmtTime = (dateStr) => {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
-// ── Thread bubble ──────────────────────────────────────────────────────────────
+// â”€â”€ Thread bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const ThreadBubble = ({ email, isOwn }) => (
   <div style={{
     display: 'flex', gap: 10, flexDirection: isOwn ? 'row-reverse' : 'row',
@@ -67,7 +67,7 @@ const ThreadBubble = ({ email, isOwn }) => (
   </div>
 );
 
-// ── Main Component ─────────────────────────────────────────────────────────────
+// â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const EmailsPage = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('inbox');
@@ -95,7 +95,7 @@ const EmailsPage = () => {
 
   const threadBottomRef = useRef(null);
 
-  // ── Data fetching ────────────────────────────────────────────────────────────
+  // â”€â”€ Data fetching â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const fetchEmails = async () => {
     setLoading(true);
     try {
@@ -166,14 +166,14 @@ const EmailsPage = () => {
     if (activeTab === 'inbox' && !email.isRead) markRead(email._id);
   };
 
-  // ── Send reply ───────────────────────────────────────────────────────────────
+  // â”€â”€ Send reply â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleSendReply = async (e) => {
     e.preventDefault();
     if (!replyBody.trim()) return;
     setSendingReply(true);
     setReplyMsg({ type: '', text: '' });
 
-    // Reply goes to the other party: if I'm the recipient → reply to sender; if I'm the sender → reply to recipient
+    // Reply goes to the other party: if I'm the recipient â†’ reply to sender; if I'm the sender â†’ reply to recipient
     const isSender = selectedEmail.senderId?._id === user?._id || selectedEmail.senderId === user?._id;
     const replyToEmail = isSender
       ? selectedEmail.recipientId?.email
@@ -206,7 +206,7 @@ const EmailsPage = () => {
     }
   };
 
-  // ── Send new email ───────────────────────────────────────────────────────────
+  // â”€â”€ Send new email â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleSendEmail = async (e) => {
     e.preventDefault();
     if (!composeTo || !composeSubject || !composeBody) {
@@ -230,7 +230,7 @@ const EmailsPage = () => {
     }
   };
 
-  // ── Filter ───────────────────────────────────────────────────────────────────
+  // â”€â”€ Filter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const filteredEmails = emails.filter((e) => {
     const term = searchQuery.toLowerCase();
     const other = activeTab === 'inbox' ? e.senderId : e.recipientId;
@@ -244,14 +244,14 @@ const EmailsPage = () => {
     );
   });
 
-  // ── Render ───────────────────────────────────────────────────────────────────
+  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20, height: '100%' }}>
       {/* Header */}
       <div className="page-header">
         <div>
           <h1 className="page-title">Internal Communications</h1>
-          <p className="page-subtitle">Secure, threaded internal messaging — all messages are permanent and auditable</p>
+          <p className="page-subtitle">Secure, threaded internal messaging â€” all messages are permanent and auditable</p>
         </div>
       </div>
 
@@ -263,7 +263,7 @@ const EmailsPage = () => {
             onClick={() => setActiveTab('inbox')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px', position: 'relative' }}
           >
-            📥 Inbox
+            ðŸ“¥ Inbox
             {unreadCount > 0 && (
               <span style={{
                 position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
@@ -277,21 +277,21 @@ const EmailsPage = () => {
             onClick={() => setActiveTab('sent')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px' }}
           >
-            📤 Sent
+            ðŸ“¤ Sent
           </button>
           <button
             className={`btn ${activeTab === 'compose' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setActiveTab('compose')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px' }}
           >
-            ✏️ New Email
+            âœï¸ New Email
           </button>
         </div>
 
         {/* Main content card */}
         <div className="card" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
 
-          {/* ── COMPOSE NEW ── */}
+          {/* â”€â”€ COMPOSE NEW â”€â”€ */}
           {activeTab === 'compose' && (
             <div style={{ padding: 28 }}>
               <h3 style={{ margin: '0 0 20px 0' }}>Compose New Message</h3>
@@ -308,7 +308,7 @@ const EmailsPage = () => {
                     <option value="">Select a colleague...</option>
                     {usersList.filter(u => u.email !== user?.email).map(u => (
                       <option key={u.email} value={u.email}>
-                        {u.firstName} {u.lastName} · {u.role} ({u.email})
+                        {u.firstName} {u.lastName} Â· {u.role} ({u.email})
                       </option>
                     ))}
                   </select>
@@ -325,13 +325,13 @@ const EmailsPage = () => {
                     style={{ resize: 'vertical' }} required />
                 </div>
                 <button type="submit" className="btn btn-primary" disabled={sending} style={{ alignSelf: 'flex-start' }}>
-                  {sending ? 'Sending…' : '📨 Send Message'}
+                  {sending ? 'Sendingâ€¦' : 'ðŸ“¨ Send Message'}
                 </button>
               </form>
             </div>
           )}
 
-          {/* ── INBOX / SENT TWO-COLUMN LAYOUT ── */}
+          {/* â”€â”€ INBOX / SENT TWO-COLUMN LAYOUT â”€â”€ */}
           {activeTab !== 'compose' && (
             <div style={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
 
@@ -344,7 +344,7 @@ const EmailsPage = () => {
                 <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-color)' }}>
                   <input
                     className="form-input"
-                    placeholder="🔍 Search…"
+                    placeholder="ðŸ” Searchâ€¦"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     style={{ fontSize: 12, padding: '7px 12px' }}
@@ -354,7 +354,7 @@ const EmailsPage = () => {
                 {/* List */}
                 <div style={{ overflowY: 'auto', flexGrow: 1 }}>
                   {loading ? (
-                    <div className="loading-state" style={{ padding: 24 }}>Loading…</div>
+                    <div className="loading-state" style={{ padding: 24 }}>Loadingâ€¦</div>
                   ) : filteredEmails.length === 0 ? (
                     <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 40, fontSize: 13 }}>
                       No messages found
@@ -399,7 +399,7 @@ const EmailsPage = () => {
                             fontSize: 11, color: 'var(--text-muted)', marginTop: 2,
                             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
                           }}>
-                            {e.body.substring(0, 60)}…
+                            {e.body.substring(0, 60)}â€¦
                           </div>
                         </div>
                       );
@@ -415,7 +415,7 @@ const EmailsPage = () => {
                     flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: 'var(--text-muted)', flexDirection: 'column', gap: 12
                   }}>
-                    <span style={{ fontSize: 40 }}>✉️</span>
+                    <span style={{ fontSize: 40 }}>âœ‰ï¸</span>
                     <span style={{ fontSize: 14 }}>Select an email to read it</span>
                   </div>
                 ) : (
@@ -450,7 +450,7 @@ const EmailsPage = () => {
                           onClick={() => { setShowReplyBox(true); setReplyMsg({ type: '', text: '' }); }}
                           style={{ flexShrink: 0, padding: '7px 16px', display: 'flex', alignItems: 'center', gap: 6 }}
                         >
-                          ↩ Reply
+                          â†© Reply
                         </button>
                       </div>
                     </div>
@@ -478,7 +478,7 @@ const EmailsPage = () => {
                       {/* Reply bubbles */}
                       {loadingThread ? (
                         <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', padding: 16 }}>
-                          Loading thread…
+                          Loading threadâ€¦
                         </div>
                       ) : (
                         thread.map(reply => (
@@ -518,7 +518,7 @@ const EmailsPage = () => {
                             <textarea
                               className="form-input"
                               rows={3}
-                              placeholder="Write your reply…"
+                              placeholder="Write your replyâ€¦"
                               value={replyBody}
                               onChange={e => setReplyBody(e.target.value)}
                               style={{ resize: 'none', fontSize: 13 }}
@@ -529,7 +529,7 @@ const EmailsPage = () => {
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flexShrink: 0 }}>
                             <button type="submit" className="btn btn-primary btn-sm" disabled={sendingReply}
                               style={{ padding: '9px 18px' }}>
-                              {sendingReply ? 'Sending…' : '↩ Send'}
+                              {sendingReply ? 'Sendingâ€¦' : 'â†© Send'}
                             </button>
                             <button type="button" className="btn btn-secondary btn-sm"
                               onClick={() => { setShowReplyBox(false); setReplyBody(''); }}
@@ -557,7 +557,7 @@ const EmailsPage = () => {
                             color: 'var(--text-muted)', fontSize: 13, justifyContent: 'flex-start'
                           }}
                         >
-                          ↩ Click to reply to this thread…
+                          â†© Click to reply to this threadâ€¦
                         </button>
                       </div>
                     )}

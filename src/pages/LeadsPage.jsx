@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -243,7 +243,7 @@ const LeadsPage = () => {
                     <td style={{ fontSize: 12, color: '#64748B' }}>
                       {lead.assignedTo?.supervisor
                         ? `${lead.assignedTo.supervisor.firstName} ${lead.assignedTo.supervisor.lastName}`
-                        : '—'}
+                        : 'â€”'}
                     </td>
                   )}
                   <td style={{ fontSize: 12, color: '#64748B' }}>
@@ -252,7 +252,7 @@ const LeadsPage = () => {
                         {lead.campaign.name}
                       </span>
                     ) : (
-                      '—'
+                      'â€”'
                     )}
                   </td>
                   <td style={{ fontSize: 12, color: '#64748B' }}>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
@@ -197,7 +197,7 @@ const CampaignsPage = () => {
             </select>
             <input
               className="table-search"
-              placeholder="Search campaigns…"
+              placeholder="Search campaignsâ€¦"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
@@ -205,7 +205,7 @@ const CampaignsPage = () => {
         </div>
 
         {loading ? (
-          <div className="loading-state"><div className="spinner" />Loading campaigns…</div>
+          <div className="loading-state"><div className="spinner" />Loading campaignsâ€¦</div>
         ) : filtered.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state-icon"><Icon name="campaigns" size={48} style={{ opacity: 0.4 }} /></div>
@@ -240,15 +240,15 @@ const CampaignsPage = () => {
                     ${Number(campaign.budget || 0).toLocaleString()}
                   </td>
                   <td style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                    {campaign.startDate ? new Date(campaign.startDate).toLocaleDateString() : '—'}
+                    {campaign.startDate ? new Date(campaign.startDate).toLocaleDateString() : 'â€”'}
                     {campaign.startDate && campaign.endDate ? ' ? ' : ''}
                     {campaign.endDate ? new Date(campaign.endDate).toLocaleDateString() : ''}
-                    {!campaign.startDate && !campaign.endDate && '—'}
+                    {!campaign.startDate && !campaign.endDate && 'â€”'}
                   </td>
                   <td style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
                     {campaign.manager
                       ? `${campaign.manager.firstName} ${campaign.manager.lastName}`
-                      : <span style={{ color: 'var(--text-muted)' }}>—</span>}
+                      : <span style={{ color: 'var(--text-muted)' }}>â€”</span>}
                   </td>
                   {canGetFormLink && (
                     <td>
@@ -402,7 +402,7 @@ const CampaignsPage = () => {
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={saving} style={{ flex: 2 }}>
-                  {saving ? 'Saving…' : editingId ? 'Save Changes' : 'Create Campaign'}
+                  {saving ? 'Savingâ€¦' : editingId ? 'Save Changes' : 'Create Campaign'}
                 </button>
               </div>
             </form>

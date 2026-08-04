@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+ï»¿import { useState, useEffect, useRef, useCallback } from 'react';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { AUX_COLORS, AUX_ICONS } from '../context/AuxContext';
@@ -7,7 +7,7 @@ const REFRESH_INTERVAL = 20000; // 20s live refresh
 
 const RTM_ROLES = ['RTM Team Member', 'Super CRM Administrator', 'HRM System Administrator', 'HR Manager'];
 
-// Live elapsed timer — ticks every second
+// Live elapsed timer â€” ticks every second
 const useLiveTick = () => {
   const [tick, setTick] = useState(0);
   useEffect(() => {
@@ -54,7 +54,7 @@ const FlagBadge = ({ reason }) => (
     border: '1px solid rgba(239,68,68,0.4)',
     animation: 'rtm-pulse 1.4s ease-in-out infinite',
   }}>
-    ?? FLAGGED{reason ? ` · ${reason}` : ''}
+    ?? FLAGGED{reason ? ` Â· ${reason}` : ''}
   </span>
 );
 
@@ -201,10 +201,10 @@ const RtmMonitorPage = () => {
             <div>
               <h1 className="page-title">?? RTM Live Monitor</h1>
               <p className="page-subtitle">
-                Real-time agent status · auto-refreshes every 20s
+                Real-time agent status Â· auto-refreshes every 20s
                 {lastRefresh && (
                   <span style={{ marginLeft: 10, color: 'var(--text-muted)', fontSize: 12 }}>
-                    · Last updated: {lastRefresh.toLocaleTimeString()}
+                    Â· Last updated: {lastRefresh.toLocaleTimeString()}
                   </span>
                 )}
               </p>
@@ -244,7 +244,7 @@ const RtmMonitorPage = () => {
         {/* Search */}
         <input
           className="form-input"
-          placeholder="?? Search by name, role, department…"
+          placeholder="?? Search by name, role, departmentâ€¦"
           value={search}
           onChange={e => setSearch(e.target.value)}
           style={{ maxWidth: 360, padding: '8px 14px', fontSize: 13 }}
@@ -274,7 +274,7 @@ const RtmMonitorPage = () => {
         {loading ? (
           <div className="loading-state">
             <div className="spinner" />
-            Loading agents…
+            Loading agentsâ€¦
           </div>
         ) : filtered.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 60 }}>
@@ -301,7 +301,7 @@ const RtmMonitorPage = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: 13 }}>
                       ?? {group.name}
                       <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}>
-                        · {group.members.length} {group.members.length === 1 ? 'agent' : 'agents'}
+                        Â· {group.members.length} {group.members.length === 1 ? 'agent' : 'agents'}
                       </span>
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -350,7 +350,7 @@ const RtmMonitorPage = () => {
                           )}
                         </div>
                         <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                          {agent.role}{agent.department ? ` · ${agent.department}` : ''}
+                          {agent.role}{agent.department ? ` Â· ${agent.department}` : ''}
                         </div>
                       </div>
 
@@ -366,7 +366,7 @@ const RtmMonitorPage = () => {
                           fontWeight: 700, fontSize: 13,
                           color: isFlagged ? '#EF4444' : agent.auxStatus === 'Live' ? AUX_COLORS.Live : 'var(--text-primary)',
                         }}>
-                          {agent.activeStatusSince ? fmtDuration(currentMs) : '—'}
+                          {agent.activeStatusSince ? fmtDuration(currentMs) : 'â€”'}
                         </div>
                       </div>
 
@@ -388,7 +388,7 @@ const RtmMonitorPage = () => {
 
                       {/* Shift */}
                       <div style={{ flex: '0 0 160px', fontSize: 11, color: 'var(--text-muted)', textAlign: 'right' }}>
-                        <div>?? {agent.shift || 'N/A'}{agent.isOffDay ? ' · Off day' : ''}</div>
+                        <div>?? {agent.shift || 'N/A'}{agent.isOffDay ? ' Â· Off day' : ''}</div>
                         {isFlagged && agent.rtmFlaggedAt && (
                           <div style={{ color: '#EF4444', marginTop: 3 }}>
                             Flagged at {new Date(agent.rtmFlaggedAt).toLocaleTimeString()}
@@ -404,7 +404,7 @@ const RtmMonitorPage = () => {
                           disabled={unflagging === agent._id}
                           style={{ flexShrink: 0, padding: '6px 14px', fontSize: 12 }}
                         >
-                          {unflagging === agent._id ? '…' : '? Unflag'}
+                          {unflagging === agent._id ? 'â€¦' : '? Unflag'}
                         </button>
                       ) : agent.rtmSuppressUntil && agent.rtmSuppressUntil > now ? (
                         <div style={{
@@ -413,7 +413,7 @@ const RtmMonitorPage = () => {
                           background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.35)',
                           textAlign: 'center',
                         }}>
-                          Hold · {Math.max(1, Math.ceil((agent.rtmSuppressUntil - now) / 60000))}m
+                          Hold Â· {Math.max(1, Math.ceil((agent.rtmSuppressUntil - now) / 60000))}m
                         </div>
                       ) : null}
                     </div>

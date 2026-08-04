@@ -1,4 +1,4 @@
-import { Icon } from '../components/Icons';
+﻿import { Icon } from '../components/Icons';
 
 const UnauthorizedPage = () => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', textAlign: 'center' }}>

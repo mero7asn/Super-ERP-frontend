@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+ï»¿import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { AuxProvider } from './context/AuxContext';
 import { ProtectedRoute, PublicRoute } from './components/ProtectedRoute';
@@ -68,7 +68,7 @@ const AppLayout = ({ children }) => {
   );
 };
 
-// Inner router — needs access to AuthContext
+// Inner router â€” needs access to AuthContext
 const AppRoutes = () => {
   const { user } = useAuth();
 
@@ -89,7 +89,7 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Protected: Dashboard — all authenticated roles */}
+      {/* Protected: Dashboard â€” all authenticated roles */}
       <Route
         path="/dashboard"
         element={
@@ -605,7 +605,7 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Protected: Employee Self-Service — My Schedule */}
+      {/* Protected: Employee Self-Service â€” My Schedule */}
       <Route
         path="/ess/schedule"
         element={
@@ -617,7 +617,7 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Protected: Employee Self-Service — My Payroll */}
+      {/* Protected: Employee Self-Service â€” My Payroll */}
       <Route
         path="/ess/payroll"
         element={

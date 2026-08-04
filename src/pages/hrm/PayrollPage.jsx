@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+ï»¿import { useState, useEffect, useRef } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
@@ -431,7 +431,7 @@ const PayrollPage = () => {
   };
 
   // -------------------------------------------------------------
-  // RENDER — MY PAYSLIPS TAB
+  // RENDER â€” MY PAYSLIPS TAB
   // -------------------------------------------------------------
 
   const renderPayslips = () => (
@@ -440,7 +440,7 @@ const PayrollPage = () => {
       <div style={{ flex: '1 1 320px' }}>
         <h3 style={{ margin: '0 0 14px', fontSize: 15 }}>Payslip History</h3>
         {payslipsLoading ? (
-          <div className="loading-state">Loading payslips…</div>
+          <div className="loading-state">Loading payslipsâ€¦</div>
         ) : payslips.length === 0 ? (
           <div className="card" style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 32 }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>??</div>
@@ -553,7 +553,7 @@ const PayrollPage = () => {
   );
 
   // -------------------------------------------------------------
-  // RENDER — DISBURSEMENT QUEUE TAB
+  // RENDER â€” DISBURSEMENT QUEUE TAB
   // -------------------------------------------------------------
 
   const renderDisbursementQueue = () => (
@@ -565,7 +565,7 @@ const PayrollPage = () => {
         </div>
         <button onClick={fetchDisbursementQueue} className="btn btn-secondary btn-sm" style={{ fontSize: 11 }}>? Refresh</button>
       </div>
-      {dqLoading ? <div className="loading-state">Loading…</div>
+      {dqLoading ? <div className="loading-state">Loadingâ€¦</div>
       : dqList.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 40 }}>
           <div style={{ fontSize: 36, marginBottom: 8 }}>?</div>
@@ -625,7 +625,7 @@ const PayrollPage = () => {
   );
 
   // -------------------------------------------------------------
-  // RENDER — PAYMENT METHODS TAB
+  // RENDER â€” PAYMENT METHODS TAB
   // -------------------------------------------------------------
 
   const renderPaymentMethods = () => (
@@ -664,7 +664,7 @@ const PayrollPage = () => {
         <button onClick={fetchPmList} className="btn btn-secondary btn-sm" style={{ fontSize: 11 }}>? Refresh</button>
       </div>
 
-      {pmLoading ? <div className="loading-state">Loading…</div>
+      {pmLoading ? <div className="loading-state">Loadingâ€¦</div>
       : pmList.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 32 }}>
           No {pmFilter !== 'All' ? pmFilter.toLowerCase() : ''} payment methods found.
@@ -699,7 +699,7 @@ const PayrollPage = () => {
                       </td>
                       <td>
                         <div style={{ fontWeight: 500, fontFamily: 'monospace', letterSpacing: 1 }}>{pm.cardToken}</div>
-                        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{pm.cardholderName} · {pm.cardType}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{pm.cardholderName} Â· {pm.cardType}</div>
                       </td>
                       <td>
                         <span style={{ fontWeight: 600, color: lenColor }}>{len} digits</span>
@@ -733,7 +733,7 @@ const PayrollPage = () => {
   );
 
   // -------------------------------------------------------------
-  // RENDER — PAYROLL RUNS TAB
+  // RENDER â€” PAYROLL RUNS TAB
   // -------------------------------------------------------------
 
   const renderPayrollRuns = () => (
@@ -791,7 +791,7 @@ const PayrollPage = () => {
               className="btn btn-primary"
               disabled={generatingRun}
             >
-              {generatingRun ? 'Generating…' : `Generate ${runType} Run`}
+              {generatingRun ? 'Generatingâ€¦' : `Generate ${runType} Run`}
             </button>
           </div>
           {runType === 'Salary' && (
@@ -812,7 +812,7 @@ const PayrollPage = () => {
             <h3 style={{ margin: 0, fontSize: 14 }}>Payroll Runs History</h3>
             <button onClick={fetchRuns} className="btn btn-secondary btn-sm" style={{ fontSize: 11 }}>? Refresh</button>
           </div>
-          {runsLoading ? <div className="loading-state">Loading runs…</div>
+          {runsLoading ? <div className="loading-state">Loading runsâ€¦</div>
           : runs.length === 0 ? (
             <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 24 }}>No payroll runs found. Generate your first run above.</div>
           ) : (
@@ -897,7 +897,7 @@ const PayrollPage = () => {
               ))}
             </div>
             <h4 style={{ margin: '0 0 10px', fontSize: 13 }}>Employee Entries ({runEntries.length})</h4>
-            {runEntriesLoading ? <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>Loading entries…</div>
+            {runEntriesLoading ? <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>Loading entriesâ€¦</div>
             : (
               <div style={{ maxHeight: 300, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {runEntries.map(e => (
@@ -921,7 +921,7 @@ const PayrollPage = () => {
   );
 
   // -------------------------------------------------------------
-  // RENDER — ALERTS & FRAUD TAB
+  // RENDER â€” ALERTS & FRAUD TAB
   // -------------------------------------------------------------
 
   const renderAlerts = () => {
@@ -969,7 +969,7 @@ const PayrollPage = () => {
         </div>
 
         {/* Alert Cards */}
-        {alertsLoading ? <div className="loading-state">Loading alerts…</div>
+        {alertsLoading ? <div className="loading-state">Loading alertsâ€¦</div>
         : filtered.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 32 }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>?</div>
@@ -995,7 +995,7 @@ const PayrollPage = () => {
                         <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 3 }}>{a.message}</div>
                         {a.employeeId && (
                           <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
-                            ?? {a.employeeId.firstName} {a.employeeId.lastName} · {a.employeeId.role}
+                            ?? {a.employeeId.firstName} {a.employeeId.lastName} Â· {a.employeeId.role}
                           </div>
                         )}
                         {a.suggestedAction && (
@@ -1030,11 +1030,11 @@ const PayrollPage = () => {
   };
 
   // -------------------------------------------------------------
-  // RENDER — ANALYTICS TAB
+  // RENDER â€” ANALYTICS TAB
   // -------------------------------------------------------------
 
   const renderAnalytics = () => {
-    if (analyticsLoading) return <div className="loading-state">Loading analytics…</div>;
+    if (analyticsLoading) return <div className="loading-state">Loading analyticsâ€¦</div>;
     if (!analytics) return <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 32 }}>No analytics data available yet.</div>;
 
     const deptEntries = Object.entries(analytics.deptBreakdown || {}).sort((a, b) => b[1].totalSalary - a[1].totalSalary);
@@ -1059,7 +1059,7 @@ const PayrollPage = () => {
               <div key={dept} style={{ marginBottom: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
                   <span style={{ fontWeight: 600 }}>{dept}</span>
-                  <span style={{ color: 'var(--text-muted)' }}>{d.count} emp · {(d.totalSalary || 0).toLocaleString()} EGP</span>
+                  <span style={{ color: 'var(--text-muted)' }}>{d.count} emp Â· {(d.totalSalary || 0).toLocaleString()} EGP</span>
                 </div>
                 <div style={{ height: 8, background: 'var(--bg-secondary)', borderRadius: 4, overflow: 'hidden' }}>
                   <div style={{
@@ -1111,7 +1111,7 @@ const PayrollPage = () => {
   };
 
   // -------------------------------------------------------------
-  // RENDER — COMPANY SOURCE BANK ACCOUNTS
+  // RENDER â€” COMPANY SOURCE BANK ACCOUNTS
   // -------------------------------------------------------------
 
   const renderCompanyAccounts = () => (
@@ -1119,7 +1119,7 @@ const PayrollPage = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div>
           <div style={{ fontWeight: 700, fontSize: 15 }}>Company Source Bank Accounts</div>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>The real accounts payroll money is debited from. Stored encrypted — only masked values are shown.</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>The real accounts payroll money is debited from. Stored encrypted â€” only masked values are shown.</div>
         </div>
         <button onClick={() => setCaForm({ open: !caForm.open, editing: null, nickname: '', bankName: '', branchName: '', accountName: '', accountNumber: '', iban: '', swiftCode: '', disbursementProvider: 'Fawry', monthlyLimit: '', isDefault: false, notes: '' })} className="btn btn-primary btn-sm" style={{ fontSize: 11 }}>
           {caForm.open ? '? Close' : '? Add Account'}
@@ -1166,7 +1166,7 @@ const PayrollPage = () => {
         </div>
       )}
 
-      {caLoading ? <div className="loading-state">Loading…</div>
+      {caLoading ? <div className="loading-state">Loadingâ€¦</div>
       : companyAccounts.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 32 }}>No company accounts configured yet.</div>
       ) : (
@@ -1179,13 +1179,13 @@ const PayrollPage = () => {
                   <tr key={a._id}>
                     <td style={{ fontWeight: 600 }}>{a.nickname} {a.isDefault && <span style={{ fontSize: 10, background: 'rgba(37,99,235,0.12)', color: '#2563EB', padding: '2px 6px', borderRadius: 6, marginLeft: 4 }}>DEFAULT</span>}</td>
                     <td>{a.bankName}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{a.accountMasked || a.ibanMasked || '—'}</td>
+                    <td style={{ fontFamily: 'monospace' }}>{a.accountMasked || a.ibanMasked || 'â€”'}</td>
                     <td>{a.disbursementProvider}</td>
                     <td>
                       {a.verifiedAt
                         ? <span style={{ color: '#047857', fontSize: 12 }}>? Verified</span>
                         : <span style={{ color: '#B45309', fontSize: 12 }}>Unverified</span>}
-                      {!a.isActive && <span style={{ color: '#B91C1C', fontSize: 12, marginLeft: 6 }}>· Inactive</span>}
+                      {!a.isActive && <span style={{ color: '#B91C1C', fontSize: 12, marginLeft: 6 }}>Â· Inactive</span>}
                     </td>
                     <td>
                       <div style={{ display: 'flex', gap: 6 }}>
@@ -1211,7 +1211,7 @@ const PayrollPage = () => {
   );
 
   // -------------------------------------------------------------
-  // RENDER — EMPLOYEE BANK ACCOUNTS (vendor-aware)
+  // RENDER â€” EMPLOYEE BANK ACCOUNTS (vendor-aware)
   // -------------------------------------------------------------
 
   const renderBankAccounts = () => {
@@ -1223,7 +1223,7 @@ const PayrollPage = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div>
             <div style={{ fontWeight: 700, fontSize: 15 }}>Employee Bank Accounts</div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Each employee is paid via a vendor (Fawry / PayMob / InstaPay / …). Required fields adapt to the selected vendor.</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Each employee is paid via a vendor (Fawry / PayMob / InstaPay / â€¦). Required fields adapt to the selected vendor.</div>
           </div>
           <button onClick={() => handleBaOpen(null)} className="btn btn-primary btn-sm" style={{ fontSize: 11 }}>? Add Bank Account</button>
         </div>
@@ -1286,7 +1286,7 @@ const PayrollPage = () => {
           </div>
         )}
 
-        {baLoading ? <div className="loading-state">Loading…</div>
+        {baLoading ? <div className="loading-state">Loadingâ€¦</div>
         : bankAccounts.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 32 }}>No employee bank accounts yet.</div>
         ) : (
@@ -1301,7 +1301,7 @@ const PayrollPage = () => {
                       <td>{a.preferredGateway}</td>
                       <td>{a.disbursementMethod}</td>
                       <td>{a.bankName}</td>
-                      <td style={{ fontFamily: 'monospace' }}>{a.accountNumber || a.iban || '—'}</td>
+                      <td style={{ fontFamily: 'monospace' }}>{a.accountNumber || a.iban || 'â€”'}</td>
                       <td>
                         {a.isVerified
                           ? <span style={{ color: '#047857', fontSize: 12 }}>? Verified</span>
@@ -1395,7 +1395,7 @@ const PayrollPage = () => {
           <div className="card" style={{ width: 480, maxWidth: '100%', maxHeight: '90vh', overflowY: 'auto', padding: 24 }}>
             <h3 style={{ margin: '0 0 4px', fontSize: 16 }}>{releaseModal.isPending ? 'Request Payroll Release' : 'Confirm Payroll Release'}</h3>
             <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 14 }}>
-              Period {releaseModal.readiness.period} · {releaseModal.readiness.headcount} employees · {(releaseModal.readiness.totalToDisburse || 0).toLocaleString()} EGP total
+              Period {releaseModal.readiness.period} Â· {releaseModal.readiness.headcount} employees Â· {(releaseModal.readiness.totalToDisburse || 0).toLocaleString()} EGP total
             </div>
 
             {/* Readiness summary */}
@@ -1416,7 +1416,7 @@ const PayrollPage = () => {
             <div style={{ marginBottom: 12 }}>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Source Company Bank Account</div>
               <select className="form-input" value={releaseModal.sourceAccountId} onChange={e => setReleaseModal({ ...releaseModal, sourceAccountId: e.target.value })}>
-                <option value="">— Select source account —</option>
+                <option value="">â€” Select source account â€”</option>
                 {companyAccounts.map(a => <option key={a._id} value={a._id}>{a.nickname} ({a.bankName})</option>)}
               </select>
             </div>
@@ -1445,7 +1445,7 @@ const PayrollPage = () => {
                 disabled={releaseModal.loading || !releaseModal.sourceAccountId}
                 onClick={confirmRelease}
               >
-                {releaseModal.loading ? 'Processing…' : (releaseModal.isPending ? 'Request Release' : (releaseModal.mode === 'live' ? '? RELEASE — LIVE' : 'Release (Simulation)'))}
+                {releaseModal.loading ? 'Processingâ€¦' : (releaseModal.isPending ? 'Request Release' : (releaseModal.mode === 'live' ? '? RELEASE â€” LIVE' : 'Release (Simulation)'))}
               </button>
             </div>
           </div>

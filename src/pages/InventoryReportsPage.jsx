@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
@@ -12,8 +12,8 @@ const TABS = [
 ];
 
 const ABC_COLORS = { A: '#22c55e', B: '#f59e0b', C: '#ef4444' };
-const fmt = (n) => n !== null && n !== undefined ? n.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—';
-const fmtCurrency = (n) => n !== null && n !== undefined ? `$${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—';
+const fmt = (n) => n !== null && n !== undefined ? n.toLocaleString(undefined, { maximumFractionDigits: 2 }) : 'â€”';
+const fmtCurrency = (n) => n !== null && n !== undefined ? `$${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'â€”';
 
 const InventoryReportsPage = () => {
   const [activeTab, setActiveTab] = useState('valuation');
@@ -77,7 +77,7 @@ const InventoryReportsPage = () => {
         ))}
       </div>
 
-      {/* ── VALUATION ── */}
+      {/* â”€â”€ VALUATION â”€â”€ */}
       {activeTab === 'valuation' && (
         <div>
           <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
@@ -93,7 +93,7 @@ const InventoryReportsPage = () => {
               <label className="form-label" style={{ fontSize: 12 }}>Warehouse</label>
               <select className="form-control" style={{ maxWidth: 200 }} value={warehouseFilter} onChange={e => setWarehouseFilter(e.target.value)}>
                 <option value="">All Warehouses</option>
-                {warehouses.map(w => <option key={w._id} value={w._id}>{w.code} — {w.name}</option>)}
+                {warehouses.map(w => <option key={w._id} value={w._id}>{w.code} â€” {w.name}</option>)}
               </select>
             </div>
             <button className="btn btn-primary" onClick={fetchData}>Run Report</button>
@@ -156,7 +156,7 @@ const InventoryReportsPage = () => {
         </div>
       )}
 
-      {/* ── ABC ANALYSIS ── */}
+      {/* â”€â”€ ABC ANALYSIS â”€â”€ */}
       {activeTab === 'abc' && (
         <div>
           <div style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'flex-end' }}>
@@ -244,7 +244,7 @@ const InventoryReportsPage = () => {
         </div>
       )}
 
-      {/* ── DEAD STOCK ── */}
+      {/* â”€â”€ DEAD STOCK â”€â”€ */}
       {activeTab === 'dead' && (
         <div>
           <div style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'flex-end' }}>
@@ -302,7 +302,7 @@ const InventoryReportsPage = () => {
                             {item.lastTransactionDate ? new Date(item.lastTransactionDate).toLocaleDateString() : 'Never'}
                           </td>
                           <td style={{ textAlign: 'right', color: '#ef4444', fontWeight: 600 }}>
-                            {item.daysSinceLastMovement ? Math.round(item.daysSinceLastMovement) : '—'}
+                            {item.daysSinceLastMovement ? Math.round(item.daysSinceLastMovement) : 'â€”'}
                           </td>
                         </tr>
                       ))}
@@ -315,7 +315,7 @@ const InventoryReportsPage = () => {
         </div>
       )}
 
-      {/* ── REORDER ALERTS ── */}
+      {/* â”€â”€ REORDER ALERTS â”€â”€ */}
       {activeTab === 'reorder' && (
         <div>
           <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
@@ -375,7 +375,7 @@ const InventoryReportsPage = () => {
         </div>
       )}
 
-      {/* ── EXPIRY ALERTS ── */}
+      {/* â”€â”€ EXPIRY ALERTS â”€â”€ */}
       {activeTab === 'expiry' && (
         <div>
           <div style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'flex-end' }}>
@@ -434,7 +434,7 @@ const InventoryReportsPage = () => {
                               <td>{lot.warehouse?.code}</td>
                               <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{lot.subinventory}</td>
                               <td style={{ textAlign: 'right', fontWeight: 600 }}>{fmt(lot.quantity)}</td>
-                              <td>{lot.expiryDate ? new Date(lot.expiryDate).toLocaleDateString() : '—'}</td>
+                              <td>{lot.expiryDate ? new Date(lot.expiryDate).toLocaleDateString() : 'â€”'}</td>
                               <td style={{ textAlign: 'right' }}>
                                 <span style={{ padding: '3px 10px', borderRadius: 12, background: urgency + '22', color: urgency, fontWeight: 700, fontSize: 12 }}>
                                   {lot.daysUntilExpiry}d

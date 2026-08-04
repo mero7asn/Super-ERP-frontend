@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+﻿import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import API from '../services/api';
 import { useAuth } from './AuthContext';
 
@@ -13,11 +13,11 @@ export const AUX_COLORS = {
 };
 
 export const AUX_ICONS = {
-  Live: '🟢',
-  Training: '🟡',
-  Break: '🟣',
-  Coaching: '🔵',
-  'Logged out': '🔴',
+  Live: 'ðŸŸ¢',
+  Training: 'ðŸŸ¡',
+  Break: 'ðŸŸ£',
+  Coaching: 'ðŸ”µ',
+  'Logged out': 'ðŸ”´',
 };
 
 export const AuxProvider = ({ children }) => {

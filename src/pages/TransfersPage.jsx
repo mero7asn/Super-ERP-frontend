@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
@@ -88,7 +88,7 @@ const TransfersPage = () => {
       {error && <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>}
 
       {loading ? (
-        <div className="loading-state"><div className="spinner" />Loading transfers�</div>
+        <div className="loading-state"><div className="spinner" />Loading transfers…</div>
       ) : (
         <div className="card" style={{ padding: 0 }}>
           <div className="table-wrapper" style={{ overflowX: 'auto' }}>

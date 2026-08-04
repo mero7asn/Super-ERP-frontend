@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+ï»¿import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 
@@ -76,7 +76,7 @@ const MemberCard = ({ member, dept, isAdmin, managers, onMove }) => {
             minWidth: 120
           }}
         >
-          <option value="">Move to…</option>
+          <option value="">Move toâ€¦</option>
           <option value="none">? Unassign</option>
           {managers.filter(m => m._id !== member._id).map(m => (
             <option key={m._id} value={m._id}>{m.firstName} {m.lastName}</option>
@@ -127,7 +127,7 @@ const TeamsPage = () => {
     }
   };
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading teams…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading teamsâ€¦</div>;
 
   const departments = [
     'All', 'Sales', 'Customer Support', 'Marketing', 'Technology',

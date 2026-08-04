@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Icon } from '../components/Icons';
 
 const DevToolsPage = () => {
@@ -129,7 +129,7 @@ const DevToolsPage = () => {
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#EF4444' }} />
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#F59E0B' }} />
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981' }} />
-            <span style={{ color: '#94A3B8', fontSize: 11, fontFamily: 'monospace', marginLeft: 8 }}>interactive-sh � diagnostic_terminal</span>
+            <span style={{ color: '#94A3B8', fontSize: 11, fontFamily: 'monospace', marginLeft: 8 }}>interactive-sh · diagnostic_terminal</span>
           </div>
         </div>
         <div style={{

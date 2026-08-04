@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
@@ -61,7 +61,7 @@ const StockOverviewPage = () => {
       </div>
 
       {loading ? (
-        <div className="loading-state"><div className="spinner" />Loading stock levels…</div>
+        <div className="loading-state"><div className="spinner" />Loading stock levelsâ€¦</div>
       ) : (
         <div className="card" style={{ padding: 0 }}>
           <div className="table-wrapper" style={{ overflowX: 'auto' }}>
@@ -91,9 +91,9 @@ const StockOverviewPage = () => {
                     <td style={{ fontFamily: 'monospace' }}>{stock.item?.sku}</td>
                     <td>{stock.warehouse?.code}</td>
                     <td>{stock.subinventory}</td>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{stock.locator || '—'}</td>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{stock.lotNumber || '—'}</td>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{stock.serialNumber || '—'}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{stock.locator || 'â€”'}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{stock.lotNumber || 'â€”'}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{stock.serialNumber || 'â€”'}</td>
                     <td style={{ fontWeight: 600 }}>{stock.onHand}</td>
                     <td style={{ color: '#22c55e', fontWeight: 600 }}>{stock.available}</td>
                     <td style={{ color: '#f59e0b' }}>{stock.allocated}</td>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { DEPARTMENTS } from '../../services/departmentJobs';
@@ -382,7 +382,7 @@ const PersonalPage = () => {
       const { data } = await API.post('/hrm/contracts/gov-docs/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      setStatusMsg({ type: 'success', text: 'Document uploaded – pending HR verification.' });
+      setStatusMsg({ type: 'success', text: 'Document uploaded â€“ pending HR verification.' });
       if (data.fileUrl) {
         setGovDocs(prev => ({ ...prev, [docField]: data.fileUrl }));
       }
@@ -1438,7 +1438,7 @@ const PersonalPage = () => {
                       </div>
                     </div>
 
-                    {/* Add / Edit form — HR only */}
+                    {/* Add / Edit form â€” HR only */}
                     {isHR && (
                       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 2fr auto', gap: 10, alignItems: 'flex-end', marginBottom: 20, padding: '14px 16px', background: 'var(--bg-secondary)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
                         <div className="form-group" style={{ margin: 0 }}>
@@ -1461,7 +1461,7 @@ const PersonalPage = () => {
                         </div>
                         <div className="form-group" style={{ margin: 0 }}>
                           <label className="form-label">{compForm.valueType === 'Percentage' ? 'Percentage' : 'Amount (EGP)'}</label>
-                          <input className="form-input" type="number" min="0" placeholder={compForm.valueType === 'Percentage' ? '0 – 100' : '0.00'} value={compForm.value} onChange={e => setCompForm(p => ({ ...p, value: e.target.value }))} />
+                          <input className="form-input" type="number" min="0" placeholder={compForm.valueType === 'Percentage' ? '0 â€“ 100' : '0.00'} value={compForm.value} onChange={e => setCompForm(p => ({ ...p, value: e.target.value }))} />
                         </div>
                         <div className="form-group" style={{ margin: 0 }}>
                           <label className="form-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1514,7 +1514,7 @@ const PersonalPage = () => {
                                             <td><span style={{ fontWeight: 700, color: group.color }}>{c.valueType === 'Percentage' ? `${c.value}%` : `${Number(c.value).toLocaleString()} EGP`}</span></td>
                                             <td style={{ color: 'var(--text-muted)', fontSize: 12 }}>{egp.toLocaleString()} EGP</td>
                                             <td><span style={{ fontSize: 12, color: c.kpiLinked ? '#F59E0B' : 'var(--text-muted)' }}>{c.kpiLinked ? 'Yes' : 'No'}</span></td>
-                                            <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.note || '—'}</td>
+                                            <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.note || 'â€”'}</td>
                                             {isHR && <td>
                                               <div style={{ display: 'flex', gap: 6 }}>
                                                 <button className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '3px 10px' }}
@@ -1562,8 +1562,8 @@ const PersonalPage = () => {
                               <tr key={i}>
                                 <td style={{ fontSize: 12 }}>{new Date(h.changedAt).toLocaleDateString()}</td>
                                 <td style={{ fontWeight: 600 }}>{(h.amount || 0).toLocaleString()} EGP</td>
-                                <td style={{ fontSize: 12 }}>{h.changedBy ? `${h.changedBy.firstName} ${h.changedBy.lastName}` : '—'}</td>
-                                <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{h.reason || '—'}</td>
+                                <td style={{ fontSize: 12 }}>{h.changedBy ? `${h.changedBy.firstName} ${h.changedBy.lastName}` : 'â€”'}</td>
+                                <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{h.reason || 'â€”'}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -1675,7 +1675,7 @@ const PersonalPage = () => {
                                       }
                                     }}
                                   />
-                                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>PDF, Image, or Word · max 10 MB</span>
+                                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>PDF, Image, or Word Â· max 10 MB</span>
                                 </div>
                               )}
                               {/* Non-HR: text link submission */}
@@ -1763,7 +1763,7 @@ const PersonalPage = () => {
                           <div style={{ height: '100%', width: `${pct}%`, background: overUsed ? '#EF4444' : pct > 80 ? '#F59E0B' : '#10B981', borderRadius: 4, transition: 'width 0.4s' }} />
                         </div>
                         {remaining === 0 && (
-                          <div style={{ fontSize: 11, color: '#EF4444', marginTop: 6 }}>All paid days exhausted — further approved leaves will be unpaid.</div>
+                          <div style={{ fontSize: 11, color: '#EF4444', marginTop: 6 }}>All paid days exhausted â€” further approved leaves will be unpaid.</div>
                         )}
                       </div>
                     );
@@ -1840,7 +1840,7 @@ const PersonalPage = () => {
                                   <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{lv.reason}</div>
                                 </td>
                                 <td style={{ fontSize: 12 }}>
-                                  {new Date(lv.startDate).toLocaleDateString()} — {new Date(lv.endDate).toLocaleDateString()}
+                                  {new Date(lv.startDate).toLocaleDateString()} â€” {new Date(lv.endDate).toLocaleDateString()}
                                 </td>
                                 <td style={{ fontSize: 12 }}>
                                   <div>{lv.daysCount || 1} day{(lv.daysCount || 1) > 1 ? 's' : ''}</div>

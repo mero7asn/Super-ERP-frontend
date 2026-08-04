@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
 
@@ -25,7 +25,7 @@ const AnalyticsPage = () => {
     ? stats.leads.total > 0
       ? ((stats.leads.converted / stats.leads.total) * 100).toFixed(1)
       : '0.0'
-    : '�';
+    : '–';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>

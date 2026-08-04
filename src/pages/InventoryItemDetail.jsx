@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
@@ -42,7 +42,7 @@ const InventoryItemDetail = () => {
     fetchData();
   }, [id]);
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading item details…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading item detailsâ€¦</div>;
   if (!item) return <div className="empty-state"><p>Item not found</p></div>;
 
   return (
@@ -137,7 +137,7 @@ const InventoryItemDetail = () => {
             </div>
             <div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Description</div>
-              <div>{item.description || '—'}</div>
+              <div>{item.description || 'â€”'}</div>
             </div>
           </div>
         </div>
@@ -167,9 +167,9 @@ const InventoryItemDetail = () => {
                   <tr key={sl._id}>
                     <td>{sl.warehouse?.code}</td>
                     <td>{sl.subinventory}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{sl.locator || '—'}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{sl.lotNumber || '—'}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{sl.serialNumber || '—'}</td>
+                    <td style={{ fontFamily: 'monospace' }}>{sl.locator || 'â€”'}</td>
+                    <td style={{ fontFamily: 'monospace' }}>{sl.lotNumber || 'â€”'}</td>
+                    <td style={{ fontFamily: 'monospace' }}>{sl.serialNumber || 'â€”'}</td>
                     <td style={{ fontWeight: 600 }}>{sl.onHand}</td>
                     <td style={{ color: '#22c55e' }}>{sl.available}</td>
                     <td style={{ color: '#f59e0b' }}>{sl.allocated}</td>
@@ -205,10 +205,10 @@ const InventoryItemDetail = () => {
                     <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{lot.lotNumber}</td>
                     <td>{lot.warehouse?.code}</td>
                     <td>{lot.subinventory}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{lot.locator || '—'}</td>
+                    <td style={{ fontFamily: 'monospace' }}>{lot.locator || 'â€”'}</td>
                     <td style={{ fontWeight: 600 }}>{lot.quantity}</td>
                     <td><span className={`badge ${lot.status === 'Unrestricted' ? 'badge-converted' : 'badge-new'}`}>{lot.status}</span></td>
-                    <td style={{ fontSize: 12 }}>{lot.expiryDate ? new Date(lot.expiryDate).toLocaleDateString() : '—'}</td>
+                    <td style={{ fontSize: 12 }}>{lot.expiryDate ? new Date(lot.expiryDate).toLocaleDateString() : 'â€”'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -240,8 +240,8 @@ const InventoryItemDetail = () => {
                     <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{sn.serialNumber}</td>
                     <td>{sn.warehouse?.code}</td>
                     <td>{sn.subinventory}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{sn.locator || '—'}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{sn.lotNumber || '—'}</td>
+                    <td style={{ fontFamily: 'monospace' }}>{sn.locator || 'â€”'}</td>
+                    <td style={{ fontFamily: 'monospace' }}>{sn.lotNumber || 'â€”'}</td>
                     <td><span className={`badge ${sn.status === 'Unrestricted' ? 'badge-converted' : 'badge-new'}`}>{sn.status}</span></td>
                     <td>{sn.condition}</td>
                   </tr>

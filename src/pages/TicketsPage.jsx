@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
@@ -23,7 +23,7 @@ const AFFECTED_PAGES = [
 
 const userName = (person) => (person ? `${person.firstName} ${person.lastName}` : 'System');
 const sameId = (left, right) => Boolean(left && right && left.toString() === right.toString());
-const formatDate = (value) => (value ? new Date(value).toLocaleString() : '—');
+const formatDate = (value) => (value ? new Date(value).toLocaleString() : 'â€”');
 
 const priorityBadge = (p) => {
   switch (p) {
@@ -335,7 +335,7 @@ const TicketsPage = () => {
                       </span>
                     </td>
                     <td style={{ fontSize: 12, color: '#475569' }}>
-                      {ticket.requesterTeam || ticket.createdBy?.role || '—'}
+                      {ticket.requesterTeam || ticket.createdBy?.role || 'â€”'}
                     </td>
                     <td style={{ fontSize: 12, color: '#475569' }}>
                       {ticket.assignedTo ? (
@@ -494,10 +494,10 @@ const TicketsPage = () => {
               <div>
                 <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', margin: 0 }}>{selectedTicket.subject}</h2>
                 <div style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>
-                  Page: <strong>{selectedTicket.affectedPage || 'Other'}</strong> · Status: <strong>{selectedTicket.status}</strong> · Priority: <strong>{selectedTicket.priority}</strong>
+                  Page: <strong>{selectedTicket.affectedPage || 'Other'}</strong> Â· Status: <strong>{selectedTicket.status}</strong> Â· Priority: <strong>{selectedTicket.priority}</strong>
                 </div>
               </div>
-              <button onClick={() => setShowDetailsModal(false)} style={{ background: 'none', border: 'none', fontSize: 24, color: '#64748B', cursor: 'pointer' }}>×</button>
+              <button onClick={() => setShowDetailsModal(false)} style={{ background: 'none', border: 'none', fontSize: 24, color: '#64748B', cursor: 'pointer' }}>Ã—</button>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>

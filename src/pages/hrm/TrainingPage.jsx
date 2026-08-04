@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+ï»¿import { useState, useEffect, useMemo } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { DEPARTMENTS } from '../../services/departmentJobs';
@@ -282,7 +282,7 @@ const TrainingPage = () => {
             <input
               className="form-input"
               style={{ flex: '1 1 160px', padding: '6px 10px', fontSize: 12 }}
-              placeholder="Search name…"
+              placeholder="Search nameâ€¦"
               value={auxSearch}
               onChange={(e) => setAuxSearch(e.target.value)}
             />
@@ -351,11 +351,11 @@ const TrainingPage = () => {
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label">Employee</label>
                 <select className="form-input" value={employeeId} onChange={(e) => setEmployeeId(e.target.value)} required>
-                  <option value="">Select Employee…</option>
+                  <option value="">Select Employeeâ€¦</option>
                   {employees
                     .filter(e => empDeptFilter === 'All' || DEPARTMENTS.find(d => d.id === empDeptFilter)?.roles.includes(e.role))
                     .map((e) => (
-                      <option key={e._id} value={e._id}>{e.firstName} {e.lastName} · {e.role}</option>
+                      <option key={e._id} value={e._id}>{e.firstName} {e.lastName} Â· {e.role}</option>
                     ))}
                 </select>
               </div>
@@ -369,9 +369,9 @@ const TrainingPage = () => {
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label">Trainer / Supervisor</label>
                 <select className="form-input" value={assignedTrainerId} onChange={(e) => setAssignedTrainerId(e.target.value)} required>
-                  <option value="">Select Trainer…</option>
+                  <option value="">Select Trainerâ€¦</option>
                   {employees.map((e) => (
-                    <option key={e._id} value={e._id}>{e.firstName} {e.lastName} · {e.role}</option>
+                    <option key={e._id} value={e._id}>{e.firstName} {e.lastName} Â· {e.role}</option>
                   ))}
                 </select>
               </div>
@@ -390,7 +390,7 @@ const TrainingPage = () => {
                 </div>
               )}
               <button type="submit" className="btn btn-primary" disabled={submitting}>
-                {submitting ? 'Assigning…' : 'Assign Program'}
+                {submitting ? 'Assigningâ€¦' : 'Assign Program'}
               </button>
             </form>
           </div>
@@ -408,7 +408,7 @@ const TrainingPage = () => {
             <input
               className="form-input"
               style={{ flex: '1 1 160px', padding: '6px 10px', fontSize: 12 }}
-              placeholder="Search employee, trainer, topic…"
+              placeholder="Search employee, trainer, topicâ€¦"
               value={listSearch}
               onChange={(e) => setListSearch(e.target.value)}
             />
@@ -424,7 +424,7 @@ const TrainingPage = () => {
           </div>
 
           {loading ? (
-            <div className="loading-state">Loading records…</div>
+            <div className="loading-state">Loading recordsâ€¦</div>
           ) : filteredTrainings.length === 0 ? (
             <div style={{ color: 'var(--text-muted)', padding: 24, textAlign: 'center' }}>No training records match your filters.</div>
           ) : (
@@ -482,7 +482,7 @@ const TrainingPage = () => {
                           {tr.performanceRating ? (
                             <StarRatingDisplay value={tr.performanceRating} />
                           ) : (
-                            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>—</span>
+                            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>â€”</span>
                           )}
                         </td>
                         <td>
@@ -533,7 +533,7 @@ const TrainingPage = () => {
           >
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>Training Follow-Up & Report</h2>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>
-              <strong>{selectedTraining.topic}</strong> ·{' '}
+              <strong>{selectedTraining.topic}</strong> Â·{' '}
               {selectedTraining.employeeId?.firstName} {selectedTraining.employeeId?.lastName}
             </p>
 
@@ -559,13 +559,13 @@ const TrainingPage = () => {
                 <label className="form-label">Trainer Report / Notes</label>
                 <textarea className="form-input" rows={4} value={reportText}
                   onChange={(e) => setReportText(e.target.value)}
-                  placeholder="Document training outcomes, observations, and recommendations…" />
+                  placeholder="Document training outcomes, observations, and recommendationsâ€¦" />
               </div>
 
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
                 <button type="button" className="btn btn-secondary btn-sm" onClick={() => setSelectedTraining(null)}>Cancel</button>
                 <button type="submit" className="btn btn-primary btn-sm" disabled={submitting}>
-                  {submitting ? 'Submitting…' : 'Submit Report'}
+                  {submitting ? 'Submittingâ€¦' : 'Submit Report'}
                 </button>
               </div>
             </form>

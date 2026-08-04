@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useAux } from '../../context/AuxContext';
@@ -24,7 +24,7 @@ const STATUS_COLORS = {
   Coaching: '#3B82F6', 'Logged out': '#EF4444',
 };
 const STATUS_ICONS = {
-  Live: '🟢', Training: '🟡', Break: '🟣', Coaching: '🔵', 'Logged out': '🔴',
+  Live: 'ðŸŸ¢', Training: 'ðŸŸ¡', Break: 'ðŸŸ£', Coaching: 'ðŸ”µ', 'Logged out': 'ðŸ”´',
 };
 
 const MySchedulePage = () => {
@@ -97,8 +97,8 @@ const MySchedulePage = () => {
           )}
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-          🕐 {profile?.shift || 'N/A'}
-          {weeklyOffDays.length > 0 && ` · Off: ${weeklyOffDays.join(', ')}`}
+          ðŸ• {profile?.shift || 'N/A'}
+          {weeklyOffDays.length > 0 && ` Â· Off: ${weeklyOffDays.join(', ')}`}
         </div>
       </div>
 
@@ -114,14 +114,14 @@ const MySchedulePage = () => {
 
       {/* Schedule detail for the month */}
       {loading ? (
-        <div className="loading-state"><div className="spinner" /> Loading schedule…</div>
+        <div className="loading-state"><div className="spinner" /> Loading scheduleâ€¦</div>
       ) : !current ? (
         <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 48 }}>
           No schedule published for {month}.
         </div>
       ) : (
         <div className="card">
-          <h3 style={{ margin: '0 0 16px', fontSize: 15 }}>Monthly Plan · {current.month}</h3>
+          <h3 style={{ margin: '0 0 16px', fontSize: 15 }}>Monthly Plan Â· {current.month}</h3>
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 16 }}>
             {[
               { l: 'Live', v: current.monthlyPlan?.liveMinutes },

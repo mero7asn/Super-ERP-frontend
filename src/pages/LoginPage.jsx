@@ -1,4 +1,4 @@
-import { useState } from 'react';
+ï»¿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logo from '../assets/logo.png';
@@ -55,7 +55,7 @@ const LoginPage = () => {
               id="password"
               type="password"
               className="form-input"
-              placeholder="••••••••"
+              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -69,7 +69,7 @@ const LoginPage = () => {
             disabled={loading}
             style={{ marginTop: '8px' }}
           >
-            {loading ? 'Signing in…' : 'Sign In'}
+            {loading ? 'Signing inâ€¦' : 'Sign In'}
           </button>
         </form>
 

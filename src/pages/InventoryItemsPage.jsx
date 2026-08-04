@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { inventoryAPI } from '../services/inventoryAPI';
@@ -91,7 +91,7 @@ const InventoryItemsPage = () => {
     }
   };
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading inventory items�</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading inventory items…</div>;
 
   return (
     <div>

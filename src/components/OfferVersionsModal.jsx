@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import API from '../services/api';
 
 const OfferVersionsModal = ({ offerId, onClose }) => {
@@ -46,7 +46,7 @@ const OfferVersionsModal = ({ offerId, onClose }) => {
               Every previously sent offer is preserved here for audit.
             </p>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>×</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>Ã—</button>
         </div>
 
         {loading ? (
@@ -78,7 +78,7 @@ const OfferVersionsModal = ({ offerId, onClose }) => {
                       <span className={`badge ${statusBadge(v.statusAtSnapshot)}`} style={{ fontSize: 10, padding: '1px 7px' }}>{v.statusAtSnapshot}</span>
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>
-                      {email ? `To: ${email.toEmail || '—'}` : 'No email record'}
+                      {email ? `To: ${email.toEmail || 'â€”'}` : 'No email record'}
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
                       {v.createdAt ? new Date(v.createdAt).toLocaleString() : ''}
@@ -100,9 +100,9 @@ const OfferVersionsModal = ({ offerId, onClose }) => {
                     <span className="badge badge-meta" style={{ fontSize: 10, padding: '1px 7px', fontWeight: 700 }}>v{selected.version}</span>
                   </div>
                   <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>
-                    <strong>${selected.price != null ? Number(selected.price).toLocaleString() : '—'}</strong>
-                    {selected.validUntil && ` • Valid until ${new Date(selected.validUntil).toLocaleDateString()}`}
-                    {selected.offerType && ` • ${selected.offerType}`}
+                    <strong>${selected.price != null ? Number(selected.price).toLocaleString() : 'â€”'}</strong>
+                    {selected.validUntil && ` â€¢ Valid until ${new Date(selected.validUntil).toLocaleDateString()}`}
+                    {selected.offerType && ` â€¢ ${selected.offerType}`}
                   </div>
                   {selected.requirement && (
                     <div style={{ fontSize: 12, color: 'var(--accent-primary)', marginTop: 6, background: 'var(--bg-secondary)', borderRadius: 6, padding: '8px 10px', border: '1px solid var(--border-color)' }}>
@@ -117,8 +117,8 @@ const OfferVersionsModal = ({ offerId, onClose }) => {
                     <div style={{ background: 'var(--bg-secondary)', padding: '8px 12px', fontSize: 11, color: 'var(--text-muted)', borderBottom: '1px solid var(--border-color)' }}>
                       {selected.emailRef ? (
                         <>
-                          From: {selected.emailRef.fromEmail || '—'} • To: {selected.emailRef.toEmail || '—'} •{' '}
-                          {selected.emailRef.sentAt ? new Date(selected.emailRef.sentAt).toLocaleString() : ''} • Status: {selected.emailRef.status}
+                          From: {selected.emailRef.fromEmail || 'â€”'} â€¢ To: {selected.emailRef.toEmail || 'â€”'} â€¢{' '}
+                          {selected.emailRef.sentAt ? new Date(selected.emailRef.sentAt).toLocaleString() : ''} â€¢ Status: {selected.emailRef.status}
                         </>
                       ) : (
                         'Snapshot only (no email artifact)'

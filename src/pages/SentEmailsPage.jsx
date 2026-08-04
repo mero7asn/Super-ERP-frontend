@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -56,7 +56,7 @@ const SentEmailsPage = () => {
     return map[status] || 'badge-new';
   };
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading sent emails…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading sent emailsâ€¦</div>;
 
   return (
     <div>
@@ -92,7 +92,7 @@ const SentEmailsPage = () => {
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                    <span style={{ fontWeight: 600, fontSize: 13 }}>To: {email.toEmail || email.recipientId?.email || '—'}</span>
+                    <span style={{ fontWeight: 600, fontSize: 13 }}>To: {email.toEmail || email.recipientId?.email || 'â€”'}</span>
                     <span className={`badge ${getStatusBadge(email.status)}`} style={{ fontSize: 10 }}>{email.status}</span>
                   </div>
                   <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 2, color: 'var(--text-primary)' }}>{email.subject}</div>
@@ -114,7 +114,7 @@ const SentEmailsPage = () => {
             <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-card)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                 <div style={{ fontWeight: 600, fontSize: 15 }}>{selectedEmail.subject}</div>
-                <button onClick={() => setSelectedEmail(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>×</button>
+                <button onClick={() => setSelectedEmail(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>Ã—</button>
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                 <span>From: {selectedEmail.fromEmail || user?.smtpUser || user?.email}</span>
@@ -129,7 +129,7 @@ const SentEmailsPage = () => {
             </div>
             <div style={{ flex: 1, background: '#ffffff', minHeight: '400px' }}>
               {previewLoading ? (
-                <div className="loading-state"><div className="spinner" />Loading preview…</div>
+                <div className="loading-state"><div className="spinner" />Loading previewâ€¦</div>
               ) : (
                 <iframe
                   srcDoc={previewHtml}

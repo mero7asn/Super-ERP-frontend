@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
@@ -79,7 +79,7 @@ const CycleCountPage = () => {
       {error && <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>}
 
       {loading ? (
-        <div className="loading-state"><div className="spinner" />Loading cycle counts…</div>
+        <div className="loading-state"><div className="spinner" />Loading cycle countsâ€¦</div>
       ) : (
         <div className="card" style={{ padding: 0 }}>
           <div className="table-wrapper" style={{ overflowX: 'auto' }}>
@@ -106,7 +106,7 @@ const CycleCountPage = () => {
                     <td>{cc.subinventory}</td>
                     <td><span className="badge badge-new">{cc.countType}</span></td>
                     <td>{cc.countMethod}</td>
-                    <td>{cc.abcClass || '—'}</td>
+                    <td>{cc.abcClass || 'â€”'}</td>
                     <td><span className={`badge ${cc.status === 'Posted' ? 'badge-converted' : 'badge-new'}`}>{cc.status}</span></td>
                     <td style={{ fontSize: 12 }}>{new Date(cc.scheduledDate).toLocaleDateString()}</td>
                   </tr>

@@ -1,4 +1,4 @@
-export const DEPARTMENTS = [
+﻿export const DEPARTMENTS = [
   {
     id: 'Sales',
     label: '?? Sales',
