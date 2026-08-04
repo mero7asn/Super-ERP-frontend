@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import API from '../services/api';
+import { Icon } from './Icons';
 
 const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
   const [history, setHistory] = useState([]);
@@ -20,24 +21,24 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
   }, [offerId]);
 
   const getActionIcon = (action) => {
-    const icons = {
-      created: 'âž•',
-      sent: 'ðŸ“¤',
-      viewed: 'ðŸ‘ï¸',
-      accepted: 'âœ…',
-      rejected: 'âŒ',
-      expired: 'â°',
-      completed: 'ðŸŽ‰',
-      canceled: 'ðŸš«',
-      refunded: 'ðŸ’¸',
-      updated: 'âœï¸',
-      resend: 'ðŸ”„',
-      revised: 'ðŸ”',
-      version_sent: 'ðŸ“¨',
-      image_added: 'ðŸ–¼ï¸',
-      image_removed: 'ðŸ—‘ï¸'
-    };
-    return icons[action] || 'ðŸ“‹';
+    switch (action) {
+      case 'created': return <Icon name="plus" />;
+      case 'sent': return <Icon name="send" />;
+      case 'viewed': return <Icon name="eye" />;
+      case 'accepted': return <Icon name="check" />;
+      case 'rejected': return <Icon name="close" />;
+      case 'expired': return <Icon name="clock" />;
+      case 'completed': return <Icon name="check" />;
+      case 'canceled': return <Icon name="close" />;
+      case 'refunded': return <Icon name="dollar" />;
+      case 'updated': return <Icon name="edit" />;
+      case 'resend': return <Icon name="send" />;
+      case 'revised': return <Icon name="edit" />;
+      case 'version_sent': return <Icon name="send" />;
+      case 'image_added': return <Icon name="image" />;
+      case 'image_removed': return <Icon name="image" />;
+      default: return <Icon name="copy" />;
+    }
   };
 
   const renderChanges = (changes) => {
@@ -59,7 +60,7 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
             }}>
               <span style={{ fontWeight: 600, textTransform: 'capitalize' }}>{field.replace(/([A-Z])/g, ' $1')}</span>:
               <span style={{ color: 'var(--status-lost)', textDecoration: 'line-through', margin: '0 4px' }}>{fmt(from)}</span>
-              <span>â†’</span>
+              <span>→</span>
               <span style={{ color: 'var(--status-converted)', fontWeight: 600, margin: '0 4px' }}>{fmt(to)}</span>
             </div>
           );

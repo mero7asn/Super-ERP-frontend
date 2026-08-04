@@ -46,7 +46,7 @@ const OfferVersionsModal = ({ offerId, onClose }) => {
               Every previously sent offer is preserved here for audit.
             </p>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>Ã—</button>
+              <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}><Icon name="close" /></button>
         </div>
 
         {loading ? (
