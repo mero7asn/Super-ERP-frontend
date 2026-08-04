@@ -345,7 +345,7 @@ const EmailsPage = () => {
                 <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-color)' }}>
                   <input
                     className="form-input"
-                    placeholder="<Icon name="search" size={18} /> Search…"
+                    placeholder="Search…"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     style={{ fontSize: 12, padding: '7px 12px' }}
@@ -412,11 +412,11 @@ const EmailsPage = () => {
               {/* Right: email detail + thread + reply */}
               <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 {!selectedEmail ? (
-                  <div style={{
-                    flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'var(--text-muted)', flexDirection: 'column', gap: 12
-                  }}>
-                    <span style={{ fontSize: 40 }}>✉</span>
+                    <div style={{
+                      flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: 'var(--text-muted)', flexDirection: 'column', gap: 12
+                    }}>
+                    <div style={{fontSize:40}}><Icon name="mail" size={40} /></div>
                     <span style={{ fontSize: 14 }}>Select an email to read it</span>
                   </div>
                 ) : (

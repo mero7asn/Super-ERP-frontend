@@ -1,12 +1,56 @@
 import React from 'react';
+import {
+  FaBox, FaMoneyBillAlt, FaUser, FaBell, FaSearch, FaCalendarAlt, FaClock, FaCheck, FaTimes,
+  FaEnvelope, FaStar, FaPlay, FaTrash, FaBook, FaBullseye, FaHandshake, FaCogs, FaBullhorn,
+  FaHome, FaChartBar, FaPlus, FaEdit, FaFolder, FaWallet, FaUniversity, FaGift, FaPrint
+} from 'react-icons/fa';
+
+const REACT_ICON_MAP = {
+  box: FaBox,
+  money: FaMoneyBillAlt,
+  payroll: FaMoneyBillAlt,
+  card: FaWallet,
+  bank: FaUniversity,
+  person: FaUser,
+  users: FaUser,
+  alert: FaBell,
+  search: FaSearch,
+  calendar: FaCalendarAlt,
+  clock: FaClock,
+  check: FaCheck,
+  close: FaTimes,
+  send: FaEnvelope,
+  mail: FaEnvelope,
+  star: FaStar,
+  play: FaPlay,
+  trash: FaTrash,
+  book: FaBook,
+  target: FaBullseye,
+  handshake: FaHandshake,
+  settings: FaCogs,
+  megaphone: FaBullhorn,
+  dashboard: FaHome,
+  analytics: FaChartBar,
+  plus: FaPlus,
+  add: FaPlus,
+  edit: FaEdit,
+  folder: FaFolder,
+  gift: FaGift,
+  print: FaPrint,
+};
 
 export const Icon = ({ name, size = 18, className = "", style = {} }) => {
+  const IconComp = REACT_ICON_MAP[name];
   const defaultStyle = {
     display: 'inline-block',
     verticalAlign: 'middle',
     flexShrink: 0,
     ...style
   };
+
+  if (IconComp) {
+    return <IconComp size={size} className={className} style={defaultStyle} />;
+  }
 
   switch (name) {
     case 'dashboard':

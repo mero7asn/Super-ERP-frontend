@@ -14,7 +14,7 @@ import Underline from '@tiptap/extension-underline';
 import API from '../services/api';
 
 // SVG Icon Helpers
-const Icon = ({ path, size = 18, color = 'currentColor', style = {} }) => (
+const SvgIcon = ({ path, size = 18, color = 'currentColor', style = {} }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}>
     {path}
   </svg>
@@ -465,7 +465,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               color: '#60A5FA',
             }}
           >
-            <Icon path={Icons.Send} size={16} />
+            <SvgIcon path={Icons.Send} size={16} />
           </div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: '-0.2px' }}>
@@ -500,7 +500,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
             onMouseLeave={(e) => (e.currentTarget.style.color = showSidePane ? '#ffffff' : '#94A3B8')}
           >
-            <Icon path={Icons.Blocks} size={15} />
+            <SvgIcon path={Icons.Blocks} size={15} />
             <span>Blocks</span>
           </button>
 
@@ -519,7 +519,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
             onMouseLeave={(e) => (e.currentTarget.style.color = '#94A3B8')}
           >
-            <Icon path={isMaximized ? Icons.Minimize : Icons.Maximize} size={16} />
+            <SvgIcon path={isMaximized ? Icons.Minimize : Icons.Maximize} size={16} />
           </button>
 
           {/* Close */}
@@ -543,7 +543,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               e.currentTarget.style.background = 'transparent';
             }}
           >
-            <Icon path={Icons.Close} size={18} />
+            <SvgIcon path={Icons.Close} size={18} />
           </button>
         </div>
       </div>
@@ -694,7 +694,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             title="Undo (Ctrl+Z)"
             style={{ background: 'none', border: 'none', padding: '6px', borderRadius: '4px', cursor: 'pointer', opacity: editor.can().undo() ? 1 : 0.4 }}
           >
-            <Icon path={Icons.Undo} size={15} color="#475569" />
+            <SvgIcon path={Icons.Undo} size={15} color="#475569" />
           </button>
           <button
             onClick={() => editor.chain().focus().redo().run()}
@@ -702,7 +702,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             title="Redo (Ctrl+Y)"
             style={{ background: 'none', border: 'none', padding: '6px', borderRadius: '4px', cursor: 'pointer', opacity: editor.can().redo() ? 1 : 0.4 }}
           >
-            <Icon path={Icons.Redo} size={15} color="#475569" />
+            <SvgIcon path={Icons.Redo} size={15} color="#475569" />
           </button>
 
           <div style={{ width: 1, height: 18, background: '#CBD5E1', margin: '0 4px' }} />
@@ -733,7 +733,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               cursor: 'pointer',
             }}
           >
-            <Icon path={Icons.Bold} size={15} color={editor.isActive('bold') ? '#2563EB' : '#475569'} />
+            <SvgIcon path={Icons.Bold} size={15} color={editor.isActive('bold') ? '#2563EB' : '#475569'} />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -746,7 +746,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               cursor: 'pointer',
             }}
           >
-            <Icon path={Icons.Italic} size={15} color={editor.isActive('italic') ? '#2563EB' : '#475569'} />
+            <SvgIcon path={Icons.Italic} size={15} color={editor.isActive('italic') ? '#2563EB' : '#475569'} />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleUnderline().run()}
@@ -759,7 +759,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               cursor: 'pointer',
             }}
           >
-            <Icon path={Icons.Underline} size={15} color={editor.isActive('underline') ? '#2563EB' : '#475569'} />
+            <SvgIcon path={Icons.Underline} size={15} color={editor.isActive('underline') ? '#2563EB' : '#475569'} />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleStrike().run()}
@@ -772,7 +772,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               cursor: 'pointer',
             }}
           >
-            <Icon path={Icons.Strikethrough} size={15} color={editor.isActive('strike') ? '#2563EB' : '#475569'} />
+            <SvgIcon path={Icons.Strikethrough} size={15} color={editor.isActive('strike') ? '#2563EB' : '#475569'} />
           </button>
 
           {/* Color Picker Input */}
@@ -799,7 +799,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               cursor: 'pointer',
             }}
           >
-            <Icon path={Icons.AlignLeft} size={15} color="#475569" />
+            <SvgIcon path={Icons.AlignLeft} size={15} color="#475569" />
           </button>
           <button
             onClick={() => editor.chain().focus().setTextAlign('center').run()}
@@ -812,7 +812,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               cursor: 'pointer',
             }}
           >
-            <Icon path={Icons.AlignCenter} size={15} color="#475569" />
+            <SvgIcon path={Icons.AlignCenter} size={15} color="#475569" />
           </button>
           <button
             onClick={() => editor.chain().focus().setTextAlign('right').run()}
@@ -825,7 +825,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               cursor: 'pointer',
             }}
           >
-            <Icon path={Icons.AlignRight} size={15} color="#475569" />
+            <SvgIcon path={Icons.AlignRight} size={15} color="#475569" />
           </button>
 
           <div style={{ width: 1, height: 18, background: '#CBD5E1', margin: '0 4px' }} />
@@ -842,7 +842,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               cursor: 'pointer',
             }}
           >
-            <Icon path={Icons.ListBullet} size={15} color="#475569" />
+            <SvgIcon path={Icons.ListBullet} size={15} color="#475569" />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
@@ -855,7 +855,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               cursor: 'pointer',
             }}
           >
-            <Icon path={Icons.ListOrdered} size={15} color="#475569" />
+            <SvgIcon path={Icons.ListOrdered} size={15} color="#475569" />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
@@ -868,7 +868,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               cursor: 'pointer',
             }}
           >
-            <Icon path={Icons.Quote} size={15} color="#475569" />
+            <SvgIcon path={Icons.Quote} size={15} color="#475569" />
           </button>
 
           <div style={{ width: 1, height: 18, background: '#CBD5E1', margin: '0 4px' }} />
@@ -879,7 +879,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             title="Clear Formatting"
             style={{ background: 'none', border: 'none', padding: '6px', borderRadius: '4px', cursor: 'pointer' }}
           >
-            <Icon path={Icons.ClearFormat} size={15} color="#64748B" />
+            <SvgIcon path={Icons.ClearFormat} size={15} color="#64748B" />
           </button>
         </div>
       )}
@@ -918,7 +918,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
                     boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                   }}
                 >
-                  <Icon path={Icons.Paperclip} size={14} color="#2563EB" />
+                  <SvgIcon path={Icons.Paperclip} size={14} color="#2563EB" />
                   <div style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 500, color: '#1E293B' }}>
                     {att.name}
                   </div>
@@ -1106,7 +1106,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             onMouseEnter={(e) => !sending && (e.currentTarget.style.background = '#1D4ED8')}
             onMouseLeave={(e) => !sending && (e.currentTarget.style.background = '#2563EB')}
           >
-            <Icon path={Icons.Send} size={16} />
+            <SvgIcon path={Icons.Send} size={16} />
             <span>{sending ? 'Sending...' : 'Send'}</span>
           </button>
 
@@ -1149,7 +1149,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             onMouseEnter={(e) => (e.currentTarget.style.background = '#F1F5F9')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
-            <Icon path={Icons.Paperclip} size={18} />
+            <SvgIcon path={Icons.Paperclip} size={18} />
           </button>
 
           {/* Insert Link */}
@@ -1173,7 +1173,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             onMouseEnter={(e) => (e.currentTarget.style.background = '#F1F5F9')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
-            <Icon path={Icons.Link} size={18} />
+            <SvgIcon path={Icons.Link} size={18} />
           </button>
 
           {/* Emoji Picker */}
@@ -1195,7 +1195,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               onMouseEnter={(e) => (e.currentTarget.style.background = '#F1F5F9')}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
-              <Icon path={Icons.Smile} size={18} />
+              <SvgIcon path={Icons.Smile} size={18} />
             </button>
 
             {showEmojiPicker && (
@@ -1249,7 +1249,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             onMouseEnter={(e) => (e.currentTarget.style.background = '#E2E8F0')}
             onMouseLeave={(e) => (e.currentTarget.style.background = '#F1F5F9')}
           >
-            <Icon path={Icons.Template} size={14} color="#2563EB" />
+            <SvgIcon path={Icons.Template} size={14} color="#2563EB" />
             <span>Templates</span>
           </button>
         </div>
@@ -1276,7 +1276,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
-            <Icon path={Icons.Eye} size={14} />
+            <SvgIcon path={Icons.Eye} size={14} />
             <span>Preview</span>
           </button>
 
@@ -1301,7 +1301,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
-            <Icon path={Icons.Save} size={14} />
+            <SvgIcon path={Icons.Save} size={14} />
             <span>{saving ? 'Saving...' : 'Save Template'}</span>
           </button>
 
@@ -1326,7 +1326,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               e.currentTarget.style.background = 'transparent';
             }}
           >
-            <Icon path={Icons.Trash} size={18} />
+            <SvgIcon path={Icons.Trash} size={18} />
           </button>
         </div>
       </div>
@@ -1358,7 +1358,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
           >
             <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Icon path={Icons.Template} size={18} color="#2563EB" />
+                <SvgIcon path={Icons.Template} size={18} color="#2563EB" />
                 <span>Email Templates</span>
               </div>
               <button onClick={() => setShowTemplates(false)} style={{ background: 'none', border: 'none', fontSize: 20, color: '#64748B', cursor: 'pointer' }}>×</button>
@@ -1456,7 +1456,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
             {/* Modal Header */}
             <div style={{ padding: '16px 24px', background: '#1E293B', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ fontSize: 15, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Icon path={Icons.Eye} size={18} color="#60A5FA" />
+                <SvgIcon path={Icons.Eye} size={18} color="#60A5FA" />
                 <span>Email Client Live Preview</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -1477,7 +1477,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
                       gap: 4,
                     }}
                   >
-                    <Icon path={Icons.Monitor} size={14} /> Desktop
+                    <SvgIcon path={Icons.Monitor} size={14} /> Desktop
                   </button>
                   <button
                     onClick={() => setPreviewDevice('mobile')}
@@ -1494,7 +1494,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
                       gap: 4,
                     }}
                   >
-                    <Icon path={Icons.Smartphone} size={14} /> Mobile
+                    <SvgIcon path={Icons.Smartphone} size={14} /> Mobile
                   </button>
                 </div>
                 <button onClick={() => setShowPreview(false)} style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: 24, cursor: 'pointer' }}>×</button>

@@ -245,7 +245,7 @@ const RtmMonitorPage = () => {
         {/* Search */}
         <input
           className="form-input"
-          placeholder="<Icon name="search" size={18} /> Search by name, role, department…"
+          placeholder="Search by name, role, department…"
           value={search}
           onChange={e => setSearch(e.target.value)}
           style={{ maxWidth: 360, padding: '8px 14px', fontSize: 13 }}

@@ -1045,10 +1045,10 @@ const PayrollPage = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {/* KPI Metrics */}
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-          <MetricCard icon="<Icon name="users" size={18} />" label="Total Headcount" value={analytics.headcount} />
-          <MetricCard icon="<Icon name="money" size={18} />" label="Monthly Payroll" value={(analytics.totalPayroll || 0).toLocaleString() + ' EGP'} />
-          <MetricCard icon="<Icon name="analytics" size={18} />" label="Avg Salary" value={(analytics.avgSalary || 0).toLocaleString() + ' EGP'} />
-          <MetricCard icon="<Icon name="siren" size={18} />" label="Open Alerts" value={analytics.openAlertsCount} sub={analytics.criticalAlertsCount + ' critical'} />
+              <MetricCard icon={<Icon name="users" size={18} />} label="Total Headcount" value={analytics.headcount} />
+              <MetricCard icon={<Icon name="money" size={18} />} label="Monthly Payroll" value={(analytics.totalPayroll || 0).toLocaleString() + ' EGP'} />
+              <MetricCard icon={<Icon name="analytics" size={18} />} label="Avg Salary" value={(analytics.avgSalary || 0).toLocaleString() + ' EGP'} />
+              <MetricCard icon={<Icon name="siren" size={18} />} label="Open Alerts" value={analytics.openAlertsCount} sub={analytics.criticalAlertsCount + ' critical'} />
         </div>
 
         <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-start' }}>

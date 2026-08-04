@@ -24,7 +24,7 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
     switch (action) {
       case 'created': return <span style={{fontSize:18}}>+</span>;
       case 'sent': return <Icon name="send" size={18} />;
-      case 'viewed': return <span style={{fontSize:18}}>👁</span>;
+      case 'viewed': return <Icon name="search" size={18} />;
       case 'accepted': return <Icon name="check" size={18} />;
       case 'rejected': return <Icon name="close" size={18} />;
       case 'expired': return <Icon name="clock" size={18} />;
@@ -32,8 +32,8 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
       case 'canceled': return <Icon name="ban" size={18} />;
       case 'refunded': return <Icon name="money" size={18} />;
       case 'updated': return <span style={{fontSize:16}}>✏</span>;
-      case 'resend': return <span style={{fontSize:16}}>🔄</span>;
-      case 'revised': return <span style={{fontSize:16}}>🔁</span>;
+      case 'resend': return <Icon name="refresh" size={16} />;
+      case 'revised': return <Icon name="refresh" size={16} />;
       case 'version_sent': return <Icon name="send" size={18} />;
       case 'image_added': return <Icon name="kanban" size={18} />;
       case 'image_removed': return <Icon name="trash" size={18} />;
