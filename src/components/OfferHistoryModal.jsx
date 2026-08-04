@@ -87,10 +87,10 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
                 onClick={onViewVersions}
                 style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '4px 10px', fontSize: 12, cursor: 'pointer', color: 'var(--accent-primary)' }}
               >
-                ðŸ—‚ï¸ Sent Versions
+                <Icon name="send" /> Sent Versions
               </button>
             )}
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>Ã—</button>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}><Icon name="close" /></button>
           </div>
         </div>
         {loading ? (
@@ -112,7 +112,7 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
                   <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 2 }}>{entry.details}</div>
                   {renderChanges(entry.changes)}
                   <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
-                    {entry.performedBy ? `${entry.performedBy.firstName} ${entry.performedBy.lastName}` : 'System'} â€¢ {new Date(entry.timestamp).toLocaleString()}
+                      {entry.performedBy ? `${entry.performedBy.firstName} ${entry.performedBy.lastName}` : 'System'} • {new Date(entry.timestamp).toLocaleString()}
                   </div>
                 </div>
               </div>
