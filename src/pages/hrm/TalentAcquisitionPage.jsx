@@ -1,4 +1,5 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { Icon } from '../../components/Icons';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { DEPARTMENTS } from '../../services/departmentJobs';
@@ -41,7 +42,7 @@ const CandidateCard = ({ candidate, isTA, onMove, onOpenFeedback }) => {
         {candidate.vacancyId?.title || 'Unknown Position'}
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>✉ {candidate.email}</div>
-      {candidate.phone && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>📞 {candidate.phone}</div>}
+      {candidate.phone && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}><Icon name="phone" size={18} /> {candidate.phone}</div>}
       {lastNote && (
         <div
           style={{
@@ -55,7 +56,7 @@ const CandidateCard = ({ candidate, isTA, onMove, onOpenFeedback }) => {
             lineHeight: 1.4,
           }}
         >
-          💬 {lastNote.note.length > 80 ? lastNote.note.slice(0, 80) + '…' : lastNote.note}
+          <Icon name="support" size={18} /> {lastNote.note.length > 80 ? lastNote.note.slice(0, 80) + '…' : lastNote.note}
           <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
             — {lastNote.addedBy?.firstName} {lastNote.addedBy?.lastName}
           </div>

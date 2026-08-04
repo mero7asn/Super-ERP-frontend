@@ -1,4 +1,5 @@
-﻿import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Icon } from '../components/Icons';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { AUX_COLORS, AUX_ICONS } from '../context/AuxContext';
@@ -54,7 +55,7 @@ const FlagBadge = ({ reason }) => (
     border: '1px solid rgba(239,68,68,0.4)',
     animation: 'rtm-pulse 1.4s ease-in-out infinite',
   }}>
-    🚨 FLAGGED{reason ? ` · ${reason}` : ''}
+    <Icon name="siren" size={18} /> FLAGGED{reason ? ` · ${reason}` : ''}
   </span>
 );
 
@@ -169,7 +170,7 @@ const RtmMonitorPage = () => {
   if (!isRTM) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400, flexDirection: 'column', gap: 12 }}>
-        <span style={{ fontSize: 40 }}>🚫</span>
+        <span style={{ fontSize: 40 }}><Icon name="ban" size={18} /></span>
         <span style={{ color: 'var(--text-muted)' }}>Access restricted to RTM Team Members.</span>
       </div>
     );
@@ -199,7 +200,7 @@ const RtmMonitorPage = () => {
         <div className="page-header" style={{ marginBottom: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <h1 className="page-title">🎯 RTM Live Monitor</h1>
+              <h1 className="page-title"><Icon name="target" size={18} /> RTM Live Monitor</h1>
               <p className="page-subtitle">
                 Real-time agent status · auto-refreshes every 20s
                 {lastRefresh && (
@@ -224,7 +225,7 @@ const RtmMonitorPage = () => {
             { key: 'Training', label: 'Training', color: AUX_COLORS.Training },
             { key: 'Coaching', label: 'Coaching', color: AUX_COLORS.Coaching },
             { key: 'Logged out', label: 'Logged Out', color: AUX_COLORS['Logged out'] },
-            { key: 'Flagged', label: '🚨 Flagged', color: '#EF4444' },
+            { key: 'Flagged', label: '<Icon name="siren" size={18} /> Flagged', color: '#EF4444' },
           ].map(({ key, label, color }) => (
             <button
               key={key}
@@ -244,7 +245,7 @@ const RtmMonitorPage = () => {
         {/* Search */}
         <input
           className="form-input"
-          placeholder="🔍 Search by name, role, department…"
+          placeholder="<Icon name="search" size={18} /> Search by name, role, department…"
           value={search}
           onChange={e => setSearch(e.target.value)}
           style={{ maxWidth: 360, padding: '8px 14px', fontSize: 13 }}
@@ -266,7 +267,7 @@ const RtmMonitorPage = () => {
             className={groupByTeam ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'}
             style={{ fontSize: 12, padding: '6px 14px' }}
           >
-            {groupByTeam ? '👥 Grouped by Team' : '👥 Group by Team'}
+            {groupByTeam ? '<Icon name="users" size={18} /> Grouped by Team' : '<Icon name="users" size={18} /> Group by Team'}
           </button>
         </div>
 
@@ -299,13 +300,13 @@ const RtmMonitorPage = () => {
                     background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: 13 }}>
-                      👥 {group.name}
+                      <Icon name="users" size={18} /> {group.name}
                       <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}>
                         · {group.members.length} {group.members.length === 1 ? 'agent' : 'agents'}
                       </span>
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                      🚨 {group.members.filter(m => m.rtmFlagged).length} flagged
+                      <Icon name="siren" size={18} /> {group.members.filter(m => m.rtmFlagged).length} flagged
                     </div>
                   </div>
                 )}
@@ -345,7 +346,7 @@ const RtmMonitorPage = () => {
                               background: 'rgba(245,158,11,0.15)', color: '#B45309',
                               border: '1px solid rgba(245,158,11,0.4)',
                             }}>
-                              ⏰ OFF-SHIFT
+                              <Icon name="clock" size={18} /> OFF-SHIFT
                             </span>
                           )}
                         </div>
@@ -388,7 +389,7 @@ const RtmMonitorPage = () => {
 
                       {/* Shift */}
                       <div style={{ flex: '0 0 160px', fontSize: 11, color: 'var(--text-muted)', textAlign: 'right' }}>
-                        <div>🕐 {agent.shift || 'N/A'}{agent.isOffDay ? ' · Off day' : ''}</div>
+                        <div><Icon name="clock" size={18} /> {agent.shift || 'N/A'}{agent.isOffDay ? ' · Off day' : ''}</div>
                         {isFlagged && agent.rtmFlaggedAt && (
                           <div style={{ color: '#EF4444', marginTop: 3 }}>
                             Flagged at {new Date(agent.rtmFlaggedAt).toLocaleTimeString()}

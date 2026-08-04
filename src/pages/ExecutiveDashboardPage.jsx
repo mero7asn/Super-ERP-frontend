@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
@@ -166,7 +166,7 @@ const ExecutiveDashboardPage = () => {
   const leadTrend = stats?.leadsByPlatform ? processLeadTrend(stats.leadsByPlatform) : [];
   
   if (stats) {
-    console.log('📈 Chart Data:', { 
+    console.log('<Icon name="trending" size={18} /> Chart Data:', { 
       leadTrendLength: leadTrend.length, 
       hasLeadsByPlatform: !!stats.leadsByPlatform,
       leadsByPlatformLength: stats.leadsByPlatform?.length || 0
@@ -283,7 +283,7 @@ const ExecutiveDashboardPage = () => {
                       boxShadow: 'var(--shadow-sm)'
                     }}>
                       <p style={{ fontSize: 13, lineHeight: 1.6, margin: 0 }}>
-                        💡 <strong>{marketingData.winningPlatform.platform}</strong> is currently performing better with a <strong>{marketingData.winningPlatform.conversionRate}%</strong> conversion rate compared to <strong>{marketingData.losingPlatform.platform}</strong>'s <strong>{marketingData.losingPlatform.conversionRate}%</strong>. We recommend prioritizing <strong>{marketingData.winningPlatform.platform}</strong> for upcoming campaign budgets.
+                        <Icon name="bulb" size={18} /> <strong>{marketingData.winningPlatform.platform}</strong> is currently performing better with a <strong>{marketingData.winningPlatform.conversionRate}%</strong> conversion rate compared to <strong>{marketingData.losingPlatform.platform}</strong>'s <strong>{marketingData.losingPlatform.conversionRate}%</strong>. We recommend prioritizing <strong>{marketingData.winningPlatform.platform}</strong> for upcoming campaign budgets.
                       </p>
                     </div>
                   ) : (

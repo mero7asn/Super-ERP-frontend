@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Icon } from '../components/Icons';
@@ -141,7 +141,7 @@ const DashboardPage = () => {
               Core 360 Executive Workspace
             </div>
             <h1 style={{ fontSize: 26, fontWeight: 800, color: '#ffffff', margin: 0 }}>
-              {greeting}, {user?.firstName} 👋
+              {greeting}, {user?.firstName}
             </h1>
             <p style={{ fontSize: 13, color: '#94A3B8', marginTop: 6, margin: 0 }}>
               Role: <strong style={{ color: '#F1F5F9' }}>{user?.role}</strong> &nbsp;&middot; Real-time operations & pipeline metrics
@@ -187,7 +187,7 @@ const DashboardPage = () => {
         {/* Permissions Panel */}
         <div className="crm-glass-card">
           <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 700, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 18 }}>🔒</span> Access Permissions Matrix
+            <Icon name="lock" size={18} /> Access Permissions Matrix
           </h3>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {user?.permissions &&
@@ -210,23 +210,23 @@ const DashboardPage = () => {
         {/* Quick Module Shortcuts */}
         <div className="crm-glass-card">
           <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 700, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 18 }}>⚡</span> Quick Navigation Shortcuts
+            <Icon name="rocket" size={18} /> Quick Navigation Shortcuts
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             <button onClick={() => navigate('/leads')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 18 }}>👤</span>
+              <Icon name="leads" size={18} style={{ color: '#2563EB' }} />
               <div><div style={{ fontWeight: 700, fontSize: 13, color: '#0F172A' }}>Leads Table</div><div style={{ fontSize: 11, color: '#64748B' }}>View all leads</div></div>
             </button>
             <button onClick={() => navigate('/kanban')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 18 }}>📊</span>
+              <Icon name="analytics" size={18} style={{ color: '#2563EB' }} />
               <div><div style={{ fontWeight: 700, fontSize: 13, color: '#0F172A' }}>Sales Kanban</div><div style={{ fontSize: 11, color: '#64748B' }}>Deal pipeline</div></div>
             </button>
             <button onClick={() => navigate('/tickets')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 18 }}>🎫</span>
+              <Icon name="tickets" size={18} style={{ color: '#2563EB' }} />
               <div><div style={{ fontWeight: 700, fontSize: 13, color: '#0F172A' }}>Tech Tickets</div><div style={{ fontSize: 11, color: '#64748B' }}>Support issues</div></div>
             </button>
             <button onClick={() => navigate('/analytics')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 18 }}>📈</span>
+              <Icon name="trending" size={18} style={{ color: '#2563EB' }} />
               <div><div style={{ fontWeight: 700, fontSize: 13, color: '#0F172A' }}>Analytics</div><div style={{ fontSize: 11, color: '#64748B' }}>Reports & charts</div></div>
             </button>
           </div>

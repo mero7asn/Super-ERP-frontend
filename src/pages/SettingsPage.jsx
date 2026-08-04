@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';

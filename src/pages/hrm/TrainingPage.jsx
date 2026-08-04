@@ -1,4 +1,5 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { Icon } from '../../components/Icons';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { DEPARTMENTS } from '../../services/departmentJobs';
@@ -15,14 +16,16 @@ const StarRatingInput = ({ value, onChange, max = 5 }) => (
           background: 'none',
           border: 'none',
           cursor: 'pointer',
-          fontSize: 22,
           color: i < value ? '#F59E0B' : 'rgba(255,255,255,0.15)',
           padding: '0 1px',
           lineHeight: 1,
           transition: 'color 0.15s',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
-        ★
+        <Icon name="star" size={18} />
       </button>
     ))}
   </div>
@@ -30,9 +33,9 @@ const StarRatingInput = ({ value, onChange, max = 5 }) => (
 
 // Star rating display component
 const StarRatingDisplay = ({ value, max = 5 }) => (
-  <span>
+  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
     {Array.from({ length: max }).map((_, i) => (
-      <span key={i} style={{ color: i < value ? '#F59E0B' : 'rgba(255,255,255,0.18)', fontSize: 13 }}>★</span>
+      <Icon key={i} name="star" size={13} style={{ color: i < value ? '#F59E0B' : 'rgba(255,255,255,0.18)' }} />
     ))}
     <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 5 }}>({value}/{max})</span>
   </span>
@@ -47,7 +50,7 @@ const AUX_COLORS = {
   Break: '#6366F1',
   Coaching: '#3B82F6',
 };
-const AUX_ICONS = { Live: '🟢', Training: '🟡', 'Logged out': '🔴', Break: '🟣', Coaching: '🔵' };
+const AUX_ICONS = { Live: '', Training: '', 'Logged out': '', Break: '', Coaching: '' };
 
 const TrainingPage = () => {
   const { user } = useAuth();
@@ -203,7 +206,7 @@ const TrainingPage = () => {
   }, [trainings, listSearch, listDeptFilter, listStatusFilter, listTypeFilter]);
 
   const STATUS_BADGE = {
-    Completed: { bg: '#10B981', label: '✓ Completed' },
+    Completed: { bg: '#10B981', label: <><Icon name="check" size={14} /> Completed</> },
     'In Progress': { bg: '#3B82F6', label: '↻ In Progress' },
     Assigned: { bg: '#6B7280', label: '○ Assigned' },
   };
@@ -386,7 +389,7 @@ const TrainingPage = () => {
               </div>
               {trainingType === 'Technical' && (
                 <div style={{ padding: '8px 12px', borderRadius: 6, background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)', fontSize: 12, color: '#818CF8' }}>
-                  💡 Supervisor will receive an internal email notification automatically.
+                  <Icon name="bulb" size={18} /> Supervisor will receive an internal email notification automatically.
                 </div>
               )}
               <button type="submit" className="btn btn-primary" disabled={submitting}>
@@ -455,11 +458,11 @@ const TrainingPage = () => {
                         <td>
                           <strong>{tr.topic}</strong>
                           <div style={{ fontSize: 11, color: tr.type === 'Technical' ? '#818CF8' : '#6EE7B7' }}>
-                            {tr.type === 'Technical' ? '⚙ Technical' : '📋 HR / General'}
+                            {tr.type === 'Technical' ? '<Icon name="settings" size={18} /> Technical' : '<Icon name="kanban" size={18} /> HR / General'}
                           </div>
                           {tr.scheduledDate && (
                             <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
-                              📅 {new Date(tr.scheduledDate).toLocaleDateString()}
+                              <Icon name="calendar" size={18} /> {new Date(tr.scheduledDate).toLocaleDateString()}
                             </div>
                           )}
                         </td>
@@ -551,7 +554,7 @@ const TrainingPage = () => {
                 <label className="form-label" style={{ marginBottom: 8 }}>Performance Rating</label>
                 <StarRatingInput value={reportStars} onChange={setReportStars} />
                 <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
-                  {reportStars === 0 ? 'No rating' : reportStars === 1 ? '⚠ Poor' : reportStars === 2 ? '📉 Below Average' : reportStars === 3 ? '✅ Satisfactory' : reportStars === 4 ? '👍 Good' : '🌟 Exceptional'}
+                  {reportStars === 0 ? 'No rating' : reportStars === 1 ? '<Icon name="warning" size={18} /> Poor' : reportStars === 2 ? '<Icon name="trending" size={18} /> Below Average' : reportStars === 3 ? '<Icon name="check" size={18} /> Satisfactory' : reportStars === 4 ? '<Icon name="like" size={18} /> Good' : '🌟 Exceptional'}
                 </div>
               </div>
 

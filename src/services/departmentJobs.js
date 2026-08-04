@@ -1,32 +1,38 @@
-﻿export const DEPARTMENTS = [
+export const DEPARTMENTS = [
   {
     id: 'Sales',
-    label: '💼 Sales',
+    label: 'Sales',
+    icon: 'leads',
     roles: ['Sales Agent', 'Sales Manager'],
   },
   {
     id: 'Customer Support',
-    label: '🎧 Customer Support',
+    label: 'Customer Support',
+    icon: 'support',
     roles: ['Customer Support Agent', 'Customer Support Manager'],
   },
   {
     id: 'Marketing',
-    label: '📣 Marketing',
+    label: 'Marketing',
+    icon: 'megaphone',
     roles: ['Marketing Specialist', 'Marketing Manager'],
   },
   {
     id: 'Technology',
-    label: '💻 Technology',
+    label: 'Technology',
+    icon: 'devtools',
     roles: ['CRM Developer', 'CRM Consultant', 'System Architect', 'Business Analyst'],
   },
   {
     id: 'Executive',
-    label: '🏛 Executive',
+    label: 'Executive',
+    icon: 'dashboard',
     roles: ['Executive User', 'Core 360 Administrator'],
   },
   {
     id: 'Human Resources',
-    label: '👥 Human Resources',
+    label: 'Human Resources',
+    icon: 'users',
     roles: [
       'HRM System Administrator',
       'HR Manager',

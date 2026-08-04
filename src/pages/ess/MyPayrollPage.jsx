@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Icon } from '../../components/Icons';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
@@ -241,10 +242,10 @@ const MyPayrollPage = () => {
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 0, overflowX: 'auto' }}>
         {[
-          { id: 'payslips', label: '📄 Payslips' },
+          { id: 'payslips', label: '<Icon name="kanban" size={18} /> Payslips' },
           { id: 'history', label: '🧾 Payment History' },
-          { id: 'bank', label: '🏦 Bank Account' },
-          { id: 'payment', label: '💳 Payment Method' },
+          { id: 'bank', label: '<Icon name="money" size={18} /> Bank Account' },
+          { id: 'payment', label: '<Icon name="money" size={18} /> Payment Method' },
         ].map(t => (
           <button
             key={t.id}
@@ -269,7 +270,7 @@ const MyPayrollPage = () => {
           {/* Add / Edit Card Form */}
           <div style={{ flex: '1 1 320px' }}>
             <div className="card">
-              <h3 style={{ margin: '0 0 12px', fontSize: 15 }}>{editingId ? '✏️ Edit Card' : 'Add Payment Card'}</h3>
+              <h3 style={{ margin: '0 0 12px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 8 }}>{editingId ? <><Icon name="edit" size={18} /> Edit Card</> : <><Icon name="card" size={18} /> Add Payment Card</>}</h3>
               <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
                 {editingId ? 'Update your card details. It will be resubmitted for payroll team approval.' : 'Your card details will be reviewed and approved by the payroll team before use.'}
               </p>
@@ -364,7 +365,7 @@ const MyPayrollPage = () => {
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
                           <span style={{ padding: '3px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600, background: sc.bg, color: sc.color }}>{pm.status}</span>
-                          {pm.isActive && <span style={{ fontSize: 11, color: '#047857' }}>✓ Active</span>}
+                          {pm.isActive && <span style={{ fontSize: 11, color: '#047857', display: 'inline-flex', alignItems: 'center', gap: 4 }}><Icon name="check" size={14} /> Active</span>}
                           <div style={{ display: 'flex', gap: 6 }}>
                             {!isBeingEdited && (
                               <button onClick={() => startEdit(pm)} className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '3px 8px' }}>Edit</button>
@@ -426,7 +427,7 @@ const MyPayrollPage = () => {
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Payslip</div>
                     <div style={{ fontWeight: 700, fontSize: 20 }}>{selected.period}</div>
                   </div>
-                  <button onClick={() => window.print()} className="btn btn-secondary btn-sm" style={{ fontSize: 11 }}>🖨️ Print</button>
+                  <button onClick={() => window.print()} className="btn btn-secondary btn-sm" style={{ fontSize: 11 }}><Icon name="print" size={18} /> Print</button>
                 </div>
 
                 <Section title="Earnings" color="var(--accent-success)" rows={EARNINGS} data={selected} />
@@ -487,13 +488,13 @@ const MyPayrollPage = () => {
               </div>
               {baErrors.length > 0 && (
                 <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 8, padding: 10, marginTop: 12 }}>
-                  {baErrors.map((err, i) => <div key={i} style={{ fontSize: 12, color: '#B91C1C' }}>⚠️ {err}</div>)}
+                  {baErrors.map((err, i) => <div key={i} style={{ fontSize: 12, color: '#B91C1C' }}><Icon name="warning" size={18} /> {err}</div>)}
                 </div>
               )}
               {baMsg.text && (
                 <div style={{ padding: '8px 12px', borderRadius: 8, fontSize: 12, marginTop: 12, background: baMsg.type === 'error' ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)', color: baMsg.type === 'error' ? '#B91C1C' : '#047857' }}>{baMsg.text}</div>
               )}
-              <button className="btn btn-primary" style={{ marginTop: 14 }} onClick={handleBaSave} disabled={baLoading}>💾 Save Bank Account</button>
+              <button className="btn btn-primary" style={{ marginTop: 14 }} onClick={handleBaSave} disabled={baLoading}><Icon name="download" size={18} /> Save Bank Account</button>
             </div>
           </div>
           <div style={{ flex: '1 1 320px' }}>
@@ -506,7 +507,7 @@ const MyPayrollPage = () => {
                   <div style={{ fontSize: 13 }}><strong>Method:</strong> {myBank.disbursementMethod}</div>
                   <div style={{ fontSize: 13 }}><strong>Bank:</strong> {myBank.bankName}</div>
                   <div style={{ fontSize: 13 }}><strong>Account:</strong> <span style={{ fontFamily: 'monospace' }}>{myBank.accountNumber || myBank.iban || '—'}</span></div>
-                  <div style={{ fontSize: 13, marginTop: 6, color: myBank.isVerified ? '#047857' : '#B45309' }}>{myBank.isVerified ? '✓ Verified by HR' : '⏳ Pending HR verification'}</div>
+                  <div style={{ fontSize: 13, marginTop: 6, color: myBank.isVerified ? '#047857' : '#B45309' }}>{myBank.isVerified ? '✓ Verified by HR' : '<Icon name="clock" size={18} /> Pending HR verification'}</div>
                 </div>
               ) : <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>No bank account on file yet.</div>}
             </div>

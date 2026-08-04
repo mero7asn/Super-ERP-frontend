@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Icon } from '../../components/Icons';
 import { useAuth } from '../../context/AuthContext';
 
 const HrmDashboardPage = () => {
@@ -16,7 +17,7 @@ const HrmDashboardPage = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
         {/* Card 1: Personal */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ fontSize: 24 }}>📁</div>
+          <div style={{ fontSize: 24 }}><Icon name="folder" size={18} /></div>
           <h3 style={{ margin: 0 }}>Personal Department</h3>
           <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>
             Manage employee contracts, Egyptian governmental compliance documents, profiles, schedules, and leaves.
@@ -28,7 +29,7 @@ const HrmDashboardPage = () => {
 
         {/* Card 2: Payroll */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ fontSize: 24 }}>💵</div>
+          <div style={{ fontSize: 24 }}><Icon name="money" size={18} /></div>
           <h3 style={{ margin: 0 }}>Payroll Department</h3>
           <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>
             Process monthly salaries, manage deductions, log achievements & KPIs, and review 10% annual salary growth.
@@ -40,7 +41,7 @@ const HrmDashboardPage = () => {
 
         {/* Card 3: Training */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ fontSize: 24 }}>🎓</div>
+          <div style={{ fontSize: 24 }}><Icon name="graduation" size={18} /></div>
           <h3 style={{ margin: 0 }}>Training Department</h3>
           <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>
             Log HR training courses, assign technical supervisor tutorials, update AUX presence status, and review follow-up reports.
@@ -52,7 +53,7 @@ const HrmDashboardPage = () => {
 
         {/* Card 4: Talent Acquisition */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ fontSize: 24 }}>🔍</div>
+          <div style={{ fontSize: 24 }}><Icon name="search" size={18} /></div>
           <h3 style={{ margin: 0 }}>Talent Acquisition</h3>
           <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>
             Open job vacancies, review resumes, track recruitment stages (Applied to Hired), and coordinate hires.
@@ -64,7 +65,7 @@ const HrmDashboardPage = () => {
 
         {/* Card 5: BD & People Culture */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ fontSize: 24 }}>🤝</div>
+          <div style={{ fontSize: 24 }}><Icon name="handshake" size={18} /></div>
           <h3 style={{ margin: 0 }}>BD & People Culture</h3>
           <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>
             Record corporate discounts, medical insurance schemes, company partnerships, and benefits programs.

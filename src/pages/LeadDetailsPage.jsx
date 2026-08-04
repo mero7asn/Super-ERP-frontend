@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -507,7 +507,7 @@ const LeadDetailsPage = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
                     <div style={{ fontSize: 14, color: 'var(--text-primary)' }}>{lead.phone}</div>
                     <button className="btn btn-secondary btn-sm" onClick={handleCallLead} disabled={callingLead || offers.length === 0}>
-                      {callingLead ? 'Calling...' : '📞 Call'}
+                      {callingLead ? 'Calling...' : <><Icon name="phone" size={18} /> Call</>}
                     </button>
                   </div>
                 </div>
@@ -591,7 +591,7 @@ const LeadDetailsPage = () => {
 
           {offers.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-state-icon">💼</div>
+              <div className="empty-state-icon"><Icon name="box" size={28} /></div>
               <p>No offers yet. Create one to get started.</p>
             </div>
           ) : (
@@ -1140,13 +1140,13 @@ const TemplateEditorInline = ({ mode, editingTemplateId, blocks, setBlocks, temp
           {[
             { type: 'header', label: 'Header', icon: 'H' },
             { type: 'text', label: 'Text', icon: 'T' },
-            { type: 'image', label: 'Image', icon: '🖼' },
-            { type: 'button', label: 'Button', icon: '🔘' },
+            { type: 'image', label: 'Image', icon: '<Icon name="kanban" size={18} />' },
+            { type: 'button', label: 'Button', icon: '<Icon name="target" size={18} />' },
             { type: 'divider', label: 'Divider', icon: '—' },
             { type: 'spacer', label: 'Spacer', icon: '↕' },
-            { type: 'offer-details', label: 'Offer Details', icon: '📋' },
-            { type: 'payment-link', label: 'Payment Button', icon: '💳' },
-            { type: 'company-info', label: 'Company Info', icon: '🏢' },
+            { type: 'offer-details', label: 'Offer Details', icon: '<Icon name="kanban" size={18} />' },
+            { type: 'payment-link', label: 'Payment Button', icon: '<Icon name="money" size={18} />' },
+            { type: 'company-info', label: 'Company Info', icon: '<Icon name="settings" size={18} />' },
           ].map(bt => (
             <div
               key={bt.type}

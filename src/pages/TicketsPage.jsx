@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
@@ -227,7 +227,7 @@ const TicketsPage = () => {
             Support Tickets Directory
           </div>
           <div style={{ position: 'relative', width: 280 }}>
-            <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}>🔍</span>
+            <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}><Icon name="search" size={18} /></span>
             <input
               type="text"
               placeholder="Search by subject, status, or team..."
@@ -252,7 +252,7 @@ const TicketsPage = () => {
           <div className="loading-state" style={{ padding: 40 }}><div className="spinner" />Loading support issues...</div>
         ) : filtered.length === 0 ? (
           <div className="empty-state" style={{ padding: 48 }}>
-            <div style={{ fontSize: 40, marginBottom: 8 }}>🎫</div>
+            <div style={{ fontSize: 40, marginBottom: 8 }}><Icon name="ticket" size={18} /></div>
             <p style={{ fontWeight: 600, color: '#475569' }}>No support tickets match your search criteria.</p>
           </div>
         ) : (

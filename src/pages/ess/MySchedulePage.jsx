@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Icon } from '../../components/Icons';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useAux } from '../../context/AuxContext';
@@ -24,7 +25,7 @@ const STATUS_COLORS = {
   Coaching: '#3B82F6', 'Logged out': '#EF4444',
 };
 const STATUS_ICONS = {
-  Live: '🟢', Training: '🟡', Break: '🟣', Coaching: '🔵', 'Logged out': '🔴',
+  Live: '', Training: '', Break: '', Coaching: '', 'Logged out': '',
 };
 
 const MySchedulePage = () => {
@@ -97,7 +98,7 @@ const MySchedulePage = () => {
           )}
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-          🕐 {profile?.shift || 'N/A'}
+          <Icon name="clock" size={18} /> {profile?.shift || 'N/A'}
           {weeklyOffDays.length > 0 && ` · Off: ${weeklyOffDays.join(', ')}`}
         </div>
       </div>

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Icon } from '../components/Icons';
@@ -80,7 +80,7 @@ const PaymentPage = () => {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)', padding: 20 }}>
         <div style={{ maxWidth: 440, width: '100%', background: 'var(--bg-card)', borderRadius: 12, padding: 40, textAlign: 'center', border: '1px solid var(--border-color)' }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}><Icon name="warning" size={40} /></div>
           <h2 style={{ fontSize: 20, marginBottom: 8 }}>Payment Unavailable</h2>
           <p style={{ color: 'var(--text-muted)' }}>{error}</p>
         </div>
@@ -147,9 +147,9 @@ const PaymentPage = () => {
               <div style={{
                 width: 64, height: 64, borderRadius: '50%', margin: '0 auto 16px',
                 background: 'rgba(16,185,129,0.12)', color: '#6EE7B7',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}>
-                ✓
+                <Icon name="check" size={28} />
               </div>
               <h2 style={{ fontSize: 20, marginBottom: 8 }}>Payment Confirmed</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: 20 }}>

@@ -1,4 +1,5 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { Icon } from '../../components/Icons';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { AUX_COLORS } from '../../context/AuxContext';
@@ -167,8 +168,8 @@ const AuxSchedulePage = () => {
       {/* Tab bar */}
       <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--border-color)' }}>
         {[
-          { id: 'report', label: '📊 Compliance Report' },
-          ...(isHR ? [{ id: 'schedule', label: '📅 Schedule Editor' }] : []),
+          { id: 'report', label: '<Icon name="analytics" size={18} /> Compliance Report' },
+          ...(isHR ? [{ id: 'schedule', label: '<Icon name="calendar" size={18} /> Schedule Editor' }] : []),
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
             padding: '10px 20px', border: 'none', background: 'transparent', cursor: 'pointer',
@@ -233,7 +234,7 @@ const AuxSchedulePage = () => {
 
                   {!entry.planned?.liveMinutes && (
                     <div style={{ fontSize: 12, color: 'var(--text-muted)', fontStyle: 'italic' }}>
-                      ⚠ No schedule set for this employee in {month}. Set one in the Schedule Editor.
+                      <Icon name="warning" size={18} /> No schedule set for this employee in {month}. Set one in the Schedule Editor.
                     </div>
                   )}
                 </div>

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -136,7 +136,7 @@ const LeadsPage = () => {
           </div>
 
           <div style={{ position: 'relative', width: 260 }}>
-            <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}>🔍</span>
+            <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}><Icon name="search" size={18} /></span>
             <input
               type="text"
               placeholder="Search by name, email, or rep..."
@@ -164,7 +164,7 @@ const LeadsPage = () => {
           </div>
         ) : filtered.length === 0 ? (
           <div className="empty-state" style={{ padding: 48 }}>
-            <div style={{ fontSize: 40, marginBottom: 8 }}>👥</div>
+            <div style={{ fontSize: 40, marginBottom: 8 }}><Icon name="users" size={18} /></div>
             <p style={{ fontWeight: 600, color: '#475569' }}>No leads match your current search or filter.</p>
           </div>
         ) : (

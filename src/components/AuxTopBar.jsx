@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Icon } from '../components/Icons';
 import { useNavigate } from 'react-router-dom';
 import { useAux, AUX_COLORS, AUX_ICONS } from '../context/AuxContext';
 import { useAuth } from '../context/AuthContext';
@@ -100,7 +101,7 @@ const AuxTopBar = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, flex: 1, maxWidth: 520 }}>
         {/* Omni Search Bar */}
         <form onSubmit={handleOmniSearch} style={{ flex: 1, position: 'relative' }}>
-          <span style={{ position: 'absolute', left: 12, top: 10, fontSize: 13, color: '#94A3B8' }}>🔍</span>
+          <span style={{ position: 'absolute', left: 12, top: 10, fontSize: 13, color: '#94A3B8' }}><Icon name="search" size={18} /></span>
           <input
             type="text"
             value={searchQuery}
@@ -164,25 +165,25 @@ const AuxTopBar = () => {
                 onClick={() => { navigate('/leads'); setOpenQuickAdd(false); }}
                 style={{ width: '100%', padding: '8px 12px', border: 'none', background: 'none', textAlign: 'left', fontSize: 12, cursor: 'pointer', display: 'flex', gap: 8 }}
               >
-                <span>👤</span> New Lead
+                <span><Icon name="person" size={18} /></span> New Lead
               </button>
               <button
                 onClick={() => { navigate('/email-composer'); setOpenQuickAdd(false); }}
                 style={{ width: '100%', padding: '8px 12px', border: 'none', background: 'none', textAlign: 'left', fontSize: 12, cursor: 'pointer', display: 'flex', gap: 8 }}
               >
-                <span>✉️</span> Compose Email
+                <span><Icon name="mail" size={18} /></span> Compose Email
               </button>
               <button
                 onClick={() => { navigate('/tickets'); setOpenQuickAdd(false); }}
                 style={{ width: '100%', padding: '8px 12px', border: 'none', background: 'none', textAlign: 'left', fontSize: 12, cursor: 'pointer', display: 'flex', gap: 8 }}
               >
-                <span>🎫</span> New Support Ticket
+                <span><Icon name="ticket" size={18} /></span> New Support Ticket
               </button>
               <button
                 onClick={() => { navigate('/inventory/items'); setOpenQuickAdd(false); }}
                 style={{ width: '100%', padding: '8px 12px', border: 'none', background: 'none', textAlign: 'left', fontSize: 12, cursor: 'pointer', display: 'flex', gap: 8 }}
               >
-                <span>📦</span> Add Inventory Item
+                <span><Icon name="box" size={18} /></span> Add Inventory Item
               </button>
             </div>
           )}

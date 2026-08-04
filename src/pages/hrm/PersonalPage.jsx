@@ -1,4 +1,5 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { Icon } from '../../components/Icons';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { DEPARTMENTS } from '../../services/departmentJobs';
@@ -804,10 +805,10 @@ const PersonalPage = () => {
       {/* HRM Top Sub-Tabs Navigation */}
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 0, overflowX: 'auto' }}>
         {[
-          { id: 'profile', label: '👤 Profile & Schedule' },
-          { id: 'contract', label: '📄 Contract Terms' },
-          { id: 'docs', label: '🇪🇬 Gov Documents' },
-          { id: 'leaves', label: '🌴 Leave & Absence' }
+          { id: 'profile', label: <><Icon name="person" size={18} /> Profile & Schedule</> },
+          { id: 'contract', label: <><Icon name="kanban" size={18} /> Contract Terms</> },
+          { id: 'docs', label: <><span style={{fontSize:18}}>🇪🇬</span> Gov Documents</> },
+          { id: 'leaves', label: <><Icon name="clock" size={18} /> Leave & Absence</> }
         ].map(tab => (
           <button
             key={tab.id}
@@ -877,7 +878,7 @@ const PersonalPage = () => {
                 >
                   <div style={{ fontWeight: '600', fontSize: 13 }}>{emp.firstName} {emp.lastName}</div>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{emp.role}</div>
-                  <div style={{ fontSize: 10, color: 'var(--accent-primary)', marginTop: 4 }}>🕒 {emp.shift}</div>
+                  <div style={{ fontSize: 10, color: 'var(--accent-primary)', marginTop: 4 }}><Icon name="clock" size={18} /> {emp.shift}</div>
                 </div>
               ))}
               {filteredEmployees.length === 0 && (
@@ -928,7 +929,7 @@ const PersonalPage = () => {
                   {/* Dynamic Month Calendar with Planned AUXes */}
                   {detailedSchedule && (
                     <div className="card">
-                      <h3 style={{ margin: '0 0 12px 0', fontSize: 15 }}>🗓️ Month Schedule & Planned AUX Overview</h3>
+                      <h3 style={{ margin: '0 0 12px 0', fontSize: 15 }}><Icon name="calendar" size={18} /> Month Schedule & Planned AUX Overview</h3>
                       <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
                         Visual representation of the 4 weeks of the month. Includes daily working shifts, off-days, and planned AUX target durations.
                       </p>
@@ -1051,10 +1052,10 @@ const PersonalPage = () => {
 
                                       {!day.isOff && (
                                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 4, marginTop: 4 }}>
-                                          <div style={{ fontSize: 9, color: '#6ee7b7' }}>📞 {day.targets.live}m</div>
+                                          <div style={{ fontSize: 9, color: '#6ee7b7' }}><Icon name="phone" size={18} /> {day.targets.live}m</div>
                                           <div style={{ fontSize: 9, color: '#fcd34d' }}>☕ {day.targets.break}m</div>
-                                          <div style={{ fontSize: 9, color: '#a5b4fc' }}>🎓 {day.targets.train}m</div>
-                                          <div style={{ fontSize: 9, color: '#c084fc' }}>👥 {day.targets.coach}m</div>
+                                          <div style={{ fontSize: 9, color: '#a5b4fc' }}><Icon name="graduation" size={18} /> {day.targets.train}m</div>
+                                          <div style={{ fontSize: 9, color: '#c084fc' }}><Icon name="users" size={18} /> {day.targets.coach}m</div>
                                         </div>
                                       )}
                                     </div>
@@ -1078,7 +1079,7 @@ const PersonalPage = () => {
                       <div className="card" style={{ width: '100%', maxWidth: 700, maxHeight: '90vh', overflowY: 'auto', border: '1px solid var(--accent-secondary)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: 12, marginBottom: 16 }}>
                           <div>
-                            <h3 style={{ margin: 0, fontSize: 16 }}>🕒 Day Details & Staggered AUX Planner</h3>
+                            <h3 style={{ margin: 0, fontSize: 16 }}><Icon name="clock" size={18} /> Day Details & Staggered AUX Planner</h3>
                             <p style={{ margin: '2px 0 0 0', fontSize: 12, color: 'var(--text-muted)' }}>Date: {activeExpandedDay.dateStr} ({activeExpandedDay.dayName})</p>
                           </div>
                           <button 
@@ -1138,10 +1139,10 @@ const PersonalPage = () => {
                                         defaultValue={defaultVal}
                                         style={{ width: 'auto', padding: '4px 8px', fontSize: 11, height: 'auto', margin: 0 }}
                                       >
-                                        <option value="Live (Online)">🟢 Live (Online)</option>
+                                        <option value="Live (Online)"> Live (Online)</option>
                                         <option value="Break / Rest">☕ Break / Rest</option>
-                                        <option value="Coaching / Training">🎓 Training / Coaching</option>
-                                        <option value="Offline / Logged out">⚫ Offline / Logged out</option>
+                                        <option value="Coaching / Training"><Icon name="graduation" size={18} /> Training / Coaching</option>
+                                        <option value="Offline / Logged out"> Offline / Logged out</option>
                                       </select>
                                     </div>
                                   );
@@ -1183,7 +1184,7 @@ const PersonalPage = () => {
                             disabled={copyingSchedule || !detailedSchedule}
                             style={{ fontSize: 11 }}
                           >
-                            {copyingSchedule ? 'Copying...' : '📋 Copy to Next Month'}
+                            {copyingSchedule ? 'Copying...' : '<Icon name="kanban" size={18} /> Copy to Next Month'}
                           </button>
                         </div>
                       </div>
@@ -1210,7 +1211,7 @@ const PersonalPage = () => {
 
                           <div style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 16 }}>
                             <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">📞 Live (mins)</label>
+                              <label className="form-label"><Icon name="phone" size={18} /> Live (mins)</label>
                               <input type="number" className="form-input" value={defaultLiveTarget} onChange={(e) => setDefaultLiveTarget(e.target.value)} />
                             </div>
                             <div className="form-group" style={{ margin: 0 }}>
@@ -1218,11 +1219,11 @@ const PersonalPage = () => {
                               <input type="number" className="form-input" value={defaultBreakTarget} onChange={(e) => setDefaultBreakTarget(e.target.value)} />
                             </div>
                             <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">🎓 Training (mins)</label>
+                              <label className="form-label"><Icon name="graduation" size={18} /> Training (mins)</label>
                               <input type="number" className="form-input" value={defaultTrainingTarget} onChange={(e) => setDefaultTrainingTarget(e.target.value)} />
                             </div>
                             <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">👥 Coaching (mins)</label>
+                              <label className="form-label"><Icon name="users" size={18} /> Coaching (mins)</label>
                               <input type="number" className="form-input" value={defaultCoachingTarget} onChange={(e) => setDefaultCoachingTarget(e.target.value)} />
                             </div>
                           </div>
@@ -1553,7 +1554,7 @@ const PersonalPage = () => {
                   {/* Salary History */}
                   {contract?.salaryHistory?.length > 0 && (
                     <div className="card">
-                      <h3 style={{ margin: '0 0 12px', fontSize: 15 }}>📈 Salary History</h3>
+                      <h3 style={{ margin: '0 0 12px', fontSize: 15 }}><Icon name="trending" size={18} /> Salary History</h3>
                       <div className="table-wrapper">
                         <table>
                           <thead><tr><th>Date</th><th>Net Salary</th><th>Changed By</th><th>Reason</th></tr></thead>
@@ -1622,7 +1623,7 @@ const PersonalPage = () => {
                                         📎 View / Download File
                                       </a>
                                     ) : (
-                                      <span style={{ color: 'var(--accent-secondary)' }}>📄 {docUrl}</span>
+                                      <span style={{ color: 'var(--accent-secondary)' }}><Icon name="kanban" size={18} /> {docUrl}</span>
                                     )}
                                   </div>
                                 )}
@@ -1642,7 +1643,7 @@ const PersonalPage = () => {
 
                             {docDetails.remarks && (
                               <div style={{ fontSize: 12, color: 'var(--text-muted)', background: 'rgba(0,0,0,0.15)', padding: '6px 10px', borderRadius: 4 }}>
-                                💬 Remarks: {docDetails.remarks}
+                                <Icon name="support" size={18} /> Remarks: {docDetails.remarks}
                               </div>
                             )}
 
@@ -1660,7 +1661,7 @@ const PersonalPage = () => {
                                       cursor: 'pointer', fontWeight: 600
                                     }}
                                   >
-                                    {uploadingDoc === doc.key ? '⏳ Uploading...' : '📤 Upload Soft Copy'}
+                                    {uploadingDoc === doc.key ? '<Icon name="clock" size={18} /> Uploading...' : '<Icon name="send" size={18} /> Upload Soft Copy'}
                                   </label>
                                   <input
                                     id={`file-${doc.key}`}
@@ -1884,7 +1885,7 @@ const PersonalPage = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                   {/* 1. Personal Employee Assistant */}
                   <div className="card">
-                    <h3 style={{ margin: '0 0 4px 0', fontSize: 15 }}>🤖 Personal AI Agent (Employee Assistant)</h3>
+                    <h3 style={{ margin: '0 0 4px 0', fontSize: 15 }}><Icon name="robot" size={18} /> Personal AI Agent (Employee Assistant)</h3>
                     <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 14 }}>
                       Ask questions about your leaves, schedules, active contracts, assets, or document expirations.
                     </p>

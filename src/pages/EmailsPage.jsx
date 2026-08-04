@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Icon } from '../components/Icons';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -263,7 +264,7 @@ const EmailsPage = () => {
             onClick={() => setActiveTab('inbox')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px', position: 'relative' }}
           >
-            📥 Inbox
+            <Icon name="inbox" size={18} /> Inbox
             {unreadCount > 0 && (
               <span style={{
                 position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
@@ -277,14 +278,14 @@ const EmailsPage = () => {
             onClick={() => setActiveTab('sent')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px' }}
           >
-            📤 Sent
+            <Icon name="send" size={18} /> Sent
           </button>
           <button
             className={`btn ${activeTab === 'compose' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setActiveTab('compose')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px' }}
           >
-            ✏️ New Email
+            ✏ New Email
           </button>
         </div>
 
@@ -325,7 +326,7 @@ const EmailsPage = () => {
                     style={{ resize: 'vertical' }} required />
                 </div>
                 <button type="submit" className="btn btn-primary" disabled={sending} style={{ alignSelf: 'flex-start' }}>
-                  {sending ? 'Sending…' : '📨 Send Message'}
+                  {sending ? 'Sending…' : '<Icon name="send" size={18} /> Send Message'}
                 </button>
               </form>
             </div>
@@ -344,7 +345,7 @@ const EmailsPage = () => {
                 <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-color)' }}>
                   <input
                     className="form-input"
-                    placeholder="🔍 Search…"
+                    placeholder="<Icon name="search" size={18} /> Search…"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     style={{ fontSize: 12, padding: '7px 12px' }}
@@ -415,7 +416,7 @@ const EmailsPage = () => {
                     flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: 'var(--text-muted)', flexDirection: 'column', gap: 12
                   }}>
-                    <span style={{ fontSize: 40 }}>✉️</span>
+                    <span style={{ fontSize: 40 }}>✉</span>
                     <span style={{ fontSize: 14 }}>Select an email to read it</span>
                   </div>
                 ) : (

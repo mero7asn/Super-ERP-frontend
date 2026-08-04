@@ -1,42 +1,43 @@
 import { useState, useEffect, useRef } from 'react';
+import { Icon } from '../components/Icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 import API from '../services/api';
 
 const CONTEXT_INSIGHTS = {
   '/dashboard': [
-    { title: 'Pipeline Velocity', desc: 'Conversion rate is up 12% this week across top sales reps.', icon: '📈' },
-    { title: 'Action Item', desc: '3 high-value leads have had no contact for over 48 hours.', icon: '⚡' },
-    { title: 'System Health', desc: 'All CRM services, SMTP email relays, and APIs operating normally.', icon: '✅' },
+    { title: 'Pipeline Velocity', desc: 'Conversion rate is up 12% this week across top sales reps.', icon: <Icon name="trending" size={18} /> },
+    { title: 'Action Item', desc: '3 high-value leads have had no contact for over 48 hours.', icon: <Icon name="play" size={18} /> },
+    { title: 'System Health', desc: 'All CRM services, SMTP email relays, and APIs operating normally.', icon: <Icon name="check" size={18} /> },
   ],
   '/leads': [
-    { title: 'Smart Recommendation', desc: 'Prioritize leads tagged "Service Inquiry" for highest conversion probability.', icon: '🎯' },
-    { title: 'Auto-Distribution', desc: '2 newly assigned leads ready for sales team outreach.', icon: '🔄' },
+    { title: 'Smart Recommendation', desc: 'Prioritize leads tagged "Service Inquiry" for highest conversion probability.', icon: <Icon name="target" size={18} /> },
+    { title: 'Auto-Distribution', desc: '2 newly assigned leads ready for sales team outreach.', icon: <Icon name="refresh" size={18} /> },
   ],
   '/inventory': [
-    { title: 'Stock Alert', desc: '3 SKU items are below safety threshold and require reordering.', icon: '📦' },
-    { title: 'Cycle Count Due', desc: 'Physical inventory audit recommended for Zone A Warehouse.', icon: '📋' },
+    { title: 'Stock Alert', desc: '3 SKU items are below safety threshold and require reordering.', icon: <Icon name="box" size={18} /> },
+    { title: 'Cycle Count Due', desc: 'Physical inventory audit recommended for Zone A Warehouse.', icon: <Icon name="kanban" size={18} /> },
   ],
   '/hrm/payroll': [
-    { title: 'Payroll Audit', desc: 'All 14 employee overtime entries validated against schedule logs.', icon: '💰' },
-    { title: 'Tax Threshold Warning', desc: 'Quarterly tax adjustment summary ready for review.', icon: '⚠️' },
+    { title: 'Payroll Audit', desc: 'All 14 employee overtime entries validated against schedule logs.', icon: <Icon name="money" size={18} /> },
+    { title: 'Tax Threshold Warning', desc: 'Quarterly tax adjustment summary ready for review.', icon: <Icon name="warning" size={18} /> },
   ],
   '/executive': [
-    { title: 'Executive Brief', desc: 'Quarterly revenue forecast tracking at 104% of baseline target.', icon: '📊' },
-    { title: 'Margin Analysis', desc: 'Top product category generated 42% gross margin this month.', icon: '🏆' },
+    { title: 'Executive Brief', desc: 'Quarterly revenue forecast tracking at 104% of baseline target.', icon: <Icon name="analytics" size={18} /> },
+    { title: 'Margin Analysis', desc: 'Top product category generated 42% gross margin this month.', icon: <Icon name="trophy" size={18} /> },
   ],
 };
 
 const DEFAULT_INSIGHTS = [
-  { title: 'Super Ecosystem Co-Pilot', desc: 'Connected across CRM, HRM, ESS, and Inventory modules.', icon: '🤖' },
-  { title: 'Proactive Alert', desc: 'Check system alerts and pending approvals in the top menu.', icon: '💡' },
+  { title: 'Super Ecosystem Co-Pilot', desc: 'Connected across CRM, HRM, ESS, and Inventory modules.', icon: <Icon name="robot" size={18} /> },
+  { title: 'Proactive Alert', desc: 'Check system alerts and pending approvals in the top menu.', icon: <Icon name="bulb" size={18} /> },
 ];
 
 const QUICK_ACTIONS = [
-  { label: 'Create New Lead', path: '/leads', icon: '👤', category: 'CRM' },
-  { label: 'Draft Offer Email', path: '/email-composer', icon: '✉️', category: 'CRM' },
-  { label: 'Check Stock Items', path: '/inventory/items', icon: '📦', category: 'Inventory' },
-  { label: 'View Employee Payroll', path: '/hrm/payroll', icon: '💰', category: 'HRM' },
-  { label: 'Report Tech Issue', path: '/tickets', icon: '🎫', category: 'Support' },
+  { label: 'Create New Lead', path: '/leads', icon: <Icon name="person" size={18} />, category: 'CRM' },
+  { label: 'Draft Offer Email', path: '/email-composer', icon: <Icon name="mail" size={18} />, category: 'CRM' },
+  { label: 'Check Stock Items', path: '/inventory/items', icon: <Icon name="box" size={18} />, category: 'Inventory' },
+  { label: 'View Employee Payroll', path: '/hrm/payroll', icon: <Icon name="money" size={18} />, category: 'HRM' },
+  { label: 'Report Tech Issue', path: '/tickets', icon: <Icon name="ticket" size={18} />, category: 'Support' },
 ];
 
 const SmartEcosystemAssistant = () => {
@@ -168,7 +169,7 @@ const SmartEcosystemAssistant = () => {
         onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
         onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
       >
-        <span style={{ fontSize: 18 }}>🤖</span>
+        <span style={{ fontSize: 18 }}><Icon name="robot" size={18} /></span>
         <span>AI Assistant</span>
         <span
           style={{
@@ -236,7 +237,7 @@ const SmartEcosystemAssistant = () => {
                     fontSize: 20,
                   }}
                 >
-                  🤖
+                  <Icon name="robot" size={18} />
                 </div>
                 <div>
                   <div style={{ fontSize: 16, fontWeight: 700 }}>Ecosystem AI Co-Pilot</div>
@@ -256,7 +257,7 @@ const SmartEcosystemAssistant = () => {
             {/* Context Insights */}
             <div style={{ padding: '16px 20px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: '#64748B', marginBottom: 10 }}>
-                💡 Page Insights & Recommendations
+                <Icon name="bulb" size={18} /> Page Insights & Recommendations
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {activeInsights.map((insight, idx) => (
@@ -285,7 +286,7 @@ const SmartEcosystemAssistant = () => {
             {/* Quick Actions Shortcuts */}
             <div style={{ padding: '12px 20px', borderBottom: '1px solid #E2E8F0' }}>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: '#64748B', marginBottom: 8 }}>
-                ⚡ Quick Ecosystem Actions
+                <Icon name="play" size={18} /> Quick Ecosystem Actions
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {QUICK_ACTIONS.map((action, idx) => (

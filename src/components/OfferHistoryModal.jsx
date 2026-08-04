@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Icon } from '../components/Icons';
 import API from '../services/api';
 
 const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
@@ -20,24 +21,24 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
   }, [offerId]);
 
   const getActionIcon = (action) => {
-    const icons = {
-      created: '➕',
-      sent: '📤',
-      viewed: '👁️',
-      accepted: '✅',
-      rejected: '❌',
-      expired: '⏰',
-      completed: '🎉',
-      canceled: '🚫',
-      refunded: '💸',
-      updated: '✏️',
-      resend: '🔄',
-      revised: '🔁',
-      version_sent: '📨',
-      image_added: '🖼️',
-      image_removed: '🗑️'
-    };
-    return icons[action] || '📋';
+    switch (action) {
+      case 'created': return <span style={{fontSize:18}}>+</span>;
+      case 'sent': return <Icon name="send" size={18} />;
+      case 'viewed': return <span style={{fontSize:18}}>👁</span>;
+      case 'accepted': return <Icon name="check" size={18} />;
+      case 'rejected': return <Icon name="close" size={18} />;
+      case 'expired': return <Icon name="clock" size={18} />;
+      case 'completed': return <Icon name="play" size={18} />;
+      case 'canceled': return <Icon name="ban" size={18} />;
+      case 'refunded': return <Icon name="money" size={18} />;
+      case 'updated': return <span style={{fontSize:16}}>✏</span>;
+      case 'resend': return <span style={{fontSize:16}}>🔄</span>;
+      case 'revised': return <span style={{fontSize:16}}>🔁</span>;
+      case 'version_sent': return <Icon name="send" size={18} />;
+      case 'image_added': return <Icon name="kanban" size={18} />;
+      case 'image_removed': return <Icon name="trash" size={18} />;
+      default: return <Icon name="kanban" size={18} />;
+    }
   };
 
   const renderChanges = (changes) => {
@@ -86,7 +87,7 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
                 onClick={onViewVersions}
                 style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '4px 10px', fontSize: 12, cursor: 'pointer', color: 'var(--accent-primary)' }}
               >
-                🗂️ Sent Versions
+                <Icon name="folder" size={18} /> Sent Versions
               </button>
             )}
             <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>×</button>

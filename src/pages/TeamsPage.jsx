@@ -1,17 +1,18 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { Icon } from '../components/Icons';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 
 const DEPT_COLORS = {
-  'Sales': { c1: '#2563EB', c2: '#14B8A6', badge: 'badge-new', icon: '💼' },
-  'Customer Support': { c1: '#F59E0B', c2: '#F97316', badge: 'badge-converted', icon: '🎧' },
-  'Marketing': { c1: '#8B5CF6', c2: '#EC4899', badge: 'badge-meta', icon: '📣' },
-  'Technology': { c1: '#10B981', c2: '#14B8A6', badge: 'badge-qualified', icon: '⚙️' },
-  'Personal': { c1: '#3B82F6', c2: '#60A5FA', badge: 'badge-new', icon: '👤' },
-  'Payroll': { c1: '#10B981', c2: '#34D399', badge: 'badge-qualified', icon: '💵' },
-  'Training': { c1: '#F59E0B', c2: '#FBBF24', badge: 'badge-converted', icon: '📚' },
-  'Talent Acquisition': { c1: '#8B5CF6', c2: '#A78BFA', badge: 'badge-meta', icon: '🎯' },
-  'BD & People Culture': { c1: '#EC4899', c2: '#F472B6', badge: 'badge-meta', icon: '🤝' },
+  'Sales': { c1: '#2563EB', c2: '#14B8A6', badge: 'badge-new', icon: <Icon name="leads" size={18} /> },
+  'Customer Support': { c1: '#F59E0B', c2: '#F97316', badge: 'badge-converted', icon: <Icon name="support" size={18} /> },
+  'Marketing': { c1: '#8B5CF6', c2: '#EC4899', badge: 'badge-meta', icon: <Icon name="megaphone" size={18} /> },
+  'Technology': { c1: '#10B981', c2: '#14B8A6', badge: 'badge-qualified', icon: <Icon name="settings" size={18} /> },
+  'Personal': { c1: '#3B82F6', c2: '#60A5FA', badge: 'badge-new', icon: <Icon name="person" size={18} /> },
+  'Payroll': { c1: '#10B981', c2: '#34D399', badge: 'badge-qualified', icon: <Icon name="money" size={18} /> },
+  'Training': { c1: '#F59E0B', c2: '#FBBF24', badge: 'badge-converted', icon: <Icon name="book" size={18} /> },
+  'Talent Acquisition': { c1: '#8B5CF6', c2: '#A78BFA', badge: 'badge-meta', icon: <Icon name="target" size={18} /> },
+  'BD & People Culture': { c1: '#EC4899', c2: '#F472B6', badge: 'badge-meta', icon: <Icon name="handshake" size={18} /> },
 };
 
 const Avatar = ({ firstName, lastName, size = 36, colors }) => {
@@ -277,7 +278,7 @@ const TeamsPage = () => {
         {filteredUnassigned.length > 0 && (
           <div className="table-wrapper" style={{ padding: 0, overflow: 'hidden', border: '2px dashed rgba(239,68,68,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '20px 24px', borderBottom: '1px solid var(--border-color)', background: 'rgba(239,68,68,0.05)' }}>
-              <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>⚠️</div>
+              <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}><Icon name="warning" size={18} /></div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700, fontSize: 16 }}>Unassigned Members</div>
                 <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>These members need to be assigned to a team</div>

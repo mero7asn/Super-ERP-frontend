@@ -1,12 +1,12 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Icon } from '../components/Icons';
 
 const DevToolsPage = () => {
   const [logs, setLogs] = useState([
-    '⚙️ CRM System Developer Environment Initialized.',
+    '<Icon name="settings" size={18} /> CRM System Developer Environment Initialized.',
     '🔌 DB Connection established: crm_prod_replica',
-    '🛡️ Active permissions session: Core 360 Administrator',
-    '📊 API Gateway status: 200 OK (5.2ms latency)'
+    '<Icon name="lock" size={18} /> Active permissions session: Core 360 Administrator',
+    '<Icon name="analytics" size={18} /> API Gateway status: 200 OK (5.2ms latency)'
   ]);
   const [isSeeding, setIsSeeding] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
@@ -18,10 +18,10 @@ const DevToolsPage = () => {
   const handleSeed = () => {
     if (isSeeding) return;
     setIsSeeding(true);
-    addLog('🚀 Initializing database seeding sequence...');
+    addLog('<Icon name="rocket" size={18} /> Initializing database seeding sequence...');
     
     setTimeout(() => {
-      addLog('🗑️ Clearing active collection records...');
+      addLog('<Icon name="trash" size={18} /> Clearing active collection records...');
     }, 1000);
 
     setTimeout(() => {
@@ -29,7 +29,7 @@ const DevToolsPage = () => {
     }, 2000);
 
     setTimeout(() => {
-      addLog('🎉 Seed complete! All system roles and credentials loaded.');
+      addLog('<Icon name="play" size={18} /> Seed complete! All system roles and credentials loaded.');
       setIsSeeding(false);
     }, 3200);
   };
@@ -144,7 +144,7 @@ const DevToolsPage = () => {
           lineHeight: 1.5
         }}>
           {logs.map((log, index) => (
-            <div key={index} style={{ color: log.includes('✓') || log.includes('🎉') ? '#10B981' : log.includes('⚙️') ? '#60A5FA' : '#E2E8F0' }}>
+            <div key={index} style={{ color: log.includes('✓') || log.includes('<Icon name="play" size={18} />') ? '#10B981' : log.includes('<Icon name="settings" size={18} />') ? '#60A5FA' : '#E2E8F0' }}>
               {log}
             </div>
           ))}
