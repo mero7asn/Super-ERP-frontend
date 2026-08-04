@@ -247,11 +247,11 @@ const Sidebar = () => {
             <div
               className="mini-sidebar-sticky-header crm-header"
               onClick={() => setCrmOpen(!crmOpen)}
-              title="Core 360 Department"
+              title="Super CRM Department"
             >
               <div className="mini-sidebar-header-left">
                 <span className="mini-sidebar-icon"><SidebarIcon name="dept-crm" /></span>
-                <span className="mini-sidebar-title">1. Core 360</span>
+                <span className="mini-sidebar-title">1. Super CRM</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredCrmItems.length}</span>
