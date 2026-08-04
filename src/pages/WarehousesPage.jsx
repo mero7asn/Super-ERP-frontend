@@ -1,10 +1,10 @@
-ï»¿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
 
 const INVENTORY_ROLES = [
-  'Core 360 Administrator', 'System Architect', 'Inventory Manager',
+  'Super CRM Administrator', 'System Architect', 'Inventory Manager',
   'Warehouse Manager', 'Receiving Clerk', 'Shipping Clerk',
   'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
 ];
@@ -82,7 +82,7 @@ const WarehousesPage = () => {
       {error && <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>}
 
       {loading ? (
-        <div className="loading-state"><div className="spinner" />Loading warehousesâ€¦</div>
+        <div className="loading-state"><div className="spinner" />Loading warehouses…</div>
       ) : (
         <div className="card" style={{ padding: 0 }}>
           <div className="table-wrapper" style={{ overflowX: 'auto' }}>
@@ -107,8 +107,8 @@ const WarehousesPage = () => {
                     <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{wh.code}</td>
                     <td style={{ fontWeight: 600 }}>{wh.name}</td>
                     <td><span className="badge badge-new">{wh.type}</span></td>
-                    <td>{wh.address?.city || 'â€”'}</td>
-                    <td>{wh.contact?.phone || 'â€”'}</td>
+                    <td>{wh.address?.city || '—'}</td>
+                    <td>{wh.contact?.phone || '—'}</td>
                     <td><span className={`badge ${wh.status === 'Active' ? 'badge-converted' : 'badge-new'}`}>{wh.status}</span></td>
                     <td>{wh.subinventories?.length || 0}</td>
                     <td>

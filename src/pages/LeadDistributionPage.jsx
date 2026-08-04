@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -10,7 +10,7 @@ const LeadDistributionPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(user?.role);
   const isManager = user?.role === 'Sales Manager';
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const LeadDistributionPage = () => {
               </div>
               <div>
                 <span className={`badge ${data.stats.isBalanced ? 'badge-qualified' : 'badge-new'}`} style={{ fontSize: 13, padding: '6px 16px' }}>
-                  {data.stats.isBalanced ? '✓ Balanced' : '⚠ Needs Balancing'}
+                  {data.stats.isBalanced ? '? Balanced' : '? Needs Balancing'}
                 </span>
               </div>
             </div>
@@ -155,7 +155,7 @@ const LeadDistributionPage = () => {
 
           {/* Info Box */}
           <div className="card" style={{ marginTop: 20 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>📊 How Lead Distribution Works</h3>
+            <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>?? How Lead Distribution Works</h3>
             <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8 }}>
               When new leads are created without manual assignment, the system automatically uses a <strong>round-robin algorithm</strong> 
               to assign them to the agent with the fewest leads.

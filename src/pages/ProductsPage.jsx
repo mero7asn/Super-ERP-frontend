@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
@@ -26,7 +26,7 @@ const ProductsPage = () => {
     name: '', sku: '', price: '', description: '', imageUrl: '', status: 'Active',
   });
 
-  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(user?.role);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -94,7 +94,7 @@ const ProductsPage = () => {
     }
   };
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading products…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading products�</div>;
 
   return (
     <div>
@@ -123,7 +123,7 @@ const ProductsPage = () => {
 
       {products.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">📦</div>
+          <div className="empty-state-icon">??</div>
           <p>No products yet. Add your first product to start building offers.</p>
         </div>
       ) : (
@@ -160,7 +160,7 @@ const ProductsPage = () => {
                   <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{p.sku}</td>
                   <td style={{ fontWeight: 600, color: 'var(--accent-primary)' }}>${Number(p.price).toLocaleString()}</td>
                   <td><span className={`badge ${statusBadge(p.status)}`}>{p.status}</span></td>
-                  <td>{p.createdBy ? `${p.createdBy.firstName} ${p.createdBy.lastName}` : '—'}</td>
+                  <td>{p.createdBy ? `${p.createdBy.firstName} ${p.createdBy.lastName}` : '�'}</td>
                   <td>
                     <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                       <button className="btn btn-secondary btn-sm" onClick={() => openEdit(p)}>Edit</button>

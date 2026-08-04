@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -55,14 +55,14 @@ const Icons = {
 
 const BLOCK_TYPES = [
   { type: 'header', label: 'Title Header', icon: 'H', description: 'Styled title banner' },
-  { type: 'offer-details', label: 'Offer Summary Card', icon: '📋', description: 'Interactive proposal box' },
-  { type: 'payment-link', label: 'Pay Now Button', icon: '💳', description: 'Direct checkout action' },
-  { type: 'company-info', label: 'Company Branding', icon: '🏢', description: 'Logo & signature header' },
-  { type: 'text', label: 'Text Paragraph', icon: '¶', description: 'Standard body text' },
-  { type: 'button', label: 'Custom CTA Button', icon: '🔘', description: 'Clickable action button' },
-  { type: 'image', label: 'Image Box', icon: '🖼', description: 'Image placeholder or URL' },
-  { type: 'divider', label: 'Divider Line', icon: '—', description: 'Clean separator line' },
-  { type: 'spacer', label: 'Spacer', icon: '↕', description: 'Vertical spacing gap' },
+  { type: 'offer-details', label: 'Offer Summary Card', icon: '??', description: 'Interactive proposal box' },
+  { type: 'payment-link', label: 'Pay Now Button', icon: '??', description: 'Direct checkout action' },
+  { type: 'company-info', label: 'Company Branding', icon: '??', description: 'Logo & signature header' },
+  { type: 'text', label: 'Text Paragraph', icon: '�', description: 'Standard body text' },
+  { type: 'button', label: 'Custom CTA Button', icon: '??', description: 'Clickable action button' },
+  { type: 'image', label: 'Image Box', icon: '??', description: 'Image placeholder or URL' },
+  { type: 'divider', label: 'Divider Line', icon: '�', description: 'Clean separator line' },
+  { type: 'spacer', label: 'Spacer', icon: '?', description: 'Vertical spacing gap' },
 ];
 
 const VARIABLES = [
@@ -95,7 +95,7 @@ const VARIABLES = [
   },
 ];
 
-const EMOJIS = ['😊', '👍', '💼', '📊', '🤝', '🚀', '✅', '⭐', '✉️', '📌', '💡', '🎉'];
+const EMOJIS = ['??', '??', '??', '??', '??', '??', '?', '?', '??', '??', '??', '??'];
 
 const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
   const [subject, setSubject] = useState(`Offer Proposal: ${offer?.title || 'Custom Service'}`);
@@ -162,7 +162,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
 
         <div style="margin-top: 20px; text-align: center;">
           <a href="https://super-erp-frontend.vercel.app/pay/${offer?.paymentToken || 'token'}" style="display: inline-block; background: #2563EB; color: #FFFFFF; font-weight: 600; font-size: 15px; padding: 12px 28px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
-            Review & Pay Online →
+            Review & Pay Online ?
           </a>
         </div>
       </div>
@@ -284,7 +284,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
       case 'offer-details':
         return `<div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; margin: 20px 0;"><h4 style="margin: 0 0 8px 0; color: #1E293B; font-size: 16px;">{{offer.title}}</h4><p style="margin: 0 0 12px 0; color: #64748B; font-size: 14px;">Official Offer details and parameters</p><div style="font-size: 18px; font-weight: 700; color: #2563EB;">Price: \${{offer.price}}</div></div>`;
       case 'payment-link':
-        return '<div style="text-align: center; margin: 20px 0;"><a href="{{payLink}}" style="display: inline-block; background: #10B981; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px;">💳 Pay Now via Secure Portal</a></div>';
+        return '<div style="text-align: center; margin: 20px 0;"><a href="{{payLink}}" style="display: inline-block; background: #10B981; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px;">?? Pay Now via Secure Portal</a></div>';
       case 'company-info':
         return '<div style="padding: 16px; border-left: 4px solid #2563EB; background: #F1F5F9; margin: 20px 0;"><h4 style="margin: 0; color: #0F172A; font-size: 15px;">{{companyName}}</h4><p style="margin: 4px 0 0 0; font-size: 13px; color: #475569;">Verified Partner & Enterprise Provider</p></div>';
       default:
@@ -468,7 +468,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
           </div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: '-0.2px' }}>
-              {offer?.title ? `New Offer Email — ${offer.title}` : 'Compose New Offer Email'}
+              {offer?.title ? `New Offer Email � ${offer.title}` : 'Compose New Offer Email'}
             </div>
             <div style={{ fontSize: 11, color: '#94A3B8', display: 'flex', alignItems: 'center', gap: 6 }}>
               <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#10B981' }} />
@@ -550,14 +550,14 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
       {/* ALERT NOTIFICATIONS */}
       {error && (
         <div style={{ background: '#FEF2F2', color: '#991B1B', borderBottom: '1px solid #FCA5A5', padding: '8px 16px', fontSize: 13, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>⚠️ {error}</span>
-          <button onClick={() => setError('')} style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 'bold' }}>×</button>
+          <span>?? {error}</span>
+          <button onClick={() => setError('')} style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 'bold' }}>�</button>
         </div>
       )}
       {success && (
         <div style={{ background: '#ECFDF5', color: '#065F46', borderBottom: '1px solid #6EE7B7', padding: '8px 16px', fontSize: 13, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>✨ {success}</span>
-          <button onClick={() => setSuccess('')} style={{ background: 'none', border: 'none', color: '#065F46', cursor: 'pointer', fontWeight: 'bold' }}>×</button>
+          <span>? {success}</span>
+          <button onClick={() => setSuccess('')} style={{ background: 'none', border: 'none', color: '#065F46', cursor: 'pointer', fontWeight: 'bold' }}>�</button>
         </div>
       )}
 
@@ -632,7 +632,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               placeholder="cc@example.com"
               style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontSize: 14, color: '#0F172A' }}
             />
-            <button onClick={() => { setCc(''); setShowCc(false); }} style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}>×</button>
+            <button onClick={() => { setCc(''); setShowCc(false); }} style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}>�</button>
           </div>
         )}
 
@@ -647,7 +647,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
               placeholder="bcc@example.com"
               style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontSize: 14, color: '#0F172A' }}
             />
-            <button onClick={() => { setBcc(''); setShowBcc(false); }} style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}>×</button>
+            <button onClick={() => { setBcc(''); setShowBcc(false); }} style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}>�</button>
           </div>
         )}
 
@@ -926,7 +926,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
                     onClick={() => removeAttachment(i)}
                     style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', padding: 2, fontSize: 14, fontWeight: 'bold' }}
                   >
-                    ×
+                    �
                   </button>
                 </div>
               ))}
@@ -1360,7 +1360,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
                 <Icon path={Icons.Template} size={18} color="#2563EB" />
                 <span>Email Templates</span>
               </div>
-              <button onClick={() => setShowTemplates(false)} style={{ background: 'none', border: 'none', fontSize: 20, color: '#64748B', cursor: 'pointer' }}>×</button>
+              <button onClick={() => setShowTemplates(false)} style={{ background: 'none', border: 'none', fontSize: 20, color: '#64748B', cursor: 'pointer' }}>�</button>
             </div>
 
             <div style={{ padding: 16, flex: 1, overflowY: 'auto' }}>
@@ -1496,7 +1496,7 @@ const EmailComposer = ({ offer, lead, user, onClose, onSend }) => {
                     <Icon path={Icons.Smartphone} size={14} /> Mobile
                   </button>
                 </div>
-                <button onClick={() => setShowPreview(false)} style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: 24, cursor: 'pointer' }}>×</button>
+                <button onClick={() => setShowPreview(false)} style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: 24, cursor: 'pointer' }}>�</button>
               </div>
             </div>
 

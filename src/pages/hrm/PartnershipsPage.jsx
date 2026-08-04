@@ -1,17 +1,17 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
 // Category definitions
 const BENEFIT_CATEGORIES = [
-  { id: 'All', label: 'All', emoji: '🗂' },
-  { id: 'Health', label: 'Health & Wellness', emoji: '🏥' },
-  { id: 'Financial', label: 'Financial', emoji: '💰' },
-  { id: 'Lifestyle', label: 'Lifestyle & Leisure', emoji: '🌴' },
-  { id: 'Education', label: 'Education & Training', emoji: '📚' },
-  { id: 'Insurance', label: 'Insurance', emoji: '🛡' },
-  { id: 'Transport', label: 'Transportation', emoji: '🚌' },
-  { id: 'Other', label: 'Other', emoji: '📦' },
+  { id: 'All', label: 'All', emoji: '??' },
+  { id: 'Health', label: 'Health & Wellness', emoji: '??' },
+  { id: 'Financial', label: 'Financial', emoji: '??' },
+  { id: 'Lifestyle', label: 'Lifestyle & Leisure', emoji: '??' },
+  { id: 'Education', label: 'Education & Training', emoji: '??' },
+  { id: 'Insurance', label: 'Insurance', emoji: '??' },
+  { id: 'Transport', label: 'Transportation', emoji: '??' },
+  { id: 'Other', label: 'Other', emoji: '??' },
 ];
 
 const CATEGORY_COLORS = {
@@ -25,7 +25,7 @@ const CATEGORY_COLORS = {
 };
 
 const getCategoryColor = (cat) => CATEGORY_COLORS[cat] || CATEGORY_COLORS.Other;
-const getCategoryEmoji = (cat) => BENEFIT_CATEGORIES.find((c) => c.id === cat)?.emoji || '📦';
+const getCategoryEmoji = (cat) => BENEFIT_CATEGORIES.find((c) => c.id === cat)?.emoji || '??';
 
 const PartnershipsPage = () => {
   const { user } = useAuth();
@@ -55,7 +55,7 @@ const PartnershipsPage = () => {
   const [suggDetails, setSuggDetails] = useState('');
   const [submittingSugg, setSubmittingSugg] = useState(false);
 
-  const isBD = ['HRM System Administrator', 'HR Manager', 'HR Business Partner', 'Core 360 Administrator'].includes(user?.role);
+  const isBD = ['HRM System Administrator', 'HR Manager', 'HR Business Partner', 'Super CRM Administrator'].includes(user?.role);
 
   const fetchAll = async () => {
     setLoading(true);
@@ -172,8 +172,8 @@ const PartnershipsPage = () => {
       {/* Tab Navigation */}
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 0 }}>
         {[
-          { id: 'benefits', label: '🤝 Employee Benefits & Deals' },
-          { id: 'suggestions', label: `💡 Improvement Suggestions (${suggestions.length})` },
+          { id: 'benefits', label: '?? Employee Benefits & Deals' },
+          { id: 'suggestions', label: `?? Improvement Suggestions (${suggestions.length})` },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -196,7 +196,7 @@ const PartnershipsPage = () => {
         ))}
       </div>
 
-      {/* ── Benefits Tab ── */}
+      {/* -- Benefits Tab -- */}
       {activeTab === 'benefits' && (
         <>
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
@@ -223,7 +223,7 @@ const PartnershipsPage = () => {
                     <label className="form-label">Benefit Details *</label>
                     <textarea className="form-input" rows={3} value={benefitDetails}
                       onChange={(e) => setBenefitDetails(e.target.value)}
-                      placeholder="e.g. 15% discount on memberships for all employees…" required />
+                      placeholder="e.g. 15% discount on memberships for all employees�" required />
                   </div>
                   <div className="form-group" style={{ margin: 0 }}>
                     <label className="form-label">Contact Info</label>
@@ -236,7 +236,7 @@ const PartnershipsPage = () => {
                     <input className="form-input" type="date" value={benefitExpiry} onChange={(e) => setBenefitExpiry(e.target.value)} />
                   </div>
                   <button type="submit" className="btn btn-primary" disabled={submitting}>
-                    {submitting ? 'Saving…' : 'Save Deal'}
+                    {submitting ? 'Saving�' : 'Save Deal'}
                   </button>
                 </form>
               </div>
@@ -249,7 +249,7 @@ const PartnershipsPage = () => {
                 <input
                   className="form-input"
                   style={{ flex: '1 1 180px', padding: '6px 12px', fontSize: 12 }}
-                  placeholder="Search benefits…"
+                  placeholder="Search benefits�"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -282,7 +282,7 @@ const PartnershipsPage = () => {
 
               {/* Benefits Grid */}
               {loading ? (
-                <div className="loading-state">Loading deals…</div>
+                <div className="loading-state">Loading deals�</div>
               ) : filteredPartnerships.length === 0 ? (
                 <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 32 }}>
                   No partnerships match the selected filters.
@@ -330,12 +330,12 @@ const PartnershipsPage = () => {
                         </p>
                         {p.contactInfo && (
                           <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                            📞 {p.contactInfo}
+                            ?? {p.contactInfo}
                           </div>
                         )}
                         {p.expiryDate && (
                           <div style={{ fontSize: 11, color: isExpired ? '#FCA5A5' : 'var(--text-muted)' }}>
-                            📅 Valid until: {new Date(p.expiryDate).toLocaleDateString()}
+                            ?? Valid until: {new Date(p.expiryDate).toLocaleDateString()}
                           </div>
                         )}
                       </div>
@@ -348,7 +348,7 @@ const PartnershipsPage = () => {
         </>
       )}
 
-      {/* ── Suggestions Tab ── */}
+      {/* -- Suggestions Tab -- */}
       {activeTab === 'suggestions' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* Stats */}
@@ -376,7 +376,7 @@ const PartnershipsPage = () => {
           </div>
 
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-            {/* Submit Suggestion Form — all employees */}
+            {/* Submit Suggestion Form � all employees */}
             <div className="card" style={{ flex: '1 1 300px' }}>
               <h3 style={{ margin: '0 0 16px 0', fontSize: 15 }}>Submit a Suggestion</h3>
               <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
@@ -401,11 +401,11 @@ const PartnershipsPage = () => {
                   <label className="form-label">Details *</label>
                   <textarea className="form-input" rows={4} value={suggDetails}
                     onChange={(e) => setSuggDetails(e.target.value)}
-                    placeholder="Describe the benefit idea, how it would work, and why it would help employees…"
+                    placeholder="Describe the benefit idea, how it would work, and why it would help employees�"
                     required />
                 </div>
                 <button type="submit" className="btn btn-primary" disabled={submittingSugg}>
-                  {submittingSugg ? 'Submitting…' : '→ Submit Suggestion'}
+                  {submittingSugg ? 'Submitting�' : '? Submit Suggestion'}
                 </button>
               </form>
             </div>
@@ -414,7 +414,7 @@ const PartnershipsPage = () => {
             <div className="card" style={{ flex: '2 1 440px' }}>
               <h3 style={{ margin: '0 0 16px 0', fontSize: 15 }}>Submitted Suggestions</h3>
               {loading ? (
-                <div className="loading-state">Loading suggestions…</div>
+                <div className="loading-state">Loading suggestions�</div>
               ) : suggestions.length === 0 ? (
                 <div style={{ color: 'var(--text-muted)', padding: 24, textAlign: 'center' }}>
                   No suggestions have been submitted yet. Be the first!
@@ -446,8 +446,8 @@ const PartnershipsPage = () => {
                             </p>
                             {s.submittedBy && (
                               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
-                                Submitted by: {s.submittedBy.firstName} {s.submittedBy.lastName} ·{' '}
-                                {s.createdAt ? new Date(s.createdAt).toLocaleDateString() : '—'}
+                                Submitted by: {s.submittedBy.firstName} {s.submittedBy.lastName} �{' '}
+                                {s.createdAt ? new Date(s.createdAt).toLocaleDateString() : '�'}
                               </div>
                             )}
                           </div>
@@ -472,14 +472,14 @@ const PartnershipsPage = () => {
                                   style={{ padding: '3px 10px', fontSize: 11, background: '#10B98122', color: '#6EE7B7', border: '1px solid #10B98144' }}
                                   onClick={() => handleUpdateSuggestion(s._id, 'Approved')}
                                 >
-                                  ✓ Approve
+                                  ? Approve
                                 </button>
                                 <button
                                   className="btn btn-sm"
                                   style={{ padding: '3px 10px', fontSize: 11, background: '#EF444422', color: '#FCA5A5', border: '1px solid #EF444444' }}
                                   onClick={() => handleUpdateSuggestion(s._id, 'Declined')}
                                 >
-                                  ✗ Decline
+                                  ? Decline
                                 </button>
                               </div>
                             )}

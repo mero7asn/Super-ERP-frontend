@@ -1,12 +1,12 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Icon } from '../components/Icons';
 
 const DevToolsPage = () => {
   const [logs, setLogs] = useState([
-    '⚙️ CRM System Developer Environment Initialized.',
-    '🔌 DB Connection established: crm_prod_replica',
-    '🛡️ Active permissions session: Core 360 Administrator',
-    '📊 API Gateway status: 200 OK (5.2ms latency)'
+    '?? CRM System Developer Environment Initialized.',
+    '?? DB Connection established: crm_prod_replica',
+    '??? Active permissions session: Super CRM Administrator',
+    '?? API Gateway status: 200 OK (5.2ms latency)'
   ]);
   const [isSeeding, setIsSeeding] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
@@ -18,18 +18,18 @@ const DevToolsPage = () => {
   const handleSeed = () => {
     if (isSeeding) return;
     setIsSeeding(true);
-    addLog('🚀 Initializing database seeding sequence...');
+    addLog('?? Initializing database seeding sequence...');
     
     setTimeout(() => {
-      addLog('🗑️ Clearing active collection records...');
+      addLog('??? Clearing active collection records...');
     }, 1000);
 
     setTimeout(() => {
-      addLog('✓ Populating seed collection schema (12 user accounts)...');
+      addLog('? Populating seed collection schema (12 user accounts)...');
     }, 2000);
 
     setTimeout(() => {
-      addLog('🎉 Seed complete! All system roles and credentials loaded.');
+      addLog('?? Seed complete! All system roles and credentials loaded.');
       setIsSeeding(false);
     }, 3200);
   };
@@ -37,7 +37,7 @@ const DevToolsPage = () => {
   const handleClearLogs = () => {
     setIsClearing(true);
     setTimeout(() => {
-      setLogs(['🧹 Logs console cleared.', `🔌 Active session refreshed.`]);
+      setLogs(['?? Logs console cleared.', `?? Active session refreshed.`]);
       setIsClearing(false);
     }, 800);
   };
@@ -62,7 +62,7 @@ const DevToolsPage = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, fontSize: 13 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-secondary)' }}>Server Status</span>
-              <span style={{ color: 'var(--accent-success)', fontWeight: 600 }}>● Operational</span>
+              <span style={{ color: 'var(--accent-success)', fontWeight: 600 }}>? Operational</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-secondary)' }}>Database Latency</span>
@@ -129,7 +129,7 @@ const DevToolsPage = () => {
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#EF4444' }} />
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#F59E0B' }} />
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981' }} />
-            <span style={{ color: '#94A3B8', fontSize: 11, fontFamily: 'monospace', marginLeft: 8 }}>interactive-sh · diagnostic_terminal</span>
+            <span style={{ color: '#94A3B8', fontSize: 11, fontFamily: 'monospace', marginLeft: 8 }}>interactive-sh � diagnostic_terminal</span>
           </div>
         </div>
         <div style={{
@@ -144,7 +144,7 @@ const DevToolsPage = () => {
           lineHeight: 1.5
         }}>
           {logs.map((log, index) => (
-            <div key={index} style={{ color: log.includes('✓') || log.includes('🎉') ? '#10B981' : log.includes('⚙️') ? '#60A5FA' : '#E2E8F0' }}>
+            <div key={index} style={{ color: log.includes('?') || log.includes('??') ? '#10B981' : log.includes('??') ? '#60A5FA' : '#E2E8F0' }}>
               {log}
             </div>
           ))}

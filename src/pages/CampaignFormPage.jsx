@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import API from '../services/api';
 import logo from '../assets/logo.png';
@@ -65,17 +65,17 @@ const CampaignFormPage = () => {
         {loading ? (
           <div style={{ textAlign: 'center', padding: '40px 0', color: '#9CA3AF' }}>
             <div className="spinner" style={{ margin: '0 auto 16px' }} />
-            Loading form…
+            Loading form�
           </div>
         ) : error ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>🚫</div>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>??</div>
             <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: '#1F2937' }}>Form Unavailable</h2>
             <p style={{ color: '#6B7280', fontSize: 14 }}>{error}</p>
           </div>
         ) : submitted ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>?</div>
             <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8, color: '#1F2937' }}>Thank You!</h2>
             <p style={{ color: '#6B7280', fontSize: 14 }}>Your information has been received. We'll be in touch shortly.</p>
           </div>
@@ -126,7 +126,7 @@ const CampaignFormPage = () => {
                 <label className="form-label">Message <span style={{ color: '#9CA3AF', fontWeight: 400 }}>(optional)</span></label>
                 <textarea
                   className="form-input"
-                  placeholder="Tell us how we can help…"
+                  placeholder="Tell us how we can help�"
                   rows={3}
                   value={form.notes}
                   onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
@@ -139,7 +139,7 @@ const CampaignFormPage = () => {
                 disabled={submitting}
                 style={{ marginTop: 8 }}
               >
-                {submitting ? 'Submitting…' : 'Submit'}
+                {submitting ? 'Submitting�' : 'Submit'}
               </button>
             </form>
           </>

@@ -1,10 +1,10 @@
-ï»¿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
 
 const INVENTORY_ROLES = [
-  'Core 360 Administrator', 'System Architect', 'Inventory Manager',
+  'Super CRM Administrator', 'System Architect', 'Inventory Manager',
   'Warehouse Manager', 'Receiving Clerk', 'Shipping Clerk',
   'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
 ];
@@ -98,7 +98,7 @@ const ShippingPage = () => {
       {error && <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>}
 
       {loading ? (
-        <div className="loading-state"><div className="spinner" />Loading shipmentsâ€¦</div>
+        <div className="loading-state"><div className="spinner" />Loading shipments…</div>
       ) : (
         <div className="card" style={{ padding: 0 }}>
           <div className="table-wrapper" style={{ overflowX: 'auto' }}>
@@ -122,10 +122,10 @@ const ShippingPage = () => {
                     <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{ship.shipmentId}</td>
                     <td style={{ fontFamily: 'monospace' }}>{ship.orderReference}</td>
                     <td>{ship.customerName}</td>
-                    <td>{ship.carrier || 'â€”'}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{ship.trackingNumber || 'â€”'}</td>
+                    <td>{ship.carrier || '—'}</td>
+                    <td style={{ fontFamily: 'monospace' }}>{ship.trackingNumber || '—'}</td>
                     <td><span className={`badge ${ship.status === 'Shipped' || ship.status === 'Delivered' ? 'badge-converted' : 'badge-new'}`}>{ship.status}</span></td>
-                    <td style={{ fontSize: 12 }}>{ship.shippedAt ? new Date(ship.shippedAt).toLocaleDateString() : 'â€”'}</td>
+                    <td style={{ fontSize: 12 }}>{ship.shippedAt ? new Date(ship.shippedAt).toLocaleDateString() : '—'}</td>
                   </tr>
                 ))}
               </tbody>

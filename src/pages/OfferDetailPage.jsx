@@ -1,4 +1,4 @@
-ï»¿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -46,7 +46,7 @@ const OfferDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(user?.role);
 
   const [offer, setOffer] = useState(null);
   const [lead, setLead] = useState(null);
@@ -199,7 +199,7 @@ const OfferDetailPage = () => {
   const symbol = currency?.symbol || offer?.currencySymbol || '$';
   const price = Number(offer?.price || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading offerâ€¦</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading offer…</div>;
   if (!offer) return <div className="empty-state"><p>Offer not found</p></div>;
 
   return (
@@ -219,7 +219,7 @@ const OfferDetailPage = () => {
             <span className="badge badge-meta" style={{ fontSize: 10, padding: '2px 8px', fontWeight: 700 }}>v{offer.version || 1}</span>
           </div>
           <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
-            {lead?.name} â€¢ {symbol}{price} â€¢ Expires {new Date(offer.validUntil).toLocaleDateString()}
+            {lead?.name} • {symbol}{price} • Expires {new Date(offer.validUntil).toLocaleDateString()}
           </div>
         </div>
 
@@ -294,9 +294,9 @@ const OfferDetailPage = () => {
               <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Customer</div>
               <div style={{ display: 'grid', gap: 6, fontSize: 13 }}>
                 <div><strong>Name:</strong> {lead?.name}</div>
-                <div><strong>Email:</strong> {lead?.email || 'â€”'}</div>
-                <div><strong>Phone:</strong> {lead?.phone || 'â€”'}</div>
-                <div><strong>Lead ref:</strong> {lead?.referenceNumber || lead?._id || 'â€”'}</div>
+                <div><strong>Email:</strong> {lead?.email || '—'}</div>
+                <div><strong>Phone:</strong> {lead?.phone || '—'}</div>
+                <div><strong>Lead ref:</strong> {lead?.referenceNumber || lead?._id || '—'}</div>
               </div>
             </div>
             <div style={{ padding: 16, borderRadius: 10, border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
@@ -319,7 +319,7 @@ const OfferDetailPage = () => {
               </button>
             </div>
             {emailsLoading ? (
-              <div className="loading-state"><div className="spinner" />Loading emailsâ€¦</div>
+              <div className="loading-state"><div className="spinner" />Loading emails…</div>
             ) : emails.length === 0 ? (
               <div style={{ padding: 24, textAlign: 'center', color: 'var(--text-muted)' }}>No communications yet.</div>
             ) : (
@@ -364,7 +364,7 @@ const OfferDetailPage = () => {
                   <div key={img._id || img.url} style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#000', minHeight: 110 }}>
                     <img src={img.url && (img.url.startsWith('http') || img.url.startsWith('data:')) ? img.url : `http://localhost:5000${img.url}`} alt={img.caption || 'Offer image'} style={{ width: '100%', height: 110, objectFit: 'cover' }} />
                     {(isAdmin || (offer.createdBy && offer.createdBy._id === user?._id)) && (
-                      <button type="button" onClick={() => handleDeleteImage(img._id)} style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(239,68,68,0.9)', color: '#fff', border: 'none', borderRadius: 999, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 10 }} title="Delete photo">âœ•</button>
+                      <button type="button" onClick={() => handleDeleteImage(img._id)} style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(239,68,68,0.9)', color: '#fff', border: 'none', borderRadius: 999, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 10 }} title="Delete photo">?</button>
                     )}
                     {img.caption && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 10, padding: '4px 6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{img.caption}</div>}
                   </div>
@@ -479,7 +479,7 @@ const OfferDetailPage = () => {
           }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>Add Offer Image</h3>
-              <button onClick={() => { setShowImageModal(false); setSelectedFile(null); setImageCaption(''); }} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>Ã—</button>
+              <button onClick={() => { setShowImageModal(false); setSelectedFile(null); setImageCaption(''); }} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>×</button>
             </div>
             {error && <div className="alert alert-error" style={{ marginBottom: 12 }}>{error}</div>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

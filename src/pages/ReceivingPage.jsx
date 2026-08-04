@@ -1,10 +1,10 @@
-ï»¿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
 
 const INVENTORY_ROLES = [
-  'Core 360 Administrator', 'System Architect', 'Inventory Manager',
+  'Super CRM Administrator', 'System Architect', 'Inventory Manager',
   'Warehouse Manager', 'Receiving Clerk', 'Shipping Clerk',
   'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
 ];
@@ -122,7 +122,7 @@ const ReceivingPage = () => {
       {error && <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>}
 
       {loading ? (
-        <div className="loading-state"><div className="spinner" />Loading receiving ordersâ€¦</div>
+        <div className="loading-state"><div className="spinner" />Loading receiving orders…</div>
       ) : (
         <div className="card" style={{ padding: 0 }}>
           <div className="table-wrapper" style={{ overflowX: 'auto' }}>
@@ -145,11 +145,11 @@ const ReceivingPage = () => {
                   <tr key={order._id}>
                     <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{order.poNumber}</td>
                     <td>{order.supplierName}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{order.asnNumber || 'â€”'}</td>
+                    <td style={{ fontFamily: 'monospace' }}>{order.asnNumber || '—'}</td>
                     <td>{order.warehouse?.code}</td>
                     <td>{order.lines?.length || 0}</td>
                     <td><span className={`badge ${order.status === 'Completed' ? 'badge-converted' : 'badge-new'}`}>{order.status}</span></td>
-                    <td style={{ fontSize: 12 }}>{order.receivedAt ? new Date(order.receivedAt).toLocaleDateString() : 'â€”'}</td>
+                    <td style={{ fontSize: 12 }}>{order.receivedAt ? new Date(order.receivedAt).toLocaleDateString() : '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -241,7 +241,7 @@ const ReceivingPage = () => {
                   <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>Smart putaway guidance</div>
                   {putawayHints.map((hint, idx) => (
                     <div key={`${hint.strategy}-${idx}`} style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>
-                      <strong>{hint.strategy}</strong> â†’ {hint.subinventory}{hint.locator ? ` / ${hint.locator}` : ''} Â· {hint.reason}
+                      <strong>{hint.strategy}</strong> ? {hint.subinventory}{hint.locator ? ` / ${hint.locator}` : ''} · {hint.reason}
                     </div>
                   ))}
                 </div>

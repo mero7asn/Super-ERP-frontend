@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
 import { useAuth } from '../context/AuthContext';
@@ -44,7 +44,7 @@ const OnboardingModal = () => {
     }
   };
 
-  if (!user || user.role !== 'Core 360 Administrator' || user.onboarded) return null;
+  if (!user || user.role !== 'Super CRM Administrator' || user.onboarded) return null;
 
   return (
     <div style={{
