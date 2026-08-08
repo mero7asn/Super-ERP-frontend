@@ -13,6 +13,36 @@ const HrmDashboardPage = () => {
         </div>
       </div>
 
+      <div className="card" style={{
+        background: 'linear-gradient(135deg, rgba(2,132,199,0.16), rgba(124,58,237,0.16))',
+        border: '1px solid rgba(2,132,199,0.26)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 16,
+        flexWrap: 'wrap',
+      }}>
+        <div>
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-primary)', fontWeight: 700 }}>HR operations pulse</div>
+          <h3 style={{ margin: '6px 0 4px', fontSize: 18 }}>Keep people processes moving from one place</h3>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 13 }}>
+            Review employee lifecycle tasks, payroll, training, hiring, and benefits in a single executive workspace.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {[
+            { label: 'People modules', value: '5' },
+            { label: 'Operations', value: 'Live' },
+            { label: 'Focus', value: 'HRM' },
+          ].map((item) => (
+            <div key={item.label} style={{ minWidth: 108, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
+              <div style={{ fontSize: 18, fontWeight: 700 }}>{item.value}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
         {/* Card 1: Personal */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

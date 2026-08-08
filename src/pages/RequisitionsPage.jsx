@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import API from '../services/api';
+import { Icon } from '../components/Icons';
 
 const RequisitionsPage = () => {
   const [requisitions, setRequisitions] = useState([]);
@@ -8,7 +9,6 @@ const RequisitionsPage = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
-  // Form State
   const [department, setDepartment] = useState('Maintenance');
   const [purpose, setPurpose] = useState('');
   const [urgency, setUrgency] = useState('Normal');
@@ -72,141 +72,106 @@ const RequisitionsPage = () => {
     }
   };
 
+  const summaryCards = [
+    { label: 'Pending review', value: requisitions.filter((req) => req.status === 'Pending Approval').length, tone: '#d97706' },
+    { label: 'Approved', value: requisitions.filter((req) => req.status === 'Approved').length, tone: '#16a34a' },
+    { label: 'Urgent', value: requisitions.filter((req) => req.urgency === 'Critical' || req.urgency === 'High').length, tone: '#dc2626' },
+    { label: 'Total requests', value: requisitions.length, tone: '#0284c7' }
+  ];
+
   return (
-    <div style={{ padding: 24, maxWidth: 1400, margin: '0 auto' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#0f172a' }}>📋 Internal Material Requisitions</h1>
-          <p style={{ color: '#64748b', margin: '4px 0 0', fontSize: 14 }}>
-            Employees & departments request spare parts, materials, and equipment from central inventory
-          </p>
+    <div className="fade-in" style={{ padding: '0 12px 32px' }}>
+      <div className="crm-page-banner" style={{ padding: 24, marginBottom: 18 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#7dd3fc', marginBottom: 6 }}>Inventory approvals</div>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: '#fff' }}>Material requisitions</h1>
+            <p style={{ margin: '8px 0 0', fontSize: 14, color: '#e2e8f0' }}>Review internal requests, urgency, and approval status in a more structured flow.</p>
+          </div>
+          <button onClick={() => setShowModal(true)} className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Icon name="plus" size={16} /> New request</button>
         </div>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary" style={{ padding: '10px 20px' }}>
-          + New Material Request
-        </button>
+      </div>
+
+      <div className="crm-glass-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+          {summaryCards.map((card) => (
+            <div key={card.label} style={{ padding: 12, borderRadius: 12, background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>{card.label}</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: card.tone }}>{card.value}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {loading ? (
-        <div style={{ padding: 32, textAlign: 'center' }}>Loading Material Requisitions...</div>
+        <div className="card" style={{ padding: 32, textAlign: 'center' }}>Loading requisitions…</div>
       ) : (
-        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 14 }}>
-            <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-              <tr>
-                <th style={{ padding: '12px 16px' }}>Requisition #</th>
-                <th style={{ padding: '12px 16px' }}>Requester & Dept</th>
-                <th style={{ padding: '12px 16px' }}>Purpose</th>
-                <th style={{ padding: '12px 16px' }}>Items Requested</th>
-                <th style={{ padding: '12px 16px' }}>Urgency</th>
-                <th style={{ padding: '12px 16px' }}>Status</th>
-                <th style={{ padding: '12px 16px' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requisitions.length > 0 ? (
-                requisitions.map((req) => (
-                  <tr key={req._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '12px 16px', fontWeight: 700, color: '#0f172a' }}>{req.requisitionNumber}</td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <div style={{ fontWeight: 600 }}>{req.requester ? `${req.requester.firstName} ${req.requester.lastName}` : 'Employee'}</div>
-                      <div style={{ fontSize: 12, color: '#64748b' }}>{req.department}</div>
-                    </td>
-                    <td style={{ padding: '12px 16px' }}>{req.purpose || 'Maintenance'}</td>
-                    <td style={{ padding: '12px 16px' }}>
-                      {req.items?.map((i, idx) => (
-                        <div key={idx} style={{ fontSize: 13, fontWeight: 600 }}>
-                          • {i.item?.name || 'Item'} (Req: {i.requestedQty})
-                        </div>
-                      ))}
-                    </td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <span style={{
-                        padding: '2px 8px', borderRadius: 12, fontSize: 11, fontWeight: 600,
-                        background: req.urgency === 'High' || req.urgency === 'Critical' ? '#fee2e2' : '#f1f5f9',
-                        color: req.urgency === 'High' || req.urgency === 'Critical' ? '#991b1b' : '#334155'
-                      }}>
-                        {req.urgency}
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <span style={{
-                        padding: '2px 8px', borderRadius: 12, fontSize: 11, fontWeight: 600,
-                        background: req.status === 'Approved' ? '#dcfce7' : req.status === 'Pending Approval' ? '#fef3c7' : '#f1f5f9',
-                        color: req.status === 'Approved' ? '#166534' : req.status === 'Pending Approval' ? '#92400e' : '#334155'
-                      }}>
-                        {req.status}
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px 16px' }}>
-                      {req.status === 'Pending Approval' && (
-                        <button
-                          onClick={() => handleApprove(req._id)}
-                          style={{ padding: '4px 10px', fontSize: 12, borderRadius: 4, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer' }}
-                        >
-                          Approve
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colSpan={7} style={{ padding: 24, textAlign: 'center', color: '#94a3b8' }}>No requisitions submitted yet</td></tr>
+        <div style={{ display: 'grid', gap: 12 }}>
+          {requisitions.length > 0 ? requisitions.map((req) => (
+            <div key={req._id} className="card" style={{ padding: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ fontSize: 12, color: '#64748b', fontWeight: 700 }}>{req.requisitionNumber}</div>
+                  <div style={{ fontSize: 16, fontWeight: 800 }}>{req.requester ? `${req.requester.firstName} ${req.requester.lastName}` : 'Employee'} • {req.department}</div>
+                </div>
+                <span className={`badge ${req.status === 'Approved' ? 'badge-converted' : req.status === 'Pending Approval' ? 'badge-warning' : 'badge-neutral'}`}>{req.status}</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginTop: 12 }}>
+                <div style={{ padding: 10, borderRadius: 10, background: '#f8fafc' }}><div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Purpose</div><div style={{ fontWeight: 700 }}>{req.purpose || 'Maintenance'}</div></div>
+                <div style={{ padding: 10, borderRadius: 10, background: '#f8fafc' }}><div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Urgency</div><div style={{ fontWeight: 700 }}>{req.urgency}</div></div>
+                <div style={{ padding: 10, borderRadius: 10, background: '#f8fafc' }}><div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Requested items</div><div style={{ fontWeight: 700 }}>{req.items?.length || 0}</div></div>
+              </div>
+              <div style={{ marginTop: 10, fontSize: 13, color: '#475569' }}>
+                {req.items?.map((item, idx) => <div key={idx}>• {item.item?.name || 'Item'} — Qty {item.requestedQty}</div>)}
+              </div>
+              {req.status === 'Pending Approval' && (
+                <button onClick={() => handleApprove(req._id)} className="btn btn-primary" style={{ marginTop: 12 }}>Approve request</button>
               )}
-            </tbody>
-          </table>
+            </div>
+          )) : <div className="card" style={{ padding: 32, textAlign: 'center', color: 'var(--text-muted)' }}>No requisitions submitted yet.</div>}
         </div>
       )}
 
-      {/* Modal Form */}
       {showModal && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-        }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="card" style={{ width: 500, padding: 24, background: '#fff', borderRadius: 12 }}>
-            <h3 style={{ margin: '0 0 16px' }}>Submit Internal Material Requisition</h3>
+            <h3 style={{ margin: '0 0 16px' }}>Submit requisition</h3>
             <form onSubmit={handleCreateRequisition}>
               <div style={{ marginBottom: 12 }}>
-                <label style={{ fontSize: 12, fontWeight: 600 }}>Department</label>
-                <select className="input" value={department} onChange={e => setDepartment(e.target.value)} style={{ width: '100%', marginTop: 4 }}>
+                <label className="form-label">Department</label>
+                <select className="form-input" value={department} onChange={(e) => setDepartment(e.target.value)}>
                   <option value="Maintenance">Maintenance</option>
                   <option value="Production">Production</option>
                   <option value="Operations">Operations</option>
                   <option value="IT Support">IT Support</option>
                 </select>
               </div>
-
               <div style={{ marginBottom: 12 }}>
-                <label style={{ fontSize: 12, fontWeight: 600 }}>Purpose / Notes</label>
-                <input type="text" className="input" placeholder="e.g., Replacement parts for Machine #4" value={purpose} onChange={e => setPurpose(e.target.value)} style={{ width: '100%', marginTop: 4 }} />
+                <label className="form-label">Purpose / notes</label>
+                <input type="text" className="form-input" placeholder="Replacement parts for Machine #4" value={purpose} onChange={(e) => setPurpose(e.target.value)} />
               </div>
-
               <div style={{ marginBottom: 12 }}>
-                <label style={{ fontSize: 12, fontWeight: 600 }}>Urgency</label>
-                <select className="input" value={urgency} onChange={e => setUrgency(e.target.value)} style={{ width: '100%', marginTop: 4 }}>
+                <label className="form-label">Urgency</label>
+                <select className="form-input" value={urgency} onChange={(e) => setUrgency(e.target.value)}>
                   <option value="Normal">Normal</option>
                   <option value="High">High</option>
                   <option value="Critical">Critical</option>
                 </select>
               </div>
-
               <div style={{ marginBottom: 12 }}>
-                <label style={{ fontSize: 12, fontWeight: 600 }}>Requested Product Item</label>
-                <select className="input" value={selectedItem} onChange={e => setSelectedItem(e.target.value)} required style={{ width: '100%', marginTop: 4 }}>
-                  <option value="">-- Select Item --</option>
-                  {items.map(i => <option key={i._id} value={i._id}>{i.sku} - {i.name}</option>)}
+                <label className="form-label">Requested item</label>
+                <select className="form-input" value={selectedItem} onChange={(e) => setSelectedItem(e.target.value)} required>
+                  <option value="">Select item</option>
+                  {items.map((item) => <option key={item._id} value={item._id}>{item.sku} - {item.name}</option>)}
                 </select>
               </div>
-
               <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 12, fontWeight: 600 }}>Requested Quantity</label>
-                <input type="number" className="input" min={1} value={requestedQty} onChange={e => setRequestedQty(Number(e.target.value))} style={{ width: '100%', marginTop: 4 }} />
+                <label className="form-label">Requested quantity</label>
+                <input type="number" className="form-input" min={1} value={requestedQty} onChange={(e) => setRequestedQty(Number(e.target.value))} />
               </div>
-
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-                <button type="button" onClick={() => setShowModal(false)} className="btn" style={{ padding: '8px 16px', background: '#f1f5f9' }}>Cancel</button>
-                <button type="submit" className="btn btn-primary" style={{ padding: '8px 16px' }}>Submit Request</button>
+                <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
+                <button type="submit" className="btn btn-primary">Submit request</button>
               </div>
             </form>
           </div>

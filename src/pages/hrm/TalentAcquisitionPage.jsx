@@ -332,6 +332,36 @@ const TalentAcquisitionPage = () => {
         </div>
       )}
 
+      <div className="card" style={{
+        background: 'linear-gradient(135deg, rgba(59,130,246,0.14), rgba(124,58,237,0.12))',
+        border: '1px solid rgba(59,130,246,0.22)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 16,
+        flexWrap: 'wrap'
+      }}>
+        <div>
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-primary)', fontWeight: 700 }}>Recruitment pipeline</div>
+          <h3 style={{ margin: '6px 0 4px', fontSize: 17 }}>Bring hiring activity into a clear, trackable flow</h3>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 13 }}>
+            Post vacancies, queue candidates, and move each opportunity through the recruitment stages with better visibility.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {[
+            { label: 'Open roles', value: vacancies.length },
+            { label: 'Candidates', value: candidates.length },
+            { label: 'Stage focus', value: 'Kanban' },
+          ].map((item) => (
+            <div key={item.label} style={{ minWidth: 96, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
+              <div style={{ fontSize: 18, fontWeight: 700 }}>{item.value}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Collapsible Forms */}
       {isTA && showVacancyForm && (
         <div className="card">

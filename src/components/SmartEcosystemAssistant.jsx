@@ -141,264 +141,90 @@ const SmartEcosystemAssistant = () => {
 
   return (
     <>
-      {/* FLOATING TRIGGER BUTTON */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         title="Super Ecosystem AI Co-Pilot (Ctrl + K)"
-        style={{
-          position: 'fixed',
-          bottom: 24,
-          right: 24,
-          height: 52,
-          padding: '0 20px',
-          borderRadius: 26,
-          background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
-          color: '#ffffff',
-          border: 'none',
-          boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.2)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          cursor: 'pointer',
-          zIndex: 9000,
-          fontFamily: "'Inter', sans-serif",
-          fontWeight: 600,
-          fontSize: 14,
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        className="assistant-trigger"
       >
         <span style={{ fontSize: 18 }}>🤖</span>
-        <span
-          style={{
-            background: 'rgba(255, 255, 255, 0.2)',
-            padding: '2px 8px',
-            borderRadius: 10,
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: '0.5px',
-          }}
-        >
-          Ctrl+K
-        </span>
+        <span>Ask Copilot</span>
+        <span className="assistant-trigger-badge">Ctrl+K</span>
       </button>
 
-      {/* ASSISTANT DRAWER PANEL */}
       {isOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(15, 23, 42, 0.4)',
-            backdropFilter: 'blur(3px)',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            zIndex: 9999,
-          }}
-          onClick={() => setIsOpen(false)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: 420,
-              maxWidth: '100vw',
-              height: '100%',
-              background: '#ffffff',
-              boxShadow: '-10px 0 30px rgba(0, 0, 0, 0.2)',
-              display: 'flex',
-              flexDirection: 'column',
-              fontFamily: "'Inter', sans-serif",
-            }}
-          >
-            {/* Header */}
-            <div
-              style={{
-                padding: '20px 24px',
-                background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 10,
-                    background: 'rgba(37, 99, 235, 0.3)',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 20,
-                  }}
-                >
-                    🤖
-                </div>
-                <div>
-                  <div style={{ fontSize: 16, fontWeight: 700 }}>Ecosystem AI Co-Pilot</div>
-                  <div style={{ fontSize: 11, color: '#94A3B8' }}>
-                    Active Context: <strong style={{ color: '#60A5FA' }}>{currentRoute}</strong>
-                  </div>
-                </div>
+        <div className="assistant-overlay" onClick={() => setIsOpen(false)}>
+          <div className="assistant-panel" onClick={(e) => e.stopPropagation()}>
+            <div className="assistant-header">
+              <div>
+                <div className="assistant-header-title">Ecosystem AI Co-Pilot</div>
+                <div className="assistant-subtitle">Active context: {currentRoute}</div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: 24, cursor: 'pointer' }}
-              >
+              <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', color: '#fff', fontSize: 24, cursor: 'pointer' }}>
                 ×
               </button>
             </div>
 
-            {/* Context Insights */}
-            <div style={{ padding: '16px 20px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: '#64748B', marginBottom: 10 }}>
-                  📊 Page Insights & Recommendations
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {activeInsights.map((insight, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      padding: '10px 12px',
-                      background: '#ffffff',
-                      border: '1px solid #E2E8F0',
-                      borderRadius: 8,
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 10,
-                    }}
-                  >
-                    <span style={{ fontSize: 16 }}>{insight.icon}</span>
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: '#1E293B' }}>{insight.title}</div>
-                      <div style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>{insight.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick Actions Shortcuts */}
-            <div style={{ padding: '12px 20px', borderBottom: '1px solid #E2E8F0' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: '#64748B', marginBottom: 8 }}>
-                ⚡ Quick Ecosystem Actions
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {QUICK_ACTIONS.map((action, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      navigate(action.path);
-                      setIsOpen(false);
-                    }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      background: '#F1F5F9',
-                      border: '1px solid #CBD5E1',
-                      borderRadius: 16,
-                      padding: '6px 12px',
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: '#334155',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = '#DBEAFE';
-                      e.currentTarget.style.borderColor = '#93C5FD';
-                      e.currentTarget.style.color = '#1E40AF';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = '#F1F5F9';
-                      e.currentTarget.style.borderColor = '#CBD5E1';
-                      e.currentTarget.style.color = '#334155';
-                    }}
-                  >
-                    <span>{action.icon}</span>
-                    <span>{action.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Messages Area */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {messages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
-                    maxWidth: '85%',
-                    background: msg.sender === 'user' ? '#2563EB' : '#F1F5F9',
-                    color: msg.sender === 'user' ? '#ffffff' : '#1E293B',
-                    padding: '10px 14px',
-                    borderRadius: msg.sender === 'user' ? '14px 14px 2px 14px' : '14px 14px 14px 2px',
-                    fontSize: 13,
-                    lineHeight: 1.5,
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
-                  }}
-                >
-                  <div>{msg.text}</div>
-                  <div
-                    style={{
-                      fontSize: 10,
-                      marginTop: 4,
-                      textAlign: 'right',
-                      opacity: 0.7,
-                    }}
-                  >
-                    {msg.timestamp}
+            <div className="assistant-insights">
+              {activeInsights.map((insight, idx) => (
+                <div key={idx} className="assistant-insight">
+                  <span style={{ fontSize: 16 }}>{insight.icon}</span>
+                  <div>
+                    <strong>{insight.title}</strong>
+                    <span>{insight.desc}</span>
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="assistant-quick-actions">
+              {QUICK_ACTIONS.map((action, idx) => (
+                <button
+                  key={idx}
+                  className="assistant-quick-action"
+                  onClick={() => {
+                    navigate(action.path);
+                    setIsOpen(false);
+                  }}
+                >
+                  <span>{action.icon}</span>
+                  <span>{action.label}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="assistant-messages">
+              {messages.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`assistant-bubble ${msg.sender === 'user' ? 'assistant-bubble-user' : 'assistant-bubble-ai'}`}
+                >
+                  <div>{msg.text}</div>
+                  <div style={{ fontSize: 10, marginTop: 4, opacity: 0.72, textAlign: 'right' }}>{msg.timestamp}</div>
+                </div>
+              ))}
               {loading && (
-                <div style={{ alignSelf: 'flex-start', background: '#F1F5F9', padding: '10px 14px', borderRadius: 14, fontSize: 13, color: '#64748B' }}>
-                  Analyzing ecosystem data...
+                <div className="assistant-bubble assistant-bubble-ai">
+                  <div className="assistant-typing">
+                    <span />
+                    <span />
+                    <span />
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* Input Bar */}
-            <form onSubmit={handleSearch} style={{ padding: 16, borderTop: '1px solid #E2E8F0', background: '#ffffff' }}>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Ask Assistant or search ecosystem..."
-                  style={{
-                    flex: 1,
-                    padding: '10px 14px',
-                    borderRadius: 20,
-                    border: '1px solid #CBD5E1',
-                    fontSize: 13,
-                    outline: 'none',
-                  }}
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  style={{
-                    background: '#2563EB',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: 20,
-                    padding: '0 18px',
-                    fontWeight: 600,
-                    fontSize: 13,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Send
-                </button>
-              </div>
+            <form onSubmit={handleSearch} className="assistant-input-row">
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Ask Assistant or search ecosystem..."
+                className="assistant-input"
+              />
+              <button type="submit" disabled={loading} className="assistant-send">
+                Send
+              </button>
             </form>
           </div>
         </div>

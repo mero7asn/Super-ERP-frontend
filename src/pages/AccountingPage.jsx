@@ -85,13 +85,17 @@ const AccountingPage = () => {
   return (
     <div style={{ padding: '0 12px 32px', maxWidth: 1440, margin: '0 auto' }}>
       {/* Top Header */}
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
+      <div className="page-header page-header--elevated" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
         <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10, margin: 0, fontSize: 24, fontWeight: 800 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span className="metric-pill metric-pill--success">Financial control tower</span>
+            <span className="metric-pill">ERP core</span>
+          </div>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0 0', fontSize: 24, fontWeight: 800 }}>
             <Icon name="payroll" size={28} style={{ color: '#16a34a' }} />
             Accounting Core & Financial Control Engine
           </h1>
-          <p className="page-subtitle" style={{ margin: '4px 0 0', color: '#64748b' }}>
+          <p className="page-subtitle" style={{ margin: '6px 0 0', color: '#64748b' }}>
             Double-Entry Ledger → Accounts Receivable & Payable → Egyptian Tax / ETA E-Invoice → One-Click Financial Traceability
           </p>
         </div>
@@ -147,35 +151,35 @@ const AccountingPage = () => {
             <div>
               {/* Executive Financial KPIs */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 14, marginBottom: 24 }}>
-                <div className="card" style={{ padding: 18, borderRadius: 10, background: '#fff', border: '1px solid #cbd5e1' }}>
+                <div className="card" style={{ padding: 18, borderRadius: 12, background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Annual Gross Revenue</div>
                   <div style={{ fontSize: 24, fontWeight: 800, color: '#16a34a', margin: '4px 0' }}>{fmtEgp(kpis?.revenueEgp || 18400000)}</div>
-                  <div style={{ fontSize: 11, color: '#16a34a' }}>+15.4% YoY Growth</div>
+                  <div className="metric-pill metric-pill--success" style={{ marginTop: 6 }}>+15.4% YoY Growth</div>
                 </div>
-                <div className="card" style={{ padding: 18, borderRadius: 10, background: '#fff', border: '1px solid #cbd5e1' }}>
+                <div className="card" style={{ padding: 18, borderRadius: 12, background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Gross Profit Margin</div>
                   <div style={{ fontSize: 24, fontWeight: 800, color: '#0284c7', margin: '4px 0' }}>{fmtEgp(kpis?.grossProfitEgp || 6200000)}</div>
-                  <div style={{ fontSize: 11, color: '#0284c7' }}>33.7% Gross Margin</div>
+                  <div className="metric-pill" style={{ marginTop: 6 }}>33.7% Gross Margin</div>
                 </div>
-                <div className="card" style={{ padding: 18, borderRadius: 10, background: '#fff', border: '1px solid #cbd5e1' }}>
+                <div className="card" style={{ padding: 18, borderRadius: 12, background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Net Profit</div>
                   <div style={{ fontSize: 24, fontWeight: 800, color: '#0f172a', margin: '4px 0' }}>{fmtEgp(kpis?.netProfitEgp || 2100000)}</div>
-                  <div style={{ fontSize: 11, color: '#16a34a' }}>{kpis?.netProfitMarginPct || 11.4}% Net Margin</div>
+                  <div className="metric-pill metric-pill--success" style={{ marginTop: 6 }}>{kpis?.netProfitMarginPct || 11.4}% Net Margin</div>
                 </div>
-                <div className="card" style={{ padding: 18, borderRadius: 10, background: '#fff', border: '1px solid #cbd5e1' }}>
+                <div className="card" style={{ padding: 18, borderRadius: 12, background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Cash + Bank Liquidity</div>
                   <div style={{ fontSize: 24, fontWeight: 800, color: '#8b5cf6', margin: '4px 0' }}>{fmtEgp(kpis?.cashAndBanksBalanceEgp || 4800000)}</div>
-                  <div style={{ fontSize: 11, color: '#8b5cf6' }}>CIB EGP + QNB USD</div>
+                  <div className="metric-pill" style={{ marginTop: 6 }}>CIB EGP + QNB USD</div>
                 </div>
-                <div className="card" style={{ padding: 18, borderRadius: 10, background: '#fff', border: '1px solid #cbd5e1' }}>
+                <div className="card" style={{ padding: 18, borderRadius: 12, background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Accounts Receivable (AR)</div>
                   <div style={{ fontSize: 24, fontWeight: 800, color: '#d97706', margin: '4px 0' }}>{fmtEgp(kpis?.accountsReceivableEgp || 3400000)}</div>
-                  <div style={{ fontSize: 11, color: '#d97706' }}>Customer Outstandings</div>
+                  <div className="metric-pill metric-pill--warning" style={{ marginTop: 6 }}>Customer Outstandings</div>
                 </div>
-                <div className="card" style={{ padding: 18, borderRadius: 10, background: '#fff', border: '1px solid #cbd5e1' }}>
+                <div className="card" style={{ padding: 18, borderRadius: 12, background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Net Egyptian VAT Position</div>
                   <div style={{ fontSize: 24, fontWeight: 800, color: '#ef4444', margin: '4px 0' }}>{fmtEgp(kpis?.vatPositionEgp || 420000)}</div>
-                  <div style={{ fontSize: 11, color: '#ef4444' }}>Output VAT - Input VAT</div>
+                  <div className="metric-pill metric-pill--danger" style={{ marginTop: 6 }}>Output VAT - Input VAT</div>
                 </div>
               </div>
 

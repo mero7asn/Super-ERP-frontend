@@ -169,6 +169,36 @@ const PartnershipsPage = () => {
         </div>
       )}
 
+      <div className="card" style={{
+        background: 'linear-gradient(135deg, rgba(16,185,129,0.14), rgba(37,99,235,0.12))',
+        border: '1px solid rgba(16,185,129,0.22)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 16,
+        flexWrap: 'wrap'
+      }}>
+        <div>
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-success)', fontWeight: 700 }}>Benefits and culture</div>
+          <h3 style={{ margin: '6px 0 4px', fontSize: 17 }}>Make employee perks and ideas easier to manage</h3>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 13 }}>
+            Track partnerships, review submitted improvements, and keep the employee experience visible and organized.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {[
+            { label: 'Deals', value: partnerships.length },
+            { label: 'Suggestions', value: suggestions.length },
+            { label: 'Status', value: 'Live' },
+          ].map((item) => (
+            <div key={item.label} style={{ minWidth: 96, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
+              <div style={{ fontSize: 18, fontWeight: 700 }}>{item.value}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Tab Navigation */}
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 0 }}>
         {[

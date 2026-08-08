@@ -116,7 +116,7 @@ const PaymentPage = () => {
           </div>
         </div>
 
-        <div style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-color)', overflow: 'hidden' }}>
+        <div style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)', borderRadius: 16, border: '1px solid var(--border-color)', overflow: 'hidden', boxShadow: '0 18px 42px rgba(15, 23, 42, 0.08)' }}>
           {/* Offer Summary */}
           <div style={{ padding: '24px 28px', borderBottom: '1px solid var(--border-color)' }}>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>

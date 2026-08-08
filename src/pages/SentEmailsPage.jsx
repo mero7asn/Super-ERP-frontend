@@ -60,18 +60,22 @@ const SentEmailsPage = () => {
 
   return (
     <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+      <div className="page-header page-header--elevated" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 className="page-title">Sent Emails</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span className="metric-pill">Outbound mail</span>
+            <span className="metric-pill metric-pill--success">Delivery history</span>
+          </div>
+          <h1 className="page-title" style={{ marginTop: 8 }}>Sent Emails</h1>
           <p className="page-subtitle">History of all emails and offers sent from your account</p>
         </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: selectedEmail ? '1fr 1.5fr' : '1fr', gap: 20, alignItems: 'start' }}>
         {/* Email List */}
-        <div className="table-wrapper">
-          <div className="table-header">
-            <span className="table-title">{emails.length} Email{emails.length !== 1 ? 's' : ''}</span>
+        <div className="surface-card" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--border-color)', background: 'linear-gradient(135deg, rgba(248,250,252,0.95), rgba(255,255,255,0.98))' }}>
+            <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{emails.length} Email{emails.length !== 1 ? 's' : ''}</span>
           </div>
           {emails.length === 0 ? (
             <div className="empty-state">
@@ -110,7 +114,7 @@ const SentEmailsPage = () => {
 
         {/* Preview Pane */}
         {selectedEmail && (
-          <div className="table-wrapper" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <div className="surface-card" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-card)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                 <div style={{ fontWeight: 600, fontSize: 15 }}>{selectedEmail.subject}</div>

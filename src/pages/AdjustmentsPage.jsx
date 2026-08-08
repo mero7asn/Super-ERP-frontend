@@ -1,18 +1,12 @@
 ﻿import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
-
-const INVENTORY_ROLES = [
-  'Super CRM Administrator', 'System Architect', 'Inventory Manager',
-  'Warehouse Manager', 'Receiving Clerk', 'Shipping Clerk',
-  'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
-];
 
 const AdjustmentsPage = () => {
   const [adjustments, setAdjustments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [activeTab, setActiveTab] = useState('All');
   const [form, setForm] = useState({
     item: '', warehouse: '', subinventory: '', locator: '',
     lotNumber: '', serialNumber: '', systemQuantity: '', countedQuantity: '',
@@ -21,7 +15,6 @@ const AdjustmentsPage = () => {
   const [error, setError] = useState('');
   const [warehouses, setWarehouses] = useState([]);
   const [items, setItems] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,19 +91,35 @@ const AdjustmentsPage = () => {
     }
   };
 
+  const tabs = ['All', 'Pending', 'Approved', 'Posted'];
+  const filteredAdjustments = adjustments.filter((adj) => {
+    if (activeTab === 'All') return true;
+    return adj.status === activeTab;
+  });
+
   return (
-    <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Icon name="kanban" size={26} style={{ color: 'var(--accent-primary)' }} />
-            Inventory Adjustments
-          </h1>
-          <p className="page-subtitle">Cycle count variances and miscellaneous adjustments</p>
+    <div className="fade-in">
+      <div className="crm-page-banner" style={{ padding: 24, marginBottom: 18 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#7dd3fc', marginBottom: 6 }}>Adjustment workflow</div>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: '#fff' }}>Inventory adjustments</h1>
+            <p style={{ margin: '8px 0 0', fontSize: 14, color: '#e2e8f0' }}>Track physical count variance, approval state, and net stock impact.</p>
+          </div>
+          <button className="btn btn-primary" onClick={() => setShowForm(true)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Icon name="plus" size={16} /> New adjustment</button>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowForm(true)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Icon name="plus" size={16} /> New Adjustment
-        </button>
+      </div>
+
+      <div className="crm-glass-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+          <div style={{ padding: 12, borderRadius: 12, background: '#f8fafc', border: '1px solid #e2e8f0' }}><div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Pending</div><div style={{ fontSize: 20, fontWeight: 800, color: '#d97706' }}>{adjustments.filter((adj) => adj.status === 'Pending').length}</div></div>
+          <div style={{ padding: 12, borderRadius: 12, background: '#f8fafc', border: '1px solid #e2e8f0' }}><div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Approved</div><div style={{ fontSize: 20, fontWeight: 800, color: '#0284c7' }}>{adjustments.filter((adj) => adj.status === 'Approved').length}</div></div>
+          <div style={{ padding: 12, borderRadius: 12, background: '#f8fafc', border: '1px solid #e2e8f0' }}><div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Posted</div><div style={{ fontSize: 20, fontWeight: 800, color: '#16a34a' }}>{adjustments.filter((adj) => adj.status === 'Posted').length}</div></div>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+        {tabs.map((tab) => <button key={tab} onClick={() => setActiveTab(tab)} style={{ padding: '8px 14px', borderRadius: 999, border: '1px solid #e2e8f0', background: activeTab === tab ? '#0284c7' : '#fff', color: activeTab === tab ? '#fff' : '#475569', fontWeight: 700, cursor: 'pointer' }}>{tab}</button>)}
       </div>
 
       {error && <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>}
@@ -118,122 +127,56 @@ const AdjustmentsPage = () => {
       {loading ? (
         <div className="loading-state"><div className="spinner" />Loading adjustments…</div>
       ) : (
-        <div className="card" style={{ padding: 0 }}>
-          <div className="table-wrapper" style={{ overflowX: 'auto' }}>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Adjustment ID</th>
-                  <th>Item</th>
-                  <th>WH</th>
-                  <th>System Qty</th>
-                  <th>Counted Qty</th>
-                  <th>Variance</th>
-                  <th>Value</th>
-                  <th>Reason</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {adjustments.length === 0 ? (
-                  <tr><td colSpan="10" style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>No adjustments yet.</td></tr>
-                ) : adjustments.map(adj => (
-                  <tr key={adj._id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{adj.adjustmentId}</td>
-                    <td>{adj.item?.name}</td>
-                    <td>{adj.warehouse?.code}</td>
-                    <td>{adj.systemQuantity}</td>
-                    <td style={{ fontWeight: 600 }}>{adj.countedQuantity}</td>
-                    <td style={{ color: adj.varianceQuantity > 0 ? '#22c55e' : '#ef4444', fontWeight: 600 }}>{adj.varianceQuantity > 0 ? '+' : ''}{adj.varianceQuantity}</td>
-                    <td>${adj.varianceValue?.toLocaleString()}</td>
-                    <td><span className="badge badge-new">{adj.reasonCode}</span></td>
-                    <td><span className={`badge ${adj.status === 'Posted' ? 'badge-converted' : adj.status === 'Approved' ? 'badge-qualified' : 'badge-new'}`}>{adj.status}</span></td>
-                    <td>
-                      <div style={{ display: 'flex', gap: 8 }}>
-                        {adj.status === 'Pending' && <button className="btn btn-secondary btn-sm" onClick={() => handleApprove(adj._id)}>Approve</button>}
-                        {adj.status === 'Approved' && <button className="btn btn-primary btn-sm" onClick={() => handlePost(adj._id)}>Post</button>}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div style={{ display: 'grid', gap: 14 }}>
+          {filteredAdjustments.length === 0 ? <div className="card" style={{ padding: 24, textAlign: 'center', color: '#64748b' }}>No adjustments match this view yet.</div> : filteredAdjustments.map((adj) => (
+            <div key={adj._id} className="card" style={{ padding: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{adj.adjustmentId}</div>
+                  <div style={{ fontSize: 18, fontWeight: 800 }}>{adj.item?.name}</div>
+                </div>
+                <span style={{ padding: '6px 10px', borderRadius: 999, background: adj.status === 'Posted' ? '#dcfce7' : adj.status === 'Approved' ? '#e0f2fe' : '#fef3c7', color: adj.status === 'Posted' ? '#166534' : adj.status === 'Approved' ? '#0369a1' : '#92400e', fontWeight: 700, fontSize: 12 }}>{adj.status}</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 12, marginTop: 12 }}>
+                <div style={{ padding: 10, borderRadius: 10, background: '#f8fafc', border: '1px solid #e2e8f0' }}><div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Warehouse</div><div style={{ fontWeight: 700 }}>{adj.warehouse?.code}</div></div>
+                <div style={{ padding: 10, borderRadius: 10, background: '#f8fafc', border: '1px solid #e2e8f0' }}><div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>System qty</div><div style={{ fontWeight: 700 }}>{adj.systemQuantity}</div></div>
+                <div style={{ padding: 10, borderRadius: 10, background: '#f8fafc', border: '1px solid #e2e8f0' }}><div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Counted qty</div><div style={{ fontWeight: 700 }}>{adj.countedQuantity}</div></div>
+                <div style={{ padding: 10, borderRadius: 10, background: '#f8fafc', border: '1px solid #e2e8f0' }}><div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Variance</div><div style={{ fontWeight: 700, color: (adj.varianceQuantity || 0) > 0 ? '#16a34a' : '#dc2626' }}>{(adj.varianceQuantity || 0) > 0 ? '+' : ''}{adj.varianceQuantity || 0}</div></div>
+              </div>
+              <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
+                <span className="badge badge-new">{adj.reasonCode}</span>
+                {adj.status === 'Pending' && <button className="btn btn-secondary btn-sm" onClick={() => handleApprove(adj._id)}>Approve</button>}
+                {adj.status === 'Approved' && <button className="btn btn-primary btn-sm" onClick={() => handlePost(adj._id)}>Post</button>}
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
       {showForm && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 1000, padding: 20,
-        }} onClick={() => setShowForm(false)}>
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: 12, padding: 32, maxWidth: 600, width: '100%',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-          }} onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>New Inventory Adjustment</h2>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }} onClick={() => setShowForm(false)}>
+          <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 32, maxWidth: 600, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }} onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>New inventory adjustment</h2>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>Record variance and request approval</p>
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Item *</label>
-                  <select className="form-input" value={form.item} onChange={e => setForm(p => ({ ...p, item: e.target.value }))}>
-                    <option value="">Select item</option>
-                    {items.map(it => <option key={it._id} value={it._id}>{it.sku} - {it.name}</option>)}
-                  </select>
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Warehouse *</label>
-                  <select className="form-input" value={form.warehouse} onChange={e => setForm(p => ({ ...p, warehouse: e.target.value }))}>
-                    <option value="">Select warehouse</option>
-                    {warehouses.map(w => <option key={w._id} value={w._id}>{w.code} - {w.name}</option>)}
-                  </select>
-                </div>
+                <div className="form-group" style={{ margin: 0 }}><label className="form-label">Item *</label><select className="form-input" value={form.item} onChange={(e) => setForm((p) => ({ ...p, item: e.target.value }))}><option value="">Select item</option>{items.map((it) => <option key={it._id} value={it._id}>{it.sku} - {it.name}</option>)}</select></div>
+                <div className="form-group" style={{ margin: 0 }}><label className="form-label">Warehouse *</label><select className="form-input" value={form.warehouse} onChange={(e) => setForm((p) => ({ ...p, warehouse: e.target.value }))}><option value="">Select warehouse</option>{warehouses.map((w) => <option key={w._id} value={w._id}>{w.code} - {w.name}</option>)}</select></div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">System Qty *</label>
-                  <input className="form-input" type="number" value={form.systemQuantity} onChange={e => setForm(p => ({ ...p, systemQuantity: e.target.value }))} />
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Counted Qty *</label>
-                  <input className="form-input" type="number" value={form.countedQuantity} onChange={e => setForm(p => ({ ...p, countedQuantity: e.target.value }))} />
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Unit Cost</label>
-                  <input className="form-input" type="number" step="0.01" value={form.unitCost} onChange={e => setForm(p => ({ ...p, unitCost: e.target.value }))} />
-                </div>
+                <div className="form-group" style={{ margin: 0 }}><label className="form-label">System Qty *</label><input className="form-input" type="number" value={form.systemQuantity} onChange={(e) => setForm((p) => ({ ...p, systemQuantity: e.target.value }))} /></div>
+                <div className="form-group" style={{ margin: 0 }}><label className="form-label">Counted Qty *</label><input className="form-input" type="number" value={form.countedQuantity} onChange={(e) => setForm((p) => ({ ...p, countedQuantity: e.target.value }))} /></div>
+                <div className="form-group" style={{ margin: 0 }}><label className="form-label">Unit Cost</label><input className="form-input" type="number" step="0.01" value={form.unitCost} onChange={(e) => setForm((p) => ({ ...p, unitCost: e.target.value }))} /></div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Reason Code *</label>
-                  <select className="form-input" value={form.reasonCode} onChange={e => setForm(p => ({ ...p, reasonCode: e.target.value }))}>
-                    <option value="DAMAGE">Damage</option>
-                    <option value="THEFT">Theft</option>
-                    <option value="OBSOLETE">Obsolete</option>
-                    <option value="DATA_ENTRY_ERROR">Data Entry Error</option>
-                    <option value="OVERAGE">Overage</option>
-                    <option value="SHORTAGE">Shortage</option>
-                    <option value="OTHER">Other</option>
-                  </select>
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">GL Account</label>
-                  <input className="form-input" placeholder="GL-XXXXX" value={form.glAccount} onChange={e => setForm(p => ({ ...p, glAccount: e.target.value }))} />
-                </div>
+                <div className="form-group" style={{ margin: 0 }}><label className="form-label">Reason Code *</label><select className="form-input" value={form.reasonCode} onChange={(e) => setForm((p) => ({ ...p, reasonCode: e.target.value }))}><option value="DAMAGE">Damage</option><option value="THEFT">Theft</option><option value="OBSOLETE">Obsolete</option><option value="DATA_ENTRY_ERROR">Data Entry Error</option><option value="OVERAGE">Overage</option><option value="SHORTAGE">Shortage</option><option value="OTHER">Other</option></select></div>
+                <div className="form-group" style={{ margin: 0 }}><label className="form-label">GL Account</label><input className="form-input" placeholder="GL-XXXXX" value={form.glAccount} onChange={(e) => setForm((p) => ({ ...p, glAccount: e.target.value }))} /></div>
               </div>
-              <div className="form-group" style={{ margin: 0 }}>
-                <label className="form-label">Remarks</label>
-                <textarea className="form-input" rows="2" value={form.remarks} onChange={e => setForm(p => ({ ...p, remarks: e.target.value }))} />
-              </div>
+              <div className="form-group" style={{ margin: 0 }}><label className="form-label">Remarks</label><textarea className="form-input" rows="2" value={form.remarks} onChange={(e) => setForm((p) => ({ ...p, remarks: e.target.value }))} /></div>
             </div>
-
             <div style={{ display: 'flex', gap: 10, marginTop: 24, justifyContent: 'flex-end' }}>
               <button type="button" className="btn btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
-              <button type="button" className="btn btn-primary" onClick={handleCreate}>Create Adjustment</button>
+              <button type="button" className="btn btn-primary" onClick={handleCreate}>Create adjustment</button>
             </div>
           </div>
         </div>

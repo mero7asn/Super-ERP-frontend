@@ -44,12 +44,18 @@ const DevToolsPage = () => {
 
   return (
     <div>
-      <div className="page-header">
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Icon name="devtools" size={26} style={{ color: 'var(--accent-primary)' }} />
-          CRM Developer Console
-        </h1>
-        <p className="page-subtitle">Diagnostic controls, system status logs, and developer maintenance utilities</p>
+      <div className="page-header page-header--elevated">
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span className="metric-pill">Developer tools</span>
+            <span className="metric-pill metric-pill--success">Diagnostics ready</span>
+          </div>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: 8 }}>
+            <Icon name="devtools" size={26} style={{ color: 'var(--accent-primary)' }} />
+            CRM Developer Console
+          </h1>
+          <p className="page-subtitle">Diagnostic controls, system status logs, and developer maintenance utilities</p>
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 24 }}>

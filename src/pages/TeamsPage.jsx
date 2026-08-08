@@ -150,11 +150,14 @@ const TeamsPage = () => {
   });
 
   return (
-    <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent-primary)' }}>
+    <div className="fade-in">
+      <div className="crm-page-banner" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, padding: 24 }}>
+        <div style={{ maxWidth: 640 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 6 }}>
+            Organizational oversight
+          </div>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#ffffff', margin: 0 }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#F8FAFC' }}>
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
               <circle cx="9" cy="7" r="4"/>
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -162,17 +165,17 @@ const TeamsPage = () => {
             </svg>
             Teams
           </h1>
-          <p className="page-subtitle">Manage department teams and member assignments</p>
+          <p className="page-subtitle" style={{ color: '#CBD5E1', marginTop: 8, marginBottom: 0 }}>Manage department teams and member assignments with clear ownership.</p>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {[
-            { label: 'Teams', value: teams.length, color: 'var(--accent-primary)' },
-            { label: 'Members', value: teams.reduce((s, t) => s + t.members.length, 0), color: '#10B981' },
-            { label: 'Unassigned', value: unassigned.length, color: unassigned.length > 0 ? '#EF4444' : '#10B981' },
+            { label: 'Teams', value: teams.length, color: '#F8FAFC' },
+            { label: 'Members', value: teams.reduce((s, t) => s + t.members.length, 0), color: '#A7F3D0' },
+            { label: 'Unassigned', value: unassigned.length, color: unassigned.length > 0 ? '#FCA5A5' : '#A7F3D0' },
           ].map(s => (
-            <div key={s.label} className="table-wrapper" style={{ padding: '12px 18px', textAlign: 'center', minWidth: 80 }}>
+            <div key={s.label} className="crm-glass-card" style={{ padding: '12px 18px', textAlign: 'center', minWidth: 90, background: 'rgba(255,255,255,0.12)', borderColor: 'rgba(255,255,255,0.16)' }}>
               <div style={{ fontSize: 22, fontWeight: 700, color: s.color }}>{s.value}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{s.label}</div>
+              <div style={{ fontSize: 11, color: 'rgba(248,250,252,0.8)' }}>{s.label}</div>
             </div>
           ))}
         </div>

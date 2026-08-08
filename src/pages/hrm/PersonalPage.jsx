@@ -801,6 +801,36 @@ const PersonalPage = () => {
         </div>
       )}
 
+      <div className="card" style={{
+        background: 'linear-gradient(135deg, rgba(2,132,199,0.14), rgba(124,58,237,0.12))',
+        border: '1px solid rgba(2,132,199,0.22)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 16,
+        flexWrap: 'wrap'
+      }}>
+        <div>
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-primary)', fontWeight: 700 }}>People operations</div>
+          <h3 style={{ margin: '6px 0 4px', fontSize: 17 }}>Manage employee lifecycle and compliance from one screen</h3>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 13 }}>
+            Review the selected employee profile, contract terms, documents, and leave activity with a more structured overview.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {[
+            { label: 'Employees', value: employees.length },
+            { label: 'Filtered', value: filteredEmployees.length },
+            { label: 'Focus', value: selectedEmployeeName ? 'Active' : 'Select' },
+          ].map((item) => (
+            <div key={item.label} style={{ minWidth: 96, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
+              <div style={{ fontSize: 18, fontWeight: 700 }}>{item.value}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* HRM Top Sub-Tabs Navigation */}
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 0, overflowX: 'auto' }}>
         {[

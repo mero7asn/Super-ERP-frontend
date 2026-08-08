@@ -103,23 +103,22 @@ const SalesKanbanPage = () => {
   }, [board]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div className="crm-glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#2563EB', marginBottom: 4 }}>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div className="crm-page-banner" style={{ padding: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+        <div style={{ maxWidth: 620 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 6 }}>
             Visual Sales Pipeline
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Icon name="kanban" size={24} style={{ color: '#2563EB' }} />
-            Sales Dashboard
+          <h1 style={{ fontSize: 26, fontWeight: 800, color: '#ffffff', margin: 0, letterSpacing: '-0.02em' }}>
+            <span style={{ marginRight: 8 }}>📊</span> Sales Dashboard
           </h1>
-          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4, margin: 0 }}>
-            Track every deal from first contact to close with a clearer, faster workflow.
+          <p style={{ fontSize: 14, color: '#CBD5E1', marginTop: 8, margin: 0, lineHeight: 1.5 }}>
+            Track every deal from first contact to close with a clearer, faster workflow and better visibility into momentum.
           </p>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <div style={{ position: 'relative', width: 260 }}>
+          <div style={{ position: 'relative', width: 280 }}>
             <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}>
               <Icon name="search" size={14} />
             </span>
@@ -134,15 +133,15 @@ const SalesKanbanPage = () => {
                 paddingRight: 12,
                 paddingTop: 8,
                 paddingBottom: 8,
-                borderRadius: 10,
-                border: '1px solid #CBD5E1',
+                borderRadius: 999,
+                border: '1px solid rgba(255,255,255,0.2)',
                 fontSize: 12,
                 outline: 'none',
-                background: '#FFF',
+                background: 'rgba(255,255,255,0.92)',
               }}
             />
           </div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 999, background: '#EFF6FF', color: '#1D4ED8', fontSize: 12, fontWeight: 700 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 999, background: 'rgba(255,255,255,0.12)', color: '#F8FAFC', border: '1px solid rgba(255,255,255,0.18)', fontSize: 12, fontWeight: 700 }}>
             <Icon name="trending" size={14} />
             {summary.conversion}% conversion
           </div>
@@ -156,13 +155,14 @@ const SalesKanbanPage = () => {
           { label: 'Won', value: summary.won, icon: 'check', color: '#059669', bg: '#ECFDF5' },
           { label: 'Lost', value: summary.lost, icon: 'close', color: '#DC2626', bg: '#FEF2F2' },
         ].map((item) => (
-          <div key={item.label} style={{ background: '#FFF', border: '1px solid #E2E8F0', borderRadius: 14, padding: '14px 16px', boxShadow: '0 1px 3px rgba(15, 23, 42, 0.05)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <div style={{ width: 34, height: 34, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', background: item.bg, color: item.color }}>
+          <div key={item.label} className="crm-stat-widget">
+            <div className="crm-stat-header">
+              <div className="crm-stat-icon-bg" style={{ background: item.bg, color: item.color }}>
                 <Icon name={item.icon} size={16} />
               </div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: '#0F172A' }}>{item.value}</div>
+              <span className="crm-trend-pill crm-trend-up">Live</span>
             </div>
+            <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A' }}>{item.value}</div>
             <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>{item.label}</div>
           </div>
         ))}
@@ -184,7 +184,7 @@ const SalesKanbanPage = () => {
                       background: 'rgba(255, 255, 255, 0.95)',
                       border: `1px solid ${col.color}33`,
                       borderTop: `3px solid ${col.color}`,
-                      borderRadius: 14,
+                      borderRadius: 16,
                       padding: '14px 16px',
                       marginBottom: 12,
                       boxShadow: `0 10px 24px rgba(15, 23, 42, 0.05)`,
@@ -192,7 +192,7 @@ const SalesKanbanPage = () => {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: 10, background: col.bg, color: col.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: 34, height: 34, borderRadius: 10, background: col.bg, color: col.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <Icon name={col.icon} size={15} />
                         </div>
                         <div>
@@ -200,9 +200,12 @@ const SalesKanbanPage = () => {
                           <div style={{ fontSize: 11, color: '#64748B' }}>{col.description}</div>
                         </div>
                       </div>
-                      <span style={{ background: col.bg, color: col.color, border: `1px solid ${col.color}44`, borderRadius: 999, padding: '3px 9px', fontSize: 12, fontWeight: 700 }}>
-                        {leads.length}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ background: col.bg, color: col.color, border: `1px solid ${col.color}44`, borderRadius: 999, padding: '3px 9px', fontSize: 12, fontWeight: 700 }}>
+                          {leads.length}
+                        </span>
+                        <button style={{ border: 'none', background: '#F8FAFC', color: '#2563EB', borderRadius: 999, width: 24, height: 24, cursor: 'pointer', fontSize: 12 }} title="Add deal">＋</button>
+                      </div>
                     </div>
                   </div>
 
@@ -216,7 +219,7 @@ const SalesKanbanPage = () => {
                           minHeight: 340,
                           background: snapshot.isDraggingOver ? `${col.color}0D` : '#F8FAFC',
                           border: snapshot.isDraggingOver ? `2px dashed ${col.color}` : '1px solid #E2E8F0',
-                          borderRadius: 14,
+                          borderRadius: 16,
                           padding: 8,
                           transition: 'all 0.18s ease',
                         }}
@@ -232,7 +235,7 @@ const SalesKanbanPage = () => {
                                 style={{
                                   background: snap.isDragging ? 'rgba(255,255,255,0.98)' : '#FFF',
                                   border: snap.isDragging ? `2px solid ${col.color}` : '1px solid #E2E8F0',
-                                  borderRadius: 12,
+                                  borderRadius: 14,
                                   padding: 12,
                                   marginBottom: 10,
                                   boxShadow: snap.isDragging ? `0 16px 32px rgba(0,0,0,0.12)` : '0 4px 10px rgba(15, 23, 42, 0.04)',

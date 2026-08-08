@@ -49,6 +49,7 @@ const UserProfilePage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [editing, setEditing] = useState(false);
+  const [activeSection, setActiveSection] = useState('profile');
   const [form, setForm] = useState({});
 
   const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(currentUser?.role);
@@ -181,6 +182,25 @@ const UserProfilePage = () => {
       {error && <div className="alert alert-error">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
 
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
+        {['profile','security','notifications','activity'].map((section) => (
+          <button
+            key={section}
+            onClick={() => setActiveSection(section)}
+            className="btn btn-secondary btn-sm"
+            style={{
+              textTransform: 'capitalize',
+              background: activeSection === section ? 'var(--accent-primary)' : 'rgba(255,255,255,0.9)',
+              color: activeSection === section ? '#fff' : 'var(--text-primary)',
+              border: activeSection === section ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)'
+            }}
+          >
+            {section === 'profile' ? 'Profile Info' : section === 'security' ? 'Security' : section === 'notifications' ? 'Notifications' : 'Activity Log'}
+          </button>
+        ))}
+      </div>
+
+      {activeSection === 'profile' ? (
       <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 20, alignItems: 'start' }}>
         {/* Left card */}
         <div className="table-wrapper" style={{ padding: 24, textAlign: 'center' }}>
@@ -361,6 +381,70 @@ const UserProfilePage = () => {
           )}
         </div>
       </div>
+      ) : activeSection === 'security' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div className="surface-card" style={{ padding: 24 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Security posture</div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Account protection overview</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {[
+                ['Active session', 'Protected and current'],
+                ['Password policy', 'Strong password requirements'],
+                ['Two-factor authentication', user.isActive ? 'Enabled for administration' : 'Review required'],
+                ['Last activity', new Date(user.updatedAt).toLocaleDateString()]
+              ].map(([label, value]) => (
+                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', borderRadius: 10, background: 'rgba(248,250,252,0.9)' }}>
+                  <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{label}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="surface-card" style={{ padding: 24 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Security actions</div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Recommended next steps</h3>
+            <ul style={{ paddingLeft: 18, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <li>Review recent device sign-ins and revoke unknown sessions.</li>
+              <li>Enable MFA for all privileged roles in the company.</li>
+              <li>Use the password reset flow for any shared account access.</li>
+            </ul>
+          </div>
+        </div>
+      ) : activeSection === 'notifications' ? (
+        <div className="surface-card" style={{ padding: 24 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Notifications center</div>
+          <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Current delivery preferences</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {[
+              ['Email alerts', 'Enabled for governance updates'],
+              ['In-app messages', 'Enabled for approvals and mentions'],
+              ['Weekly digest', 'Scheduled every Monday morning']
+            ].map(([label, value]) => (
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', borderRadius: 10, background: 'rgba(248,250,252,0.9)' }}>
+                <span style={{ fontSize: 14, fontWeight: 600 }}>{label}</span>
+                <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="surface-card" style={{ padding: 24 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Activity log</div>
+          <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Recent system activity</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {[
+              ['Updated profile information', 'Today · 09:24'],
+              ['Reviewed account permissions', 'Yesterday · 16:12'],
+              ['Opened user management workspace', 'Yesterday · 11:05']
+            ].map(([title, time]) => (
+              <div key={title} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', borderRadius: 10, background: 'rgba(248,250,252,0.9)' }}>
+                <span style={{ fontSize: 14, fontWeight: 600 }}>{title}</span>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{time}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

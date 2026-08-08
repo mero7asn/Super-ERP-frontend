@@ -249,9 +249,13 @@ const EmailsPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20, height: '100%' }}>
       {/* Header */}
-      <div className="page-header">
+      <div className="page-header page-header--elevated">
         <div>
-          <h1 className="page-title">Internal Communications</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span className="metric-pill">Secure messaging</span>
+            <span className="metric-pill metric-pill--success">Threaded conversations</span>
+          </div>
+          <h1 className="page-title" style={{ marginTop: 8 }}>Internal Communications</h1>
           <p className="page-subtitle">Secure, threaded internal messaging — all messages are permanent and auditable</p>
         </div>
       </div>
@@ -290,7 +294,7 @@ const EmailsPage = () => {
         </div>
 
         {/* Main content card */}
-        <div className="card" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
+        <div className="surface-card" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
 
           {/* â”€â”€ COMPOSE NEW â”€â”€ */}
           {activeTab === 'compose' && (

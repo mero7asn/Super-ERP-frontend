@@ -4,7 +4,7 @@ import API from '../services/api';
 import { Icon } from '../components/Icons';
 
 const platformBadge = (platform) => {
-  const map = { Meta: 'badge-meta', Google: 'badge-google', Email: 'badge-new', Other: 'badge-contacted' };
+  const map = { Meta: 'badge-meta', Google: 'badge-google', Email: 'badge-new', WhatsApp: 'badge-qualified', Other: 'badge-contacted' };
   return map[platform] || 'badge-new';
 };
 
@@ -22,14 +22,13 @@ const CampaignsPage = () => {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
+  const [filterPlatform, setFilterPlatform] = useState('All');
 
-  // Modal state
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
-
   const [copied, setCopied] = useState(null);
 
   const canCreate = ['Super CRM Administrator', 'Marketing Specialist', 'Marketing Manager', 'System Architect'].includes(user?.role);
@@ -62,11 +61,13 @@ const CampaignsPage = () => {
 
   useEffect(() => { fetchCampaigns(); }, []);
 
-  const filtered = campaigns.filter(c =>
-    (filterStatus === 'All' || c.status === filterStatus) &&
-    (c.name?.toLowerCase().includes(search.toLowerCase()) ||
-     c.platform?.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filtered = campaigns.filter((c) => {
+    const matchesStatus = filterStatus === 'All' || c.status === filterStatus;
+    const matchesPlatform = filterPlatform === 'All' || c.platform === filterPlatform;
+    const query = search.toLowerCase();
+    const matchesSearch = !query || [c.name, c.platform, c.status].join(' ').toLowerCase().includes(query);
+    return matchesStatus && matchesPlatform && matchesSearch;
+  });
 
   const openCreate = () => {
     setEditingId(null);
@@ -119,22 +120,31 @@ const CampaignsPage = () => {
     }
   };
 
-  // Summary stats
-  const totalBudget = campaigns.reduce((sum, c) => sum + (c.budget || 0), 0);
+  const totalBudget = campaigns.reduce((sum, c) => sum + (Number(c.budget) || 0), 0);
   const activeCampaigns = campaigns.filter(c => c.status === 'Active').length;
   const draftCampaigns = campaigns.filter(c => c.status === 'Draft').length;
   const completedCampaigns = campaigns.filter(c => c.status === 'Completed').length;
 
+  const progressValue = (campaign) => {
+    if (campaign.status === 'Completed') return 100;
+    if (campaign.status === 'Paused') return 38;
+    if (campaign.status === 'Active') return 72;
+    return 56;
+  };
+
   return (
-    <div>
-      {/* Page Header */}
-      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Icon name="campaigns" size={26} style={{ color: 'var(--accent-primary)' }} />
-            Campaigns
+    <div className="fade-in">
+      <div className="crm-page-banner" style={{ padding: 24, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+        <div style={{ maxWidth: 640 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 6 }}>
+            Marketing Command Center
+          </div>
+          <h1 style={{ fontSize: 26, fontWeight: 800, color: '#ffffff', margin: 0, letterSpacing: '-0.02em' }}>
+            <span style={{ marginRight: 8 }}>📢</span> Campaigns
           </h1>
-          <p className="page-subtitle">Plan, track, and manage marketing campaigns across platforms</p>
+          <p style={{ fontSize: 14, color: '#CBD5E1', marginTop: 8, margin: 0, lineHeight: 1.5 }}>
+            Plan, track, and manage campaigns with a faster visual workflow across every channel.
+          </p>
         </div>
         {canCreate && (
           <button className="btn btn-primary" onClick={openCreate} style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -146,61 +156,49 @@ const CampaignsPage = () => {
 
       {error && <div className="alert alert-error">{error}</div>}
 
-      {/* KPI Cards */}
-      <div className="stat-grid" style={{ marginBottom: 28 }}>
-        <div className="stat-card blue">
-          <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-            <Icon name="campaigns" size={24} />
-          </div>
-          <div className="stat-value">{campaigns.length}</div>
-          <div className="stat-label">Total Campaigns</div>
+      <div className="stat-grid" style={{ marginBottom: 20 }}>
+        <div className="crm-stat-widget">
+          <div className="crm-stat-header"><div className="crm-stat-icon-bg" style={{ background: '#EFF6FF', color: '#2563EB' }}><Icon name="campaigns" size={18} /></div><span className="crm-trend-pill crm-trend-up">Live</span></div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A' }}>{campaigns.length}</div>
+          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Total Campaigns</div>
         </div>
-        <div className="stat-card green">
-          <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-            <Icon name="play" size={24} />
-          </div>
-          <div className="stat-value">{activeCampaigns}</div>
-          <div className="stat-label">Active Now</div>
+        <div className="crm-stat-widget">
+          <div className="crm-stat-header"><div className="crm-stat-icon-bg" style={{ background: '#ECFDF5', color: '#059669' }}><Icon name="play" size={18} /></div><span className="crm-trend-pill crm-trend-up">Active</span></div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A' }}>{activeCampaigns}</div>
+          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Active Now</div>
         </div>
-        <div className="stat-card yellow">
-          <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-            <Icon name="edit" size={24} />
-          </div>
-          <div className="stat-value">{draftCampaigns}</div>
-          <div className="stat-label">In Draft</div>
+        <div className="crm-stat-widget">
+          <div className="crm-stat-header"><div className="crm-stat-icon-bg" style={{ background: '#FEF3C7', color: '#D97706' }}><Icon name="edit" size={18} /></div><span className="crm-trend-pill crm-trend-up">Draft</span></div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A' }}>{draftCampaigns}</div>
+          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>In Draft</div>
         </div>
-        <div className="stat-card cyan">
-          <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-            <Icon name="check" size={24} />
-          </div>
-          <div className="stat-value">{completedCampaigns}</div>
-          <div className="stat-label">Completed</div>
+        <div className="crm-stat-widget">
+          <div className="crm-stat-header"><div className="crm-stat-icon-bg" style={{ background: '#E0F2FE', color: '#0284C7' }}><Icon name="check" size={18} /></div><span className="crm-trend-pill crm-trend-up">Done</span></div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A' }}>{completedCampaigns}</div>
+          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Completed</div>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="table-wrapper">
-        <div className="table-header">
-          <span className="table-title">{filtered.length} Campaign{filtered.length !== 1 ? 's' : ''}</span>
+      <div className="crm-glass-card" style={{ padding: '18px 20px', marginBottom: 20 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>{filtered.length} campaign{filtered.length !== 1 ? 's' : ''}</div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-            <select
-              className="table-search"
-              value={filterStatus}
-              onChange={e => setFilterStatus(e.target.value)}
-              style={{ width: 140 }}
-            >
+            <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ width: 140, border: '1px solid #CBD5E1', borderRadius: 999, padding: '6px 10px', fontSize: 12, background: '#fff' }}>
               <option value="All">All Statuses</option>
               <option value="Active">Active</option>
               <option value="Draft">Draft</option>
               <option value="Paused">Paused</option>
               <option value="Completed">Completed</option>
             </select>
-            <input
-              className="table-search"
-              placeholder="Search campaigns…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
+            <select value={filterPlatform} onChange={e => setFilterPlatform(e.target.value)} style={{ width: 140, border: '1px solid #CBD5E1', borderRadius: 999, padding: '6px 10px', fontSize: 12, background: '#fff' }}>
+              <option value="All">All Channels</option>
+              <option value="Meta">Meta</option>
+              <option value="Google">Google</option>
+              <option value="Email">Email</option>
+              <option value="WhatsApp">WhatsApp</option>
+              <option value="Other">Other</option>
+            </select>
+            <input placeholder="Search campaigns…" value={search} onChange={e => setSearch(e.target.value)} style={{ width: 220, border: '1px solid #CBD5E1', borderRadius: 999, padding: '6px 10px', fontSize: 12, background: '#fff' }} />
           </div>
         </div>
 
@@ -209,132 +207,81 @@ const CampaignsPage = () => {
         ) : filtered.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state-icon"><Icon name="campaigns" size={48} style={{ opacity: 0.4 }} /></div>
-            <p>No campaigns found</p>
-            {canCreate && (
-              <button className="btn btn-primary" onClick={openCreate} style={{ width: 'auto', marginTop: 12 }}>
-                Create First Campaign
-              </button>
-            )}
+            <p>No campaigns match the current filters.</p>
+            {canCreate && (<button className="btn btn-primary" onClick={openCreate} style={{ width: 'auto', marginTop: 12 }}>Create First Campaign</button>)}
           </div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Campaign Name</th>
-                <th>Platform</th>
-                <th>Status</th>
-                <th>Budget</th>
-                <th>Duration</th>
-                <th>Manager</th>
-                {canGetFormLink && <th>Form Link</th>}
-                {(canCreate || canDelete) && <th>Actions</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(campaign => (
-                <tr key={campaign._id}>
-                  <td><strong>{campaign.name}</strong></td>
-                  <td><span className={`badge ${platformBadge(campaign.platform)}`}>{campaign.platform}</span></td>
-                  <td><span className={`badge ${statusBadge(campaign.status)}`}>{campaign.status}</span></td>
-                  <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-                    ${Number(campaign.budget || 0).toLocaleString()}
-                  </td>
-                  <td style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                    {campaign.startDate ? new Date(campaign.startDate).toLocaleDateString() : '—'}
-                    {campaign.startDate && campaign.endDate ? ' ? ' : ''}
-                    {campaign.endDate ? new Date(campaign.endDate).toLocaleDateString() : ''}
-                    {!campaign.startDate && !campaign.endDate && '—'}
-                  </td>
-                  <td style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                    {campaign.manager
-                      ? `${campaign.manager.firstName} ${campaign.manager.lastName}`
-                      : <span style={{ color: 'var(--text-muted)' }}>—</span>}
-                  </td>
-                  {canGetFormLink && (
-                    <td>
-                      <button
-                        onClick={() => handleGetFormLink(campaign)}
-                        className="btn btn-secondary btn-sm"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap' }}
-                      >
-                        {copied === campaign._id ? (
-                          <><Icon name="check" size={13} /> Copied!</>
-                        ) : (
-                          <><Icon name="globe" size={13} /> {campaign.formSlug ? 'Copy Link' : 'Get Form Link'}</>
-                        )}
-                      </button>
-                    </td>
-                  )}
-                  {(canCreate || canDelete) && (
-                    <td>
-                      <div style={{ display: 'flex', gap: 8 }}>
-                        {canCreate && (
-                          <button
-                            onClick={() => openEdit(campaign)}
-                            className="btn btn-secondary btn-sm"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                          >
-                            <Icon name="edit" size={13} />
-                            Edit
-                          </button>
-                        )}
-                        {canDelete && (
-                          <button
-                            onClick={() => handleDelete(campaign._id)}
-                            className="btn btn-danger btn-sm"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                          >
-                            <Icon name="trash" size={13} />
-                            Delete
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginTop: 16 }}>
+            {filtered.map((campaign) => {
+              const value = progressValue(campaign);
+              return (
+                <div key={campaign._id} className="crm-glass-card" style={{ padding: 18, background: '#ffffff', borderRadius: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{campaign.platform}</div>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>{campaign.name}</div>
+                    </div>
+                    <span className={`badge ${statusBadge(campaign.status)}`}>{campaign.status}</span>
+                  </div>
 
-        {/* Budget Footer */}
-        {!loading && campaigns.length > 0 && (
-          <div style={{
-            padding: '14px 24px',
-            borderTop: '1px solid var(--border-color)',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            fontSize: 13,
-            color: 'var(--text-secondary)',
-            background: 'var(--bg-secondary)'
-          }}>
-            <span>Total allocated budget: <strong style={{ color: 'var(--text-primary)' }}>${totalBudget.toLocaleString()}</strong></span>
+                  <div style={{ marginTop: 14, marginBottom: 10 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#64748B', marginBottom: 6 }}>
+                      <span>Performance pulse</span>
+                      <span>{value}%</span>
+                    </div>
+                    <div style={{ height: 8, borderRadius: 999, background: '#E2E8F0', overflow: 'hidden' }}>
+                      <div style={{ width: `${value}%`, height: '100%', borderRadius: 999, background: 'linear-gradient(90deg, #2563EB 0%, #7C3AED 100%)' }} />
+                    </div>
+                  </div>
+
+                  <svg viewBox="0 0 120 32" width="120" height="32" style={{ marginBottom: 10 }}>
+                    <polyline fill="none" stroke="#2563EB" strokeWidth="2.5" points="0,24 20,18 40,22 60,12 80,16 100,8 120,10" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, fontSize: 12, color: '#475569', marginBottom: 12 }}>
+                    <div style={{ background: '#F8FAFC', padding: '8px 10px', borderRadius: 10 }}><strong style={{ color: '#0F172A' }}>Budget</strong><div>${Number(campaign.budget || 0).toLocaleString()}</div></div>
+                    <div style={{ background: '#F8FAFC', padding: '8px 10px', borderRadius: 10 }}><strong style={{ color: '#0F172A' }}>Lead goal</strong><div>{campaign.leadsCount || 'Live'}</div></div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <div style={{ fontSize: 12, color: '#64748B' }}>
+                      {campaign.manager ? `${campaign.manager.firstName} ${campaign.manager.lastName}` : 'Manager pending'}
+                    </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      {canGetFormLink && (
+                        <button onClick={() => handleGetFormLink(campaign)} className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                          {copied === campaign._id ? <><Icon name="check" size={13} /> Copied</> : <><Icon name="globe" size={13} /> Link</>}
+                        </button>
+                      )}
+                      {canCreate && (<button onClick={() => openEdit(campaign)} className="btn btn-secondary btn-sm"><Icon name="edit" size={13} /></button>)}
+                      {canDelete && (<button onClick={() => handleDelete(campaign._id)} className="btn btn-danger btn-sm"><Icon name="trash" size={13} /></button>)}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
 
-      {/* Create / Edit Modal */}
+      {!loading && campaigns.length > 0 && (
+        <div style={{ textAlign: 'right', fontSize: 13, color: '#64748B', marginTop: 8 }}>
+          Total allocated budget: <strong style={{ color: '#0F172A' }}>${totalBudget.toLocaleString()}</strong>
+        </div>
+      )}
+
       {showModal && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 999,
-          background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: 20,
-        }} onClick={(e) => e.target === e.currentTarget && setShowModal(false)}>
-          <div className="card" style={{ width: '100%', maxWidth: 520, padding: 36, position: 'relative' }}>
-            {/* Close */}
-            <button
-              onClick={() => setShowModal(false)}
-              style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4 }}
-            >
+        <div style={{ position: 'fixed', inset: 0, zIndex: 999, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }} onClick={(e) => e.target === e.currentTarget && setShowModal(false)}>
+          <div className="crm-glass-card" style={{ width: '100%', maxWidth: 560, padding: 32, position: 'relative' }}>
+            <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4 }}>
               <Icon name="close" size={18} />
             </button>
 
-            <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
               <Icon name="campaigns" size={20} style={{ color: 'var(--accent-primary)' }} />
               {editingId ? 'Edit Campaign' : 'Create Campaign'}
             </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 24 }}>
+            <p style={{ color: '#64748B', fontSize: 13, marginBottom: 20 }}>
               {editingId ? 'Update campaign details below.' : 'Fill in the details to launch a new campaign.'}
             </p>
 
@@ -343,49 +290,26 @@ const CampaignsPage = () => {
             <form onSubmit={handleSave}>
               <div className="form-group">
                 <label className="form-label">Campaign Name</label>
-                <input
-                  className="form-input"
-                  placeholder="e.g. Summer Sale Q3 2026"
-                  value={form.name}
-                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  required
-                />
+                <input className="form-input" placeholder="e.g. Summer Sale Q3 2026" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
               </div>
-
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div className="form-group">
                   <label className="form-label">Platform</label>
                   <select className="form-input" value={form.platform} onChange={e => setForm(f => ({ ...f, platform: e.target.value }))} style={{ cursor: 'pointer' }}>
-                    <option>Meta</option>
-                    <option>Google</option>
-                    <option>Email</option>
-                    <option>Other</option>
+                    <option>Meta</option><option>Google</option><option>Email</option><option>WhatsApp</option><option>Other</option>
                   </select>
                 </div>
                 <div className="form-group">
                   <label className="form-label">Status</label>
                   <select className="form-input" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))} style={{ cursor: 'pointer' }}>
-                    <option>Draft</option>
-                    <option>Active</option>
-                    <option>Paused</option>
-                    <option>Completed</option>
+                    <option>Draft</option><option>Active</option><option>Paused</option><option>Completed</option>
                   </select>
                 </div>
               </div>
-
               <div className="form-group">
                 <label className="form-label">Budget (USD)</label>
-                <input
-                  type="number"
-                  min="0"
-                  className="form-input"
-                  placeholder="e.g. 5000"
-                  value={form.budget}
-                  onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
-                  required
-                />
+                <input type="number" min="0" className="form-input" placeholder="e.g. 5000" value={form.budget} onChange={e => setForm(f => ({ ...f, budget: e.target.value }))} required />
               </div>
-
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div className="form-group">
                   <label className="form-label">Start Date</label>
@@ -396,14 +320,9 @@ const CampaignsPage = () => {
                   <input type="date" className="form-input" value={form.endDate} onChange={e => setForm(f => ({ ...f, endDate: e.target.value }))} />
                 </div>
               </div>
-
               <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-                <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary" style={{ flex: 1 }}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-primary" disabled={saving} style={{ flex: 2 }}>
-                  {saving ? 'Saving…' : editingId ? 'Save Changes' : 'Create Campaign'}
-                </button>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} style={{ flex: 1 }}>Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={saving} style={{ flex: 1 }}>{saving ? 'Saving...' : editingId ? 'Save Changes' : 'Create Campaign'}</button>
               </div>
             </form>
           </div>

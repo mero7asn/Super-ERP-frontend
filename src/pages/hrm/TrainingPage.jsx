@@ -226,6 +226,36 @@ const TrainingPage = () => {
         </div>
       )}
 
+      <div className="card" style={{
+        background: 'linear-gradient(135deg, rgba(16,185,129,0.14), rgba(37,99,235,0.12))',
+        border: '1px solid rgba(16,185,129,0.22)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 16,
+        flexWrap: 'wrap'
+      }}>
+        <div>
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-success)', fontWeight: 700 }}>Training and readiness</div>
+          <h3 style={{ margin: '6px 0 4px', fontSize: 17 }}>Keep your workforce aligned and productive</h3>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 13 }}>
+            Track presence, assign programs, and review follow-up progress without leaving the core HR workspace.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {[
+            { label: 'Live', value: auxStats.live },
+            { label: 'Training', value: auxStats.training },
+            { label: 'Records', value: trainings.length },
+          ].map((item) => (
+            <div key={item.label} style={{ minWidth: 96, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
+              <div style={{ fontSize: 18, fontWeight: 700 }}>{item.value}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* ── AUX Presence Section ── */}
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
         {/* My Status Switcher */}

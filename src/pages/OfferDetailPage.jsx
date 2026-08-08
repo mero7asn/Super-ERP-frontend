@@ -203,22 +203,22 @@ const OfferDetailPage = () => {
   if (!offer) return <div className="empty-state"><p>Offer not found</p></div>;
 
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
-        <button onClick={() => navigate(-1)} className="sidebar-link" style={{ width: 'auto', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <div className="fade-in">
+      <div className="crm-page-banner" style={{ padding: 24, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
+        <button onClick={() => navigate(-1)} className="btn btn-secondary btn-sm" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 12px', borderRadius: 10 }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
             <path d="M19 12H5" /><path d="m12 19-7-7 7-7" />
           </svg>
           Back
         </button>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>{offer.title}</h1>
-            <span className={`badge ${statusBadge(offer.status)}`}>{offer.status}</span>
-            <span className={`badge ${offer.offerType === 'Product' ? 'badge-contacted' : 'badge-qualified'}`}>{offer.offerType}</span>
-            <span className="badge badge-meta" style={{ fontSize: 10, padding: '2px 8px', fontWeight: 700 }}>v{offer.version || 1}</span>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: '#ffffff' }}>{offer.title}</h1>
+            <span className={`crm-status-pill ${statusBadge(offer.status)}`}>{offer.status}</span>
+            <span className={`crm-status-pill ${offer.offerType === 'Product' ? 'status-contacted' : 'status-qualified'}`}>{offer.offerType}</span>
+            <span className="crm-status-pill status-new" style={{ fontSize: 10, padding: '4px 8px', fontWeight: 700 }}>v{offer.version || 1}</span>
           </div>
-          <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
+          <div style={{ fontSize: 13, color: '#CBD5E1', marginTop: 6 }}>
             {lead?.name} • {symbol}{price} • Expires {new Date(offer.validUntil).toLocaleDateString()}
           </div>
         </div>
@@ -264,12 +264,13 @@ const OfferDetailPage = () => {
             style={{
               padding: '10px 14px',
               border: 'none',
-              background: activeTab === tab.key ? 'var(--bg-primary)' : 'transparent',
-              color: activeTab === tab.key ? 'var(--text-primary)' : 'var(--text-muted)',
-              fontWeight: activeTab === tab.key ? 600 : 500,
+              background: activeTab === tab.key ? '#EFF6FF' : 'transparent',
+              color: activeTab === tab.key ? '#1D4ED8' : '#64748B',
+              fontWeight: activeTab === tab.key ? 700 : 600,
               cursor: 'pointer',
-              borderBottom: activeTab === tab.key ? '2px solid var(--accent-primary)' : '2px solid transparent',
-              whiteSpace: 'nowrap'
+              borderBottom: activeTab === tab.key ? '2px solid #2563EB' : '2px solid transparent',
+              whiteSpace: 'nowrap',
+              borderRadius: 10,
             }}
           >
             {tab.label}
@@ -277,34 +278,47 @@ const OfferDetailPage = () => {
         ))}
       </div>
 
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 12, padding: 20 }}>
+      <div className="crm-glass-card" style={{ padding: 20 }}>
         {activeTab === 'overview' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            <div style={{ padding: 16, borderRadius: 10, border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Offer</div>
-              <div style={{ display: 'grid', gap: 6, fontSize: 13 }}>
-                <div><strong>Offer no.:</strong> {offer.recordLocator || offer._id?.toString().slice(-6).toUpperCase()}</div>
-                <div><strong>Status:</strong> {offer.status}</div>
-                <div><strong>Type:</strong> {offer.offerType}</div>
-                <div><strong>Valid until:</strong> {new Date(offer.validUntil).toLocaleDateString()}</div>
-                <div><strong>Created by:</strong> {offer.createdBy?.firstName} {offer.createdBy?.lastName}</div>
+          <div style={{ display: 'grid', gap: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+              <div style={{ padding: 16, borderRadius: 14, border: '1px solid #E2E8F0', background: 'linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#2563EB', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Offer</div>
+                <div style={{ display: 'grid', gap: 6, fontSize: 13 }}>
+                  <div><strong>Offer no.:</strong> {offer.recordLocator || offer._id?.toString().slice(-6).toUpperCase()}</div>
+                  <div><strong>Status:</strong> {offer.status}</div>
+                  <div><strong>Type:</strong> {offer.offerType}</div>
+                  <div><strong>Valid until:</strong> {new Date(offer.validUntil).toLocaleDateString()}</div>
+                  <div><strong>Created by:</strong> {offer.createdBy?.firstName} {offer.createdBy?.lastName}</div>
+                </div>
+              </div>
+              <div style={{ padding: 16, borderRadius: 14, border: '1px solid #E2E8F0', background: 'linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#7C3AED', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Customer</div>
+                <div style={{ display: 'grid', gap: 6, fontSize: 13 }}>
+                  <div><strong>Name:</strong> {lead?.name}</div>
+                  <div><strong>Email:</strong> {lead?.email || '—'}</div>
+                  <div><strong>Phone:</strong> {lead?.phone || '—'}</div>
+                  <div><strong>Lead ref:</strong> {lead?.referenceNumber || lead?._id || '—'}</div>
+                </div>
+              </div>
+              <div style={{ padding: 16, borderRadius: 14, border: '1px solid #E2E8F0', background: 'linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#059669', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Pricing</div>
+                <div style={{ display: 'grid', gap: 6, fontSize: 13 }}>
+                  <div><strong>Product/service:</strong> {offer.title}</div>
+                  <div><strong>Grand total:</strong> {symbol}{price}</div>
+                  <div><strong>Currency:</strong> {offer.currency || 'USD'}</div>
+                </div>
               </div>
             </div>
-            <div style={{ padding: 16, borderRadius: 10, border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Customer</div>
-              <div style={{ display: 'grid', gap: 6, fontSize: 13 }}>
-                <div><strong>Name:</strong> {lead?.name}</div>
-                <div><strong>Email:</strong> {lead?.email || '—'}</div>
-                <div><strong>Phone:</strong> {lead?.phone || '—'}</div>
-                <div><strong>Lead ref:</strong> {lead?.referenceNumber || lead?._id || '—'}</div>
-              </div>
-            </div>
-            <div style={{ padding: 16, borderRadius: 10, border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Pricing</div>
-              <div style={{ display: 'grid', gap: 6, fontSize: 13 }}>
-                <div><strong>Product/service:</strong> {offer.title}</div>
-                <div><strong>Grand total:</strong> {symbol}{price}</div>
-                <div><strong>Currency:</strong> {offer.currency || 'USD'}</div>
+            <div style={{ padding: 16, borderRadius: 14, border: '1px solid #E2E8F0', background: '#F8FAFC' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 10 }}>Status timeline</div>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                {['Draft','Submitted','Approved','Won/Lost'].map((step, index) => (
+                  <div key={step} style={{ flex: '1 1 140px', minWidth: 140, padding: '10px 12px', borderRadius: 12, border: '1px solid #E2E8F0', background: index <= 1 ? '#EFF6FF' : '#F8FAFC' }}>
+                    <div style={{ fontWeight: 700, fontSize: 13 }}>{step}</div>
+                    <div style={{ fontSize: 11, color: '#64748B', marginTop: 4 }}>{index === 0 ? 'Preparing' : index === 1 ? 'In review' : 'Next step'}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

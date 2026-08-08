@@ -463,14 +463,28 @@ const LeadDetailsPage = () => {
   const leadInitials = String(lead.name || 'Lead').split(' ').slice(0, 2).map(part => part[0] || '').join('').toUpperCase() || 'L';
 
   return (
-    <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={() => navigate('/leads')} className="sidebar-link" style={{ width: 'auto', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className="crm-page-banner" style={{ padding: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+        <div style={{ maxWidth: 640 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 6 }}>
+            Lead workspace
+          </div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: '#ffffff', margin: 0, letterSpacing: '-0.02em' }}>
+            {lead.name}
+          </h1>
+          <p style={{ fontSize: 13, color: '#CBD5E1', marginTop: 8, margin: 0, lineHeight: 1.5 }}>
+            {lead.email} • {lead.phone || 'No phone on file'} • Status <strong style={{ color: '#F8FAFC' }}>{lead.status}</strong>
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button onClick={() => navigate('/leads')} className="btn btn-secondary btn-sm" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 16px', borderRadius: 10 }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
               <path d="M19 12H5" /><path d="m12 19-7-7 7-7" />
             </svg>
             Back to Leads
+          </button>
+          <button className="btn btn-primary btn-sm" onClick={() => setShowOfferModal(true)} style={{ padding: '8px 16px', borderRadius: 10 }}>
+            Create Offer
           </button>
         </div>
       </div>
@@ -478,7 +492,7 @@ const LeadDetailsPage = () => {
       {error && <div className="alert alert-error" style={{ marginBottom: 20 }}>{error}</div>}
 
       <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 24, alignItems: 'start' }}>
-        <div className="table-wrapper" style={{ padding: 0, overflow: 'hidden', borderRadius: 18, boxShadow: '0 20px 45px rgba(15, 23, 42, 0.10)' }}>
+        <div className="crm-glass-card" style={{ padding: 0, overflow: 'hidden', borderRadius: 18, boxShadow: '0 20px 45px rgba(15, 23, 42, 0.10)' }}>
           <div style={{ padding: '24px 24px 18px', background: 'linear-gradient(135deg, rgba(99,102,241,0.18), rgba(16,185,129,0.16))', borderBottom: '1px solid var(--border-color)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <div style={{

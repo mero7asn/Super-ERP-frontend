@@ -381,23 +381,21 @@ const BookingLookupPage = () => {
   const financials = calculateFinancials();
 
   return (
-    <div style={{ paddingBottom: 40 }}>
-      {/* Header */}
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+    <div className="fade-in" style={{ paddingBottom: 40 }}>
+      <div className="crm-page-banner" style={{ padding: 24, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Icon name="tickets" size={28} style={{ color: 'var(--accent-primary)' }} />
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ffffff', margin: 0 }}>
+            <Icon name="tickets" size={28} style={{ color: '#F8FAFC' }} />
             Booking & Order Workspace
           </h1>
-          <p className="page-subtitle">Manage customer details, booking lifecycle processing, transactions, documentation, and system/agent logs.</p>
+          <p className="page-subtitle" style={{ color: '#CBD5E1', marginTop: 8, marginBottom: 0 }}>Manage customer details, booking lifecycle processing, transactions, documentation, and system/agent logs.</p>
         </div>
-        <button className="btn btn-secondary" onClick={() => navigate('/leads')} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <button className="btn btn-secondary btn-sm" onClick={() => navigate('/leads')} style={{ background: 'rgba(255,255,255,0.12)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', gap: 6, borderRadius: 10 }}>
           <Icon name="leads" size={16} /> View Leads
         </button>
       </div>
 
-      {/* Lookup Bar */}
-      <div className="card" style={{ padding: 20, borderRadius: 16, marginBottom: 24, boxShadow: '0 10px 30px rgba(15, 23, 42, 0.05)' }}>
+      <div className="crm-glass-card" style={{ padding: 20, marginBottom: 24 }}>
         <form onSubmit={handleLookup} style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr auto', gap: 12, alignItems: 'end' }}>
           <div className="form-group" style={{ margin: 0 }}>
             <label className="form-label" style={{ fontWeight: 600 }}>Lookup Type</label>
