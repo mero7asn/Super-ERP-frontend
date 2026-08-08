@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
-import { DEPARTMENTS, getRolesByDepartment, getDepartmentByRole } from '../services/departmentJobs';
+import { DEPARTMENTS, getRolesByDepartment, getDepartmentByRole, getDepartmentThemeByRole } from '../services/departmentJobs';
 
 const roleBadge = (role) => {
   const map = {
@@ -138,6 +138,7 @@ const UsersPage = () => {
             <tbody>
               {filtered.map(user => {
                 const initials = `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase();
+                const departmentTheme = getDepartmentThemeByRole(user.role);
                 const enabledPermissions = Object.entries(user.permissions || {})
                   .filter(([, val]) => val)
                   .map(([key]) => key.replace('can', ''));
@@ -148,7 +149,7 @@ const UsersPage = () => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <div style={{
                           width: 36, height: 36, borderRadius: '50%',
-                          background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
+                          background: `linear-gradient(135deg, ${departmentTheme.primary}, ${departmentTheme.dark})`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0,
                         }}>
@@ -162,7 +163,7 @@ const UsersPage = () => {
                       </div>
                     </td>
                     <td>
-                      <span className={`badge ${roleBadge(user.role)}`}>{user.role}</span>
+                      <span className={`badge ${roleBadge(user.role)}`} style={{ background: `${departmentTheme.light}`, color: departmentTheme.dark, border: `1px solid ${departmentTheme.primary}33` }}>{user.role}</span>
                     </td>
                     <td>
                       <span className={`badge ${user.isActive ? 'badge-qualified' : 'badge-lost'}`}>

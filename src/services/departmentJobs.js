@@ -1,3 +1,87 @@
+export const DEPARTMENT_THEMES = {
+  Sales: {
+    id: 'Sales',
+    label: 'CRM / Sales',
+    primary: '#2563EB',
+    dark: '#1D4ED8',
+    light: '#DBEAFE',
+    badgeClass: 'badge-new',
+    icon: '💼',
+  },
+  'Customer Support': {
+    id: 'Customer Support',
+    label: 'Customer Support',
+    primary: '#F59E0B',
+    dark: '#B45309',
+    light: '#FEF3C7',
+    badgeClass: 'badge-converted',
+    icon: '🎧',
+  },
+  Marketing: {
+    id: 'Marketing',
+    label: 'Marketing',
+    primary: '#8B5CF6',
+    dark: '#6D28D9',
+    light: '#EDE9FE',
+    badgeClass: 'badge-meta',
+    icon: '📣',
+  },
+  Technology: {
+    id: 'Technology',
+    label: 'IT / Technology',
+    primary: '#0EA5E9',
+    dark: '#0369A1',
+    light: '#E0F2FE',
+    badgeClass: 'badge-qualified',
+    icon: '⚙️',
+  },
+  Executive: {
+    id: 'Executive',
+    label: 'Operations',
+    primary: '#0F766E',
+    dark: '#115E59',
+    light: '#CCFBF1',
+    badgeClass: 'badge-converted',
+    icon: '🏢',
+  },
+  'Human Resources': {
+    id: 'Human Resources',
+    label: 'HR',
+    primary: '#7C3AED',
+    dark: '#5B21B6',
+    light: '#EDE9FE',
+    badgeClass: 'badge-meta',
+    icon: '👥',
+  },
+  Finance: {
+    id: 'Finance',
+    label: 'Finance',
+    primary: '#D97706',
+    dark: '#B45309',
+    light: '#FEF3C7',
+    badgeClass: 'badge-contacted',
+    icon: '💰',
+  },
+  Inventory: {
+    id: 'Inventory',
+    label: 'Inventory',
+    primary: '#F97316',
+    dark: '#C2410C',
+    light: '#FFEDD5',
+    badgeClass: 'badge-qualified',
+    icon: '📦',
+  },
+  Operations: {
+    id: 'Operations',
+    label: 'Operations',
+    primary: '#14B8A6',
+    dark: '#0F766E',
+    light: '#CCFBF1',
+    badgeClass: 'badge-contacted',
+    icon: '🛠️',
+  },
+};
+
 export const DEPARTMENTS = [
   {
     id: 'Sales',
@@ -56,3 +140,34 @@ export const getRolesByDepartment = (deptId) =>
 
 export const getDepartmentByRole = (role) =>
   DEPARTMENTS.find((d) => d.roles.includes(role))?.id || '';
+
+export const getDepartmentTheme = (deptId = '') => {
+  const normalized = String(deptId || '').trim().toLowerCase();
+  if (!normalized) return DEPARTMENT_THEMES.Sales;
+
+  const directMatch = DEPARTMENT_THEMES[deptId];
+  if (directMatch) return directMatch;
+
+  const aliasMap = {
+    sales: 'Sales',
+    'crm/sales': 'Sales',
+    crm: 'Sales',
+    hr: 'Human Resources',
+    'human resources': 'Human Resources',
+    'human-resources': 'Human Resources',
+    finance: 'Finance',
+    inventory: 'Inventory',
+    operations: 'Operations',
+    technology: 'Technology',
+    'it/technology': 'Technology',
+    it: 'Technology',
+  };
+
+  const alias = aliasMap[normalized];
+  return alias ? DEPARTMENT_THEMES[alias] : DEPARTMENT_THEMES.Sales;
+};
+
+export const getDepartmentThemeByRole = (role = '') => {
+  const dept = getDepartmentByRole(role);
+  return getDepartmentTheme(dept);
+};

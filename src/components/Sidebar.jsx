@@ -3,6 +3,7 @@ import { NavLink, useNavigate, useMatch, useLocation } from 'react-router-dom';
 import API from '../services/api';
 import logo from '../assets/logo.png';
 import { useAuth } from '../context/AuthContext';
+import { getDepartmentTheme } from '../services/departmentJobs';
 
 const SidebarIcon = ({ name }) => {
   const size = 17;
@@ -202,6 +203,12 @@ const Sidebar = () => {
     return true;
   };
 
+  const crmTheme = getDepartmentTheme('Sales');
+  const inventoryTheme = getDepartmentTheme('Inventory');
+  const supplyChainTheme = getDepartmentTheme('Operations');
+  const hrmTheme = getDepartmentTheme('Human Resources');
+  const workspaceTheme = getDepartmentTheme('Executive');
+
   const isUserProfile = useMatch('/users/:id');
   const isInventoryActive = useMatch('/inventory') || useMatch('/inventory/*');
   const isSupplyChainActive = useMatch('/supply-chain') || useMatch('/supply-chain/*');
@@ -246,6 +253,7 @@ const Sidebar = () => {
           <div className="mini-sidebar-group">
             <div
               className="mini-sidebar-sticky-header crm-header"
+              style={{ background: `linear-gradient(135deg, ${crmTheme.light}, rgba(255,255,255,0.92))`, borderColor: `${crmTheme.primary}22` }}
               onClick={() => setCrmOpen(!crmOpen)}
               title="Core 360 Department"
             >
@@ -254,7 +262,7 @@ const Sidebar = () => {
                 <span className="mini-sidebar-title">1. Core 360</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="mini-sidebar-badge">{filteredCrmItems.length}</span>
+                <span className="mini-sidebar-badge" style={{ background: `${crmTheme.primary}14`, color: crmTheme.dark }}>{filteredCrmItems.length}</span>
                 <span className="mini-sidebar-arrow" style={{ transform: crmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>▾</span>
               </div>
             </div>
@@ -283,6 +291,7 @@ const Sidebar = () => {
           <div className="mini-sidebar-group">
             <div
               className="mini-sidebar-sticky-header inventory-header"
+              style={{ background: `linear-gradient(135deg, ${inventoryTheme.light}, rgba(255,255,255,0.92))`, borderColor: `${inventoryTheme.primary}22` }}
               onClick={() => setInventoryOpen(!inventoryOpen)}
               title="Super Inventory Department"
             >
@@ -291,7 +300,7 @@ const Sidebar = () => {
                 <span className="mini-sidebar-title">2. Super Inventory</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="mini-sidebar-badge">{filteredInventoryItems.length}</span>
+                <span className="mini-sidebar-badge" style={{ background: `${inventoryTheme.primary}14`, color: inventoryTheme.dark }}>{filteredInventoryItems.length}</span>
                 <span className="mini-sidebar-arrow" style={{ transform: inventoryOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>▾</span>
               </div>
             </div>
@@ -320,6 +329,7 @@ const Sidebar = () => {
           <div className="mini-sidebar-group">
             <div
               className="mini-sidebar-sticky-header supply-header"
+              style={{ background: `linear-gradient(135deg, ${supplyChainTheme.light}, rgba(255,255,255,0.92))`, borderColor: `${supplyChainTheme.primary}22` }}
               onClick={() => setSupplyChainOpen(!supplyChainOpen)}
               title="Super Supply Chain Department"
             >
@@ -328,7 +338,7 @@ const Sidebar = () => {
                 <span className="mini-sidebar-title">3. Super Supply Chain</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="mini-sidebar-badge">{filteredSupplyChainItems.length}</span>
+                <span className="mini-sidebar-badge" style={{ background: `${supplyChainTheme.primary}14`, color: supplyChainTheme.dark }}>{filteredSupplyChainItems.length}</span>
                 <span className="mini-sidebar-arrow" style={{ transform: supplyChainOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>▾</span>
               </div>
             </div>
@@ -357,6 +367,7 @@ const Sidebar = () => {
           <div className="mini-sidebar-group">
             <div
               className="mini-sidebar-sticky-header hrm-header"
+              style={{ background: `linear-gradient(135deg, ${hrmTheme.light}, rgba(255,255,255,0.92))`, borderColor: `${hrmTheme.primary}22` }}
               onClick={() => setHrmOpen(!hrmOpen)}
               title="Super HRM Department"
             >
@@ -365,7 +376,7 @@ const Sidebar = () => {
                 <span className="mini-sidebar-title">4. Super HRM</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="mini-sidebar-badge">{filteredHrmItems.length}</span>
+                <span className="mini-sidebar-badge" style={{ background: `${hrmTheme.primary}14`, color: hrmTheme.dark }}>{filteredHrmItems.length}</span>
                 <span className="mini-sidebar-arrow" style={{ transform: hrmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>▾</span>
               </div>
             </div>
@@ -391,6 +402,7 @@ const Sidebar = () => {
         <div className="mini-sidebar-group">
           <div
             className="mini-sidebar-sticky-header workspace-header"
+            style={{ background: `linear-gradient(135deg, ${workspaceTheme.light}, rgba(255,255,255,0.92))`, borderColor: `${workspaceTheme.primary}22` }}
             onClick={() => setWorkspaceOpen(!workspaceOpen)}
             title="My Personal Workspace"
           >
@@ -399,7 +411,7 @@ const Sidebar = () => {
               <span className="mini-sidebar-title">5. My Workspace</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span className="mini-sidebar-badge">{filteredWorkspaceItems.length}</span>
+              <span className="mini-sidebar-badge" style={{ background: `${workspaceTheme.primary}14`, color: workspaceTheme.dark }}>{filteredWorkspaceItems.length}</span>
               <span className="mini-sidebar-arrow" style={{ transform: workspaceOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>▾</span>
             </div>
           </div>

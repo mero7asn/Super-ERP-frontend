@@ -31,7 +31,8 @@ const Avatar = ({ firstName, lastName, size = 36, colors }) => {
 };
 
 const MemberCard = ({ member, dept, isAdmin, managers, onMove }) => {
-  const colors = dept ? DEPT_COLORS[dept] : null;
+  const palette = getDepartmentTheme(dept);
+  const colors = dept ? { c1: palette.primary, c2: palette.dark, badge: palette.badgeClass, icon: palette.icon } : null;
   const [isMoving, setIsMoving] = useState(false);
   const [selectValue, setSelectValue] = useState('');
   
@@ -199,7 +200,12 @@ const TeamsPage = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         {/* Department Teams */}
         {filteredTeams.map(({ manager, department, members }) => {
-          const colors = DEPT_COLORS[department];
+          const colors = DEPT_COLORS[department] || {
+            c1: getDepartmentTheme(department).primary,
+            c2: getDepartmentTheme(department).dark,
+            badge: getDepartmentTheme(department).badgeClass,
+            icon: getDepartmentTheme(department).icon,
+          };
           return (
             <div key={manager._id} className="table-wrapper" style={{ padding: 0, overflow: 'hidden' }}>
               {/* Team Header */}
