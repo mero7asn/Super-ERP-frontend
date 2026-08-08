@@ -434,7 +434,8 @@ textarea::placeholder {
   background: linear-gradient(135deg, rgba(23, 49, 78, 0.98), rgba(15, 31, 45, 0.98));
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(96, 165, 250, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left-width: 3px;
   border-radius: 10px;
   cursor: pointer;
   user-select: none;
@@ -445,9 +446,29 @@ textarea::placeholder {
 
 .mini-sidebar-sticky-header:hover {
   background: linear-gradient(135deg, rgba(30, 64, 102, 0.98), rgba(19, 41, 61, 0.98));
-  border-color: rgba(96, 165, 250, 0.4);
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
 }
+
+/* Department color left-border accents */
+.mini-sidebar-sticky-header.crm-header      { border-left-color: #F97316; }
+.mini-sidebar-sticky-header.inventory-header { border-left-color: #F59E0B; }
+.mini-sidebar-sticky-header.supply-header    { border-left-color: #E11D48; }
+.mini-sidebar-sticky-header.hrm-header       { border-left-color: #8B5CF6; }
+.mini-sidebar-sticky-header.workspace-header { border-left-color: #06B6D4; }
+
+/* Department icon tint colors */
+.mini-sidebar-sticky-header.crm-header      .mini-sidebar-icon { color: #F97316; background: rgba(249,115,22,0.15); }
+.mini-sidebar-sticky-header.inventory-header .mini-sidebar-icon { color: #F59E0B; background: rgba(245,158,11,0.15); }
+.mini-sidebar-sticky-header.supply-header    .mini-sidebar-icon { color: #E11D48; background: rgba(225,29,72,0.15); }
+.mini-sidebar-sticky-header.hrm-header       .mini-sidebar-icon { color: #8B5CF6; background: rgba(139,92,246,0.15); }
+.mini-sidebar-sticky-header.workspace-header .mini-sidebar-icon { color: #06B6D4; background: rgba(6,182,212,0.15); }
+
+/* Department badge colors */
+.mini-sidebar-sticky-header.crm-header      .mini-sidebar-badge { color: #F97316; background: rgba(249,115,22,0.15); border-color: rgba(249,115,22,0.3); }
+.mini-sidebar-sticky-header.inventory-header .mini-sidebar-badge { color: #F59E0B; background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.3); }
+.mini-sidebar-sticky-header.supply-header    .mini-sidebar-badge { color: #E11D48; background: rgba(225,29,72,0.15); border-color: rgba(225,29,72,0.3); }
+.mini-sidebar-sticky-header.hrm-header       .mini-sidebar-badge { color: #8B5CF6; background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.3); }
+.mini-sidebar-sticky-header.workspace-header .mini-sidebar-badge { color: #06B6D4; background: rgba(6,182,212,0.15); border-color: rgba(6,182,212,0.3); }
 
 .mini-sidebar-header-left {
   display: flex;
