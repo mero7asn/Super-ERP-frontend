@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useMatch, useLocation } from 'react-router-dom';
 import API from '../services/api';
 import logo from '../assets/logo.png';
@@ -117,29 +117,49 @@ const CRM_NAV_ITEMS = [
 // 2. SUPER INVENTORY SUB ITEMS
 const INVENTORY_SUB_ITEMS = [
   { label: 'Dashboard', path: '/inventory', icon: 'dashboard' },
-  { label: 'Items Catalog', path: '/inventory/items', icon: 'box' },
+  { label: 'Items & Matrix', path: '/inventory/items', icon: 'box' },
   { label: 'Stock Overview', path: '/inventory/stock', icon: 'analytics' },
+  { label: 'Storage Map', path: '/inventory/warehouse-map', icon: 'dashboard' },
+  { label: 'Batches & FEFO', path: '/inventory/batches', icon: 'calendar' },
+  { label: 'Requisitions', path: '/inventory/requisitions', icon: 'personal' },
+  { label: 'Import Costs', path: '/inventory/landed-costs', icon: 'supplychain' },
   { label: 'Transactions', path: '/inventory/transactions', icon: 'teams' },
-  { label: 'Receiving', path: '/inventory/receiving', icon: 'box' },
-  { label: 'Shipping', path: '/inventory/shipping', icon: 'box' },
-  { label: 'Pick Tasks', path: '/inventory/pick-tasks', icon: 'teams' },
+  { label: 'Receiving (GRN)', path: '/inventory/receiving', icon: 'box' },
+  { label: 'Shipping & Picks', path: '/inventory/shipping', icon: 'box' },
   { label: 'Transfers', path: '/inventory/transfers', icon: 'teams' },
   { label: 'Adjustments', path: '/inventory/adjustments', icon: 'analytics' },
   { label: 'Cycle Counts', path: '/inventory/cycle-counts', icon: 'calendar' },
-  { label: 'Physical Inventory', path: '/inventory/physical-inventories', icon: 'analytics' },
   { label: 'Warehouses', path: '/inventory/warehouses', icon: 'dashboard', roles: ['Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'] },
-  { label: 'Reports', path: '/inventory/reports', icon: 'analytics', roles: ['Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Inventory Clerk'] },
+  { label: 'Valuation & Reports', path: '/inventory/reports', icon: 'analytics', roles: ['Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Inventory Clerk'] },
 ];
 
 // 3. SUPER SUPPLY CHAIN SUB ITEMS
 const SUPPLY_CHAIN_SUB_ITEMS = [
-  { label: 'Overview', path: '/supply-chain', icon: 'dashboard' },
-  { label: 'Demand Planning', path: '/supply-chain/planning', icon: 'analytics' },
-  { label: 'Procurement', path: '/supply-chain/procurement', icon: 'box' },
-  { label: 'Orders', path: '/supply-chain/orders', icon: 'teams' },
+  { label: 'Control Tower', path: '/supply-chain', icon: 'dashboard' },
+  { label: 'Demand & Planning', path: '/supply-chain/planning', icon: 'analytics' },
+  { label: 'Requisitions', path: '/supply-chain/requisitions', icon: 'personal' },
+  { label: 'RFQs & Matrix', path: '/supply-chain/rfqs', icon: 'analytics' },
+  { label: 'Purchase Orders', path: '/supply-chain/purchase-orders', icon: 'box' },
+  { label: 'Imports & ACI', path: '/supply-chain/imports', icon: 'supplychain' },
+  { label: 'Suppliers & Ratings', path: '/supply-chain/vendors', icon: 'teams' },
+  { label: 'Contracts & Prices', path: '/supply-chain/contracts', icon: 'box' },
   { label: 'Logistics', path: '/supply-chain/logistics', icon: 'supplychain' },
-  { label: 'Vendors', path: '/supply-chain/vendors', icon: 'teams' },
-  { label: 'Reports', path: '/supply-chain/reports', icon: 'analytics' },
+  { label: 'Spend & Reports', path: '/supply-chain/reports', icon: 'analytics' },
+];
+
+// 3.5. ACCOUNTING CORE SUB ITEMS
+const ACCOUNTING_SUB_ITEMS = [
+  { label: 'Financial Control Tower', path: '/accounting', icon: 'dashboard' },
+  { label: 'Chart of Accounts (COA)', path: '/accounting/coa', icon: 'analytics' },
+  { label: 'Journal Ledger', path: '/accounting/journals', icon: 'box' },
+  { label: 'Accounts Receivable (AR)', path: '/accounting/ar', icon: 'personal' },
+  { label: 'Accounts Payable (AP)', path: '/accounting/ap', icon: 'teams' },
+  { label: 'Cash & Banks', path: '/accounting/banks', icon: 'payroll' },
+  { label: 'Tax & E-Invoice', path: '/accounting/tax', icon: 'supplychain' },
+  { label: 'Fixed Assets', path: '/accounting/assets', icon: 'box' },
+  { label: 'Cost Centers & Budgets', path: '/accounting/cost-centers', icon: 'analytics' },
+  { label: 'Month-End Closing', path: '/accounting/closing', icon: 'calendar' },
+  { label: 'Financial Reports', path: '/accounting/reports', icon: 'analytics' },
 ];
 
 // 4. SUPER HRM NAV ITEMS
@@ -169,6 +189,7 @@ const Sidebar = () => {
   const [crmOpen, setCrmOpen] = useState(true);
   const [inventoryOpen, setInventoryOpen] = useState(true);
   const [supplyChainOpen, setSupplyChainOpen] = useState(true);
+  const [accountingOpen, setAccountingOpen] = useState(true);
   const [hrmOpen, setHrmOpen] = useState(true);
   const [workspaceOpen, setWorkspaceOpen] = useState(true);
 
@@ -179,6 +200,8 @@ const Sidebar = () => {
       setInventoryOpen(true);
     } else if (p.startsWith('/supply-chain')) {
       setSupplyChainOpen(true);
+    } else if (p.startsWith('/accounting')) {
+      setAccountingOpen(true);
     } else if (p.startsWith('/hrm')) {
       setHrmOpen(true);
     } else if (p.startsWith('/ess') || p.startsWith('/emails')) {
@@ -205,6 +228,7 @@ const Sidebar = () => {
   const isUserProfile = useMatch('/users/:id');
   const isInventoryActive = useMatch('/inventory') || useMatch('/inventory/*');
   const isSupplyChainActive = useMatch('/supply-chain') || useMatch('/supply-chain/*');
+  const isAccountingActive = useMatch('/accounting') || useMatch('/accounting/*');
 
   const isSuperAdmin = user?.role === 'Super CRM Administrator';
   const showCRM = isSuperAdmin || CRM_ROLES.includes(user?.role);
@@ -220,6 +244,7 @@ const Sidebar = () => {
   const filteredCrmItems = CRM_NAV_ITEMS.filter(canSee);
   const filteredInventoryItems = INVENTORY_SUB_ITEMS.filter((sub) => !sub.roles || sub.roles.includes(user?.role));
   const filteredSupplyChainItems = SUPPLY_CHAIN_SUB_ITEMS;
+  const filteredAccountingItems = ACCOUNTING_SUB_ITEMS;
   const filteredHrmItems = HRM_NAV_ITEMS.filter(canSee);
   const filteredWorkspaceItems = WORKSPACE_NAV_ITEMS;
 
@@ -351,6 +376,42 @@ const Sidebar = () => {
             )}
           </div>
         )}
+
+        {/* 3.5. MINI SIDEBAR: ACCOUNTING CORE */}
+        <div className="mini-sidebar-group">
+          <div
+            className="mini-sidebar-sticky-header accounting-header"
+            onClick={() => setAccountingOpen(!accountingOpen)}
+            title="Accounting Core Department"
+            style={{ borderLeft: '4px solid #16a34a' }}
+          >
+            <div className="mini-sidebar-header-left">
+              <span className="mini-sidebar-icon"><SidebarIcon name="payroll" /></span>
+              <span className="mini-sidebar-title">4. Accounting Core</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="mini-sidebar-badge" style={{ background: '#dcfce7', color: '#166534' }}>{filteredAccountingItems.length}</span>
+              <span className="mini-sidebar-arrow" style={{ transform: accountingOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
+            </div>
+          </div>
+
+          {accountingOpen && (
+            <div className="mini-sidebar-body">
+              {filteredAccountingItems.map((sub) => (
+                <NavLink
+                  key={sub.path}
+                  to={sub.path}
+                  className={({ isActive }) =>
+                    `sidebar-link${isActive || (sub.path === '/accounting' && isAccountingActive) ? ' active' : ''}`
+                  }
+                >
+                  <span className="sidebar-link-icon"><SidebarIcon name={sub.icon} /></span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* 4. MINI SIDEBAR: SUPER HRM */}
         {showHRM && (

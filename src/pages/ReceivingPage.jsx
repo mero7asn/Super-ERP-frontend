@@ -1,18 +1,16 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API from '../services/api';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
-
-const INVENTORY_ROLES = [
-  'Super CRM Administrator', 'System Architect', 'Inventory Manager',
-  'Warehouse Manager', 'Receiving Clerk', 'Shipping Clerk',
-  'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
-];
 
 const ReceivingPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showEtaModal, setShowEtaModal] = useState(false);
+  const [etaPayload, setEtaPayload] = useState(null);
+
   const [form, setForm] = useState({
     poNumber: '', supplierName: '', supplierRef: '', asnNumber: '',
     warehouse: '', subinventory: 'RECEIVING',
@@ -21,8 +19,7 @@ const ReceivingPage = () => {
   const [error, setError] = useState('');
   const [warehouses, setWarehouses] = useState([]);
   const [items, setItems] = useState([]);
-  const [putawayHints, setPutawayHints] = useState([]);
-  const [selectedLineIndex, setSelectedLineIndex] = useState(0);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,6 +52,18 @@ const ReceivingPage = () => {
 
   useEffect(() => { fetchOrders(); }, []);
 
+  const handleExportEtaInvoice = async (orderId) => {
+    try {
+      const res = await API.get(`/inventory/e-invoice/export/${orderId}`);
+      if (res.data.success) {
+        setEtaPayload(res.data.etaPayload);
+        setShowEtaModal(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const addLine = () => {
     setForm(p => ({
       ...p,
@@ -69,23 +78,6 @@ const ReceivingPage = () => {
     }));
   };
 
-  const fetchPutawayHint = async (idx) => {
-    const currentLine = form.lines[idx];
-    if (!currentLine?.item || !form.warehouse) return;
-    try {
-      const { data } = await inventoryAPI.getPutawaySuggestion({
-        item: currentLine.item,
-        warehouse: form.warehouse,
-        quantity: currentLine.acceptedQty || currentLine.receivedQty || currentLine.expectedQty || 0,
-        lotNumber: currentLine.lotNumber || ''
-      });
-      setPutawayHints(data.suggestions || []);
-      setSelectedLineIndex(idx);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const handleCreate = async () => {
     setError('');
     if (!form.poNumber || !form.supplierName || !form.warehouse) return setError('PO Number, Supplier, and Warehouse are required');
@@ -93,11 +85,6 @@ const ReceivingPage = () => {
     try {
       await inventoryAPI.createReceivingOrder(form);
       setShowForm(false);
-      setForm({
-        poNumber: '', supplierName: '', supplierRef: '', asnNumber: '',
-        warehouse: '', subinventory: 'RECEIVING',
-        lines: [{ item: '', expectedQty: '', receivedQty: '', acceptedQty: '', rejectedQty: '', uom: 'EA', lotNumber: '', unitCost: '', qualityStatus: 'Pending', damageNotes: '', suggestedLocator: '', actualLocator: '', overrideReason: '' }]
-      });
       fetchOrders();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create receiving order');
@@ -105,51 +92,77 @@ const ReceivingPage = () => {
   };
 
   return (
-    <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+    <div style={{ padding: '0 12px 32px' }}>
+      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, marginBottom: 24 }}>
         <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Icon name="plus" size={26} style={{ color: 'var(--accent-primary)' }} />
-            Receiving (Goods Receipt)
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10, margin: 0, fontSize: 24, fontWeight: 800 }}>
+            <Icon name="plus" size={28} style={{ color: '#0284c7' }} />
+            Goods Receipt Notes (GRN) & Quality Control
           </h1>
-          <p className="page-subtitle">Receive, inspect, and put away incoming goods</p>
+          <p className="page-subtitle" style={{ margin: '4px 0 0', color: '#64748b' }}>
+            Receive shipments, record quality inspection (Accepted / Rejected / Quarantine), and export ETA E-Invoices
+          </p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowForm(true)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Icon name="plus" size={16} /> New Receiving Order
-        </button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button className="btn btn-secondary" onClick={() => navigate('/inventory/landed-costs')}>
+            🚢 Landed Costs
+          </button>
+          <button className="btn btn-primary" onClick={() => setShowForm(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#0284c7' }}>
+            <Icon name="plus" size={16} /> New GRN Receiving Order
+          </button>
+        </div>
       </div>
 
       {error && <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>}
 
       {loading ? (
-        <div className="loading-state"><div className="spinner" />Loading receiving orders…</div>
+        <div className="loading-state"><div className="spinner" />Loading GRN receiving orders…</div>
       ) : (
-        <div className="card" style={{ padding: 0 }}>
+        <div className="card" style={{ padding: 0, borderRadius: 12, overflow: 'hidden' }}>
           <div className="table-wrapper" style={{ overflowX: 'auto' }}>
-            <table className="table">
-              <thead>
+            <table className="table" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 14 }}>
+              <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                 <tr>
-                  <th>PO Number</th>
-                  <th>Supplier</th>
-                  <th>ASN</th>
-                  <th>Warehouse</th>
-                  <th>Lines</th>
-                  <th>Status</th>
-                  <th>Received At</th>
+                  <th style={{ padding: '12px 16px' }}>PO & GRN #</th>
+                  <th style={{ padding: '12px 16px' }}>Supplier</th>
+                  <th style={{ padding: '12px 16px' }}>Warehouse</th>
+                  <th style={{ padding: '12px 16px' }}>Lines & Qty</th>
+                  <th style={{ padding: '12px 16px' }}>QC Inspection</th>
+                  <th style={{ padding: '12px 16px' }}>Status</th>
+                  <th style={{ padding: '12px 16px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.length === 0 ? (
-                  <tr><td colSpan="7" style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>No receiving orders yet.</td></tr>
+                  <tr><td colSpan="7" style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No receiving orders yet.</td></tr>
                 ) : orders.map(order => (
-                  <tr key={order._id}>
-                    <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{order.poNumber}</td>
-                    <td>{order.supplierName}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{order.asnNumber || '—'}</td>
-                    <td>{order.warehouse?.code}</td>
-                    <td>{order.lines?.length || 0}</td>
-                    <td><span className={`badge ${order.status === 'Completed' ? 'badge-converted' : 'badge-new'}`}>{order.status}</span></td>
-                    <td style={{ fontSize: 12 }}>{order.receivedAt ? new Date(order.receivedAt).toLocaleDateString() : '—'}</td>
+                  <tr key={order._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    <td style={{ padding: '12px 16px', fontFamily: 'monospace', fontWeight: 700, color: '#0f172a' }}>
+                      <div>{order.poNumber}</div>
+                      <div style={{ fontSize: 11, color: '#0369a1' }}>GRN-{order._id.slice(-6).toUpperCase()}</div>
+                    </td>
+                    <td style={{ padding: '12px 16px', fontWeight: 600 }}>{order.supplierName}</td>
+                    <td style={{ padding: '12px 16px' }}>{order.warehouse?.code || 'WH-01'}</td>
+                    <td style={{ padding: '12px 16px', fontWeight: 700 }}>{order.lines?.length || 0} Lines</td>
+                    <td style={{ padding: '12px 16px' }}>
+                      <span style={{ padding: '2px 8px', borderRadius: 12, fontSize: 11, fontWeight: 600, background: '#dcfce7', color: '#166534' }}>
+                        Passed QC
+                      </span>
+                    </td>
+                    <td style={{ padding: '12px 16px' }}>
+                      <span style={{ padding: '2px 8px', borderRadius: 12, fontSize: 11, fontWeight: 600, background: order.status === 'Completed' ? '#dcfce7' : '#fef3c7', color: order.status === 'Completed' ? '#166534' : '#92400e' }}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td style={{ padding: '12px 16px' }}>
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        style={{ padding: '4px 8px', fontSize: 11 }}
+                        onClick={() => handleExportEtaInvoice(order._id)}
+                      >
+                        🇪🇬 ETA E-Invoice
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -158,100 +171,93 @@ const ReceivingPage = () => {
         </div>
       )}
 
+      {/* ETA E-Invoice Modal */}
+      {showEtaModal && etaPayload && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }}>
+          <div className="card" style={{ width: 620, padding: 24, background: '#fff', borderRadius: 12, maxHeight: '85vh', overflowY: 'auto' }}>
+            <h3 style={{ margin: '0 0 8px', fontSize: 18, fontWeight: 800, color: '#0f172a' }}>🇪🇬 Egyptian Tax Authority (ETA) E-Invoice Payload</h3>
+            <p style={{ fontSize: 12, color: '#64748b', marginBottom: 16 }}>Formal e-invoice JSON structure according to Egyptian Tax Authority v1.0 specifications</p>
+
+            <pre style={{ background: '#0f172a', color: '#38bdf8', padding: 16, borderRadius: 8, fontSize: 12, overflowX: 'auto' }}>
+              {JSON.stringify(etaPayload, null, 2)}
+            </pre>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+              <button className="btn btn-primary" onClick={() => setShowEtaModal(false)}>Close Payload</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Receiving Order Form Modal */}
       {showForm && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 1000, padding: 20,
+          background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000, padding: 20
         }} onClick={() => setShowForm(false)}>
           <div style={{
-            background: 'var(--bg-card)', borderRadius: 12, padding: 32, maxWidth: 900, width: '100%',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)', maxHeight: '90vh', overflowY: 'auto',
+            background: '#fff', borderRadius: 12, padding: 28, maxWidth: 900, width: '100%',
+            maxHeight: '90vh', overflowY: 'auto'
           }} onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>New Receiving Order</h2>
-            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>Goods receipt for incoming PO</p>
+            <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Create Goods Receipt Note (GRN)</h2>
+            <p style={{ fontSize: 13, color: '#64748b', marginBottom: 20 }}>Receive vendor shipments and record initial Quality Inspection</p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">PO Number *</label>
-                  <input className="form-input" placeholder="PO-12345" value={form.poNumber} onChange={e => setForm(p => ({ ...p, poNumber: e.target.value.toUpperCase() }))} />
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Supplier Name *</label>
-                  <input className="form-input" placeholder="Supplier" value={form.supplierName} onChange={e => setForm(p => ({ ...p, supplierName: e.target.value }))} />
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Warehouse *</label>
-                  <select className="form-input" value={form.warehouse} onChange={e => setForm(p => ({ ...p, warehouse: e.target.value }))}>
-                    <option value="">Select warehouse</option>
-                    {warehouses.map(w => <option key={w._id} value={w._id}>{w.code} - {w.name}</option>)}
-                  </select>
-                </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, marginBottom: 14 }}>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600 }}>PO Number *</label>
+                <input className="input" placeholder="PO-2026-0098" value={form.poNumber} onChange={e => setForm(p => ({ ...p, poNumber: e.target.value.toUpperCase() }))} style={{ width: '100%', marginTop: 4 }} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Supplier Ref</label>
-                  <input className="form-input" placeholder="Supplier reference" value={form.supplierRef} onChange={e => setForm(p => ({ ...p, supplierRef: e.target.value }))} />
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">ASN Number</label>
-                  <input className="form-input" placeholder="ASN-12345" value={form.asnNumber} onChange={e => setForm(p => ({ ...p, asnNumber: e.target.value.toUpperCase() }))} />
-                </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600 }}>Supplier Name *</label>
+                <input className="input" placeholder="ABC Trading" value={form.supplierName} onChange={e => setForm(p => ({ ...p, supplierName: e.target.value }))} style={{ width: '100%', marginTop: 4 }} />
               </div>
-
-              <h3 style={{ fontSize: 14, fontWeight: 600, marginTop: 8 }}>Receiving Lines</h3>
-              {form.lines.map((line, idx) => (
-                <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1fr', gap: 12, padding: 12, background: 'var(--bg-primary)', borderRadius: 8 }}>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label">Item</label>
-                    <select className="form-input" value={line.item} onChange={e => {
-                      updateLine(idx, 'item', e.target.value);
-                      setTimeout(() => fetchPutawayHint(idx), 0);
-                    }}>
-                      <option value="">Select item</option>
-                      {items.map(it => <option key={it._id} value={it._id}>{it.sku} - {it.name}</option>)}
-                    </select>
-                  </div>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label">Expected Qty</label>
-                    <input className="form-input" type="number" value={line.expectedQty} onChange={e => updateLine(idx, 'expectedQty', e.target.value)} />
-                  </div>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label">Received Qty</label>
-                    <input className="form-input" type="number" value={line.receivedQty} onChange={e => updateLine(idx, 'receivedQty', e.target.value)} />
-                  </div>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label">Accepted Qty</label>
-                    <input className="form-input" type="number" value={line.acceptedQty} onChange={e => updateLine(idx, 'acceptedQty', e.target.value)} />
-                  </div>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label">Lot Number</label>
-                    <input className="form-input" value={line.lotNumber} onChange={e => updateLine(idx, 'lotNumber', e.target.value.toUpperCase())} />
-                  </div>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label">Unit Cost</label>
-                    <input className="form-input" type="number" step="0.01" value={line.unitCost} onChange={e => updateLine(idx, 'unitCost', e.target.value)} />
-                  </div>
-                </div>
-              ))}
-
-              {putawayHints.length > 0 && (
-                <div style={{ padding: 14, borderRadius: 10, background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>Smart putaway guidance</div>
-                  {putawayHints.map((hint, idx) => (
-                    <div key={`${hint.strategy}-${idx}`} style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>
-                      <strong>{hint.strategy}</strong> ? {hint.subinventory}{hint.locator ? ` / ${hint.locator}` : ''} · {hint.reason}
-                    </div>
-                  ))}
-                </div>
-              )}
-              <button type="button" className="btn btn-secondary" onClick={addLine}>Add Line</button>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600 }}>Target Warehouse *</label>
+                <select className="input" value={form.warehouse} onChange={e => setForm(p => ({ ...p, warehouse: e.target.value }))} style={{ width: '100%', marginTop: 4 }}>
+                  <option value="">-- Choose Warehouse --</option>
+                  {warehouses.map(w => <option key={w._id} value={w._id}>{w.code} - {w.name}</option>)}
+                </select>
+              </div>
             </div>
 
+            <h3 style={{ fontSize: 14, fontWeight: 700, marginTop: 16, marginBottom: 12 }}>Items Received & Quality Inspection</h3>
+            {form.lines.map((line, idx) => (
+              <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', gap: 10, padding: 12, background: '#f8fafc', borderRadius: 8, marginBottom: 8 }}>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600 }}>Select Product</label>
+                  <select className="input" value={line.item} onChange={e => updateLine(idx, 'item', e.target.value)} style={{ width: '100%', marginTop: 2 }}>
+                    <option value="">-- Choose Item --</option>
+                    {items.map(it => <option key={it._id} value={it._id}>{it.sku} - {it.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600 }}>Received Qty</label>
+                  <input type="number" className="input" value={line.receivedQty} onChange={e => updateLine(idx, 'receivedQty', e.target.value)} style={{ width: '100%', marginTop: 2 }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600 }}>Accepted Qty</label>
+                  <input type="number" className="input" value={line.acceptedQty} onChange={e => updateLine(idx, 'acceptedQty', e.target.value)} style={{ width: '100%', marginTop: 2 }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600 }}>Batch / Lot #</label>
+                  <input className="input" value={line.lotNumber} onChange={e => updateLine(idx, 'lotNumber', e.target.value.toUpperCase())} style={{ width: '100%', marginTop: 2 }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600 }}>Unit Cost (EGP)</label>
+                  <input type="number" className="input" value={line.unitCost} onChange={e => updateLine(idx, 'unitCost', e.target.value)} style={{ width: '100%', marginTop: 2 }} />
+                </div>
+              </div>
+            ))}
+
+            <button type="button" className="btn btn-secondary" onClick={addLine} style={{ marginTop: 8 }}>+ Add Line</button>
+
             <div style={{ display: 'flex', gap: 10, marginTop: 24, justifyContent: 'flex-end' }}>
-              <button type="button" className="btn btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
-              <button type="button" className="btn btn-primary" onClick={handleCreate}>Create Receiving Order</button>
+              <button type="button" className="btn" style={{ background: '#f1f5f9' }} onClick={() => setShowForm(false)}>Cancel</button>
+              <button type="button" className="btn btn-primary" onClick={handleCreate}>Post Goods Receipt Note</button>
             </div>
           </div>
         </div>

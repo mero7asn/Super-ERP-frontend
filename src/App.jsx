@@ -1,4 +1,4 @@
-﻿import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { AuxProvider } from './context/AuxContext';
 import { ProtectedRoute, PublicRoute } from './components/ProtectedRoute';
@@ -52,7 +52,12 @@ import PhysicalInventoryPage from './pages/PhysicalInventoryPage';
 import WarehousesPage from './pages/WarehousesPage';
 import PickTaskPage from './pages/PickTaskPage';
 import InventoryReportsPage from './pages/InventoryReportsPage';
+import WarehouseMapPage from './pages/WarehouseMapPage';
+import BatchSerialPage from './pages/BatchSerialPage';
+import RequisitionsPage from './pages/RequisitionsPage';
+import LandedCostsPage from './pages/LandedCostsPage';
 import SupplyChainPage from './pages/SupplyChainPage';
+import AccountingPage from './pages/AccountingPage';
 import OfferDetailPage from './pages/OfferDetailPage';
 
 // Layout wrapper: renders Sidebar + content for authenticated pages
@@ -334,6 +339,52 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/inventory/warehouse-map"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'
+          ]}>
+            <AppLayout>
+              <WarehouseMapPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/batches"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Quality Inspector'
+          ]}>
+            <AppLayout>
+              <BatchSerialPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/requisitions"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <RequisitionsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/landed-costs"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'
+          ]}>
+            <AppLayout>
+              <LandedCostsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/supply-chain"
@@ -357,6 +408,28 @@ const AppRoutes = () => {
           ]}>
             <AppLayout>
               <SupplyChainPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Accounting Core */}
+      <Route
+        path="/accounting"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <AccountingPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounting/:section"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <AccountingPage />
             </AppLayout>
           </ProtectedRoute>
         }
