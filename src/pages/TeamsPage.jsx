@@ -1,18 +1,7 @@
 ﻿import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
-
-const DEPT_COLORS = {
-  'Sales': { c1: '#2563EB', c2: '#14B8A6', badge: 'badge-new', icon: '💼' },
-  'Customer Support': { c1: '#F59E0B', c2: '#F97316', badge: 'badge-converted', icon: '🎧' },
-  'Marketing': { c1: '#8B5CF6', c2: '#EC4899', badge: 'badge-meta', icon: '📣' },
-  'Technology': { c1: '#10B981', c2: '#14B8A6', badge: 'badge-qualified', icon: '⚙️' },
-  'Personal': { c1: '#3B82F6', c2: '#60A5FA', badge: 'badge-new', icon: '👤' },
-  'Payroll': { c1: '#10B981', c2: '#34D399', badge: 'badge-qualified', icon: '💵' },
-  'Training': { c1: '#F59E0B', c2: '#FBBF24', badge: 'badge-converted', icon: '📚' },
-  'Talent Acquisition': { c1: '#8B5CF6', c2: '#A78BFA', badge: 'badge-meta', icon: '🎯' },
-  'BD & People Culture': { c1: '#EC4899', c2: '#F472B6', badge: 'badge-meta', icon: '🤝' },
-};
+import { getDepartmentTheme } from '../services/departmentJobs';
 
 const Avatar = ({ firstName, lastName, size = 36, colors }) => {
   const initials = `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase();
@@ -30,7 +19,8 @@ const Avatar = ({ firstName, lastName, size = 36, colors }) => {
 };
 
 const MemberCard = ({ member, dept, isAdmin, managers, onMove }) => {
-  const colors = dept ? DEPT_COLORS[dept] : null;
+  const theme = getDepartmentTheme(dept);
+  const colors = dept ? { c1: theme.primary, c2: theme.dark, badge: theme.badgeClass, icon: theme.icon } : null;
   const [isMoving, setIsMoving] = useState(false);
   const [selectValue, setSelectValue] = useState('');
   
@@ -130,8 +120,9 @@ const TeamsPage = () => {
   if (loading) return <div className="loading-state"><div className="spinner" />Loading teams…</div>;
 
   const departments = [
-    'All', 'Sales', 'Customer Support', 'Marketing', 'Technology',
-    'Personal', 'Payroll', 'Training', 'Talent Acquisition', 'BD & People Culture'
+    'All', 'Sales', 'Customer Support', 'Marketing', 'Technology', 'Human Resources',
+    'Finance', 'Inventory', 'Operations', 'Personal', 'Payroll', 'Training',
+    'Talent Acquisition', 'BD & People Culture', 'Executive'
   ];
   const filteredTeams = activeTab === 'All' ? teams : teams.filter(t => t.department === activeTab);
   const filteredUnassigned = activeTab === 'All' ? unassigned : unassigned.filter(u => {
@@ -186,22 +177,31 @@ const TeamsPage = () => {
 
       {/* Department tabs */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 20, borderBottom: '1px solid var(--border-color)', paddingBottom: 0 }}>
-        {departments.map(dept => (
-          <button key={dept} onClick={() => setActiveTab(dept)} style={{
-            padding: '10px 20px', background: 'none', border: 'none', cursor: 'pointer',
-            fontSize: 13, fontWeight: 600, color: activeTab === dept ? 'var(--accent-primary)' : 'var(--text-muted)',
-            borderBottom: activeTab === dept ? '2px solid var(--accent-primary)' : '2px solid transparent',
-            marginBottom: -1, transition: 'all 0.15s',
-          }}>
-            {DEPT_COLORS[dept]?.icon || ''} {dept}
-          </button>
-        ))}
+        {departments.map(dept => {
+          const theme = dept === 'All' ? null : getDepartmentTheme(dept);
+          return (
+            <button key={dept} onClick={() => setActiveTab(dept)} style={{
+              padding: '10px 20px', background: 'none', border: 'none', cursor: 'pointer',
+              fontSize: 13, fontWeight: 600, color: activeTab === dept ? (theme?.primary || 'var(--accent-primary)') : 'var(--text-muted)',
+              borderBottom: activeTab === dept ? `2px solid ${theme?.primary || 'var(--accent-primary)'}` : '2px solid transparent',
+              marginBottom: -1, transition: 'all 0.15s',
+            }}>
+              {theme?.icon || ''} {dept}
+            </button>
+          );
+        })}
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         {/* Department Teams */}
         {filteredTeams.map(({ manager, department, members }) => {
-          const colors = DEPT_COLORS[department];
+          const theme = getDepartmentTheme(department);
+          const colors = {
+            c1: theme.primary,
+            c2: theme.dark,
+            badge: theme.badgeClass,
+            icon: theme.icon,
+          };
           return (
             <div key={manager._id} className="table-wrapper" style={{ padding: 0, overflow: 'hidden' }}>
               {/* Team Header */}

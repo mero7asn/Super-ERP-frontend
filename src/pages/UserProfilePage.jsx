@@ -2,6 +2,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
+import { getDepartmentThemeByRole } from '../services/departmentJobs';
 
 const roleBadge = (role) => {
   const map = {
@@ -147,6 +148,7 @@ const UserProfilePage = () => {
   if (!user) return null;
 
   const initials = `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase();
+  const departmentTheme = getDepartmentThemeByRole(user.role);
   const enabledPerms = Object.entries(user.permissions || {}).filter(([, v]) => v).map(([k]) => k);
 
   return (
@@ -206,7 +208,7 @@ const UserProfilePage = () => {
         <div className="table-wrapper" style={{ padding: 24, textAlign: 'center' }}>
           <div style={{
             width: 80, height: 80, borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
+            background: `linear-gradient(135deg, ${departmentTheme.primary}, ${departmentTheme.dark})`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 28, fontWeight: 700, color: '#fff', margin: '0 auto 16px',
           }}>
@@ -214,7 +216,7 @@ const UserProfilePage = () => {
           </div>
           <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>{user.firstName} {user.lastName}</h2>
           <div style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 12 }}>{user.email}</div>
-          <span className={`badge ${roleBadge(user.role)}`} style={{ fontSize: 12 }}>{user.role}</span>
+          <span className={`badge ${roleBadge(user.role)}`} style={{ fontSize: 12, background: `${departmentTheme.light}`, color: departmentTheme.dark, border: `1px solid ${departmentTheme.primary}33` }}>{user.role}</span>
           <div style={{ marginTop: 16 }}>
             <span className={`badge ${user.isActive ? 'badge-qualified' : 'badge-lost'}`}>
               {user.isActive ? 'Active' : 'Suspended'}

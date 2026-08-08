@@ -3,6 +3,7 @@ import { NavLink, useNavigate, useMatch, useLocation } from 'react-router-dom';
 import API from '../services/api';
 import logo from '../assets/logo.png';
 import { useAuth } from '../context/AuthContext';
+import { getDepartmentTheme, getDepartmentThemeByRole } from '../services/departmentJobs';
 
 const SidebarIcon = ({ name }) => {
   const size = 17;
@@ -486,10 +487,10 @@ const Sidebar = () => {
       {/* Sidebar Footer User Card */}
       <div className="sidebar-footer">
         <div className="sidebar-user" onClick={() => navigate(`/users/${user?._id}`)} style={{ cursor: 'pointer' }}>
-          <div className="sidebar-user-avatar">{initials}</div>
+          <div className="sidebar-user-avatar" style={{ background: `linear-gradient(135deg, ${userTheme.primary}, ${userTheme.dark})`, color: '#fff' }}>{initials}</div>
           <div className="sidebar-user-info">
             <div className="sidebar-user-name">{user?.firstName} {user?.lastName}</div>
-            <div className="sidebar-user-role">{user?.role}</div>
+            <div className="sidebar-user-role" style={{ color: userTheme.primary }}>{user?.role}</div>
           </div>
         </div>
         <button
