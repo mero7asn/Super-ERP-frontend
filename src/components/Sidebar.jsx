@@ -181,6 +181,11 @@ const WORKSPACE_NAV_ITEMS = [
   { label: 'My Payroll & Payslip', icon: 'payroll', path: '/ess/payroll' },
 ];
 
+const INVENTORY_ROLES = [
+  'Inventory Manager', 'Warehouse Manager', 'Receiving Clerk', 'Shipping Clerk',
+  'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
+];
+
 const Sidebar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -231,11 +236,13 @@ const Sidebar = () => {
   const isSupplyChainActive = useMatch('/supply-chain') || useMatch('/supply-chain/*');
   const isAccountingActive = useMatch('/accounting') || useMatch('/accounting/*');
 
-  const isSuperAdmin = user?.role === 'CRM core Administrator';
+  const isSuperAdmin = user?.role === 'CRM core Administrator' || user?.role === 'System Architect' || user?.role === 'Executive User';
   const showCRM = isSuperAdmin || CRM_ROLES.includes(user?.role);
   const showHRM = isSuperAdmin || HRM_ROLES.includes(user?.role);
   const bm = user?.businessModel || 'service';
-  const showERP = ['product', 'both'].includes(bm);
+  const showERP = isSuperAdmin || ['product', 'both'].includes(bm) || INVENTORY_ROLES.includes(user?.role);
+
+  const userTheme = getDepartmentThemeByRole(user?.role) || { primary: '#6366f1', dark: '#4338ca' };
 
   const initials = user
     ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase()
@@ -378,7 +385,7 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* 3.5. MINI SIDEBAR: ACCOUNTING CORE */}
+        {/* 4. MINI SIDEBAR: ACCOUNTING CORE */}
         <div className="mini-sidebar-group">
           <div
             className="mini-sidebar-sticky-header accounting-header"
@@ -414,7 +421,7 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* 4. MINI SIDEBAR: HRM core */}
+        {/* 5. MINI SIDEBAR: HRM core */}
         {showHRM && (
           <div className="mini-sidebar-group">
             <div
@@ -424,7 +431,7 @@ const Sidebar = () => {
             >
               <div className="mini-sidebar-header-left">
                 <span className="mini-sidebar-icon"><SidebarIcon name="dept-hrm" /></span>
-                <span className="mini-sidebar-title">4. HRM core</span>
+                <span className="mini-sidebar-title">5. HRM core</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredHrmItems.length}</span>
@@ -449,7 +456,7 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* 5. MINI SIDEBAR: MY WORKSPACE */}
+        {/* 6. MINI SIDEBAR: MY WORKSPACE */}
         <div className="mini-sidebar-group">
           <div
             className="mini-sidebar-sticky-header workspace-header"
@@ -458,7 +465,7 @@ const Sidebar = () => {
           >
             <div className="mini-sidebar-header-left">
               <span className="mini-sidebar-icon"><SidebarIcon name="dept-workspace" /></span>
-              <span className="mini-sidebar-title">5. My Workspace</span>
+              <span className="mini-sidebar-title">6. My Workspace</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span className="mini-sidebar-badge">{filteredWorkspaceItems.length}</span>
