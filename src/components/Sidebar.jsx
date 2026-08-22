@@ -282,115 +282,109 @@ const Sidebar = () => {
       <nav className="sidebar-nav">
 
         {/* 1. MINI SIDEBAR: CRM core */}
-        {showCRM && (
-          <div className="mini-sidebar-group">
-            <div
-              className="mini-sidebar-sticky-header crm-header"
-              onClick={() => setCrmOpen(!crmOpen)}
-              title="CRM core Department"
-            >
-              <div className="mini-sidebar-header-left">
-                <span className="mini-sidebar-icon"><SidebarIcon name="dept-crm" /></span>
-                <span className="mini-sidebar-title">1. CRM core</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="mini-sidebar-badge">{filteredCrmItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: crmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
-              </div>
+        <div className="mini-sidebar-group">
+          <div
+            className="mini-sidebar-sticky-header crm-header"
+            onClick={() => setCrmOpen(!crmOpen)}
+            title="CRM core Department"
+          >
+            <div className="mini-sidebar-header-left">
+              <span className="mini-sidebar-icon"><SidebarIcon name="dept-crm" /></span>
+              <span className="mini-sidebar-title">1. CRM core</span>
             </div>
-
-            {crmOpen && (
-              <div className="mini-sidebar-body">
-                {filteredCrmItems.map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    className={({ isActive }) =>
-                      `sidebar-link${isActive || (item.path === '/users' && isUserProfile) ? ' active' : ''}`
-                    }
-                  >
-                    <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
-                  </NavLink>
-                ))}
-              </div>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="mini-sidebar-badge">{filteredCrmItems.length}</span>
+              <span className="mini-sidebar-arrow" style={{ transform: crmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
+            </div>
           </div>
-        )}
+
+          {crmOpen && (
+            <div className="mini-sidebar-body">
+              {filteredCrmItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `sidebar-link${isActive || (item.path === '/users' && isUserProfile) ? ' active' : ''}`
+                  }
+                >
+                  <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* 2. MINI SIDEBAR: inventory core */}
-        {showERP && (
-          <div className="mini-sidebar-group">
-            <div
-              className="mini-sidebar-sticky-header inventory-header"
-              onClick={() => setInventoryOpen(!inventoryOpen)}
-              title="inventory core Department"
-            >
-              <div className="mini-sidebar-header-left">
-                <span className="mini-sidebar-icon"><SidebarIcon name="dept-inventory" /></span>
-                <span className="mini-sidebar-title">2. inventory core</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="mini-sidebar-badge">{filteredInventoryItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: inventoryOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
-              </div>
+        <div className="mini-sidebar-group">
+          <div
+            className="mini-sidebar-sticky-header inventory-header"
+            onClick={() => setInventoryOpen(!inventoryOpen)}
+            title="inventory core Department"
+          >
+            <div className="mini-sidebar-header-left">
+              <span className="mini-sidebar-icon"><SidebarIcon name="dept-inventory" /></span>
+              <span className="mini-sidebar-title">2. inventory core</span>
             </div>
-
-            {inventoryOpen && (
-              <div className="mini-sidebar-body">
-                {filteredInventoryItems.map((sub) => (
-                  <NavLink
-                    key={sub.path}
-                    to={sub.path}
-                    className={({ isActive }) =>
-                      `sidebar-link${isActive || (sub.path === '/inventory' && isInventoryActive) ? ' active' : ''}`
-                    }
-                  >
-                    <span className="sidebar-link-icon"><SidebarIcon name={sub.icon} /></span>
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.label}</span>
-                  </NavLink>
-                ))}
-              </div>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="mini-sidebar-badge">{filteredInventoryItems.length}</span>
+              <span className="mini-sidebar-arrow" style={{ transform: inventoryOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
+            </div>
           </div>
-        )}
+
+          {inventoryOpen && (
+            <div className="mini-sidebar-body">
+              {filteredInventoryItems.map((sub) => (
+                <NavLink
+                  key={sub.path}
+                  to={sub.path}
+                  className={({ isActive }) =>
+                    `sidebar-link${isActive || (sub.path === '/inventory' && isInventoryActive) ? ' active' : ''}`
+                  }
+                >
+                  <span className="sidebar-link-icon"><SidebarIcon name={sub.icon} /></span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* 3. MINI SIDEBAR: supply chain core */}
-        {showERP && (
-          <div className="mini-sidebar-group">
-            <div
-              className="mini-sidebar-sticky-header supply-header"
-              onClick={() => setSupplyChainOpen(!supplyChainOpen)}
-              title="supply chain core Department"
-            >
-              <div className="mini-sidebar-header-left">
-                <span className="mini-sidebar-icon"><SidebarIcon name="dept-supply" /></span>
-                <span className="mini-sidebar-title">3. supply chain core</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="mini-sidebar-badge">{filteredSupplyChainItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: supplyChainOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
-              </div>
+        <div className="mini-sidebar-group">
+          <div
+            className="mini-sidebar-sticky-header supply-header"
+            onClick={() => setSupplyChainOpen(!supplyChainOpen)}
+            title="supply chain core Department"
+          >
+            <div className="mini-sidebar-header-left">
+              <span className="mini-sidebar-icon"><SidebarIcon name="dept-supply" /></span>
+              <span className="mini-sidebar-title">3. supply chain core</span>
             </div>
-
-            {supplyChainOpen && (
-              <div className="mini-sidebar-body">
-                {filteredSupplyChainItems.map((sub) => (
-                  <NavLink
-                    key={sub.path}
-                    to={sub.path}
-                    className={({ isActive }) =>
-                      `sidebar-link${isActive || (sub.path === '/supply-chain' && isSupplyChainActive) ? ' active' : ''}`
-                    }
-                  >
-                    <span className="sidebar-link-icon"><SidebarIcon name={sub.icon} /></span>
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.label}</span>
-                  </NavLink>
-                ))}
-              </div>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="mini-sidebar-badge">{filteredSupplyChainItems.length}</span>
+              <span className="mini-sidebar-arrow" style={{ transform: supplyChainOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
+            </div>
           </div>
-        )}
+
+          {supplyChainOpen && (
+            <div className="mini-sidebar-body">
+              {filteredSupplyChainItems.map((sub) => (
+                <NavLink
+                  key={sub.path}
+                  to={sub.path}
+                  className={({ isActive }) =>
+                    `sidebar-link${isActive || (sub.path === '/supply-chain' && isSupplyChainActive) ? ' active' : ''}`
+                  }
+                >
+                  <span className="sidebar-link-icon"><SidebarIcon name={sub.icon} /></span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* 4. MINI SIDEBAR: ACCOUNTING CORE */}
         <div className="mini-sidebar-group">
@@ -429,39 +423,37 @@ const Sidebar = () => {
         </div>
 
         {/* 5. MINI SIDEBAR: HRM core */}
-        {showHRM && (
-          <div className="mini-sidebar-group">
-            <div
-              className="mini-sidebar-sticky-header hrm-header"
-              onClick={() => setHrmOpen(!hrmOpen)}
-              title="HRM core Department"
-            >
-              <div className="mini-sidebar-header-left">
-                <span className="mini-sidebar-icon"><SidebarIcon name="dept-hrm" /></span>
-                <span className="mini-sidebar-title">5. HRM core</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="mini-sidebar-badge">{filteredHrmItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: hrmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
-              </div>
+        <div className="mini-sidebar-group">
+          <div
+            className="mini-sidebar-sticky-header hrm-header"
+            onClick={() => setHrmOpen(!hrmOpen)}
+            title="HRM core Department"
+          >
+            <div className="mini-sidebar-header-left">
+              <span className="mini-sidebar-icon"><SidebarIcon name="dept-hrm" /></span>
+              <span className="mini-sidebar-title">5. HRM core</span>
             </div>
-
-            {hrmOpen && (
-              <div className="mini-sidebar-body">
-                {filteredHrmItems.map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
-                  >
-                    <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
-                  </NavLink>
-                ))}
-              </div>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="mini-sidebar-badge">{filteredHrmItems.length}</span>
+              <span className="mini-sidebar-arrow" style={{ transform: hrmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
+            </div>
           </div>
-        )}
+
+          {hrmOpen && (
+            <div className="mini-sidebar-body">
+              {filteredHrmItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
+                >
+                  <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* 6. MINI SIDEBAR: MY WORKSPACE */}
         <div className="mini-sidebar-group">
