@@ -1,0 +1,29 @@
+﻿{
+  "worktrees": {
+    "wt-1785174069276-8": {
+      "branch": "irradiated-hardware",
+      "path": "c:\\Users\\Admin\\Desktop\\Core 360\\.kilo\\worktrees\\irradiated-hardware",
+      "parentBranch": "main",
+      "createdAt": "2026-07-27T17:41:09.276Z",
+      "remote": "origin",
+      "branchOwned": true,
+      "autoNameSessionId": "ses_05b556b5cffeVYKv0A0VngblyU",
+      "autoNamePromptCount": 0
+    }
+  },
+  "sessions": {
+    "ses_05b556b5cffeVYKv0A0VngblyU": {
+      "worktreeId": "wt-1785174069276-8",
+      "createdAt": "2026-07-27T17:41:10.438Z"
+    }
+  },
+  "tabOrder": {
+    "local": [
+      "pending:5f42fe91-ef54-408d-98b7-19ff51f9777e"
+    ]
+  },
+  "worktreeOrder": [
+    "wt-1785174069276-8"
+  ],
+  "sessionsCollapsed": true
+}
