@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Icon } from '../components/Icons';
@@ -80,7 +80,7 @@ const PaymentPage = () => {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)', padding: 20 }}>
         <div style={{ maxWidth: 440, width: '100%', background: 'var(--bg-card)', borderRadius: 12, padding: 40, textAlign: 'center', border: '1px solid var(--border-color)' }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}><Icon name="warning" size={40} /></div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
           <h2 style={{ fontSize: 20, marginBottom: 8 }}>Payment Unavailable</h2>
           <p style={{ color: 'var(--text-muted)' }}>{error}</p>
         </div>
@@ -116,7 +116,7 @@ const PaymentPage = () => {
           </div>
         </div>
 
-        <div style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-color)', overflow: 'hidden' }}>
+        <div style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)', borderRadius: 16, border: '1px solid var(--border-color)', overflow: 'hidden', boxShadow: '0 18px 42px rgba(15, 23, 42, 0.08)' }}>
           {/* Offer Summary */}
           <div style={{ padding: '24px 28px', borderBottom: '1px solid var(--border-color)' }}>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -147,9 +147,9 @@ const PaymentPage = () => {
               <div style={{
                 width: 64, height: 64, borderRadius: '50%', margin: '0 auto 16px',
                 background: 'rgba(16,185,129,0.12)', color: '#6EE7B7',
-                display: 'flex', alignItems: 'center', justifyContent: 'center'
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32
               }}>
-                <Icon name="check" size={28} />
+                ✓
               </div>
               <h2 style={{ fontSize: 20, marginBottom: 8 }}>Payment Confirmed</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: 20 }}>

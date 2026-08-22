@@ -1,4 +1,4 @@
-export const DEPARTMENT_THEMES = {
+﻿export const DEPARTMENT_THEMES = {
   // CRM / SALES
   Sales: {
     id: 'Sales',
@@ -7,6 +7,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#C2410C',
     light: '#FFF7ED',
     badgeClass: 'badge-new',
+    icon: '💼',
   },
   'Customer Support': {
     id: 'Customer Support',
@@ -15,6 +16,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#C2410C',
     light: '#FFF7ED',
     badgeClass: 'badge-converted',
+    icon: '🎧',
   },
   Marketing: {
     id: 'Marketing',
@@ -23,82 +25,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#C2410C',
     light: '#FFF7ED',
     badgeClass: 'badge-meta',
-  },
-  // HR
-  'Human Resources': {
-    id: 'Human Resources',
-    label: 'HR',
-    primary: '#8B5CF6',
-    dark: '#6D28D9',
-    light: '#F5F3FF',
-    badgeClass: 'badge-meta',
-  },
-  Personal: {
-    id: 'Personal',
-    label: 'Personal',
-    primary: '#8B5CF6',
-    dark: '#6D28D9',
-    light: '#F5F3FF',
-    badgeClass: 'badge-new',
-  },
-  Payroll: {
-    id: 'Payroll',
-    label: 'Payroll',
-    primary: '#8B5CF6',
-    dark: '#6D28D9',
-    light: '#F5F3FF',
-    badgeClass: 'badge-qualified',
-  },
-  Training: {
-    id: 'Training',
-    label: 'Training',
-    primary: '#8B5CF6',
-    dark: '#6D28D9',
-    light: '#F5F3FF',
-    badgeClass: 'badge-converted',
-  },
-  'Talent Acquisition': {
-    id: 'Talent Acquisition',
-    label: 'Talent Acquisition',
-    primary: '#8B5CF6',
-    dark: '#6D28D9',
-    light: '#F5F3FF',
-    badgeClass: 'badge-meta',
-  },
-  'BD & People Culture': {
-    id: 'BD & People Culture',
-    label: 'BD & People Culture',
-    primary: '#8B5CF6',
-    dark: '#6D28D9',
-    light: '#F5F3FF',
-    badgeClass: 'badge-contacted',
-  },
-  // FINANCE
-  Finance: {
-    id: 'Finance',
-    label: 'Finance',
-    primary: '#10B981',
-    dark: '#047857',
-    light: '#ECFDF5',
-    badgeClass: 'badge-contacted',
-  },
-  // INVENTORY
-  Inventory: {
-    id: 'Inventory',
-    label: 'Inventory',
-    primary: '#F59E0B',
-    dark: '#B45309',
-    light: '#FFFBEB',
-    badgeClass: 'badge-qualified',
-  },
-  // OPERATIONS
-  Operations: {
-    id: 'Operations',
-    label: 'Operations',
-    primary: '#E11D48',
-    dark: '#BE123C',
-    light: '#FFF1F2',
-    badgeClass: 'badge-contacted',
+    icon: '📣',
   },
   // IT / TECHNOLOGY
   Technology: {
@@ -108,8 +35,8 @@ export const DEPARTMENT_THEMES = {
     dark: '#0E7490',
     light: '#ECFEFF',
     badgeClass: 'badge-qualified',
+    icon: '⚙️',
   },
-  // EXECUTIVE (workspace)
   Executive: {
     id: 'Executive',
     label: 'Executive',
@@ -117,6 +44,92 @@ export const DEPARTMENT_THEMES = {
     dark: '#0E7490',
     light: '#ECFEFF',
     badgeClass: 'badge-converted',
+    icon: '🏢',
+  },
+  // HR
+  'Human Resources': {
+    id: 'Human Resources',
+    label: 'HR',
+    primary: '#8B5CF6',
+    dark: '#6D28D9',
+    light: '#F5F3FF',
+    badgeClass: 'badge-meta',
+    icon: '👥',
+  },
+  Personal: {
+    id: 'Personal',
+    label: 'Personal',
+    primary: '#8B5CF6',
+    dark: '#6D28D9',
+    light: '#F5F3FF',
+    badgeClass: 'badge-new',
+    icon: '👤',
+  },
+  Payroll: {
+    id: 'Payroll',
+    label: 'Payroll',
+    primary: '#8B5CF6',
+    dark: '#6D28D9',
+    light: '#F5F3FF',
+    badgeClass: 'badge-qualified',
+    icon: '💵',
+  },
+  Training: {
+    id: 'Training',
+    label: 'Training',
+    primary: '#8B5CF6',
+    dark: '#6D28D9',
+    light: '#F5F3FF',
+    badgeClass: 'badge-converted',
+    icon: '📚',
+  },
+  'Talent Acquisition': {
+    id: 'Talent Acquisition',
+    label: 'Talent Acquisition',
+    primary: '#8B5CF6',
+    dark: '#6D28D9',
+    light: '#F5F3FF',
+    badgeClass: 'badge-meta',
+    icon: '🎯',
+  },
+  'BD & People Culture': {
+    id: 'BD & People Culture',
+    label: 'BD & People Culture',
+    primary: '#8B5CF6',
+    dark: '#6D28D9',
+    light: '#F5F3FF',
+    badgeClass: 'badge-contacted',
+    icon: '🤝',
+  },
+  // FINANCE
+  Finance: {
+    id: 'Finance',
+    label: 'Finance',
+    primary: '#10B981',
+    dark: '#047857',
+    light: '#ECFDF5',
+    badgeClass: 'badge-contacted',
+    icon: '💰',
+  },
+  // INVENTORY
+  Inventory: {
+    id: 'Inventory',
+    label: 'Inventory',
+    primary: '#F59E0B',
+    dark: '#B45309',
+    light: '#FFFBEB',
+    badgeClass: 'badge-qualified',
+    icon: '📦',
+  },
+  // OPERATIONS
+  Operations: {
+    id: 'Operations',
+    label: 'Operations',
+    primary: '#E11D48',
+    dark: '#BE123C',
+    light: '#FFF1F2',
+    badgeClass: 'badge-contacted',
+    icon: '🛠️',
   },
 };
 

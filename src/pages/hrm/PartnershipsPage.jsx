@@ -1,18 +1,17 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Icon } from '../../components/Icons';
+﻿import { useState, useEffect, useMemo } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
 // Category definitions
 const BENEFIT_CATEGORIES = [
-  { id: 'All', label: 'All', emoji: <Icon name="folder" size={18} /> },
-  { id: 'Health', label: 'Health & Wellness', emoji: <Icon name="support" size={18} /> },
-  { id: 'Financial', label: 'Financial', emoji: <Icon name="money" size={18} /> },
-  { id: 'Lifestyle', label: 'Lifestyle & Leisure', emoji: <Icon name="clock" size={18} /> },
-  { id: 'Education', label: 'Education & Training', emoji: <Icon name="book" size={18} /> },
-  { id: 'Insurance', label: 'Insurance', emoji: <Icon name="lock" size={18} /> },
-  { id: 'Transport', label: 'Transportation', emoji: <Icon name="settings" size={18} /> },
-  { id: 'Other', label: 'Other', emoji: <Icon name="box" size={18} /> },
+  { id: 'All', label: 'All', emoji: '🗂' },
+  { id: 'Health', label: 'Health & Wellness', emoji: '🏥' },
+  { id: 'Financial', label: 'Financial', emoji: '💰' },
+  { id: 'Lifestyle', label: 'Lifestyle & Leisure', emoji: '🌴' },
+  { id: 'Education', label: 'Education & Training', emoji: '📚' },
+  { id: 'Insurance', label: 'Insurance', emoji: '🛡' },
+  { id: 'Transport', label: 'Transportation', emoji: '🚌' },
+  { id: 'Other', label: 'Other', emoji: '📦' },
 ];
 
 const CATEGORY_COLORS = {
@@ -26,7 +25,7 @@ const CATEGORY_COLORS = {
 };
 
 const getCategoryColor = (cat) => CATEGORY_COLORS[cat] || CATEGORY_COLORS.Other;
-const getCategoryEmoji = (cat) => BENEFIT_CATEGORIES.find((c) => c.id === cat)?.emoji || <Icon name="box" size={18} />;
+const getCategoryEmoji = (cat) => BENEFIT_CATEGORIES.find((c) => c.id === cat)?.emoji || '📦';
 
 const PartnershipsPage = () => {
   const { user } = useAuth();
@@ -56,7 +55,7 @@ const PartnershipsPage = () => {
   const [suggDetails, setSuggDetails] = useState('');
   const [submittingSugg, setSubmittingSugg] = useState(false);
 
-  const isBD = ['HRM System Administrator', 'HR Manager', 'HR Business Partner', 'Core 360 Administrator'].includes(user?.role);
+  const isBD = ['HRM System Administrator', 'HR Manager', 'HR Business Partner', 'CRM core Administrator'].includes(user?.role);
 
   const fetchAll = async () => {
     setLoading(true);
@@ -170,11 +169,41 @@ const PartnershipsPage = () => {
         </div>
       )}
 
+      <div className="card" style={{
+        background: 'linear-gradient(135deg, rgba(16,185,129,0.14), rgba(37,99,235,0.12))',
+        border: '1px solid rgba(16,185,129,0.22)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 16,
+        flexWrap: 'wrap'
+      }}>
+        <div>
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-success)', fontWeight: 700 }}>Benefits and culture</div>
+          <h3 style={{ margin: '6px 0 4px', fontSize: 17 }}>Make employee perks and ideas easier to manage</h3>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 13 }}>
+            Track partnerships, review submitted improvements, and keep the employee experience visible and organized.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {[
+            { label: 'Deals', value: partnerships.length },
+            { label: 'Suggestions', value: suggestions.length },
+            { label: 'Status', value: 'Live' },
+          ].map((item) => (
+            <div key={item.label} style={{ minWidth: 96, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
+              <div style={{ fontSize: 18, fontWeight: 700 }}>{item.value}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Tab Navigation */}
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 0 }}>
         {[
-          { id: 'benefits', label: (<><Icon name="handshake" size={18} /> Employee Benefits & Deals</>) },
-          { id: 'suggestions', label: `<Icon name="bulb" size={18} /> Improvement Suggestions (${suggestions.length})` },
+          { id: 'benefits', label: '🤝 Employee Benefits & Deals' },
+          { id: 'suggestions', label: `💡 Improvement Suggestions (${suggestions.length})` },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -331,12 +360,12 @@ const PartnershipsPage = () => {
                         </p>
                         {p.contactInfo && (
                           <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                            <Icon name="phone" size={18} /> {p.contactInfo}
+                            📞 {p.contactInfo}
                           </div>
                         )}
                         {p.expiryDate && (
                           <div style={{ fontSize: 11, color: isExpired ? '#FCA5A5' : 'var(--text-muted)' }}>
-                            <Icon name="calendar" size={18} /> Valid until: {new Date(p.expiryDate).toLocaleDateString()}
+                            📅 Valid until: {new Date(p.expiryDate).toLocaleDateString()}
                           </div>
                         )}
                       </div>

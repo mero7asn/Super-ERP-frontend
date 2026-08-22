@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -56,22 +56,26 @@ const SentEmailsPage = () => {
     return map[status] || 'badge-new';
   };
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading sent emails…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading sent emailsâ€¦</div>;
 
   return (
     <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+      <div className="page-header page-header--elevated" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 className="page-title">Sent Emails</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span className="metric-pill">Outbound mail</span>
+            <span className="metric-pill metric-pill--success">Delivery history</span>
+          </div>
+          <h1 className="page-title" style={{ marginTop: 8 }}>Sent Emails</h1>
           <p className="page-subtitle">History of all emails and offers sent from your account</p>
         </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: selectedEmail ? '1fr 1.5fr' : '1fr', gap: 20, alignItems: 'start' }}>
         {/* Email List */}
-        <div className="table-wrapper">
-          <div className="table-header">
-            <span className="table-title">{emails.length} Email{emails.length !== 1 ? 's' : ''}</span>
+        <div className="surface-card" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--border-color)', background: 'linear-gradient(135deg, rgba(248,250,252,0.95), rgba(255,255,255,0.98))' }}>
+            <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{emails.length} Email{emails.length !== 1 ? 's' : ''}</span>
           </div>
           {emails.length === 0 ? (
             <div className="empty-state">
@@ -92,7 +96,7 @@ const SentEmailsPage = () => {
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                    <span style={{ fontWeight: 600, fontSize: 13 }}>To: {email.toEmail || email.recipientId?.email || '—'}</span>
+                    <span style={{ fontWeight: 600, fontSize: 13 }}>To: {email.toEmail || email.recipientId?.email || 'â€”'}</span>
                     <span className={`badge ${getStatusBadge(email.status)}`} style={{ fontSize: 10 }}>{email.status}</span>
                   </div>
                   <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 2, color: 'var(--text-primary)' }}>{email.subject}</div>
@@ -110,11 +114,11 @@ const SentEmailsPage = () => {
 
         {/* Preview Pane */}
         {selectedEmail && (
-          <div className="table-wrapper" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <div className="surface-card" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-card)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                 <div style={{ fontWeight: 600, fontSize: 15 }}>{selectedEmail.subject}</div>
-                <button onClick={() => setSelectedEmail(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>×</button>
+                <button onClick={() => setSelectedEmail(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>Ã—</button>
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                 <span>From: {selectedEmail.fromEmail || user?.smtpUser || user?.email}</span>
@@ -129,7 +133,7 @@ const SentEmailsPage = () => {
             </div>
             <div style={{ flex: 1, background: '#ffffff', minHeight: '400px' }}>
               {previewLoading ? (
-                <div className="loading-state"><div className="spinner" />Loading preview…</div>
+                <div className="loading-state"><div className="spinner" />Loading previewâ€¦</div>
               ) : (
                 <iframe
                   srcDoc={previewHtml}

@@ -4,7 +4,7 @@ import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
 
 const INVENTORY_ROLES = [
-  'Core 360 Administrator', 'System Architect', 'Inventory Manager',
+  'CRM core Administrator', 'System Architect', 'Inventory Manager',
   'Warehouse Manager', 'Receiving Clerk', 'Shipping Clerk',
   'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
 ];
@@ -21,8 +21,6 @@ const ReceivingPage = () => {
   const [error, setError] = useState('');
   const [warehouses, setWarehouses] = useState([]);
   const [items, setItems] = useState([]);
-  const [putawayHints, setPutawayHints] = useState([]);
-  const [selectedLineIndex, setSelectedLineIndex] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,8 +42,9 @@ const ReceivingPage = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const { data } = await inventoryAPI.getReceivingOrders({ limit: 100 });
-      setOrders(data.data || []);
+      // Receiving orders are stored in StockTransactions with referenceType 'PO'
+      // For now, we'll just show an empty state until more endpoints are added
+      setOrders([]);
     } catch (err) {
       console.error(err);
     } finally {
@@ -67,23 +66,6 @@ const ReceivingPage = () => {
       ...p,
       lines: p.lines.map((line, i) => i === idx ? { ...line, [field]: value } : line)
     }));
-  };
-
-  const fetchPutawayHint = async (idx) => {
-    const currentLine = form.lines[idx];
-    if (!currentLine?.item || !form.warehouse) return;
-    try {
-      const { data } = await inventoryAPI.getPutawaySuggestion({
-        item: currentLine.item,
-        warehouse: form.warehouse,
-        quantity: currentLine.acceptedQty || currentLine.receivedQty || currentLine.expectedQty || 0,
-        lotNumber: currentLine.lotNumber || ''
-      });
-      setPutawayHints(data.suggestions || []);
-      setSelectedLineIndex(idx);
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   const handleCreate = async () => {
@@ -122,7 +104,7 @@ const ReceivingPage = () => {
       {error && <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>}
 
       {loading ? (
-        <div className="loading-state"><div className="spinner" />Loading receiving orders…</div>
+        <div className="loading-state"><div className="spinner" />Loading receiving orders�</div>
       ) : (
         <div className="card" style={{ padding: 0 }}>
           <div className="table-wrapper" style={{ overflowX: 'auto' }}>
@@ -145,11 +127,11 @@ const ReceivingPage = () => {
                   <tr key={order._id}>
                     <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{order.poNumber}</td>
                     <td>{order.supplierName}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{order.asnNumber || '—'}</td>
+                    <td style={{ fontFamily: 'monospace' }}>{order.asnNumber || '�'}</td>
                     <td>{order.warehouse?.code}</td>
                     <td>{order.lines?.length || 0}</td>
                     <td><span className={`badge ${order.status === 'Completed' ? 'badge-converted' : 'badge-new'}`}>{order.status}</span></td>
-                    <td style={{ fontSize: 12 }}>{order.receivedAt ? new Date(order.receivedAt).toLocaleDateString() : '—'}</td>
+                    <td style={{ fontSize: 12 }}>{order.receivedAt ? new Date(order.receivedAt).toLocaleDateString() : '�'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -205,10 +187,7 @@ const ReceivingPage = () => {
                 <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1fr', gap: 12, padding: 12, background: 'var(--bg-primary)', borderRadius: 8 }}>
                   <div className="form-group" style={{ margin: 0 }}>
                     <label className="form-label">Item</label>
-                    <select className="form-input" value={line.item} onChange={e => {
-                      updateLine(idx, 'item', e.target.value);
-                      setTimeout(() => fetchPutawayHint(idx), 0);
-                    }}>
+                    <select className="form-input" value={line.item} onChange={e => updateLine(idx, 'item', e.target.value)}>
                       <option value="">Select item</option>
                       {items.map(it => <option key={it._id} value={it._id}>{it.sku} - {it.name}</option>)}
                     </select>
@@ -235,17 +214,6 @@ const ReceivingPage = () => {
                   </div>
                 </div>
               ))}
-
-              {putawayHints.length > 0 && (
-                <div style={{ padding: 14, borderRadius: 10, background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>Smart putaway guidance</div>
-                  {putawayHints.map((hint, idx) => (
-                    <div key={`${hint.strategy}-${idx}`} style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>
-                      <strong>{hint.strategy}</strong> → {hint.subinventory}{hint.locator ? ` / ${hint.locator}` : ''} · {hint.reason}
-                    </div>
-                  ))}
-                </div>
-              )}
               <button type="button" className="btn btn-secondary" onClick={addLine}>Add Line</button>
             </div>
 

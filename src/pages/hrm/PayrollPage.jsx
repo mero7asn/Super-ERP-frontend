@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
-import { Icon } from '../../components/Icons';
+﻿import { useState, useEffect, useRef } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
@@ -11,7 +10,7 @@ const PAYROLL_ROLES = [
   'HR Manager',
   'HR Director / Executive HR User',
   'HRM System Administrator',
-  'Core 360 Administrator',
+  'CRM core Administrator',
 ];
 const isPayrollMgr = (role) => PAYROLL_ROLES.includes(role);
 
@@ -45,11 +44,11 @@ const sev = {
 };
 
 const alertTypeClr = {
-  Fraud:          { icon: <Icon name="siren" size={18} />, color: '#EF4444' },
-  Anomaly:        { icon: <Icon name="warning" size={18} />,  color: '#F59E0B' },
-  Compliance:     { icon: '⚖',  color: '#2563EB' },
-  Recommendation: { icon: <Icon name="bulb" size={18} />, color: '#10B981' },
-  Info:           { icon: 'ℹ',  color: '#64748B' },
+  Fraud:          { icon: '🚨', color: '#EF4444' },
+  Anomaly:        { icon: '⚠️',  color: '#F59E0B' },
+  Compliance:     { icon: '⚖️',  color: '#2563EB' },
+  Recommendation: { icon: '💡', color: '#10B981' },
+  Info:           { icon: 'ℹ️',  color: '#64748B' },
 };
 
 // ─────────────────────────────────────────────────────────────────
@@ -82,18 +81,18 @@ const MetricCard = ({ icon, label, value, sub }) => (
 const PayrollPage = () => {
   const { user } = useAuth();
   const isMgr = isPayrollMgr(user?.role);
-  const isSenior = ['HR Manager', 'HR Director / Executive HR User', 'HRM System Administrator', 'Core 360 Administrator'].includes(user?.role);
+  const isSenior = ['HR Manager', 'HR Director / Executive HR User', 'HRM System Administrator', 'CRM core Administrator'].includes(user?.role);
 
   // ── Tab State ──
   const TABS = [
-    { id: 'payslips',            label: <><Icon name="kanban" size={18} /> My Payslips</>,         visible: true },
-    { id: 'runs',                label: <><Icon name="refresh" size={18} /> Payroll Runs</>,         visible: isMgr },
-    { id: 'disbursement-queue',  label: <><Icon name="money" size={18} /> Disbursement Queue</>,   visible: isMgr },
-    { id: 'payment-methods',     label: <><Icon name="card" size={18} /> Payment Methods</>,      visible: isMgr },
-    { id: 'company-accounts',    label: <><Icon name="bank" size={18} /> Company Accounts</>,     visible: isMgr },
-    { id: 'bank-accounts',       label: <><Icon name="person" size={18} /> Employee Banks</>,      visible: isMgr },
-    { id: 'alerts',              label: <><Icon name="siren" size={18} /> Alerts & Fraud</>,       visible: isMgr },
-    { id: 'analytics',           label: <><Icon name="analytics" size={18} /> Analytics</>,            visible: isMgr },
+    { id: 'payslips',            label: '📄 My Payslips',         visible: true },
+    { id: 'runs',                label: '🔄 Payroll Runs',         visible: isMgr },
+    { id: 'disbursement-queue',  label: '💸 Disbursement Queue',   visible: isMgr },
+    { id: 'payment-methods',     label: '💳 Payment Methods',      visible: isMgr },
+    { id: 'company-accounts',    label: '🏦 Company Accounts',     visible: isMgr },
+    { id: 'bank-accounts',       label: '👤 Employee Banks',      visible: isMgr },
+    { id: 'alerts',              label: '🚨 Alerts & Fraud',       visible: isMgr },
+    { id: 'analytics',           label: '📊 Analytics',            visible: isMgr },
   ].filter(t => t.visible);
 
   const [activeTab, setActiveTab] = useState('payslips');
@@ -444,7 +443,7 @@ const PayrollPage = () => {
           <div className="loading-state">Loading payslips…</div>
         ) : payslips.length === 0 ? (
           <div className="card" style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 32 }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}><Icon name="kanban" size={18} /></div>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>📄</div>
             <div>No payslips found yet. Payslips appear here once payroll is processed.</div>
           </div>
         ) : (
@@ -483,7 +482,7 @@ const PayrollPage = () => {
                 <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Payslip</div>
                 <div style={{ fontWeight: 700, fontSize: 20 }}>{selectedPayslip.period}</div>
               </div>
-              <button onClick={() => window.print()} className="btn btn-secondary btn-sm" style={{ fontSize: 11 }}><Icon name="print" size={18} /> Print</button>
+              <button onClick={() => window.print()} className="btn btn-secondary btn-sm" style={{ fontSize: 11 }}>🖨️ Print</button>
             </div>
 
             {/* Earnings */}
@@ -545,7 +544,7 @@ const PayrollPage = () => {
             </div>
 
             {selectedPayslip.hrNotes && (
-              <div style={{ marginTop: 12, fontSize: 12, color: 'var(--text-muted)' }}><Icon name="edit" size={18} /> HR Note: {selectedPayslip.hrNotes}</div>
+              <div style={{ marginTop: 12, fontSize: 12, color: 'var(--text-muted)' }}>📝 HR Note: {selectedPayslip.hrNotes}</div>
             )}
           </div>
         </div>
@@ -569,7 +568,7 @@ const PayrollPage = () => {
       {dqLoading ? <div className="loading-state">Loading…</div>
       : dqList.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 40 }}>
-          <div style={{ fontSize: 36, marginBottom: 8 }}><Icon name="check" size={18} /></div>
+          <div style={{ fontSize: 36, marginBottom: 8 }}>✅</div>
           <div>No failed disbursements. All payments processed successfully.</div>
         </div>
       ) : (
@@ -600,7 +599,7 @@ const PayrollPage = () => {
                     <td style={{ fontWeight: 700 }}>{(e.netSalary || 0).toLocaleString()} EGP</td>
                     <td>
                       <span style={{ fontSize: 12, color: '#B91C1C', background: 'rgba(239,68,68,0.08)', padding: '3px 8px', borderRadius: 6 }}>
-                        <Icon name="warning" size={18} /> {e.failureReason}
+                        ⚠️ {e.failureReason}
                       </span>
                     </td>
                     <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(e.updatedAt).toLocaleDateString()}</td>
@@ -611,7 +610,7 @@ const PayrollPage = () => {
                           className="btn btn-primary btn-sm"
                           style={{ fontSize: 11, padding: '4px 12px' }}
                         >
-                          <Icon name="check" size={18} /> Mark Paid
+                          ✅ Mark Paid
                         </button>
                       </td>
                     )}
@@ -757,7 +756,7 @@ const PayrollPage = () => {
             <div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Run Type</div>
               <select className="form-input" value={runType} onChange={e => setRunType(e.target.value)} style={{ padding: '8px 12px' }}>
-                <option value="Salary"><Icon name="money" size={18} /> Salary</option>
+                <option value="Salary">💰 Salary</option>
                 <option value="Bonus">🎁 Bonus</option>
               </select>
             </div>
@@ -797,7 +796,7 @@ const PayrollPage = () => {
           </div>
           {runType === 'Salary' && (
             <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8 }}>
-              <Icon name="warning" size={18} /> Only one salary run is allowed per period. Bonus runs can be created anytime.
+              ⚠️ Only one salary run is allowed per period. Bonus runs can be created anytime.
             </div>
           )}
           {runMsg.text && (
@@ -839,7 +838,7 @@ const PayrollPage = () => {
                         <td style={{ fontWeight: 600 }}>{r.period}</td>
                         <td>
                           <span style={{ padding: '3px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600, background: isBonus ? 'rgba(245,158,11,0.12)' : 'rgba(37,99,235,0.10)', color: isBonus ? '#B45309' : '#2563EB' }}>
-                            {isBonus ? '🎁 Bonus' : (<><Icon name="money" size={18} /> Salary</>)}
+                            {isBonus ? '🎁 Bonus' : '💰 Salary'}
                           </span>
                         </td>
                         <td><Badge label={r.status} bg={s.bg} color={s.text} border={s.border} /></td>
@@ -859,7 +858,7 @@ const PayrollPage = () => {
                               <button onClick={(e) => { e.stopPropagation(); handleReleaseRun(r._id, true); }} className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 10px', background: 'var(--accent-success)', borderColor: 'var(--accent-success)' }}>Confirm Release</button>
                             )}
                             {r.status === 'PendingRelease' && !isSenior && (
-                              <span style={{ fontSize: 11, color: '#92400E' }}><Icon name="clock" size={18} /> Awaiting manager</span>
+                              <span style={{ fontSize: 11, color: '#92400E' }}>⏳ Awaiting manager</span>
                             )}
                           </div>
                         </td>
@@ -941,10 +940,10 @@ const PayrollPage = () => {
         {/* Stats Row */}
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
           {[
-            { icon: '', label: 'Open Alerts', value: openCount },
-            { icon: <Icon name="siren" size={18} />, label: 'Critical', value: criticalCount },
+            { icon: '🔴', label: 'Open Alerts', value: openCount },
+            { icon: '🚨', label: 'Critical', value: criticalCount },
             { icon: '👻', label: 'Fraud Flags', value: fraudCount },
-            { icon: <Icon name="check" size={18} />, label: 'Resolved', value: alerts.filter(a => a.status === 'Resolved').length },
+            { icon: '✅', label: 'Resolved', value: alerts.filter(a => a.status === 'Resolved').length },
           ].map(({ icon, label, value }) => (
             <MetricCard key={label} icon={icon} label={label} value={value} />
           ))}
@@ -973,7 +972,7 @@ const PayrollPage = () => {
         {alertsLoading ? <div className="loading-state">Loading alerts…</div>
         : filtered.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 32 }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}><Icon name="check" size={18} /></div>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>✅</div>
             <div>No alerts matching the current filter.</div>
           </div>
         ) : (
@@ -996,12 +995,12 @@ const PayrollPage = () => {
                         <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 3 }}>{a.message}</div>
                         {a.employeeId && (
                           <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
-                            <Icon name="person" size={18} /> {a.employeeId.firstName} {a.employeeId.lastName} · {a.employeeId.role}
+                            👤 {a.employeeId.firstName} {a.employeeId.lastName} · {a.employeeId.role}
                           </div>
                         )}
                         {a.suggestedAction && (
                           <div style={{ fontSize: 12, marginTop: 5, padding: '4px 8px', background: 'rgba(37,99,235,0.08)', borderRadius: 6, display: 'inline-block', color: 'var(--accent-primary)' }}>
-                            <Icon name="bulb" size={18} /> {a.suggestedAction}
+                            💡 {a.suggestedAction}
                           </div>
                         )}
                       </div>
@@ -1045,10 +1044,10 @@ const PayrollPage = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {/* KPI Metrics */}
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-              <MetricCard icon={<Icon name="users" size={18} />} label="Total Headcount" value={analytics.headcount} />
-              <MetricCard icon={<Icon name="money" size={18} />} label="Monthly Payroll" value={(analytics.totalPayroll || 0).toLocaleString() + ' EGP'} />
-              <MetricCard icon={<Icon name="analytics" size={18} />} label="Avg Salary" value={(analytics.avgSalary || 0).toLocaleString() + ' EGP'} />
-              <MetricCard icon={<Icon name="siren" size={18} />} label="Open Alerts" value={analytics.openAlertsCount} sub={analytics.criticalAlertsCount + ' critical'} />
+          <MetricCard icon="👥" label="Total Headcount" value={analytics.headcount} />
+          <MetricCard icon="💰" label="Monthly Payroll" value={(analytics.totalPayroll || 0).toLocaleString() + ' EGP'} />
+          <MetricCard icon="📊" label="Avg Salary" value={(analytics.avgSalary || 0).toLocaleString() + ' EGP'} />
+          <MetricCard icon="🚨" label="Open Alerts" value={analytics.openAlertsCount} sub={analytics.criticalAlertsCount + ' critical'} />
         </div>
 
         <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-start' }}>
@@ -1076,7 +1075,7 @@ const PayrollPage = () => {
           <div style={{ flex: '1 1 280px', display: 'flex', flexDirection: 'column', gap: 14 }}>
             {/* Top Earners */}
             <div className="card">
-              <h3 style={{ margin: '0 0 14px', fontSize: 14 }}><Icon name="trophy" size={18} /> Top Earners</h3>
+              <h3 style={{ margin: '0 0 14px', fontSize: 14 }}>🏆 Top Earners</h3>
               {(analytics.topEarners || []).map((e, i) => (
                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -1096,7 +1095,7 @@ const PayrollPage = () => {
 
             {/* Monthly Trend */}
             <div className="card">
-              <h3 style={{ margin: '0 0 14px', fontSize: 14 }}><Icon name="trending" size={18} /> Monthly Trend</h3>
+              <h3 style={{ margin: '0 0 14px', fontSize: 14 }}>📈 Monthly Trend</h3>
               {(analytics.monthlyTrend || []).map((m, i) => (
                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 8 }}>
                   <span style={{ color: 'var(--text-muted)' }}>{m.period}</span>
@@ -1162,7 +1161,7 @@ const PayrollPage = () => {
           </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
             <button className="btn btn-secondary btn-sm" onClick={() => { setCaForm({ ...caForm, open: false }); setCaMsg({ type: '', text: '' }); }}>Cancel</button>
-            <button className="btn btn-primary btn-sm" onClick={handleCaSave}><Icon name="download" size={18} /> Save Account</button>
+            <button className="btn btn-primary btn-sm" onClick={handleCaSave}>💾 Save Account</button>
           </div>
         </div>
       )}
@@ -1252,7 +1251,7 @@ const PayrollPage = () => {
             <div style={{ marginTop: 12, maxWidth: 280 }}>
               <Field label="Disbursement Method">
                 <select className="form-input" value={baForm.method} onChange={e => setBaForm({ ...baForm, method: e.target.value })}>
-                  {cap.methods.map(m => <option key={m} value={m}>{m === 'BankAccount' ? (<><Icon name="money" size={18} /> Bank Account</>) : m === 'FawryWallet' ? (<><Icon name="phone" size={18} /> Fawry Wallet</>) : m === 'PayMobWallet' ? (<><Icon name="money" size={18} /> PayMob Wallet</>) : m}</option>)}
+                  {cap.methods.map(m => <option key={m} value={m}>{m === 'BankAccount' ? '🏦 Bank Account' : m === 'FawryWallet' ? '📱 Fawry Wallet' : m === 'PayMobWallet' ? '💳 PayMob Wallet' : m}</option>)}
                 </select>
               </Field>
             </div>
@@ -1276,13 +1275,13 @@ const PayrollPage = () => {
 
             {baErrors.length > 0 && (
               <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 8, padding: 10, marginTop: 12 }}>
-                {baErrors.map((err, i) => <div key={i} style={{ fontSize: 12, color: '#B91C1C' }}><Icon name="warning" size={18} /> {err}</div>)}
+                {baErrors.map((err, i) => <div key={i} style={{ fontSize: 12, color: '#B91C1C' }}>⚠️ {err}</div>)}
               </div>
             )}
 
             <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
               <button className="btn btn-secondary btn-sm" onClick={() => setBaForm({ ...baForm, open: false })}>Cancel</button>
-              <button className="btn btn-primary btn-sm" onClick={handleBaSave}><Icon name="download" size={18} /> Save Bank Account</button>
+              <button className="btn btn-primary btn-sm" onClick={handleBaSave}>💾 Save Bank Account</button>
             </div>
           </div>
         )}
@@ -1409,7 +1408,7 @@ const PayrollPage = () => {
 
             {releaseModal.readiness.issues?.length > 0 && (
               <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 8, padding: 10, marginBottom: 14 }}>
-                {releaseModal.readiness.issues.map((iss, i) => <div key={i} style={{ fontSize: 12, color: '#B91C1C' }}><Icon name="warning" size={18} /> {iss}</div>)}
+                {releaseModal.readiness.issues.map((iss, i) => <div key={i} style={{ fontSize: 12, color: '#B91C1C' }}>⚠️ {iss}</div>)}
               </div>
             )}
 
@@ -1446,7 +1445,7 @@ const PayrollPage = () => {
                 disabled={releaseModal.loading || !releaseModal.sourceAccountId}
                 onClick={confirmRelease}
               >
-                {releaseModal.loading ? 'Processing…' : (releaseModal.isPending ? 'Request Release' : (releaseModal.mode === 'live' ? (<><Icon name="warning" size={18} /> RELEASE — LIVE</>) : 'Release (Simulation)'))}
+                {releaseModal.loading ? 'Processing…' : (releaseModal.isPending ? 'Request Release' : (releaseModal.mode === 'live' ? '⚠ RELEASE — LIVE' : 'Release (Simulation)'))}
               </button>
             </div>
           </div>

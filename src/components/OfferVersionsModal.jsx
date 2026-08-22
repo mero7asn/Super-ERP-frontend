@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import API from '../services/api';
+import { Icon } from './Icons';
 
 const OfferVersionsModal = ({ offerId, onClose }) => {
   const [versions, setVersions] = useState([]);
@@ -46,7 +47,7 @@ const OfferVersionsModal = ({ offerId, onClose }) => {
               Every previously sent offer is preserved here for audit.
             </p>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>×</button>
+              <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}><Icon name="close" /></button>
         </div>
 
         {loading ? (
@@ -102,7 +103,7 @@ const OfferVersionsModal = ({ offerId, onClose }) => {
                   <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>
                     <strong>${selected.price != null ? Number(selected.price).toLocaleString() : '—'}</strong>
                     {selected.validUntil && ` • Valid until ${new Date(selected.validUntil).toLocaleDateString()}`}
-                    {selected.offerType && ` • ${selected.offerType}`}
+                    {selected.offerType && ` â€¢ ${selected.offerType}`}
                   </div>
                   {selected.requirement && (
                     <div style={{ fontSize: 12, color: 'var(--accent-primary)', marginTop: 6, background: 'var(--bg-secondary)', borderRadius: 6, padding: '8px 10px', border: '1px solid var(--border-color)' }}>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
@@ -26,7 +26,7 @@ const ProductsPage = () => {
     name: '', sku: '', price: '', description: '', imageUrl: '', status: 'Active',
   });
 
-  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['CRM core Administrator', 'System Architect'].includes(user?.role);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -123,7 +123,7 @@ const ProductsPage = () => {
 
       {products.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon"><Icon name="box" size={18} /></div>
+          <div className="empty-state-icon">📦</div>
           <p>No products yet. Add your first product to start building offers.</p>
         </div>
       ) : (

@@ -1,11 +1,11 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Icon } from '../components/Icons';
 
 const DevToolsPage = () => {
   const [logs, setLogs] = useState([
     '⚙️ CRM System Developer Environment Initialized.',
     '🔌 DB Connection established: crm_prod_replica',
-    '🔒 Active permissions session: Core 360 Administrator',
+    '🛡️ Active permissions session: CRM core Administrator',
     '📊 API Gateway status: 200 OK (5.2ms latency)'
   ]);
   const [isSeeding, setIsSeeding] = useState(false);
@@ -29,7 +29,7 @@ const DevToolsPage = () => {
     }, 2000);
 
     setTimeout(() => {
-      addLog('✅ Seed complete! All system roles and credentials loaded.');
+      addLog('🎉 Seed complete! All system roles and credentials loaded.');
       setIsSeeding(false);
     }, 3200);
   };
@@ -44,12 +44,18 @@ const DevToolsPage = () => {
 
   return (
     <div>
-      <div className="page-header">
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Icon name="devtools" size={26} style={{ color: 'var(--accent-primary)' }} />
-          CRM Developer Console
-        </h1>
-        <p className="page-subtitle">Diagnostic controls, system status logs, and developer maintenance utilities</p>
+      <div className="page-header page-header--elevated">
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span className="metric-pill">Developer tools</span>
+            <span className="metric-pill metric-pill--success">Diagnostics ready</span>
+          </div>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: 8 }}>
+            <Icon name="devtools" size={26} style={{ color: 'var(--accent-primary)' }} />
+            CRM Developer Console
+          </h1>
+          <p className="page-subtitle">Diagnostic controls, system status logs, and developer maintenance utilities</p>
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 24 }}>
@@ -144,7 +150,7 @@ const DevToolsPage = () => {
           lineHeight: 1.5
         }}>
           {logs.map((log, index) => (
-            <div key={index} style={{ color: log.includes('✓') || log.includes('Seed complete') || log.includes('Populating') || log.includes('✅') ? '#10B981' : log.includes('CRM System') ? '#60A5FA' : '#E2E8F0' }}>
+            <div key={index} style={{ color: log.includes('✓') || log.includes('🎉') ? '#10B981' : log.includes('⚙️') ? '#60A5FA' : '#E2E8F0' }}>
               {log}
             </div>
           ))}

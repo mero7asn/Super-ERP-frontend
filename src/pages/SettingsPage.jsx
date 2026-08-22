@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -50,7 +50,7 @@ const normalizeCurrencies = (values = []) => {
 
 const SettingsPage = () => {
   const { user, setBusinessModel } = useAuth();
-  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['CRM core Administrator', 'System Architect'].includes(user?.role);
   const [activeTab, setActiveTab] = useState('general');
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -301,12 +301,18 @@ const SettingsPage = () => {
 
   return (
     <div>
-      <div className="page-header">
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Icon name="settings" size={26} style={{ color: 'var(--accent-primary)' }} />
-          System Settings
-        </h1>
-        <p className="page-subtitle">Configure application settings, security rules, integrations, and alerts</p>
+      <div className="page-header page-header--elevated">
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span className="metric-pill">Admin workspace</span>
+            <span className="metric-pill metric-pill--success">Secure controls</span>
+          </div>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: 8 }}>
+            <Icon name="settings" size={26} style={{ color: 'var(--accent-primary)' }} />
+            System Settings
+          </h1>
+          <p className="page-subtitle">Configure application settings, security rules, integrations, and alerts</p>
+        </div>
       </div>
 
       {(successMsg || errorMsg) && (
@@ -317,7 +323,7 @@ const SettingsPage = () => {
       )}
 
       <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-        <div className="card" style={{ flex: '1 0 200px', display: 'flex', flexDirection: 'column', gap: 4, padding: 16, height: 'fit-content' }}>
+        <div className="surface-card" style={{ flex: '1 0 220px', display: 'flex', flexDirection: 'column', gap: 6, padding: 18, height: 'fit-content' }}>
           <button
             onClick={() => setActiveTab('general')}
             className="sidebar-link"
@@ -383,7 +389,7 @@ const SettingsPage = () => {
           >
             Business Model
           </button>
-          {user?.role === 'Core 360 Administrator' && (
+          {user?.role === 'CRM core Administrator' && (
             <button
               onClick={() => setActiveTab('pricing')}
               className="sidebar-link"
@@ -400,7 +406,7 @@ const SettingsPage = () => {
           )}
         </div>
 
-        <div className="card" style={{ flex: '3 0 450px', padding: 32 }}>
+        <div className="surface-card" style={{ flex: '3 0 450px', padding: 28 }}>
           <form onSubmit={activeTab === 'integrations' ? handleSaveEmail : handleSaveGeneral}>
             {activeTab === 'general' && (
               <div>
@@ -825,7 +831,7 @@ const SettingsPage = () => {
               </div>
             )}
 
-            {activeTab === 'pricing' && user?.role === 'Core 360 Administrator' && (
+            {activeTab === 'pricing' && user?.role === 'CRM core Administrator' && (
               <div>
                 <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Icon name="dollar" size={18} style={{ color: 'var(--accent-primary)' }} />

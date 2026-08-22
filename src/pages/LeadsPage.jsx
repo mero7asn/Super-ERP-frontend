@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -29,7 +29,7 @@ const LeadsPage = () => {
   const [filterStatus, setFilterStatus] = useState('All');
   const [updating, setUpdating] = useState(null);
 
-  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['CRM core Administrator', 'System Architect'].includes(user?.role);
   const isManager = user?.role === 'Sales Manager';
   const isAgent = user?.role === 'Sales Agent';
   const canReassign = isAdmin || isManager;
@@ -74,10 +74,10 @@ const LeadsPage = () => {
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       {/* Page Header */}
-      <div className="crm-glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-        <div>
+      <div className="crm-glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, padding: '22px 24px' }}>
+        <div style={{ maxWidth: 640 }}>
           <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#2563EB', marginBottom: 4 }}>
             Sales & Prospect Management
           </div>
@@ -85,10 +85,10 @@ const LeadsPage = () => {
             <Icon name="leads" size={26} style={{ color: '#2563EB' }} />
             Leads Directory ({filtered.length})
           </h1>
-          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4, margin: 0 }}>
-            {isAdmin && 'All prospects across enterprise teams'}
-            {isManager && 'Assigned leads for your sales group'}
-            {isAgent && 'Your personal lead pipeline'}
+          <p style={{ fontSize: 13, color: '#64748B', marginTop: 6, margin: 0, lineHeight: 1.5 }}>
+            {isAdmin && 'All prospects across enterprise teams, tracked with the same clean workflow everywhere.'}
+            {isManager && 'Assigned leads for your sales group with visibility into the full pipeline.'}
+            {isAgent && 'Your personal lead pipeline, ready to move from inquiry to opportunity.'}
           </p>
         </div>
 
@@ -96,7 +96,7 @@ const LeadsPage = () => {
           <button
             className="btn btn-secondary btn-sm"
             onClick={() => navigate('/leads/distribution')}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 8 }}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 10 }}
           >
             <Icon name="analytics" size={14} />
             <span>Lead Distribution & Rules</span>
@@ -109,17 +109,17 @@ const LeadsPage = () => {
       {/* Table Container */}
       <div className="crm-table-wrapper">
         {/* Search & Filter Toolbar */}
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', background: '#FAFAFA', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', background: 'linear-gradient(90deg, #F8FAFC 0%, #F1F5F9 100%)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: '#64748B' }}>Filter Status:</span>
-            <div style={{ display: 'flex', gap: 4 }}>
+            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
               {['All', ...STATUSES].map((st) => (
                 <button
                   key={st}
                   onClick={() => setFilterStatus(st)}
                   style={{
                     padding: '4px 12px',
-                    borderRadius: 16,
+                    borderRadius: 999,
                     fontSize: 12,
                     fontWeight: 600,
                     border: filterStatus === st ? '1px solid #2563EB' : '1px solid #CBD5E1',
@@ -135,8 +135,8 @@ const LeadsPage = () => {
             </div>
           </div>
 
-          <div style={{ position: 'relative', width: 260 }}>
-            <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}><Icon name="search" size={18} /></span>
+          <div style={{ position: 'relative', width: 280, maxWidth: '100%' }}>
+            <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}>🔍</span>
             <input
               type="text"
               placeholder="Search by name, email, or rep..."
@@ -146,12 +146,13 @@ const LeadsPage = () => {
                 width: '100%',
                 paddingLeft: 30,
                 paddingRight: 12,
-                paddingTop: 6,
-                paddingBottom: 6,
-                borderRadius: 8,
+                paddingTop: 8,
+                paddingBottom: 8,
+                borderRadius: 999,
                 border: '1px solid #CBD5E1',
                 fontSize: 12,
                 outline: 'none',
+                background: '#ffffff',
               }}
             />
           </div>
@@ -164,7 +165,7 @@ const LeadsPage = () => {
           </div>
         ) : filtered.length === 0 ? (
           <div className="empty-state" style={{ padding: 48 }}>
-            <div style={{ fontSize: 40, marginBottom: 8 }}><Icon name="users" size={18} /></div>
+            <div style={{ fontSize: 40, marginBottom: 8 }}>👥</div>
             <p style={{ fontWeight: 600, color: '#475569' }}>No leads match your current search or filter.</p>
           </div>
         ) : (

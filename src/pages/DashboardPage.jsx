@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Icon } from '../components/Icons';
@@ -9,7 +9,7 @@ const ROLE_GROUPS = {
   support: ['Customer Support Agent', 'Customer Support Manager'],
   marketing: ['Marketing Specialist', 'Marketing Manager'],
   analytics: ['Business Analyst', 'Executive User'],
-  admin: ['Core 360 Administrator', 'System Architect', 'CRM Developer', 'CRM Consultant'],
+  admin: ['CRM core Administrator', 'System Architect', 'CRM Developer', 'CRM Consultant'],
 };
 
 const getRoleGroup = (role) => {
@@ -66,7 +66,7 @@ const DashboardPage = () => {
           API.get('/leads').catch(() => ({ data: { data: [] } })),
           API.get('/tickets').catch(() => ({ data: { data: [] } })),
           API.get('/campaigns').catch(() => ({ data: { data: [] } })),
-          ['Core 360 Administrator', 'System Architect'].includes(user?.role) 
+          ['CRM core Administrator', 'System Architect'].includes(user?.role) 
             ? API.get('/auth/users').catch(() => ({ data: { data: [] } }))
             : Promise.resolve({ data: { data: [] } })
         ]);
@@ -132,26 +132,26 @@ const DashboardPage = () => {
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Header Banner */}
       <div className="crm-page-banner">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 4 }}>
+          <div style={{ maxWidth: 640 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 6 }}>
               Core 360 Executive Workspace
             </div>
-            <h1 style={{ fontSize: 26, fontWeight: 800, color: '#ffffff', margin: 0 }}>
-              {greeting}, {user?.firstName}
+            <h1 style={{ fontSize: 28, fontWeight: 800, color: '#ffffff', margin: 0, letterSpacing: '-0.02em' }}>
+              {greeting}, {user?.firstName} 👋
             </h1>
-            <p style={{ fontSize: 13, color: '#94A3B8', marginTop: 6, margin: 0 }}>
-              Role: <strong style={{ color: '#F1F5F9' }}>{user?.role}</strong> &nbsp;&middot; Real-time operations & pipeline metrics
+            <p style={{ fontSize: 14, color: '#CBD5E1', marginTop: 8, margin: 0, lineHeight: 1.5 }}>
+              Role: <strong style={{ color: '#F8FAFC' }}>{user?.role}</strong> &nbsp;&middot; A focused overview of the live pipeline, service queue, and team momentum.
             </p>
           </div>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={() => navigate('/leads')} className="btn btn-primary btn-sm" style={{ background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 8 }}>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button onClick={() => navigate('/leads')} className="btn btn-primary btn-sm" style={{ background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10 }}>
               Manage Leads →
             </button>
-            <button onClick={() => navigate('/kanban')} className="btn btn-secondary btn-sm" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 16px', borderRadius: 8 }}>
+            <button onClick={() => navigate('/kanban')} className="btn btn-secondary btn-sm" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 16px', borderRadius: 10 }}>
               Sales Pipeline
             </button>
           </div>
@@ -186,9 +186,12 @@ const DashboardPage = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
         {/* Permissions Panel */}
         <div className="crm-glass-card">
-          <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 700, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Icon name="lock" size={18} /> Access Permissions Matrix
-          </h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 18 }}>🔒</span> Access Permissions Matrix
+            </h3>
+            <span style={{ fontSize: 11, fontWeight: 700, padding: '5px 10px', borderRadius: 999, background: '#EFF6FF', color: '#2563EB' }}>Role-based</span>
+          </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {user?.permissions &&
               Object.entries(user.permissions)
@@ -209,24 +212,27 @@ const DashboardPage = () => {
 
         {/* Quick Module Shortcuts */}
         <div className="crm-glass-card">
-          <h3 style={{ margin: '0 0 16px 0', fontSize: 16, fontWeight: 700, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Icon name="rocket" size={18} /> Quick Navigation Shortcuts
-          </h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 18 }}>⚡</span> Quick Navigation Shortcuts
+            </h3>
+            <span style={{ fontSize: 11, fontWeight: 700, padding: '5px 10px', borderRadius: 999, background: '#F0FDF4', color: '#047857' }}>Fast track</span>
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <button onClick={() => navigate('/leads')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Icon name="leads" size={18} style={{ color: '#2563EB' }} />
+            <button onClick={() => navigate('/leads')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 18 }}>👤</span>
               <div><div style={{ fontWeight: 700, fontSize: 13, color: '#0F172A' }}>Leads Table</div><div style={{ fontSize: 11, color: '#64748B' }}>View all leads</div></div>
             </button>
-            <button onClick={() => navigate('/kanban')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Icon name="analytics" size={18} style={{ color: '#2563EB' }} />
+            <button onClick={() => navigate('/kanban')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 18 }}>📊</span>
               <div><div style={{ fontWeight: 700, fontSize: 13, color: '#0F172A' }}>Sales Kanban</div><div style={{ fontSize: 11, color: '#64748B' }}>Deal pipeline</div></div>
             </button>
-            <button onClick={() => navigate('/tickets')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Icon name="tickets" size={18} style={{ color: '#2563EB' }} />
+            <button onClick={() => navigate('/tickets')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 18 }}>🎫</span>
               <div><div style={{ fontWeight: 700, fontSize: 13, color: '#0F172A' }}>Tech Tickets</div><div style={{ fontSize: 11, color: '#64748B' }}>Support issues</div></div>
             </button>
-            <button onClick={() => navigate('/analytics')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Icon name="trending" size={18} style={{ color: '#2563EB' }} />
+            <button onClick={() => navigate('/analytics')} style={{ padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 18 }}>📈</span>
               <div><div style={{ fontWeight: 700, fontSize: 13, color: '#0F172A' }}>Analytics</div><div style={{ fontSize: 11, color: '#64748B' }}>Reports & charts</div></div>
             </button>
           </div>

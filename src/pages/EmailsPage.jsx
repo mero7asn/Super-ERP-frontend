@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
-import { Icon } from '../components/Icons';
+﻿import { useState, useEffect, useRef } from 'react';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { Icon } from '../components/Icons';
 
-// ── Avatar helper ──────────────────────────────────────────────────────────────
+// â”€â”€ Avatar helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const Avatar = ({ person, size = 34 }) => {
   const initials = person
     ? `${person.firstName?.[0] || ''}${person.lastName?.[0] || ''}`.toUpperCase()
@@ -22,7 +22,7 @@ const Avatar = ({ person, size = 34 }) => {
   );
 };
 
-// ── Time formatter ─────────────────────────────────────────────────────────────
+// â”€â”€ Time formatter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const fmtTime = (dateStr) => {
   const d = new Date(dateStr);
   const now = new Date();
@@ -35,7 +35,7 @@ const fmtTime = (dateStr) => {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
-// ── Thread bubble ──────────────────────────────────────────────────────────────
+// â”€â”€ Thread bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const ThreadBubble = ({ email, isOwn }) => (
   <div style={{
     display: 'flex', gap: 10, flexDirection: isOwn ? 'row-reverse' : 'row',
@@ -68,7 +68,7 @@ const ThreadBubble = ({ email, isOwn }) => (
   </div>
 );
 
-// ── Main Component ─────────────────────────────────────────────────────────────
+// â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const EmailsPage = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('inbox');
@@ -96,7 +96,7 @@ const EmailsPage = () => {
 
   const threadBottomRef = useRef(null);
 
-  // ── Data fetching ────────────────────────────────────────────────────────────
+  // â”€â”€ Data fetching â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const fetchEmails = async () => {
     setLoading(true);
     try {
@@ -167,14 +167,14 @@ const EmailsPage = () => {
     if (activeTab === 'inbox' && !email.isRead) markRead(email._id);
   };
 
-  // ── Send reply ───────────────────────────────────────────────────────────────
+  // â”€â”€ Send reply â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleSendReply = async (e) => {
     e.preventDefault();
     if (!replyBody.trim()) return;
     setSendingReply(true);
     setReplyMsg({ type: '', text: '' });
 
-    // Reply goes to the other party: if I'm the recipient → reply to sender; if I'm the sender → reply to recipient
+    // Reply goes to the other party: if I'm the recipient â†’ reply to sender; if I'm the sender â†’ reply to recipient
     const isSender = selectedEmail.senderId?._id === user?._id || selectedEmail.senderId === user?._id;
     const replyToEmail = isSender
       ? selectedEmail.recipientId?.email
@@ -207,7 +207,7 @@ const EmailsPage = () => {
     }
   };
 
-  // ── Send new email ───────────────────────────────────────────────────────────
+  // â”€â”€ Send new email â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleSendEmail = async (e) => {
     e.preventDefault();
     if (!composeTo || !composeSubject || !composeBody) {
@@ -231,7 +231,7 @@ const EmailsPage = () => {
     }
   };
 
-  // ── Filter ───────────────────────────────────────────────────────────────────
+  // â”€â”€ Filter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const filteredEmails = emails.filter((e) => {
     const term = searchQuery.toLowerCase();
     const other = activeTab === 'inbox' ? e.senderId : e.recipientId;
@@ -245,13 +245,17 @@ const EmailsPage = () => {
     );
   });
 
-  // ── Render ───────────────────────────────────────────────────────────────────
+  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20, height: '100%' }}>
       {/* Header */}
-      <div className="page-header">
+      <div className="page-header page-header--elevated">
         <div>
-          <h1 className="page-title">Internal Communications</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span className="metric-pill">Secure messaging</span>
+            <span className="metric-pill metric-pill--success">Threaded conversations</span>
+          </div>
+          <h1 className="page-title" style={{ marginTop: 8 }}>Internal Communications</h1>
           <p className="page-subtitle">Secure, threaded internal messaging — all messages are permanent and auditable</p>
         </div>
       </div>
@@ -264,7 +268,7 @@ const EmailsPage = () => {
             onClick={() => setActiveTab('inbox')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px', position: 'relative' }}
           >
-            <Icon name="inbox" size={18} /> Inbox
+            <Icon name="inbox" size={16} /> Inbox
             {unreadCount > 0 && (
               <span style={{
                 position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
@@ -278,21 +282,21 @@ const EmailsPage = () => {
             onClick={() => setActiveTab('sent')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px' }}
           >
-            <Icon name="send" size={18} /> Sent
+            <Icon name="send" size={16} /> Sent
           </button>
           <button
             className={`btn ${activeTab === 'compose' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setActiveTab('compose')}
             style={{ justifyContent: 'flex-start', padding: '12px 16px' }}
           >
-            ✏ New Email
+            <Icon name="mail" size={16} /> New Email
           </button>
         </div>
 
         {/* Main content card */}
-        <div className="card" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
+        <div className="surface-card" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
 
-          {/* ── COMPOSE NEW ── */}
+          {/* â”€â”€ COMPOSE NEW â”€â”€ */}
           {activeTab === 'compose' && (
             <div style={{ padding: 28 }}>
               <h3 style={{ margin: '0 0 20px 0' }}>Compose New Message</h3>
@@ -309,7 +313,7 @@ const EmailsPage = () => {
                     <option value="">Select a colleague...</option>
                     {usersList.filter(u => u.email !== user?.email).map(u => (
                       <option key={u.email} value={u.email}>
-                        {u.firstName} {u.lastName} · {u.role} ({u.email})
+                        {u.firstName} {u.lastName} Â· {u.role} ({u.email})
                       </option>
                     ))}
                   </select>
@@ -326,13 +330,13 @@ const EmailsPage = () => {
                     style={{ resize: 'vertical' }} required />
                 </div>
                 <button type="submit" className="btn btn-primary" disabled={sending} style={{ alignSelf: 'flex-start' }}>
-                  {sending ? 'Sending…' : (<><Icon name="send" size={18} /> Send Message</>)}
+                  {sending ? 'Sending…' : (<><Icon name="send" size={16} /> Send Message</>)}
                 </button>
               </form>
             </div>
           )}
 
-          {/* ── INBOX / SENT TWO-COLUMN LAYOUT ── */}
+          {/* â”€â”€ INBOX / SENT TWO-COLUMN LAYOUT â”€â”€ */}
           {activeTab !== 'compose' && (
             <div style={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
 
@@ -343,7 +347,7 @@ const EmailsPage = () => {
               }}>
                 {/* Search */}
                 <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-color)' }}>
-                  <input
+                    <input
                     className="form-input"
                     placeholder="Search…"
                     value={searchQuery}
@@ -397,11 +401,11 @@ const EmailsPage = () => {
                             {e.subject}
                           </div>
                           <div style={{
-                            fontSize: 11, color: 'var(--text-muted)', marginTop: 2,
-                            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
-                          }}>
-                            {e.body.substring(0, 60)}…
-                          </div>
+                                  fontSize: 11, color: 'var(--text-muted)', marginTop: 2,
+                                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
+                                }}>
+                                  {e.body.substring(0, 60)}…
+                                </div>
                         </div>
                       );
                     })
@@ -412,11 +416,11 @@ const EmailsPage = () => {
               {/* Right: email detail + thread + reply */}
               <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 {!selectedEmail ? (
-                    <div style={{
-                      flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: 'var(--text-muted)', flexDirection: 'column', gap: 12
-                    }}>
-                    <div style={{fontSize:40}}><Icon name="mail" size={40} /></div>
+                  <div style={{
+                    flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: 'var(--text-muted)', flexDirection: 'column', gap: 12
+                  }}>
+                    <Icon name="mail" size={40} />
                     <span style={{ fontSize: 14 }}>Select an email to read it</span>
                   </div>
                 ) : (

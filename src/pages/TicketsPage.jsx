@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
@@ -53,6 +53,7 @@ const TicketsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
+  const [filterStatus, setFilterStatus] = useState('All');
   const [showModal, setShowModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -66,7 +67,7 @@ const TicketsPage = () => {
     assignedTo: ''
   });
 
-  const canManage = ['CRM Developer', 'CRM Consultant', 'System Architect', 'Core 360 Administrator'].includes(user?.role);
+  const canManage = ['CRM Developer', 'CRM Consultant', 'System Architect', 'CRM core Administrator'].includes(user?.role);
   const canCreate = Boolean(user);
   const canComment = Boolean(
     selectedTicket &&
@@ -164,33 +165,34 @@ const TicketsPage = () => {
     }
   };
 
-  const filtered = tickets.filter((t) =>
-    t.subject?.toLowerCase().includes(search.toLowerCase()) ||
-    t.status?.toLowerCase().includes(search.toLowerCase()) ||
-    t.priority?.toLowerCase().includes(search.toLowerCase()) ||
-    t.affectedPage?.toLowerCase().includes(search.toLowerCase()) ||
-    t.requesterTeam?.toLowerCase().includes(search.toLowerCase()) ||
-    t.createdBy?.role?.toLowerCase().includes(search.toLowerCase()) ||
-    t.createdBy?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
-    t.createdBy?.lastName?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = tickets.filter((t) => {
+    const matchesStatus = filterStatus === 'All' || t.status === filterStatus;
+    const matchesSearch =
+      t.subject?.toLowerCase().includes(search.toLowerCase()) ||
+      t.status?.toLowerCase().includes(search.toLowerCase()) ||
+      t.priority?.toLowerCase().includes(search.toLowerCase()) ||
+      t.affectedPage?.toLowerCase().includes(search.toLowerCase()) ||
+      t.requesterTeam?.toLowerCase().includes(search.toLowerCase()) ||
+      t.createdBy?.role?.toLowerCase().includes(search.toLowerCase()) ||
+      t.createdBy?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
+      t.createdBy?.lastName?.toLowerCase().includes(search.toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {/* Header */}
-      <div className="crm-glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#2563EB', marginBottom: 4 }}>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div className="crm-page-banner" style={{ padding: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+        <div style={{ maxWidth: 640 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 6 }}>
             System Support & Maintenance
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Icon name="tickets" size={26} style={{ color: '#2563EB' }} />
-            Technical Issues ({filtered.length})
+          <h1 style={{ fontSize: 26, fontWeight: 800, color: '#ffffff', margin: 0, letterSpacing: '-0.02em' }}>
+            <span style={{ marginRight: 8 }}>🎫</span> Technical Issues ({filtered.length})
           </h1>
-          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4, margin: 0 }}>
+          <p style={{ fontSize: 14, color: '#CBD5E1', marginTop: 8, margin: 0, lineHeight: 1.5 }}>
             {canManage
-              ? 'Viewing all technical support issues reported to the Technology team'
-              : 'Report and track technical issues submitted to the Technology team'}
+              ? 'Viewing all technical support issues reported to the Technology team.'
+              : 'Report and track technical issues submitted to the Technology team.'}
           </p>
         </div>
 
@@ -202,7 +204,7 @@ const TicketsPage = () => {
               color: '#ffffff',
               border: 'none',
               padding: '10px 20px',
-              borderRadius: 8,
+              borderRadius: 10,
               fontWeight: 600,
               fontSize: 13,
               cursor: 'pointer',
@@ -218,33 +220,75 @@ const TicketsPage = () => {
         )}
       </div>
 
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+        {[
+          { label: 'Open', value: tickets.filter((t) => t.status === 'Open').length, icon: 'unlock', color: '#2563EB', bg: '#EFF6FF' },
+          { label: 'In Progress', value: tickets.filter((t) => t.status === 'In Progress').length, icon: 'play', color: '#D97706', bg: '#FEF3C7' },
+          { label: 'Resolved', value: tickets.filter((t) => t.status === 'Resolved').length, icon: 'check', color: '#059669', bg: '#ECFDF5' },
+          { label: 'Urgent', value: tickets.filter((t) => t.priority === 'Urgent').length, icon: 'alert', color: '#DC2626', bg: '#FEF2F2' },
+        ].map((item) => (
+          <div key={item.label} className="crm-stat-widget">
+            <div className="crm-stat-header">
+              <div className="crm-stat-icon-bg" style={{ background: item.bg, color: item.color }}>
+                <Icon name={item.icon} size={16} />
+              </div>
+              <span className="crm-trend-pill crm-trend-up">Live</span>
+            </div>
+            <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A' }}>{item.value}</div>
+            <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>{item.label}</div>
+          </div>
+        ))}
+      </div>
+
       {error && <div className="alert alert-error">{error}</div>}
 
-      {/* Table Container */}
-      <div className="crm-table-wrapper">
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', background: '#FAFAFA', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="crm-glass-card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', background: 'linear-gradient(90deg, #F8FAFC 0%, #F1F5F9 100%)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>
             Support Tickets Directory
           </div>
-          <div style={{ position: 'relative', width: 280 }}>
-            <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}><Icon name="search" size={18} /></span>
-            <input
-              type="text"
-              placeholder="Search by subject, status, or team..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                width: '100%',
-                paddingLeft: 30,
-                paddingRight: 12,
-                paddingTop: 6,
-                paddingBottom: 6,
-                borderRadius: 8,
-                border: '1px solid #CBD5E1',
-                fontSize: 12,
-                outline: 'none',
-              }}
-            />
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {['All','Open','In Progress','Resolved','Closed'].map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setFilterStatus(status)}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: 999,
+                    border: filterStatus === status ? '1px solid #2563EB' : '1px solid #CBD5E1',
+                    background: filterStatus === status ? '#2563EB' : '#ffffff',
+                    color: filterStatus === status ? '#ffffff' : '#475569',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
+            <div style={{ position: 'relative', width: 280 }}>
+              <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}>🔍</span>
+              <input
+                type="text"
+                placeholder="Search by subject, status, or team..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  width: '100%',
+                  paddingLeft: 30,
+                  paddingRight: 12,
+                  paddingTop: 8,
+                  paddingBottom: 8,
+                  borderRadius: 999,
+                  border: '1px solid #CBD5E1',
+                  fontSize: 12,
+                  outline: 'none',
+                  background: '#ffffff',
+                }}
+              />
+            </div>
           </div>
         </div>
 
@@ -252,128 +296,45 @@ const TicketsPage = () => {
           <div className="loading-state" style={{ padding: 40 }}><div className="spinner" />Loading support issues...</div>
         ) : filtered.length === 0 ? (
           <div className="empty-state" style={{ padding: 48 }}>
-            <div style={{ fontSize: 40, marginBottom: 8 }}><Icon name="ticket" size={18} /></div>
+            <div style={{ fontSize: 40, marginBottom: 8 }}>🎫</div>
             <p style={{ fontWeight: 600, color: '#475569' }}>No support tickets match your search criteria.</p>
           </div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Subject & Description</th>
-                <th>Priority</th>
-                <th>Status</th>
-                <th>Affected Page</th>
-                <th>Reporting Team</th>
-                <th>Assigned Developer</th>
-                <th>Created Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((ticket) => {
-                const pb = priorityBadge(ticket.priority);
-                const sb = statusBadge(ticket.status);
-                return (
-                  <tr key={ticket._id} style={{ opacity: updating === ticket._id ? 0.5 : 1 }}>
-                    <td>
-                      <div>
+          <div style={{ display: 'grid', gap: 12, padding: 16 }}>
+            {filtered.map((ticket) => {
+              const pb = priorityBadge(ticket.priority);
+              const sb = statusBadge(ticket.status);
+              return (
+                <div key={ticket._id} style={{ border: '1px solid #E2E8F0', borderRadius: 14, padding: 16, background: '#ffffff', boxShadow: '0 4px 10px rgba(15, 23, 42, 0.03)', opacity: updating === ticket._id ? 0.6 : 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
                         <strong style={{ fontSize: 14, color: '#0F172A' }}>{ticket.subject}</strong>
-                        <div style={{ fontSize: 12, color: '#64748B', marginTop: 2, maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {ticket.description}
-                        </div>
+                        <span style={{ background: pb.bg, color: pb.color, border: `1px solid ${pb.border}`, padding: '3px 8px', borderRadius: 999, fontSize: 11, fontWeight: 700 }}>
+                          {ticket.priority}
+                        </span>
+                        <span style={{ background: sb.bg, color: sb.color, border: `1px solid ${sb.border}`, padding: '3px 8px', borderRadius: 999, fontSize: 11, fontWeight: 700 }}>
+                          {ticket.status}
+                        </span>
                       </div>
-                    </td>
-                    <td>
-                      <select
-                        value={ticket.priority}
-                        onChange={(e) => handleUpdate(ticket._id, { priority: e.target.value })}
-                        disabled={updating === ticket._id || !canManage}
-                        style={{
-                          background: pb.bg,
-                          color: pb.color,
-                          border: `1px solid ${pb.border}`,
-                          borderRadius: 16,
-                          padding: '3px 10px',
-                          fontSize: 11,
-                          fontWeight: 700,
-                          cursor: canManage ? 'pointer' : 'default',
-                          outline: 'none',
-                        }}
-                      >
-                        <option>Low</option>
-                        <option>Medium</option>
-                        <option>High</option>
-                        <option>Urgent</option>
-                      </select>
-                    </td>
-                    <td>
-                      <select
-                        value={ticket.status}
-                        onChange={(e) => handleUpdate(ticket._id, { status: e.target.value })}
-                        disabled={updating === ticket._id || !canManage}
-                        style={{
-                          background: sb.bg,
-                          color: sb.color,
-                          border: `1px solid ${sb.border}`,
-                          borderRadius: 16,
-                          padding: '3px 10px',
-                          fontSize: 11,
-                          fontWeight: 700,
-                          cursor: canManage ? 'pointer' : 'default',
-                          outline: 'none',
-                        }}
-                      >
-                        <option>Open</option>
-                        <option>In Progress</option>
-                        <option>Resolved</option>
-                        <option>Closed</option>
-                      </select>
-                    </td>
-                    <td style={{ fontSize: 12, color: '#475569' }}>
-                      <span style={{ background: '#F1F5F9', padding: '2px 8px', borderRadius: 4, fontWeight: 500 }}>
-                        {ticket.affectedPage || 'Other'}
-                      </span>
-                    </td>
-                    <td style={{ fontSize: 12, color: '#475569' }}>
-                      {ticket.requesterTeam || ticket.createdBy?.role || '—'}
-                    </td>
-                    <td style={{ fontSize: 12, color: '#475569' }}>
-                      {ticket.assignedTo ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <div className="crm-avatar-chip" style={{ width: 22, height: 22, fontSize: 9 }}>
-                            {ticket.assignedTo.firstName?.[0] || 'D'}
-                          </div>
-                          <span>{ticket.assignedTo.firstName} {ticket.assignedTo.lastName}</span>
-                        </div>
-                      ) : (
-                        <span style={{ color: '#94A3B8' }}>Unassigned</span>
-                      )}
-                    </td>
-                    <td style={{ fontSize: 12, color: '#94A3B8' }}>
-                      {new Date(ticket.createdAt).toLocaleDateString()}
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => openTicket(ticket._id)}
-                        style={{
-                          background: '#F1F5F9',
-                          border: '1px solid #CBD5E1',
-                          color: '#334155',
-                          padding: '4px 10px',
-                          borderRadius: 6,
-                          fontSize: 12,
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        View Issue
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      <div style={{ fontSize: 12, color: '#64748B', marginTop: 2, maxWidth: 560 }}>
+                        {ticket.description}
+                      </div>
+                    </div>
+                    <button onClick={() => openTicket(ticket._id)} style={{ background: '#F1F5F9', border: '1px solid #CBD5E1', color: '#334155', padding: '6px 10px', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                      View Issue
+                    </button>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginTop: 12 }}>
+                    <div style={{ fontSize: 12, color: '#64748B' }}><strong style={{ color: '#0F172A' }}>Affected page:</strong> {ticket.affectedPage || 'Other'}</div>
+                    <div style={{ fontSize: 12, color: '#64748B' }}><strong style={{ color: '#0F172A' }}>Reporting team:</strong> {ticket.requesterTeam || ticket.createdBy?.role || '—'}</div>
+                    <div style={{ fontSize: 12, color: '#64748B' }}><strong style={{ color: '#0F172A' }}>Assignee:</strong> {ticket.assignedTo ? `${ticket.assignedTo.firstName} ${ticket.assignedTo.lastName}` : 'Unassigned'}</div>
+                    <div style={{ fontSize: 12, color: '#64748B' }}><strong style={{ color: '#0F172A' }}>Created:</strong> {new Date(ticket.createdAt).toLocaleDateString()}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
 

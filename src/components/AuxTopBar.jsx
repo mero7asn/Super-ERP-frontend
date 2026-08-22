@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
-import { Icon } from '../components/Icons';
+﻿import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAux, AUX_COLORS, AUX_ICONS } from '../context/AuxContext';
+import { Icon } from '../components/Icons';
 import { useAuth } from '../context/AuthContext';
 
 const STATUSES = ['Live', 'Training', 'Coaching', 'Break', 'Logged out'];
@@ -177,7 +177,7 @@ const AuxTopBar = () => {
                 onClick={() => { navigate('/tickets'); setOpenQuickAdd(false); }}
                 style={{ width: '100%', padding: '8px 12px', border: 'none', background: 'none', textAlign: 'left', fontSize: 12, cursor: 'pointer', display: 'flex', gap: 8 }}
               >
-                <span><Icon name="ticket" size={18} /></span> New Support Ticket
+                <span><Icon name="tickets" size={18} /></span> New Support Ticket
               </button>
               <button
                 onClick={() => { navigate('/inventory/items'); setOpenQuickAdd(false); }}
@@ -255,7 +255,7 @@ const AuxTopBar = () => {
           >
             {fmtSecs(elapsed)}
           </span>
-          <span style={{ fontSize: 10, opacity: 0.7 }}>▾</span>
+          <span style={{ fontSize: 10, opacity: 0.7 }}>▮</span>
         </button>
 
         {openAux && (

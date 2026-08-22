@@ -1,5 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Icon } from '../../components/Icons';
+﻿import { useState, useEffect, useMemo } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { DEPARTMENTS } from '../../services/departmentJobs';
@@ -42,7 +41,7 @@ const CandidateCard = ({ candidate, isTA, onMove, onOpenFeedback }) => {
         {candidate.vacancyId?.title || 'Unknown Position'}
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>✉ {candidate.email}</div>
-      {candidate.phone && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}><Icon name="phone" size={18} /> {candidate.phone}</div>}
+      {candidate.phone && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>📞 {candidate.phone}</div>}
       {lastNote && (
         <div
           style={{
@@ -56,7 +55,7 @@ const CandidateCard = ({ candidate, isTA, onMove, onOpenFeedback }) => {
             lineHeight: 1.4,
           }}
         >
-          <Icon name="support" size={18} /> {lastNote.note.length > 80 ? lastNote.note.slice(0, 80) + '…' : lastNote.note}
+          💬 {lastNote.note.length > 80 ? lastNote.note.slice(0, 80) + '…' : lastNote.note}
           <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
             — {lastNote.addedBy?.firstName} {lastNote.addedBy?.lastName}
           </div>
@@ -194,7 +193,7 @@ const TalentAcquisitionPage = () => {
   const [feedbackNote, setFeedbackNote] = useState('');
   const [savingFeedback, setSavingFeedback] = useState(false);
 
-  const isTA = ['HRM System Administrator', 'HR Manager', 'Recruitment Specialist (Talent Acquisition)', 'Core 360 Administrator'].includes(user?.role);
+  const isTA = ['HRM System Administrator', 'HR Manager', 'Recruitment Specialist (Talent Acquisition)', 'CRM core Administrator'].includes(user?.role);
 
   const fetchAll = async () => {
     setLoading(true);
@@ -332,6 +331,36 @@ const TalentAcquisitionPage = () => {
           {statusMsg.text}
         </div>
       )}
+
+      <div className="card" style={{
+        background: 'linear-gradient(135deg, rgba(59,130,246,0.14), rgba(124,58,237,0.12))',
+        border: '1px solid rgba(59,130,246,0.22)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 16,
+        flexWrap: 'wrap'
+      }}>
+        <div>
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-primary)', fontWeight: 700 }}>Recruitment pipeline</div>
+          <h3 style={{ margin: '6px 0 4px', fontSize: 17 }}>Bring hiring activity into a clear, trackable flow</h3>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 13 }}>
+            Post vacancies, queue candidates, and move each opportunity through the recruitment stages with better visibility.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {[
+            { label: 'Open roles', value: vacancies.length },
+            { label: 'Candidates', value: candidates.length },
+            { label: 'Stage focus', value: 'Kanban' },
+          ].map((item) => (
+            <div key={item.label} style={{ minWidth: 96, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
+              <div style={{ fontSize: 18, fontWeight: 700 }}>{item.value}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Collapsible Forms */}
       {isTA && showVacancyForm && (

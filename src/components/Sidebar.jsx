@@ -84,73 +84,93 @@ const SidebarIcon = ({ name }) => {
 };
 
 const CRM_ROLES = [
-  'Core 360 Administrator','Sales Agent','Sales Manager','Customer Support Agent',
-  'Customer Support Manager','Marketing Specialist','Marketing Manager','Business Analyst',
-  'CRM Developer','CRM Consultant','System Architect','Executive User','RTM Team Member',
+  'CRM core Administrator', 'Core 360 Administrator', 'Sales Agent', 'Sales Manager', 'Customer Support Agent',
+  'Customer Support Manager', 'Marketing Specialist', 'Marketing Manager', 'Business Analyst',
+  'CRM Developer', 'CRM Consultant', 'System Architect', 'Executive User', 'RTM Team Member',
 ];
 
 const HRM_ROLES = [
-  'HRM System Administrator','HR Manager','HR Specialist (Generalist)',
-  'Recruitment Specialist (Talent Acquisition)','Payroll Specialist','HR Business Partner',
-  'Training and Development Specialist','Performance Management Specialist',
-  'Attendance and Time Officer','Employee (General User)','HR Director / Executive HR User',
-  'RTM Team Member',
+  'HRM System Administrator', 'HR Manager', 'HR Specialist (Generalist)',
+  'Recruitment Specialist (Talent Acquisition)', 'Payroll Specialist', 'HR Business Partner',
+  'Training and Development Specialist', 'Performance Management Specialist',
+  'Attendance and Time Officer', 'Employee (General User)', 'HR Director / Executive HR User',
+  'RTM Team Member', 'CRM core Administrator', 'Core 360 Administrator',
 ];
 
 // 1. CRM core NAV ITEMS
 const CRM_NAV_ITEMS = [
   { label: 'Dashboard', icon: 'dashboard', path: '/dashboard', roles: null },
-  { label: 'Leads', icon: 'leads', path: '/leads', roles: ['Core 360 Administrator','Sales Agent','Sales Manager','Marketing Specialist','Marketing Manager','Executive User','System Architect','Business Analyst'] },
-  { label: 'Teams', icon: 'teams', path: '/teams', roles: ['Core 360 Administrator','System Architect','Sales Manager','Sales Agent','Customer Support Manager','Customer Support Agent','Marketing Manager','Marketing Specialist'] },
-  { label: 'Sales Dashboard', icon: 'kanban', path: '/kanban', roles: ['Core 360 Administrator','Sales Agent','Sales Manager','Executive User','System Architect','Business Analyst'] },
+  { label: 'Leads', icon: 'leads', path: '/leads', roles: ['CRM core Administrator','Sales Agent','Sales Manager','Marketing Specialist','Marketing Manager','Executive User','System Architect','Business Analyst'] },
+  { label: 'Teams', icon: 'teams', path: '/teams', roles: ['CRM core Administrator','System Architect','Sales Manager','Sales Agent','Customer Support Manager','Customer Support Agent','Marketing Manager','Marketing Specialist'] },
+  { label: 'Sales Dashboard', icon: 'kanban', path: '/kanban', roles: ['CRM core Administrator','Sales Agent','Sales Manager','Executive User','System Architect','Business Analyst'] },
   { label: 'Technical Issues', icon: 'tickets', path: '/tickets', roles: null },
-  { label: 'Bookings', icon: 'bookings', path: '/bookings', roles: ['Sales Agent','Sales Manager','Customer Support Agent','Customer Support Manager','CRM Developer','CRM Consultant','System Architect','Core 360 Administrator'], businessModel: ['service', 'both'] },
-  { label: 'Products', icon: 'box', path: '/products', roles: ['Core 360 Administrator','System Architect','Sales Agent','Sales Manager','Executive User'], businessModel: ['product', 'both'] },
-  { label: 'Campaigns', icon: 'campaigns', path: '/campaigns', roles: ['Core 360 Administrator','Marketing Specialist','Marketing Manager','Executive User','Business Analyst','System Architect'] },
-  { label: 'Analytics', icon: 'analytics', path: '/analytics', roles: ['Core 360 Administrator','Executive User','Business Analyst','System Architect'] },
-  { label: 'Executive Dashboard', icon: 'executive', path: '/executive', roles: ['Core 360 Administrator','Executive User','Business Analyst','System Architect'] },
-  { label: 'User Management', icon: 'users', path: '/users', roles: ['Core 360 Administrator','System Architect'] },
-  { label: 'System Settings', icon: 'settings', path: '/settings', roles: ['Core 360 Administrator'] },
-  { label: 'CRM Dev Tools', icon: 'devtools', path: '/devtools', roles: ['CRM Developer','System Architect','Core 360 Administrator'] },
-  { label: 'RTM Monitor', icon: 'rtm', path: '/rtm', roles: ['RTM Team Member','Core 360 Administrator','HRM System Administrator','HR Manager'] },
+  { label: 'Bookings', icon: 'bookings', path: '/bookings', roles: ['Sales Agent','Sales Manager','Customer Support Agent','Customer Support Manager','CRM Developer','CRM Consultant','System Architect','CRM core Administrator'], businessModel: ['service', 'both'] },
+  { label: 'Products', icon: 'box', path: '/products', roles: ['CRM core Administrator','System Architect','Sales Agent','Sales Manager','Executive User'], businessModel: ['product', 'both'] },
+  { label: 'Campaigns', icon: 'campaigns', path: '/campaigns', roles: ['CRM core Administrator','Marketing Specialist','Marketing Manager','Executive User','Business Analyst','System Architect'] },
+  { label: 'Analytics', icon: 'analytics', path: '/analytics', roles: ['CRM core Administrator','Executive User','Business Analyst','System Architect'] },
+  { label: 'Executive Dashboard', icon: 'executive', path: '/executive', roles: ['CRM core Administrator','Executive User','Business Analyst','System Architect'] },
+  { label: 'User Management', icon: 'users', path: '/users', roles: ['CRM core Administrator','System Architect'] },
+  { label: 'System Settings', icon: 'settings', path: '/settings', roles: ['CRM core Administrator'] },
+  { label: 'CRM Dev Tools', icon: 'devtools', path: '/devtools', roles: ['CRM Developer','System Architect','CRM core Administrator'] },
+  { label: 'RTM Monitor', icon: 'rtm', path: '/rtm', roles: ['RTM Team Member','CRM core Administrator','HRM System Administrator','HR Manager'] },
 ];
 
 // 2. inventory core SUB ITEMS
 const INVENTORY_SUB_ITEMS = [
   { label: 'Dashboard', path: '/inventory', icon: 'dashboard' },
-  { label: 'Items Catalog', path: '/inventory/items', icon: 'box' },
+  { label: 'Items & Matrix', path: '/inventory/items', icon: 'box' },
   { label: 'Stock Overview', path: '/inventory/stock', icon: 'analytics' },
+  { label: 'Storage Map', path: '/inventory/warehouse-map', icon: 'dashboard' },
+  { label: 'Batches & FEFO', path: '/inventory/batches', icon: 'calendar' },
+  { label: 'Requisitions', path: '/inventory/requisitions', icon: 'personal' },
+  { label: 'Import Costs', path: '/inventory/landed-costs', icon: 'supplychain' },
   { label: 'Transactions', path: '/inventory/transactions', icon: 'teams' },
-  { label: 'Receiving', path: '/inventory/receiving', icon: 'box' },
-  { label: 'Shipping', path: '/inventory/shipping', icon: 'box' },
-  { label: 'Pick Tasks', path: '/inventory/pick-tasks', icon: 'teams' },
+  { label: 'Receiving (GRN)', path: '/inventory/receiving', icon: 'box' },
+  { label: 'Shipping & Picks', path: '/inventory/shipping', icon: 'box' },
   { label: 'Transfers', path: '/inventory/transfers', icon: 'teams' },
   { label: 'Adjustments', path: '/inventory/adjustments', icon: 'analytics' },
   { label: 'Cycle Counts', path: '/inventory/cycle-counts', icon: 'calendar' },
-  { label: 'Physical Inventory', path: '/inventory/physical-inventories', icon: 'analytics' },
-  { label: 'Warehouses', path: '/inventory/warehouses', icon: 'dashboard', roles: ['Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'] },
-  { label: 'Reports', path: '/inventory/reports', icon: 'analytics', roles: ['Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Inventory Clerk'] },
+  { label: 'Warehouses', path: '/inventory/warehouses', icon: 'dashboard', roles: ['CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'] },
+  { label: 'Valuation & Reports', path: '/inventory/reports', icon: 'analytics', roles: ['CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Inventory Clerk'] },
 ];
 
 // 3. supply chain core SUB ITEMS
 const SUPPLY_CHAIN_SUB_ITEMS = [
-  { label: 'Overview', path: '/supply-chain', icon: 'dashboard' },
-  { label: 'Demand Planning', path: '/supply-chain/planning', icon: 'analytics' },
-  { label: 'Procurement', path: '/supply-chain/procurement', icon: 'box' },
-  { label: 'Orders', path: '/supply-chain/orders', icon: 'teams' },
+  { label: 'Control Tower', path: '/supply-chain', icon: 'dashboard' },
+  { label: 'Demand & Planning', path: '/supply-chain/planning', icon: 'analytics' },
+  { label: 'Requisitions', path: '/supply-chain/requisitions', icon: 'personal' },
+  { label: 'RFQs & Matrix', path: '/supply-chain/rfqs', icon: 'analytics' },
+  { label: 'Purchase Orders', path: '/supply-chain/purchase-orders', icon: 'box' },
+  { label: 'Imports & ACI', path: '/supply-chain/imports', icon: 'supplychain' },
+  { label: 'Suppliers & Ratings', path: '/supply-chain/vendors', icon: 'teams' },
+  { label: 'Contracts & Prices', path: '/supply-chain/contracts', icon: 'box' },
   { label: 'Logistics', path: '/supply-chain/logistics', icon: 'supplychain' },
-  { label: 'Vendors', path: '/supply-chain/vendors', icon: 'teams' },
-  { label: 'Reports', path: '/supply-chain/reports', icon: 'analytics' },
+  { label: 'Spend & Reports', path: '/supply-chain/reports', icon: 'analytics' },
+];
+
+// 3.5. ACCOUNTING CORE SUB ITEMS
+const ACCOUNTING_SUB_ITEMS = [
+  { label: 'Financial Control Tower', path: '/accounting', icon: 'dashboard' },
+  { label: 'Chart of Accounts (COA)', path: '/accounting/coa', icon: 'analytics' },
+  { label: 'Journal Ledger', path: '/accounting/journals', icon: 'box' },
+  { label: 'Accounts Receivable (AR)', path: '/accounting/ar', icon: 'personal' },
+  { label: 'Accounts Payable (AP)', path: '/accounting/ap', icon: 'teams' },
+  { label: 'Cash & Banks', path: '/accounting/banks', icon: 'payroll' },
+  { label: 'Tax & E-Invoice', path: '/accounting/tax', icon: 'supplychain' },
+  { label: 'Fixed Assets', path: '/accounting/assets', icon: 'box' },
+  { label: 'Cost Centers & Budgets', path: '/accounting/cost-centers', icon: 'analytics' },
+  { label: 'Month-End Closing', path: '/accounting/closing', icon: 'calendar' },
+  { label: 'Financial Reports', path: '/accounting/reports', icon: 'analytics' },
 ];
 
 // 4. HRM core NAV ITEMS
 const HRM_NAV_ITEMS = [
   { label: 'HRM Dashboard', icon: 'dashboard', path: '/hrm', roles: null },
-  { label: 'Personal & Staff', icon: 'personal', path: '/hrm/personal', roles: ['Core 360 Administrator','HRM System Administrator','HR Manager','HR Specialist (Generalist)','HR Business Partner','Employee (General User)'] },
-  { label: 'Payroll', icon: 'payroll', path: '/hrm/payroll', roles: ['Core 360 Administrator','HRM System Administrator','HR Manager','Payroll Specialist','Employee (General User)'] },
-  { label: 'Training & Development', icon: 'training', path: '/hrm/training', roles: ['Core 360 Administrator','HRM System Administrator','HR Manager','Training and Development Specialist','Employee (General User)'] },
-  { label: 'Talent Acquisition', icon: 'talent', path: '/hrm/talent', roles: ['Core 360 Administrator','HRM System Administrator','HR Manager','Recruitment Specialist (Talent Acquisition)'] },
-  { label: 'BD & People Culture', icon: 'partnerships', path: '/hrm/partnerships', roles: ['Core 360 Administrator','HRM System Administrator','HR Manager','HR Business Partner','Employee (General User)'] },
+  { label: 'Personal & Staff', icon: 'personal', path: '/hrm/personal', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','HR Specialist (Generalist)','HR Business Partner','Employee (General User)'] },
+  { label: 'Payroll', icon: 'payroll', path: '/hrm/payroll', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Payroll Specialist','Employee (General User)'] },
+  { label: 'Training & Development', icon: 'training', path: '/hrm/training', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Training and Development Specialist','Employee (General User)'] },
+  { label: 'Talent Acquisition', icon: 'talent', path: '/hrm/talent', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Recruitment Specialist (Talent Acquisition)'] },
+  { label: 'BD & People Culture', icon: 'partnerships', path: '/hrm/partnerships', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','HR Business Partner','Employee (General User)'] },
 ];
 
 // 5. MY WORKSPACE NAV ITEMS
@@ -159,6 +179,11 @@ const WORKSPACE_NAV_ITEMS = [
   { label: 'Sent Emails', icon: 'email', path: '/emails/sent' },
   { label: 'My Schedule', icon: 'calendar', path: '/ess/schedule' },
   { label: 'My Payroll & Payslip', icon: 'payroll', path: '/ess/payroll' },
+];
+
+const INVENTORY_ROLES = [
+  'Inventory Manager', 'Warehouse Manager', 'Receiving Clerk', 'Shipping Clerk',
+  'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
 ];
 
 const Sidebar = () => {
@@ -170,6 +195,7 @@ const Sidebar = () => {
   const [crmOpen, setCrmOpen] = useState(true);
   const [inventoryOpen, setInventoryOpen] = useState(true);
   const [supplyChainOpen, setSupplyChainOpen] = useState(true);
+  const [accountingOpen, setAccountingOpen] = useState(true);
   const [hrmOpen, setHrmOpen] = useState(true);
   const [workspaceOpen, setWorkspaceOpen] = useState(true);
 
@@ -180,6 +206,8 @@ const Sidebar = () => {
       setInventoryOpen(true);
     } else if (p.startsWith('/supply-chain')) {
       setSupplyChainOpen(true);
+    } else if (p.startsWith('/accounting')) {
+      setAccountingOpen(true);
     } else if (p.startsWith('/hrm')) {
       setHrmOpen(true);
     } else if (p.startsWith('/ess') || p.startsWith('/emails')) {
@@ -194,31 +222,34 @@ const Sidebar = () => {
     navigate('/login');
   };
 
+  const isSuperAdmin =
+    !user?.role ||
+    user?.role === 'CRM core Administrator' ||
+    user?.role === 'Core 360 Administrator' ||
+    user?.role === 'System Architect' ||
+    user?.role === 'Executive User';
+
   const canSee = (item) => {
+    if (isSuperAdmin) return true;
     if (item.roles && !item.roles.includes(user?.role)) return false;
     if (item.businessModel) {
-      const bm = user?.businessModel || 'service';
+      const bm = user?.businessModel || 'both';
       if (!item.businessModel.includes(bm)) return false;
     }
     return true;
   };
 
-  const crmTheme = getDepartmentTheme('Sales');
-  const inventoryTheme = getDepartmentTheme('Inventory');
-  const supplyChainTheme = getDepartmentTheme('Operations');
-  const hrmTheme = getDepartmentTheme('Human Resources');
-  const workspaceTheme = getDepartmentTheme('Executive');
-  const userTheme = getDepartmentThemeByRole(user?.role) || crmTheme;
-
   const isUserProfile = useMatch('/users/:id');
   const isInventoryActive = useMatch('/inventory') || useMatch('/inventory/*');
   const isSupplyChainActive = useMatch('/supply-chain') || useMatch('/supply-chain/*');
+  const isAccountingActive = useMatch('/accounting') || useMatch('/accounting/*');
 
-  const isSuperAdmin = user?.role === 'Core 360 Administrator';
   const showCRM = isSuperAdmin || CRM_ROLES.includes(user?.role);
   const showHRM = isSuperAdmin || HRM_ROLES.includes(user?.role);
-  const bm = user?.businessModel || 'service';
-  const showERP = ['product', 'both'].includes(bm);
+  const bm = user?.businessModel || 'both';
+  const showERP = isSuperAdmin || ['product', 'both'].includes(bm) || INVENTORY_ROLES.includes(user?.role);
+
+  const userTheme = getDepartmentThemeByRole(user?.role) || { primary: '#6366f1', dark: '#4338ca' };
 
   const initials = user
     ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase()
@@ -226,8 +257,9 @@ const Sidebar = () => {
 
   // Filtered lists for counter badges
   const filteredCrmItems = CRM_NAV_ITEMS.filter(canSee);
-  const filteredInventoryItems = INVENTORY_SUB_ITEMS.filter((sub) => !sub.roles || sub.roles.includes(user?.role));
+  const filteredInventoryItems = INVENTORY_SUB_ITEMS.filter((sub) => isSuperAdmin || !sub.roles || sub.roles.includes(user?.role));
   const filteredSupplyChainItems = SUPPLY_CHAIN_SUB_ITEMS;
+  const filteredAccountingItems = ACCOUNTING_SUB_ITEMS;
   const filteredHrmItems = HRM_NAV_ITEMS.filter(canSee);
   const filteredWorkspaceItems = WORKSPACE_NAV_ITEMS;
 
@@ -255,15 +287,15 @@ const Sidebar = () => {
             <div
               className="mini-sidebar-sticky-header crm-header"
               onClick={() => setCrmOpen(!crmOpen)}
-              title="Core 360 Department"
+              title="CRM core Department"
             >
               <div className="mini-sidebar-header-left">
                 <span className="mini-sidebar-icon"><SidebarIcon name="dept-crm" /></span>
-                <span className="mini-sidebar-title">1. Core 360</span>
+                <span className="mini-sidebar-title">1. CRM core</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredCrmItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: crmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>▾</span>
+                <span className="mini-sidebar-arrow" style={{ transform: crmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
               </div>
             </div>
 
@@ -300,7 +332,7 @@ const Sidebar = () => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredInventoryItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: inventoryOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>▾</span>
+                <span className="mini-sidebar-arrow" style={{ transform: inventoryOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
               </div>
             </div>
 
@@ -337,7 +369,7 @@ const Sidebar = () => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredSupplyChainItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: supplyChainOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>▾</span>
+                <span className="mini-sidebar-arrow" style={{ transform: supplyChainOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
               </div>
             </div>
 
@@ -360,7 +392,43 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* 4. MINI SIDEBAR: HRM core */}
+        {/* 4. MINI SIDEBAR: ACCOUNTING CORE */}
+        <div className="mini-sidebar-group">
+          <div
+            className="mini-sidebar-sticky-header accounting-header"
+            onClick={() => setAccountingOpen(!accountingOpen)}
+            title="Accounting Core Department"
+            style={{ borderLeft: '4px solid #16a34a' }}
+          >
+            <div className="mini-sidebar-header-left">
+              <span className="mini-sidebar-icon"><SidebarIcon name="payroll" /></span>
+              <span className="mini-sidebar-title">4. Accounting Core</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="mini-sidebar-badge" style={{ background: '#dcfce7', color: '#166534' }}>{filteredAccountingItems.length}</span>
+              <span className="mini-sidebar-arrow" style={{ transform: accountingOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
+            </div>
+          </div>
+
+          {accountingOpen && (
+            <div className="mini-sidebar-body">
+              {filteredAccountingItems.map((sub) => (
+                <NavLink
+                  key={sub.path}
+                  to={sub.path}
+                  className={({ isActive }) =>
+                    `sidebar-link${isActive || (sub.path === '/accounting' && isAccountingActive) ? ' active' : ''}`
+                  }
+                >
+                  <span className="sidebar-link-icon"><SidebarIcon name={sub.icon} /></span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 5. MINI SIDEBAR: HRM core */}
         {showHRM && (
           <div className="mini-sidebar-group">
             <div
@@ -370,11 +438,11 @@ const Sidebar = () => {
             >
               <div className="mini-sidebar-header-left">
                 <span className="mini-sidebar-icon"><SidebarIcon name="dept-hrm" /></span>
-                <span className="mini-sidebar-title">4. HRM core</span>
+                <span className="mini-sidebar-title">5. HRM core</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredHrmItems.length}</span>
-                <span className="mini-sidebar-arrow" style={{ transform: hrmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>▾</span>
+                <span className="mini-sidebar-arrow" style={{ transform: hrmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
               </div>
             </div>
 
@@ -395,7 +463,7 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* 5. MINI SIDEBAR: MY WORKSPACE */}
+        {/* 6. MINI SIDEBAR: MY WORKSPACE */}
         <div className="mini-sidebar-group">
           <div
             className="mini-sidebar-sticky-header workspace-header"
@@ -404,11 +472,11 @@ const Sidebar = () => {
           >
             <div className="mini-sidebar-header-left">
               <span className="mini-sidebar-icon"><SidebarIcon name="dept-workspace" /></span>
-              <span className="mini-sidebar-title">5. My Workspace</span>
+              <span className="mini-sidebar-title">6. My Workspace</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span className="mini-sidebar-badge">{filteredWorkspaceItems.length}</span>
-              <span className="mini-sidebar-arrow" style={{ transform: workspaceOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>▾</span>
+              <span className="mini-sidebar-arrow" style={{ transform: workspaceOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
             </div>
           </div>
 

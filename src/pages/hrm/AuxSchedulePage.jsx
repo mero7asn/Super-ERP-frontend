@@ -1,5 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Icon } from '../../components/Icons';
+﻿import { useState, useEffect, useMemo } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { AUX_COLORS } from '../../context/AuxContext';
@@ -50,7 +49,7 @@ const getWeeksOfMonth = (month) => {
 
 const AuxSchedulePage = () => {
   const { user } = useAuth();
-  const isHR = ['HRM System Administrator', 'HR Manager', 'Core 360 Administrator', 'Attendance and Time Officer', 'HR Director / Executive HR User'].includes(user?.role);
+  const isHR = ['HRM System Administrator', 'HR Manager', 'CRM core Administrator', 'Attendance and Time Officer', 'HR Director / Executive HR User'].includes(user?.role);
   const isRTM = user?.role === 'RTM Team Member';
   const canManageSchedules = isHR; // only HR can edit schedules
 
@@ -168,8 +167,8 @@ const AuxSchedulePage = () => {
       {/* Tab bar */}
       <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--border-color)' }}>
         {[
-          { id: 'report', label: (<><Icon name="analytics" size={18} /> Compliance Report</>) },
-          ...(isHR ? [{ id: 'schedule', label: (<><Icon name="calendar" size={18} /> Schedule Editor</>) }] : []),
+          { id: 'report', label: '📊 Compliance Report' },
+          ...(isHR ? [{ id: 'schedule', label: '📅 Schedule Editor' }] : []),
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
             padding: '10px 20px', border: 'none', background: 'transparent', cursor: 'pointer',
@@ -234,7 +233,7 @@ const AuxSchedulePage = () => {
 
                   {!entry.planned?.liveMinutes && (
                     <div style={{ fontSize: 12, color: 'var(--text-muted)', fontStyle: 'italic' }}>
-                      <Icon name="warning" size={18} /> No schedule set for this employee in {month}. Set one in the Schedule Editor.
+                      ⚠ No schedule set for this employee in {month}. Set one in the Schedule Editor.
                     </div>
                   )}
                 </div>

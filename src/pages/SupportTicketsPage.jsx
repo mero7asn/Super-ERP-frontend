@@ -156,83 +156,59 @@ const SupportTicketsPage = () => {
   const resolvedCount = tickets.filter(t => t.status === 'Resolved').length;
 
   return (
-    <div>
-      <div className="page-header">
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Icon name="support" size={26} style={{ color: 'var(--accent-primary)' }} />
+    <div className="fade-in">
+      <div className="crm-page-banner" style={{ padding: 24, marginBottom: 20 }}>
+        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ffffff', margin: 0 }}>
+          <Icon name="support" size={26} style={{ color: '#F8FAFC' }} />
           Technical Issues
         </h1>
-        <p className="page-subtitle">View technical issues reported by internal teams to the Technology team</p>
+        <p className="page-subtitle" style={{ color: '#CBD5E1', marginTop: 8, marginBottom: 0 }}>View technical issues reported by internal teams to the Technology team.</p>
       </div>
 
-      {/* KPI row */}
-      <div className="stat-grid" style={{ marginBottom: 28 }}>
-        <div className="stat-card blue">
-          <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-            <Icon name="ticket" size={24} />
-          </div>
-          <div className="stat-value">{tickets.length}</div>
-          <div className="stat-label">Total Tickets</div>
+      <div className="stat-grid" style={{ marginBottom: 20 }}>
+        <div className="crm-stat-widget">
+          <div className="crm-stat-header"><div className="crm-stat-icon-bg" style={{ background: '#EFF6FF', color: '#2563EB' }}><Icon name="ticket" size={18} /></div><span className="crm-trend-pill crm-trend-up">Live</span></div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A' }}>{tickets.length}</div>
+          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Total Tickets</div>
         </div>
-        <div className="stat-card cyan">
-          <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-            <Icon name="unlock" size={24} />
-          </div>
-          <div className="stat-value">{openCount}</div>
-          <div className="stat-label">Open</div>
+        <div className="crm-stat-widget">
+          <div className="crm-stat-header"><div className="crm-stat-icon-bg" style={{ background: '#E0F2FE', color: '#0284C7' }}><Icon name="unlock" size={18} /></div><span className="crm-trend-pill crm-trend-up">Live</span></div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A' }}>{openCount}</div>
+          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Open</div>
         </div>
-        <div className="stat-card red">
-          <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-            <Icon name="alert" size={24} />
-          </div>
-          <div className="stat-value">{urgentCount}</div>
-          <div className="stat-label">Urgent Active</div>
+        <div className="crm-stat-widget">
+          <div className="crm-stat-header"><div className="crm-stat-icon-bg" style={{ background: '#FEF2F2', color: '#DC2626' }}><Icon name="alert" size={18} /></div><span className="crm-trend-pill crm-trend-up">Live</span></div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A' }}>{urgentCount}</div>
+          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Urgent Active</div>
         </div>
-        <div className="stat-card green">
-          <div className="stat-icon" style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
-            <Icon name="check" size={24} />
-          </div>
-          <div className="stat-value">{resolvedCount}</div>
-          <div className="stat-label">Resolved</div>
+        <div className="crm-stat-widget">
+          <div className="crm-stat-header"><div className="crm-stat-icon-bg" style={{ background: '#ECFDF5', color: '#059669' }}><Icon name="check" size={18} /></div><span className="crm-trend-pill crm-trend-up">Live</span></div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A' }}>{resolvedCount}</div>
+          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Resolved</div>
         </div>
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
 
-      <div className="table-wrapper">
-        <div className="table-header">
-          <span className="table-title">{filtered.length} Ticket{filtered.length !== 1 ? 's' : ''}</span>
+      <div className="crm-glass-card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', background: 'linear-gradient(90deg, #F8FAFC 0%, #F1F5F9 100%)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>{filtered.length} Ticket{filtered.length !== 1 ? 's' : ''}</span>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-            <select
-              className="table-search"
-              value={filterPriority}
-              onChange={e => setFilterPriority(e.target.value)}
-              style={{ width: 130 }}
-            >
+            <select value={filterPriority} onChange={e => setFilterPriority(e.target.value)} style={{ width: 128, border: '1px solid #CBD5E1', borderRadius: 999, padding: '6px 10px', fontSize: 12, background: '#ffffff' }}>
               <option value="All">All Priorities</option>
               <option value="Urgent">Urgent</option>
               <option value="High">High</option>
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
             </select>
-            <select
-              className="table-search"
-              value={filterStatus}
-              onChange={e => setFilterStatus(e.target.value)}
-              style={{ width: 140 }}
-            >
+            <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ width: 140, border: '1px solid #CBD5E1', borderRadius: 999, padding: '6px 10px', fontSize: 12, background: '#ffffff' }}>
               <option value="All">All Statuses</option>
               <option value="Open">Open</option>
               <option value="In Progress">In Progress</option>
               <option value="Resolved">Resolved</option>
               <option value="Closed">Closed</option>
             </select>
-            <input
-              className="table-search"
-              placeholder="Search subject or customer…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
+            <input placeholder="Search subject or customer…" value={search} onChange={e => setSearch(e.target.value)} style={{ width: 220, border: '1px solid #CBD5E1', borderRadius: 999, padding: '6px 10px', fontSize: 12, background: '#ffffff' }} />
           </div>
         </div>
 
@@ -246,24 +222,11 @@ const SupportTicketsPage = () => {
             <p>No tickets match your filters</p>
           </div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Subject</th>
-                <th>Priority</th>
-                <th>Status</th>
-                <th>Affected Page</th>
-                <th>Reporting Team</th>
-                <th>Assigned To</th>
-                <th>Timer</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(ticket => (
-                <TicketRow key={ticket._id} ticket={ticket} onStatusChange={handleStatusChange} />
-              ))}
-            </tbody>
-          </table>
+          <div style={{ display: 'grid', gap: 12, padding: 16 }}>
+            {filtered.map(ticket => (
+              <TicketRow key={ticket._id} ticket={ticket} onStatusChange={handleStatusChange} />
+            ))}
+          </div>
         )}
       </div>
     </div>

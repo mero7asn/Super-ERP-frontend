@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
@@ -58,7 +58,7 @@ const createDefaultBooking = (locator = 'BK-PPL5H9') => {
     priority: 'Normal',
     channel: 'Website',
     createdAt: '2026-07-26T10:38:05.000Z',
-    assignedEmployee: 'Core 360 Administrator',
+    assignedEmployee: 'CRM core Administrator',
     assignedEmail: defaultAgentEmail,
     price: 50.00,
     currency: 'USD',
@@ -84,7 +84,7 @@ const createDefaultBooking = (locator = 'BK-PPL5H9') => {
     // 3b. Documentations with guaranteed unique copyable IDs
     documentations: [
       { id: 'DOC-89A12B4C', author: 'Omar Hassan', authorEmail: 'asherjobs@outlook.com', category: 'Customer Preference', date: '2026-07-26T10:38:05.000Z', text: 'Customer requested SMS notification prior to booking start time.' },
-      { id: 'DOC-3F91A20D', author: 'Core 360 Administrator', authorEmail: 'admin@supercrm.com', category: 'Internal Note', date: '2026-07-27T11:20:00.000Z', text: 'Verified customer details and confirmed reservation eligibility.' }
+      { id: 'DOC-3F91A20D', author: 'CRM core Administrator', authorEmail: 'admin@supercrm.com', category: 'Internal Note', date: '2026-07-27T11:20:00.000Z', text: 'Verified customer details and confirmed reservation eligibility.' }
     ],
     // 3c. Audit Logs with explicit System Sign vs Agent Sign
     auditLogs: [
@@ -124,7 +124,7 @@ const BookingLookupPage = () => {
   const [smsBody, setSmsBody] = useState('Hi Omar, your booking BK-PPL5H9 is confirmed for 7/26/2026.');
 
   const currentAgentEmail = user?.email || 'admin@supercrm.com';
-  const currentRole = user?.role || 'Core 360 Administrator';
+  const currentRole = user?.role || 'CRM core Administrator';
 
   const handleLookup = async (e) => {
     if (e) e.preventDefault();
@@ -381,23 +381,21 @@ const BookingLookupPage = () => {
   const financials = calculateFinancials();
 
   return (
-    <div style={{ paddingBottom: 40 }}>
-      {/* Header */}
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+    <div className="fade-in" style={{ paddingBottom: 40 }}>
+      <div className="crm-page-banner" style={{ padding: 24, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Icon name="tickets" size={28} style={{ color: 'var(--accent-primary)' }} />
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ffffff', margin: 0 }}>
+            <Icon name="tickets" size={28} style={{ color: '#F8FAFC' }} />
             Booking & Order Workspace
           </h1>
-          <p className="page-subtitle">Manage customer details, booking lifecycle processing, transactions, documentation, and system/agent logs.</p>
+          <p className="page-subtitle" style={{ color: '#CBD5E1', marginTop: 8, marginBottom: 0 }}>Manage customer details, booking lifecycle processing, transactions, documentation, and system/agent logs.</p>
         </div>
-        <button className="btn btn-secondary" onClick={() => navigate('/leads')} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <button className="btn btn-secondary btn-sm" onClick={() => navigate('/leads')} style={{ background: 'rgba(255,255,255,0.12)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', gap: 6, borderRadius: 10 }}>
           <Icon name="leads" size={16} /> View Leads
         </button>
       </div>
 
-      {/* Lookup Bar */}
-      <div className="card" style={{ padding: 20, borderRadius: 16, marginBottom: 24, boxShadow: '0 10px 30px rgba(15, 23, 42, 0.05)' }}>
+      <div className="crm-glass-card" style={{ padding: 20, marginBottom: 24 }}>
         <form onSubmit={handleLookup} style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr auto', gap: 12, alignItems: 'end' }}>
           <div className="form-group" style={{ margin: 0 }}>
             <label className="form-label" style={{ fontWeight: 600 }}>Lookup Type</label>
@@ -779,11 +777,11 @@ const BookingLookupPage = () => {
                         <div>
                           {log.signType === 'System' ? (
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 999, background: 'rgba(147, 51, 234, 0.1)', color: '#9333ea', fontSize: 12, fontWeight: 700, border: '1px solid rgba(147, 51, 234, 0.2)' }}>
-                              <Icon name="robot" size={18} /> [System Sign: {log.signature || 'Core 360'}]
+                              🤖 [System Sign: {log.signature || 'Core 360'}]
                             </span>
                           ) : (
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 999, background: 'rgba(16, 185, 129, 0.1)', color: '#059669', fontSize: 12, fontWeight: 700, border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                              <Icon name="person" size={18} /> [Agent Sign: {log.signature || currentAgentEmail}]
+                              👤 [Agent Sign: {log.signature || currentAgentEmail}]
                             </span>
                           )}
                         </div>

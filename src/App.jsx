@@ -52,7 +52,12 @@ import PhysicalInventoryPage from './pages/PhysicalInventoryPage';
 import WarehousesPage from './pages/WarehousesPage';
 import PickTaskPage from './pages/PickTaskPage';
 import InventoryReportsPage from './pages/InventoryReportsPage';
+import WarehouseMapPage from './pages/WarehouseMapPage';
+import BatchSerialPage from './pages/BatchSerialPage';
+import RequisitionsPage from './pages/RequisitionsPage';
+import LandedCostsPage from './pages/LandedCostsPage';
 import SupplyChainPage from './pages/SupplyChainPage';
+import AccountingPage from './pages/AccountingPage';
 import OfferDetailPage from './pages/OfferDetailPage';
 
 // Layout wrapper: renders Sidebar + content for authenticated pages
@@ -73,7 +78,7 @@ const AppRoutes = () => {
   const { user } = useAuth();
 
   const analyticsRoles = [
-    'Core 360 Administrator', 'Executive User',
+    'CRM core Administrator', 'Executive User',
     'Business Analyst', 'System Architect'
   ];
 
@@ -118,7 +123,7 @@ const AppRoutes = () => {
         path="/leads/distribution"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Sales Manager'
+            'CRM core Administrator', 'System Architect', 'Sales Manager'
           ]}>
             <AppLayout>
               <LeadDistributionPage />
@@ -144,7 +149,7 @@ const AppRoutes = () => {
         path="/products"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Sales Agent', 'Sales Manager', 'Executive User'
+            'CRM core Administrator', 'System Architect', 'Sales Agent', 'Sales Manager', 'Executive User'
           ]}>
             <AppLayout>
               <ProductsPage />
@@ -158,7 +163,7 @@ const AppRoutes = () => {
         path="/inventory"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
           ]}>
             <AppLayout>
@@ -171,7 +176,7 @@ const AppRoutes = () => {
         path="/inventory/items"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
           ]}>
             <AppLayout>
@@ -184,7 +189,7 @@ const AppRoutes = () => {
         path="/inventory/items/:id"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
           ]}>
             <AppLayout>
@@ -197,7 +202,7 @@ const AppRoutes = () => {
         path="/inventory/stock"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
           ]}>
             <AppLayout>
@@ -210,7 +215,7 @@ const AppRoutes = () => {
         path="/inventory/transactions"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
           ]}>
             <AppLayout>
@@ -223,7 +228,7 @@ const AppRoutes = () => {
         path="/inventory/receiving"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Receiving Clerk', 'Quality Inspector'
           ]}>
             <AppLayout>
@@ -236,7 +241,7 @@ const AppRoutes = () => {
         path="/inventory/shipping"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Shipping Clerk', 'Warehouse Operator'
           ]}>
             <AppLayout>
@@ -249,7 +254,7 @@ const AppRoutes = () => {
         path="/inventory/transfers"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Warehouse Operator'
           ]}>
             <AppLayout>
@@ -262,7 +267,7 @@ const AppRoutes = () => {
         path="/inventory/adjustments"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Inventory Clerk'
           ]}>
             <AppLayout>
@@ -275,7 +280,7 @@ const AppRoutes = () => {
         path="/inventory/cycle-counts"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Warehouse Operator', 'Quality Inspector'
           ]}>
             <AppLayout>
@@ -288,7 +293,7 @@ const AppRoutes = () => {
         path="/inventory/physical-inventories"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Warehouse Operator'
           ]}>
             <AppLayout>
@@ -301,7 +306,7 @@ const AppRoutes = () => {
         path="/inventory/warehouses"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'
           ]}>
             <AppLayout>
               <WarehousesPage />
@@ -313,7 +318,7 @@ const AppRoutes = () => {
         path="/inventory/pick-tasks"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Shipping Clerk', 'Warehouse Operator'
           ]}>
             <AppLayout>
@@ -326,10 +331,56 @@ const AppRoutes = () => {
         path="/inventory/reports"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Inventory Clerk'
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Inventory Clerk'
           ]}>
             <AppLayout>
               <InventoryReportsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/warehouse-map"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'
+          ]}>
+            <AppLayout>
+              <WarehouseMapPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/batches"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Quality Inspector'
+          ]}>
+            <AppLayout>
+              <BatchSerialPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/requisitions"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <RequisitionsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory/landed-costs"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'
+          ]}>
+            <AppLayout>
+              <LandedCostsPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -339,7 +390,7 @@ const AppRoutes = () => {
         path="/supply-chain"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
           ]}>
             <AppLayout>
@@ -352,11 +403,33 @@ const AppRoutes = () => {
         path="/supply-chain/:section"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
+            'CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager',
             'Receiving Clerk', 'Shipping Clerk', 'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
           ]}>
             <AppLayout>
               <SupplyChainPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Accounting Core */}
+      <Route
+        path="/accounting"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <AccountingPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounting/:section"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <AccountingPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -381,7 +454,7 @@ const AppRoutes = () => {
             <ProtectedRoute allowedRoles={[
               'Sales Agent', 'Sales Manager',
               'Customer Support Agent', 'Customer Support Manager',
-              'CRM Developer', 'CRM Consultant', 'System Architect', 'Core 360 Administrator'
+              'CRM Developer', 'CRM Consultant', 'System Architect', 'CRM core Administrator'
             ]}>
               <AppLayout>
                 <BookingLookupPage />
@@ -417,7 +490,7 @@ const AppRoutes = () => {
         path="/kanban"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'Sales Agent', 'Sales Manager',
+            'CRM core Administrator', 'Sales Agent', 'Sales Manager',
             'Executive User', 'System Architect', 'Business Analyst'
           ]}>
             <AppLayout>
@@ -432,7 +505,7 @@ const AppRoutes = () => {
         path="/executive"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'Executive User',
+            'CRM core Administrator', 'Executive User',
             'Business Analyst', 'System Architect'
           ]}>
             <AppLayout>
@@ -447,7 +520,7 @@ const AppRoutes = () => {
         path="/campaigns"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'Marketing Specialist',
+            'CRM core Administrator', 'Marketing Specialist',
             'Marketing Manager', 'Executive User', 'Business Analyst', 'System Architect'
           ]}>
             <AppLayout>
@@ -462,7 +535,7 @@ const AppRoutes = () => {
         path="/teams"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect',
+            'CRM core Administrator', 'System Architect',
             'Sales Manager', 'Sales Agent',
             'Customer Support Manager', 'Customer Support Agent',
             'Marketing Manager', 'Marketing Specialist'
@@ -478,7 +551,7 @@ const AppRoutes = () => {
       <Route
         path="/users"
         element={
-          <ProtectedRoute allowedRoles={['Core 360 Administrator', 'System Architect']}>
+          <ProtectedRoute allowedRoles={['CRM core Administrator', 'System Architect']}>
             <AppLayout>
               <UsersPage />
             </AppLayout>
@@ -502,7 +575,7 @@ const AppRoutes = () => {
       <Route
         path="/settings"
         element={
-          <ProtectedRoute allowedRoles={['Core 360 Administrator']}>
+          <ProtectedRoute allowedRoles={['CRM core Administrator']}>
             <AppLayout>
               <SettingsPage />
             </AppLayout>
@@ -539,7 +612,7 @@ const AppRoutes = () => {
         path="/email-composer"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'System Architect', 'Sales Agent', 'Sales Manager'
+            'CRM core Administrator', 'System Architect', 'Sales Agent', 'Sales Manager'
           ]}>
             <AppLayout>
               <EmailComposer />
@@ -553,7 +626,7 @@ const AppRoutes = () => {
         path="/rtm"
         element={
           <ProtectedRoute allowedRoles={[
-            'RTM Team Member', 'Core 360 Administrator',
+            'RTM Team Member', 'CRM core Administrator',
             'HRM System Administrator', 'HR Manager'
           ]}>
             <AppLayout>
@@ -580,7 +653,7 @@ const AppRoutes = () => {
         path="/hrm/personal"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'HRM System Administrator', 'HR Manager',
+            'CRM core Administrator', 'HRM System Administrator', 'HR Manager',
             'HR Specialist (Generalist)', 'HR Business Partner', 'Employee (General User)'
           ]}>
             <AppLayout>
@@ -595,7 +668,7 @@ const AppRoutes = () => {
         path="/hrm/payroll"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'HRM System Administrator', 'HR Manager',
+            'CRM core Administrator', 'HRM System Administrator', 'HR Manager',
             'Payroll Specialist', 'Employee (General User)'
           ]}>
             <AppLayout>
@@ -634,7 +707,7 @@ const AppRoutes = () => {
         path="/hrm/training"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'HRM System Administrator', 'HR Manager',
+            'CRM core Administrator', 'HRM System Administrator', 'HR Manager',
             'Training and Development Specialist', 'Employee (General User)'
           ]}>
             <AppLayout>
@@ -649,7 +722,7 @@ const AppRoutes = () => {
         path="/hrm/talent"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'HRM System Administrator', 'HR Manager',
+            'CRM core Administrator', 'HRM System Administrator', 'HR Manager',
             'Recruitment Specialist (Talent Acquisition)'
           ]}>
             <AppLayout>
@@ -664,7 +737,7 @@ const AppRoutes = () => {
         path="/hrm/partnerships"
         element={
           <ProtectedRoute allowedRoles={[
-            'Core 360 Administrator', 'HRM System Administrator', 'HR Manager',
+            'CRM core Administrator', 'HRM System Administrator', 'HR Manager',
             'HR Business Partner', 'Employee (General User)'
           ]}>
             <AppLayout>
@@ -678,7 +751,7 @@ const AppRoutes = () => {
       <Route
         path="/devtools"
         element={
-          <ProtectedRoute allowedRoles={['CRM Developer', 'System Architect', 'Core 360 Administrator']}>
+          <ProtectedRoute allowedRoles={['CRM Developer', 'System Architect', 'CRM core Administrator']}>
             <AppLayout>
               <DevToolsPage />
             </AppLayout>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
@@ -6,7 +6,7 @@ import { DEPARTMENTS, getRolesByDepartment, getDepartmentByRole, getDepartmentTh
 
 const roleBadge = (role) => {
   const map = {
-    'Core 360 Administrator': 'badge-urgent',
+    'CRM core Administrator': 'badge-urgent',
     'System Architect': 'badge-urgent',
     'Sales Manager': 'badge-qualified',
     'Customer Support Manager': 'badge-qualified',
@@ -79,9 +79,13 @@ const UsersPage = () => {
 
   return (
     <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+      <div className="page-header page-header--elevated" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span className="metric-pill">Access control</span>
+            <span className="metric-pill metric-pill--success">Team administration</span>
+          </div>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: 8 }}>
             <Icon name="users" size={26} style={{ color: 'var(--accent-primary)' }} />
             User Management
           </h1>
@@ -105,7 +109,7 @@ const UsersPage = () => {
 
       {error && <div className="alert alert-error">{error}</div>}
 
-      <div className="table-wrapper">
+      <div className="surface-card" style={{ padding: 0, overflow: 'hidden' }}>
         <div className="table-header">
           <span className="table-title">
             {filtered.length} Registered User{filtered.length !== 1 ? 's' : ''}

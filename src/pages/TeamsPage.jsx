@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Icon } from '../components/Icons';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import { getDepartmentTheme } from '../services/departmentJobs';
@@ -20,8 +19,8 @@ const Avatar = ({ firstName, lastName, size = 36, colors }) => {
 };
 
 const MemberCard = ({ member, dept, isAdmin, managers, onMove }) => {
-  const palette = getDepartmentTheme(dept);
-  const colors = dept ? { c1: palette.primary, c2: palette.dark, badge: palette.badgeClass, icon: palette.icon } : null;
+  const theme = getDepartmentTheme(dept);
+  const colors = dept ? { c1: theme.primary, c2: theme.dark, badge: theme.badgeClass, icon: theme.icon } : null;
   const [isMoving, setIsMoving] = useState(false);
   const [selectValue, setSelectValue] = useState('');
   
@@ -88,7 +87,7 @@ const TeamsPage = () => {
   const [success, setSuccess] = useState('');
   const [activeTab, setActiveTab] = useState('All');
 
-  const isAdmin = ['Core 360 Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['CRM core Administrator', 'System Architect'].includes(user?.role);
 
   const fetchTeams = useCallback(async () => {
     setLoading(true);
@@ -142,11 +141,14 @@ const TeamsPage = () => {
   });
 
   return (
-    <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent-primary)' }}>
+    <div className="fade-in">
+      <div className="crm-page-banner" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, padding: 24 }}>
+        <div style={{ maxWidth: 640 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 6 }}>
+            Organizational oversight
+          </div>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#ffffff', margin: 0 }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#F8FAFC' }}>
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
               <circle cx="9" cy="7" r="4"/>
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -154,17 +156,17 @@ const TeamsPage = () => {
             </svg>
             Teams
           </h1>
-          <p className="page-subtitle">Manage department teams and member assignments</p>
+          <p className="page-subtitle" style={{ color: '#CBD5E1', marginTop: 8, marginBottom: 0 }}>Manage department teams and member assignments with clear ownership.</p>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {[
-            { label: 'Teams', value: teams.length, color: 'var(--accent-primary)' },
-            { label: 'Members', value: teams.reduce((s, t) => s + t.members.length, 0), color: '#10B981' },
-            { label: 'Unassigned', value: unassigned.length, color: unassigned.length > 0 ? '#EF4444' : '#10B981' },
+            { label: 'Teams', value: teams.length, color: '#F8FAFC' },
+            { label: 'Members', value: teams.reduce((s, t) => s + t.members.length, 0), color: '#A7F3D0' },
+            { label: 'Unassigned', value: unassigned.length, color: unassigned.length > 0 ? '#FCA5A5' : '#A7F3D0' },
           ].map(s => (
-            <div key={s.label} className="table-wrapper" style={{ padding: '12px 18px', textAlign: 'center', minWidth: 80 }}>
+            <div key={s.label} className="crm-glass-card" style={{ padding: '12px 18px', textAlign: 'center', minWidth: 90, background: 'rgba(255,255,255,0.12)', borderColor: 'rgba(255,255,255,0.16)' }}>
               <div style={{ fontSize: 22, fontWeight: 700, color: s.color }}>{s.value}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{s.label}</div>
+              <div style={{ fontSize: 11, color: 'rgba(248,250,252,0.8)' }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -278,7 +280,7 @@ const TeamsPage = () => {
         {filteredUnassigned.length > 0 && (
           <div className="table-wrapper" style={{ padding: 0, overflow: 'hidden', border: '2px dashed rgba(239,68,68,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '20px 24px', borderBottom: '1px solid var(--border-color)', background: 'rgba(239,68,68,0.05)' }}>
-              <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}><Icon name="warning" size={18} /></div>
+              <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>⚠️</div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700, fontSize: 16 }}>Unassigned Members</div>
                 <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>These members need to be assigned to a team</div>

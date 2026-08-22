@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Icon } from '../components/Icons';
+﻿import { useState, useEffect } from 'react';
 import API from '../services/api';
+import { Icon } from './Icons';
 
 const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
   const [history, setHistory] = useState([]);
@@ -22,22 +22,22 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
 
   const getActionIcon = (action) => {
     switch (action) {
-      case 'created': return <span style={{fontSize:18}}>+</span>;
-      case 'sent': return <Icon name="send" size={18} />;
-      case 'viewed': return <Icon name="search" size={18} />;
-      case 'accepted': return <Icon name="check" size={18} />;
-      case 'rejected': return <Icon name="close" size={18} />;
-      case 'expired': return <Icon name="clock" size={18} />;
-      case 'completed': return <Icon name="play" size={18} />;
-      case 'canceled': return <Icon name="ban" size={18} />;
-      case 'refunded': return <Icon name="money" size={18} />;
-      case 'updated': return <span style={{fontSize:16}}>✏</span>;
-      case 'resend': return <Icon name="refresh" size={16} />;
-      case 'revised': return <Icon name="refresh" size={16} />;
-      case 'version_sent': return <Icon name="send" size={18} />;
-      case 'image_added': return <Icon name="kanban" size={18} />;
-      case 'image_removed': return <Icon name="trash" size={18} />;
-      default: return <Icon name="kanban" size={18} />;
+      case 'created': return <Icon name="plus" />;
+      case 'sent': return <Icon name="send" />;
+      case 'viewed': return <Icon name="eye" />;
+      case 'accepted': return <Icon name="check" />;
+      case 'rejected': return <Icon name="close" />;
+      case 'expired': return <Icon name="clock" />;
+      case 'completed': return <Icon name="check" />;
+      case 'canceled': return <Icon name="close" />;
+      case 'refunded': return <Icon name="dollar" />;
+      case 'updated': return <Icon name="edit" />;
+      case 'resend': return <Icon name="send" />;
+      case 'revised': return <Icon name="edit" />;
+      case 'version_sent': return <Icon name="send" />;
+      case 'image_added': return <Icon name="image" />;
+      case 'image_removed': return <Icon name="image" />;
+      default: return <Icon name="copy" />;
     }
   };
 
@@ -87,10 +87,10 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
                 onClick={onViewVersions}
                 style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '4px 10px', fontSize: 12, cursor: 'pointer', color: 'var(--accent-primary)' }}
               >
-                <Icon name="folder" size={18} /> Sent Versions
+                <Icon name="send" /> Sent Versions
               </button>
             )}
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}>×</button>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--text-muted)' }}><Icon name="close" /></button>
           </div>
         </div>
         {loading ? (
@@ -112,7 +112,7 @@ const OfferHistoryModal = ({ offerId, onClose, onViewVersions }) => {
                   <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 2 }}>{entry.details}</div>
                   {renderChanges(entry.changes)}
                   <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
-                    {entry.performedBy ? `${entry.performedBy.firstName} ${entry.performedBy.lastName}` : 'System'} • {new Date(entry.timestamp).toLocaleString()}
+                      {entry.performedBy ? `${entry.performedBy.firstName} ${entry.performedBy.lastName}` : 'System'} • {new Date(entry.timestamp).toLocaleString()}
                   </div>
                 </div>
               </div>

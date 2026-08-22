@@ -2,28 +2,34 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
-
-const INVENTORY_ROLES = [
-  'Core 360 Administrator', 'System Architect', 'Inventory Manager',
-  'Warehouse Manager', 'Receiving Clerk', 'Shipping Clerk',
-  'Warehouse Operator', 'Inventory Clerk', 'Quality Inspector'
-];
+import BarcodeScannerModal from '../components/BarcodeScannerModal';
 
 const KPICard = ({ label, value, sub, color, alert, onClick }) => (
-  <div className="card" style={{ padding: 20, cursor: onClick ? 'pointer' : 'default', position: 'relative' }}
-    onClick={onClick}>
-    {alert && (
-      <div style={{ position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: '50%', background: '#ef4444', boxShadow: '0 0 0 3px #fecaca' }} />
-    )}
-    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 26, fontWeight: 700, color: color || 'var(--text-primary)' }}>{value ?? '—'}</div>
-    {sub && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{sub}</div>}
+  <div
+    className="card"
+    style={{
+      padding: 18,
+      cursor: onClick ? 'pointer' : 'default',
+      position: 'relative',
+      borderRadius: 16,
+      border: '1px solid #e2e8f0',
+      background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+      transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+      boxShadow: '0 10px 25px rgba(15, 23, 42, 0.04)'
+    }}
+    onClick={onClick}
+  >
+    {alert && <div style={{ position: 'absolute', top: 10, right: 10, width: 10, height: 10, borderRadius: '50%', background: '#ef4444', boxShadow: '0 0 0 3px #fecaca' }} />}
+    <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{label}</div>
+    <div style={{ fontSize: 22, fontWeight: 800, color: color || '#0f172a' }}>{value ?? '—'}</div>
+    {sub && <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>{sub}</div>}
   </div>
 );
 
 const InventoryDashboard = () => {
   const [kpis, setKpis] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showScanner, setShowScanner] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,193 +46,92 @@ const InventoryDashboard = () => {
     fetchKPIs();
   }, []);
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading inventory dashboard…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading enterprise inventory dashboard…</div>;
 
-  const fmtCurrency = (n) => n != null ? `$${Number(n).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : '—';
-  const fmtPct = (n) => n != null ? `${n}%` : '—';
+  const fmtEgp = (n) => n != null ? `EGP ${Number(n).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : '—';
   const fmtNum = (n) => n != null ? Number(n).toLocaleString() : '—';
+  const quickActions = [
+    { label: 'Barcode Scan', icon: 'scan', path: null, primary: true },
+    { label: 'Storage Map', icon: 'map', path: '/inventory/warehouse-map' },
+    { label: 'Import Costs', icon: 'ship', path: '/inventory/landed-costs' },
+    { label: 'FEFO Lots', icon: 'sparkles', path: '/inventory/batches' },
+    { label: 'Reports', icon: 'analytics', path: '/inventory/reports' }
+  ];
 
   return (
-    <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Icon name="box" size={26} style={{ color: 'var(--accent-primary)' }} />
-            Inventory Dashboard
-          </h1>
-          <p className="page-subtitle">Real-time inventory overview and enterprise KPIs</p>
-        </div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button className="btn btn-secondary" onClick={() => navigate('/inventory/items')} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Icon name="box" size={16} /> Items
-          </button>
-          <button className="btn btn-secondary" onClick={() => navigate('/inventory/stock')} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Icon name="analytics" size={16} /> Stock
-          </button>
-          <button className="btn btn-secondary" onClick={() => navigate('/inventory/pick-tasks')} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Icon name="teams" size={16} /> Pick Tasks
-          </button>
-          <button className="btn btn-secondary" onClick={() => navigate('/inventory/reports')} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Icon name="analytics" size={16} /> Reports
-          </button>
-          <button className="btn btn-secondary" onClick={() => navigate('/inventory/transactions')} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Icon name="teams" size={16} /> Transactions
-          </button>
+    <div className="fade-in" style={{ padding: '0 12px 32px' }}>
+      <div className="crm-page-banner" style={{ padding: 24, marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+          <div style={{ maxWidth: 700 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#7dd3fc', marginBottom: 6 }}>Enterprise inventory command</div>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: '#fff' }}>Inventory control center</h1>
+            <p style={{ margin: '8px 0 0', fontSize: 14, color: '#e2e8f0', lineHeight: 1.5 }}>Monitor stock health, exception alerts, warehouse flow, and landed cost exposure from a single premium workspace.</p>
+          </div>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            {quickActions.map((action) => (
+              <button key={action.label} className={action.primary ? 'btn btn-primary' : 'btn btn-secondary'} onClick={() => action.path ? navigate(action.path) : setShowScanner(true)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Icon name={action.icon} size={16} /> {action.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {kpis && (
         <>
-          {/* ── Operational Stock Counts ── */}
-          <div style={{ marginBottom: 8 }}>
-            <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
-              Stock Overview
-            </h3>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginBottom: 24 }}>
-            <KPICard label="Active Items" value={fmtNum(kpis.totalItems)} color="var(--accent-primary)" />
-            <KPICard label="Warehouses" value={fmtNum(kpis.totalWarehouses)} color="var(--accent-secondary)" />
-            <KPICard label="Total On-Hand" value={fmtNum(kpis.totalOnHand)} color="#22c55e" />
-            <KPICard label="Available" value={fmtNum(kpis.totalAvailable)} color="#06b6d4" />
-            <KPICard label="Allocated" value={fmtNum(kpis.totalAllocated)} color="#f59e0b" />
-            <KPICard label="Blocked" value={fmtNum(kpis.totalBlocked)} color="#ef4444" />
-            <KPICard label="Inventory Value" value={fmtCurrency(kpis.totalInventoryValue)} color="var(--accent-primary)"
-              sub="On-hand × unit cost"
-              onClick={() => navigate('/inventory/reports')} />
-            <KPICard label="Total Transactions" value={fmtNum(kpis.totalTransactions)} />
-          </div>
-
-          {/* ── Enterprise Performance KPIs ── */}
-          <div style={{ marginBottom: 8 }}>
-            <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
-              Performance KPIs
-            </h3>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginBottom: 24 }}>
-            <KPICard
-              label="Inventory Turnover"
-              value={kpis.inventoryTurnover != null ? `${kpis.inventoryTurnover}x` : '—'}
-              color={kpis.inventoryTurnover > 6 ? '#22c55e' : kpis.inventoryTurnover > 3 ? '#f59e0b' : '#ef4444'}
-              sub="Annualized (90-day COGS)"
-            />
-            <KPICard
-              label="Days on Hand"
-              value={kpis.daysOnHand != null ? `${kpis.daysOnHand}d` : '—'}
-              color={kpis.daysOnHand < 30 ? '#22c55e' : kpis.daysOnHand < 60 ? '#f59e0b' : '#ef4444'}
-              sub="Avg days stock will last"
-            />
-            <KPICard
-              label="Stock Accuracy"
-              value={fmtPct(kpis.stockAccuracy)}
-              color={kpis.stockAccuracy >= 99 ? '#22c55e' : kpis.stockAccuracy >= 95 ? '#f59e0b' : '#ef4444'}
-              sub="From last 30-day cycle counts"
-            />
-            <KPICard
-              label="Order Fill Rate"
-              value={fmtPct(kpis.fillRate)}
-              color={kpis.fillRate >= 95 ? '#22c55e' : kpis.fillRate >= 85 ? '#f59e0b' : '#ef4444'}
-              sub="Shipments completed on time (30d)"
-            />
+          <div className="crm-glass-card" style={{ padding: 18, marginBottom: 18 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Operational & financial KPIs</div>
+              <div style={{ fontSize: 12, color: '#64748b' }}>Updated in real time</div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 14, marginTop: 16 }}>
+              <KPICard label="Total Inventory Value" value={fmtEgp(kpis.totalInventoryValue ?? 0)} color="#0284c7" sub="On-hand valuation (EGP)" onClick={() => navigate('/inventory/reports')} />
+              <KPICard label="Total Products & SKUs" value={fmtNum(kpis.totalItems ?? 0)} color="#0f172a" sub="Active item master records" onClick={() => navigate('/inventory/items')} />
+              <KPICard label="Total Stock Quantity" value={fmtNum(kpis.totalOnHand ?? 0)} color="#16a34a" sub="Units across warehouses" onClick={() => navigate('/inventory/stock')} />
+              <KPICard label="Low Stock Products" value={fmtNum(kpis.reorderAlertsCount ?? 0)} color="#ef4444" alert={(kpis.reorderAlertsCount ?? 0) > 0} sub="Below reorder threshold" onClick={() => navigate('/inventory/items')} />
+              <KPICard label="Out of Stock Items" value={fmtNum(kpis.outOfStockCount ?? 0)} color="#b91c1c" alert={(kpis.outOfStockCount ?? 0) > 0} sub="Immediate replenishment needed" />
+              <KPICard label="Expiring Soon (30d)" value={fmtNum(kpis.expiryAlertCount ?? 0)} color="#f97316" alert={(kpis.expiryAlertCount ?? 0) > 0} sub="FEFO action required" onClick={() => navigate('/inventory/batches')} />
+              <KPICard label="Expired / Blocked Lots" value={fmtNum(kpis.totalBlocked ?? 0)} color="#991b1b" alert={(kpis.totalBlocked ?? 0) > 0} sub="Quarantine / Blocked status" onClick={() => navigate('/inventory/batches')} />
+              <KPICard label="Pending Goods Receipts" value={fmtNum(kpis.pendingReceivingCount ?? 0)} color="#0284c7" sub="GRNs awaiting putaway/QC" onClick={() => navigate('/inventory/receiving')} />
+              <KPICard label="Pending Transfers" value={fmtNum(kpis.pendingTransfersCount ?? 0)} color="#8b5cf6" sub="In-transit stock" onClick={() => navigate('/inventory/transfers')} />
+              <KPICard label="Stock Reserved" value={fmtNum(kpis.totalAllocated ?? 0)} color="#d97706" sub="Reserved for orders" onClick={() => navigate('/inventory/stock')} />
+              <KPICard label="Damaged / Quarantine" value={fmtNum(kpis.damagedCount ?? 0)} color="#dc2626" sub="Pending QC review" onClick={() => navigate('/inventory/receiving')} />
+              <KPICard label="Slow-Moving Stock" value={fmtNum(kpis.slowMovingCount ?? 0)} color="#64748b" sub="> 90 days no movement" onClick={() => navigate('/inventory/reports')} />
+              <KPICard label="Dead Stock Value" value={fmtEgp(kpis.deadStockValue ?? 0)} color="#991b1b" sub="Cash locked in dead inventory" onClick={() => navigate('/inventory/reports')} />
+              <KPICard label="Stock Variance Value" value={fmtEgp(kpis.stockVarianceValue ?? 0)} color="#ca8a04" sub="Cycle count variance" onClick={() => navigate('/inventory/cycle-counts')} />
+              <KPICard label="Inventory Turnover" value={kpis.inventoryTurnover != null ? `${kpis.inventoryTurnover}x` : '—'} color="#16a34a" sub="Annualized COGS ratio" />
+            </div>
           </div>
 
-          {/* ── Alerts ── */}
-          <div style={{ marginBottom: 8 }}>
-            <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
-              Active Alerts
-            </h3>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginBottom: 28 }}>
-            <KPICard
-              label="Reorder Alerts"
-              value={fmtNum(kpis.reorderAlertsCount)}
-              color={kpis.reorderAlertsCount > 0 ? '#ef4444' : '#22c55e'}
-              alert={kpis.reorderAlertsCount > 0}
-              sub="Items below reorder point"
-              onClick={() => navigate('/inventory/reports')}
-            />
-            <KPICard
-              label="Expiry Alerts"
-              value={fmtNum(kpis.expiryAlertCount)}
-              color={kpis.expiryAlertCount > 0 ? '#f97316' : '#22c55e'}
-              alert={kpis.expiryAlertCount > 0}
-              sub="Lots expiring in 30 days"
-              onClick={() => navigate('/inventory/reports')}
-            />
-            <KPICard
-              label="Open Pick Tasks"
-              value={fmtNum(kpis.openPickTasks)}
-              color={kpis.openPickTasks > 0 ? '#3b82f6' : '#22c55e'}
-              sub="Draft / Assigned / In Progress"
-              onClick={() => navigate('/inventory/pick-tasks')}
-            />
-            <KPICard
-              label="Exception Queue"
-              value={fmtNum(kpis.adjustmentsByStatus?.find(a => a._id === 'Pending')?.count || 0)}
-              color="#f59e0b"
-              sub="Pending adjustments for review"
-              onClick={() => navigate('/inventory/adjustments')}
-            />
-          </div>
-
-          {/* ── Adjustments by Status ── */}
-          {kpis.adjustmentsByStatus?.length > 0 && (
-            <div style={{ marginBottom: 24 }}>
-              <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
-                Adjustment Pipeline
-              </h3>
-              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-                {kpis.adjustmentsByStatus.map(a => {
-                  const colorMap = { Pending: '#f59e0b', Approved: '#3b82f6', Posted: '#22c55e', Rejected: '#ef4444' };
-                  return (
-                    <div key={a._id} className="card" style={{ padding: '14px 20px', minWidth: 140 }}>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>{a._id}</div>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: colorMap[a._id] || 'var(--text-primary)' }}>{a.count}</div>
-                    </div>
-                  );
-                })}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 18 }}>
+            <div className="crm-glass-card" style={{ padding: 18 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Stock movement balance</div>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                <div style={{ background: '#fff', padding: '8px 12px', borderRadius: 10, border: '1px solid #e2e8f0' }}>Opening: {fmtNum(kpis.openingStock ?? 0)}</div>
+                <span style={{ color: '#16a34a', fontSize: 16 }}>+</span>
+                <div style={{ background: '#dcfce7', color: '#166534', padding: '8px 12px', borderRadius: 10 }}>Purchases: +{fmtNum(kpis.totalReceived ?? 0)}</div>
+                <span style={{ color: '#16a34a', fontSize: 16 }}>+</span>
+                <div style={{ background: '#dcfce7', color: '#166534', padding: '8px 12px', borderRadius: 10 }}>Transfers In: +{fmtNum(kpis.transfersIn ?? 0)}</div>
+                <span style={{ color: '#dc2626', fontSize: 16 }}>-</span>
+                <div style={{ background: '#fee2e2', color: '#991b1b', padding: '8px 12px', borderRadius: 10 }}>Issue: -{fmtNum(kpis.totalIssued ?? 0)}</div>
+                <span style={{ color: '#ca8a04', fontSize: 16 }}>±</span>
+                <div style={{ background: '#fef9c3', color: '#854d0e', padding: '8px 12px', borderRadius: 10 }}>Adjustments: {kpis.totalAdjusted != null ? (kpis.totalAdjusted >= 0 ? '+' : '') + fmtNum(kpis.totalAdjusted) : '0'}</div>
+              </div>
+              <div style={{ marginTop: 16, padding: '12px 14px', background: '#0284c7', color: '#fff', borderRadius: 12, fontWeight: 800, textAlign: 'center' }}>Closing Balance: {fmtNum(kpis.totalOnHand ?? 0)} EA</div>
+            </div>
+            <div className="crm-glass-card" style={{ padding: 18 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Priority alerts</div>
+              <div style={{ display: 'grid', gap: 10 }}>
+                <div style={{ padding: 12, borderRadius: 12, background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b' }}><strong>{kpis.reorderAlertsCount ?? 0}</strong> items below reorder point</div>
+                <div style={{ padding: 12, borderRadius: 12, background: '#fef3c7', border: '1px solid #fde68a', color: '#92400e' }}><strong>{kpis.expiryAlertCount ?? 0}</strong> batches nearing expiry</div>
+                <div style={{ padding: 12, borderRadius: 12, background: '#ecfdf5', border: '1px solid #bbf7d0', color: '#166534' }}><strong>{kpis.pendingReceivingCount ?? 0}</strong> goods receipts pending</div>
               </div>
             </div>
-          )}
+          </div>
         </>
       )}
 
-      {/* ── Recent Transactions ── */}
-      {kpis?.recentTransactions?.length > 0 && (
-        <div className="card" style={{ padding: 20 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Recent Transactions</h3>
-            <button className="btn btn-secondary" style={{ fontSize: 12 }} onClick={() => navigate('/inventory/transactions')}>
-              View All
-            </button>
-          </div>
-          <div className="table-wrapper" style={{ overflowX: 'auto' }}>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Transaction ID</th>
-                  <th>Type</th>
-                  <th>Item</th>
-                  <th>Warehouse</th>
-                  <th>Qty</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {kpis.recentTransactions.map(txn => (
-                  <tr key={txn._id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{txn.transactionId}</td>
-                    <td><span className="badge badge-new">{txn.type}</span></td>
-                    <td>{txn.item?.sku} — {txn.item?.name}</td>
-                    <td>{txn.warehouse?.code}</td>
-                    <td style={{ fontWeight: 600 }}>{txn.quantity}</td>
-                    <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(txn.createdAt).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+      <BarcodeScannerModal isOpen={showScanner} onClose={() => setShowScanner(false)} onSelectProduct={(result) => { console.log('Selected product from scanner:', result); }} />
     </div>
   );
 };

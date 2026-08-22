@@ -1,24 +1,26 @@
 import { useState, useEffect } from 'react';
+import API from '../services/api';
 import { inventoryAPI } from '../services/inventoryAPI';
 import { Icon } from '../components/Icons';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
 
 const TABS = [
-  { id: 'valuation', label: 'Valuation', icon: 'analytics' },
-  { id: 'abc', label: 'ABC Analysis', icon: 'analytics' },
-  { id: 'dead', label: 'Dead Stock', icon: 'box' },
-  { id: 'reorder', label: 'Reorder Alerts', icon: 'teams' },
-  { id: 'expiry', label: 'Expiry Alerts', icon: 'calendar' },
+  { id: 'valuation', label: 'Valuation & accounting', icon: 'analytics' },
+  { id: 'aging', label: 'Aging', icon: 'calendar' },
+  { id: 'abc', label: 'ABC analysis', icon: 'analytics' },
+  { id: 'dead', label: 'Dead / slow stock', icon: 'box' },
+  { id: 'reorder', label: 'Reorder alerts', icon: 'teams' },
+  { id: 'expiry', label: 'Expiry alerts', icon: 'calendar' },
 ];
 
-const ABC_COLORS = { A: '#22c55e', B: '#f59e0b', C: '#ef4444' };
-const fmt = (n) => n !== null && n !== undefined ? n.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—';
-const fmtCurrency = (n) => n !== null && n !== undefined ? `$${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—';
+const fmt = (n) => n !== null && n !== undefined ? Number(n).toLocaleString() : '—';
+const fmtCurrency = (n) => n !== null && n !== undefined ? `EGP ${Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—';
 
 const InventoryReportsPage = () => {
   const [activeTab, setActiveTab] = useState('valuation');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
+  const [detailedValuation, setDetailedValuation] = useState(null);
+  const [costingMethod, setCostingMethod] = useState('FIFO');
   const [groupBy, setGroupBy] = useState('item');
   const [abcDays, setAbcDays] = useState('90');
   const [deadDays, setDeadDays] = useState('90');
@@ -27,7 +29,7 @@ const InventoryReportsPage = () => {
   const [warehouseFilter, setWarehouseFilter] = useState('');
 
   useEffect(() => {
-    inventoryAPI.getWarehouses().then(r => setWarehouses(r.data || []));
+    inventoryAPI.getWarehouses().then((r) => setWarehouses(r.data || []));
   }, []);
 
   const fetchData = async () => {
@@ -35,11 +37,17 @@ const InventoryReportsPage = () => {
     setData(null);
     try {
       let res;
-      if (activeTab === 'valuation') res = await inventoryAPI.getValuationReport({ groupBy, warehouse: warehouseFilter });
-      else if (activeTab === 'abc') res = await inventoryAPI.getABCReport({ days: abcDays });
+      if (activeTab === 'valuation') {
+        res = await inventoryAPI.getValuationReport({ groupBy, warehouse: warehouseFilter });
+        const detailedRes = await API.get(`/inventory/reports/valuation-detailed?method=${costingMethod}`);
+        if (detailedRes.data.success) {
+          setDetailedValuation(detailedRes.data.data);
+        }
+      } else if (activeTab === 'abc') res = await inventoryAPI.getABCReport({ days: abcDays });
       else if (activeTab === 'dead') res = await inventoryAPI.getDeadStockReport({ days: deadDays });
       else if (activeTab === 'reorder') res = await inventoryAPI.getReorderAlerts();
       else if (activeTab === 'expiry') res = await inventoryAPI.getExpiryAlerts({ days: expiryDays });
+
       setData(res);
     } catch (err) {
       console.error(err);
@@ -48,408 +56,130 @@ const InventoryReportsPage = () => {
     }
   };
 
-  useEffect(() => { fetchData(); }, [activeTab]);
+  useEffect(() => { fetchData(); }, [activeTab, costingMethod]);
+
+  const summaryCards = [
+    { label: 'Reports ready', value: 6, tone: '#0284c7' },
+    { label: 'Alerts', value: data?.data?.length || 0, tone: '#d97706' },
+    { label: 'Valuation', value: fmtCurrency(detailedValuation?.totalCompanyValuation), tone: '#16a34a' },
+    { label: 'Costing policy', value: costingMethod, tone: '#7c3aed' }
+  ];
 
   return (
-    <div>
-      <div className="page-header" style={{ marginBottom: 20 }}>
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Icon name="analytics" size={26} style={{ color: 'var(--accent-primary)' }} />
-          Inventory Intelligence Reports
-        </h1>
-        <p className="page-subtitle">Valuation, ABC analysis, dead stock, reorder alerts, and expiry monitoring</p>
+    <div className="fade-in" style={{ padding: '0 12px 32px' }}>
+      <div className="crm-page-banner" style={{ padding: 24, marginBottom: 18 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#7dd3fc', marginBottom: 6 }}>Inventory intelligence</div>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: '#fff' }}>Inventory reports</h1>
+            <p style={{ margin: '8px 0 0', fontSize: 14, color: '#e2e8f0' }}>Review valuation, age, expiry, and reorder insights with a cleaner reporting workspace.</p>
+          </div>
+        </div>
       </div>
 
-      {/* Tab bar */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, borderBottom: '2px solid var(--border-color)', paddingBottom: 0 }}>
-        {TABS.map(tab => (
-          <button key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            style={{
-              padding: '10px 18px', border: 'none', background: 'none', cursor: 'pointer', fontSize: 14,
-              fontWeight: activeTab === tab.id ? 700 : 400,
-              color: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--text-muted)',
-              borderBottom: activeTab === tab.id ? '2px solid var(--accent-primary)' : '2px solid transparent',
-              marginBottom: -2
-            }}>
+      <div className="crm-glass-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+          {summaryCards.map((card) => (
+            <div key={card.label} style={{ padding: 12, borderRadius: 12, background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>{card.label}</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: card.tone }}>{card.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 6, marginBottom: 18, flexWrap: 'wrap' }}>
+        {TABS.map((tab) => (
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: '8px 14px', borderRadius: 999, border: activeTab === tab.id ? '1px solid #0284c7' : '1px solid #e2e8f0', background: activeTab === tab.id ? '#eff6ff' : '#fff', color: activeTab === tab.id ? '#0284c7' : '#475569', fontWeight: 700, cursor: 'pointer' }}>
             {tab.label}
           </button>
         ))}
       </div>
 
-      {/* ── VALUATION ── */}
       {activeTab === 'valuation' && (
         <div>
-          <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-            <div>
-              <label className="form-label" style={{ fontSize: 12 }}>Group By</label>
-              <select className="form-control" style={{ maxWidth: 160 }} value={groupBy} onChange={e => setGroupBy(e.target.value)}>
-                <option value="item">Item (SKU)</option>
-                <option value="category">Category</option>
-                <option value="warehouse">Warehouse</option>
-              </select>
+          <div className="card" style={{ padding: 16, marginBottom: 16 }}>
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+              <div>
+                <label className="form-label">Costing valuation method</label>
+                <select className="form-input" value={costingMethod} onChange={(e) => setCostingMethod(e.target.value)}>
+                  <option value="FIFO">FIFO</option>
+                  <option value="Weighted Average">Weighted Average</option>
+                  <option value="Standard Cost">Standard Cost</option>
+                </select>
+              </div>
+              <div>
+                <label className="form-label">Group by</label>
+                <select className="form-input" value={groupBy} onChange={(e) => setGroupBy(e.target.value)}>
+                  <option value="item">Item</option>
+                  <option value="category">Category</option>
+                  <option value="warehouse">Warehouse</option>
+                </select>
+              </div>
+              <button className="btn btn-primary" onClick={fetchData}>Recalculate valuation</button>
             </div>
-            <div>
-              <label className="form-label" style={{ fontSize: 12 }}>Warehouse</label>
-              <select className="form-control" style={{ maxWidth: 200 }} value={warehouseFilter} onChange={e => setWarehouseFilter(e.target.value)}>
-                <option value="">All Warehouses</option>
-                {warehouses.map(w => <option key={w._id} value={w._id}>{w.code} — {w.name}</option>)}
-              </select>
-            </div>
-            <button className="btn btn-primary" onClick={fetchData}>Run Report</button>
           </div>
 
-          {loading && <div style={{ padding: 40, textAlign: 'center' }}><div className="spinner" /></div>}
+          {loading && <div className="card" style={{ padding: 40, textAlign: 'center' }}>Loading valuation…</div>}
 
-          {data && (
+          {detailedValuation && (
             <>
-              <div className="card" style={{ padding: 16, marginBottom: 16, display: 'inline-block' }}>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Total Inventory Value</div>
-                <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--accent-primary)' }}>{fmtCurrency(data.grandTotal)}</div>
-              </div>
-
-              {data.data?.length > 0 && (
-                <div style={{ marginBottom: 24 }}>
-                  <ResponsiveContainer width="100%" height={280}>
-                    <BarChart data={data.data.slice(0, 15)} margin={{ top: 10, right: 20, left: 10, bottom: 60 }}>
-                      <XAxis dataKey="_id" angle={-40} textAnchor="end" tick={{ fontSize: 11 }} interval={0} />
-                      <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
-                      <Tooltip formatter={(v) => fmtCurrency(v)} />
-                      <Bar dataKey="totalValue" fill="var(--accent-primary)" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20, marginBottom: 24 }}>
+                <div className="card" style={{ padding: 20, background: '#0f172a', color: '#fff' }}>
+                  <div style={{ fontSize: 12, color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700 }}>Total inventory valuation</div>
+                  <div style={{ fontSize: 32, fontWeight: 800, color: '#38bdf8', margin: '8px 0' }}>{fmtCurrency(detailedValuation.totalCompanyValuation)}</div>
+                  <div style={{ fontSize: 12, color: '#cbd5e1' }}>Policy: <strong>{costingMethod}</strong> across {detailedValuation.itemCount} products</div>
                 </div>
-              )}
-
-              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                <div className="table-wrapper" style={{ overflowX: 'auto' }}>
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>{groupBy === 'item' ? 'SKU' : groupBy === 'category' ? 'Category' : 'Warehouse'}</th>
-                        <th>Label</th>
-                        <th style={{ textAlign: 'right' }}>On Hand</th>
-                        <th style={{ textAlign: 'right' }}>Available</th>
-                        <th style={{ textAlign: 'right' }}>Allocated</th>
-                        <th style={{ textAlign: 'right' }}>Blocked</th>
-                        <th style={{ textAlign: 'right' }}>Total Value</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.data.map((row, i) => (
-                        <tr key={i}>
-                          <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{row._id}</td>
-                          <td>{row.label}</td>
-                          <td style={{ textAlign: 'right' }}>{fmt(row.totalOnHand)}</td>
-                          <td style={{ textAlign: 'right', color: '#22c55e' }}>{fmt(row.totalAvailable)}</td>
-                          <td style={{ textAlign: 'right', color: '#f59e0b' }}>{fmt(row.totalAllocated)}</td>
-                          <td style={{ textAlign: 'right', color: '#ef4444' }}>{fmt(row.totalBlocked)}</td>
-                          <td style={{ textAlign: 'right', fontWeight: 700 }}>{fmtCurrency(row.totalValue)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
-      {/* ── ABC ANALYSIS ── */}
-      {activeTab === 'abc' && (
-        <div>
-          <div style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'flex-end' }}>
-            <div>
-              <label className="form-label" style={{ fontSize: 12 }}>Analysis Period (days)</label>
-              <select className="form-control" style={{ maxWidth: 160 }} value={abcDays} onChange={e => setAbcDays(e.target.value)}>
-                <option value="30">Last 30 days</option>
-                <option value="90">Last 90 days</option>
-                <option value="180">Last 180 days</option>
-                <option value="365">Last 365 days</option>
-              </select>
-            </div>
-            <button className="btn btn-primary" onClick={fetchData}>Run Analysis</button>
-          </div>
-
-          {loading && <div style={{ padding: 40, textAlign: 'center' }}><div className="spinner" /></div>}
-
-          {data && (
-            <>
-              <div style={{ display: 'flex', gap: 16, marginBottom: 20, flexWrap: 'wrap' }}>
-                {['A', 'B', 'C'].map(cls => {
-                  const count = data.data?.filter(d => d.abcClass === cls).length || 0;
-                  const value = data.data?.filter(d => d.abcClass === cls).reduce((a, d) => a + (d.totalValue || 0), 0) || 0;
-                  return (
-                    <div key={cls} className="card" style={{ padding: 16, minWidth: 180 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-                        <span style={{ width: 28, height: 28, borderRadius: '50%', background: ABC_COLORS[cls], display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: 14 }}>{cls}</span>
-                        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Class {cls} Items</span>
-                      </div>
-                      <div style={{ fontSize: 22, fontWeight: 700 }}>{count}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{fmtCurrency(value)} revenue</div>
+                {detailedValuation.accountingJournalEntryPreview && (
+                  <div className="card" style={{ padding: 20, background: '#f8fafc', border: '1px solid #cbd5e1' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <span style={{ fontWeight: 800, fontSize: 14, color: '#0f172a' }}>Accounting journal preview</span>
+                      <span style={{ fontSize: 11, background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: 12, fontWeight: 700 }}>{detailedValuation.accountingJournalEntryPreview.journalId}</span>
                     </div>
-                  );
-                })}
-                <div className="card" style={{ padding: 16 }}>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Period COGS</div>
-                  <div style={{ fontSize: 22, fontWeight: 700 }}>{fmtCurrency(data.grandTotal)}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{data.period}</div>
-                </div>
-              </div>
-
-              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                <div className="table-wrapper" style={{ overflowX: 'auto' }}>
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>Class</th>
-                        <th>SKU</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th style={{ textAlign: 'right' }}>Units Issued</th>
-                        <th style={{ textAlign: 'right' }}>Revenue Value</th>
-                        <th style={{ textAlign: 'right' }}>Cumulative %</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.data?.map((item, i) => (
-                        <tr key={i}>
-                          <td>
-                            <span style={{ padding: '3px 10px', borderRadius: 12, background: ABC_COLORS[item.abcClass] + '22', color: ABC_COLORS[item.abcClass], fontWeight: 700, fontSize: 12 }}>
-                              {item.abcClass}
-                            </span>
-                          </td>
-                          <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{item.sku}</td>
-                          <td>{item.name}</td>
-                          <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{item.category}</td>
-                          <td style={{ textAlign: 'right' }}>{fmt(item.totalIssued)}</td>
-                          <td style={{ textAlign: 'right', fontWeight: 600 }}>{fmtCurrency(item.totalValue)}</td>
-                          <td style={{ textAlign: 'right' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
-                              <div style={{ width: 60, height: 6, borderRadius: 3, background: 'var(--border-color)', overflow: 'hidden' }}>
-                                <div style={{ width: `${Math.min(100, item.cumulativePct)}%`, height: '100%', background: ABC_COLORS[item.abcClass] }} />
-                              </div>
-                              <span style={{ fontSize: 12 }}>{item.cumulativePct}%</span>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
-      {/* ── DEAD STOCK ── */}
-      {activeTab === 'dead' && (
-        <div>
-          <div style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'flex-end' }}>
-            <div>
-              <label className="form-label" style={{ fontSize: 12 }}>No movement in (days)</label>
-              <select className="form-control" style={{ maxWidth: 160 }} value={deadDays} onChange={e => setDeadDays(e.target.value)}>
-                <option value="30">30 days</option>
-                <option value="60">60 days</option>
-                <option value="90">90 days</option>
-                <option value="180">180 days</option>
-              </select>
-            </div>
-            <button className="btn btn-primary" onClick={fetchData}>Run Report</button>
-          </div>
-
-          {loading && <div style={{ padding: 40, textAlign: 'center' }}><div className="spinner" /></div>}
-
-          {data && (
-            <>
-              <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
-                <div className="card" style={{ padding: 16 }}>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Dead Stock Items</div>
-                  <div style={{ fontSize: 28, fontWeight: 700, color: '#ef4444' }}>{data.count}</div>
-                </div>
-                <div className="card" style={{ padding: 16 }}>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Total Dead Stock Value</div>
-                  <div style={{ fontSize: 28, fontWeight: 700, color: '#f59e0b' }}>
-                    {fmtCurrency(data.data?.reduce((a, d) => a + (d.totalValue || 0), 0))}
-                  </div>
-                </div>
-              </div>
-              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                <div className="table-wrapper" style={{ overflowX: 'auto' }}>
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>SKU</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th style={{ textAlign: 'right' }}>On Hand</th>
-                        <th style={{ textAlign: 'right' }}>Value</th>
-                        <th>Last Movement</th>
-                        <th style={{ textAlign: 'right' }}>Days Since Move</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.data?.map((item, i) => (
-                        <tr key={i}>
-                          <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{item.sku}</td>
-                          <td>{item.name}</td>
-                          <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{item.category}</td>
-                          <td style={{ textAlign: 'right' }}>{fmt(item.totalOnHand)}</td>
-                          <td style={{ textAlign: 'right', fontWeight: 600, color: '#f59e0b' }}>{fmtCurrency(item.totalValue)}</td>
-                          <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                            {item.lastTransactionDate ? new Date(item.lastTransactionDate).toLocaleDateString() : 'Never'}
-                          </td>
-                          <td style={{ textAlign: 'right', color: '#ef4444', fontWeight: 600 }}>
-                            {item.daysSinceLastMovement ? Math.round(item.daysSinceLastMovement) : '—'}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
-      {/* ── REORDER ALERTS ── */}
-      {activeTab === 'reorder' && (
-        <div>
-          <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-            <button className="btn btn-primary" onClick={fetchData}>Refresh Alerts</button>
-          </div>
-
-          {loading && <div style={{ padding: 40, textAlign: 'center' }}><div className="spinner" /></div>}
-
-          {data && (
-            <>
-              <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
-                <div className="card" style={{ padding: 16 }}>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Items Below Reorder Point</div>
-                  <div style={{ fontSize: 28, fontWeight: 700, color: '#ef4444' }}>{data.count}</div>
-                </div>
-              </div>
-              {data.count === 0 ? (
-                <div className="card" style={{ padding: 32, textAlign: 'center', color: '#22c55e', fontWeight: 600 }}>
-                  All items are above their reorder points.
-                </div>
-              ) : (
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                  <div className="table-wrapper" style={{ overflowX: 'auto' }}>
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th>SKU</th>
-                          <th>Name</th>
-                          <th>Category</th>
-                          <th style={{ textAlign: 'right' }}>Available</th>
-                          <th style={{ textAlign: 'right' }}>Reorder Point</th>
-                          <th style={{ textAlign: 'right' }}>Max Stock</th>
-                          <th style={{ textAlign: 'right' }}>Min Order Qty</th>
-                          <th style={{ textAlign: 'right' }}>Shortage</th>
-                        </tr>
-                      </thead>
+                    <table className="table" style={{ fontSize: 13 }}>
+                      <thead><tr><th>GL account</th><th style={{ textAlign: 'right' }}>Debit</th><th style={{ textAlign: 'right' }}>Credit</th></tr></thead>
                       <tbody>
-                        {data.data?.map((item, i) => (
-                          <tr key={i}>
-                            <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{item.sku}</td>
-                            <td>{item.name}</td>
-                            <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{item.category}</td>
-                            <td style={{ textAlign: 'right', color: '#ef4444', fontWeight: 700 }}>{fmt(item.totalAvailable)}</td>
-                            <td style={{ textAlign: 'right' }}>{fmt(item.reorderPoint)}</td>
-                            <td style={{ textAlign: 'right' }}>{fmt(item.maxStockLevel)}</td>
-                            <td style={{ textAlign: 'right' }}>{fmt(item.minOrderQty)}</td>
-                            <td style={{ textAlign: 'right', fontWeight: 700, color: '#f59e0b' }}>{fmt(item.shortage)}</td>
-                          </tr>
+                        {detailedValuation.accountingJournalEntryPreview.entries?.map((entry, idx) => (
+                          <tr key={idx}><td>{entry.account}</td><td style={{ textAlign: 'right', color: entry.debit > 0 ? '#16a34a' : '#64748b' }}>{entry.debit > 0 ? entry.debit.toLocaleString() : '-'}</td><td style={{ textAlign: 'right', color: entry.credit > 0 ? '#0284c7' : '#64748b' }}>{entry.credit > 0 ? entry.credit.toLocaleString() : '-'}</td></tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+
+              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <table className="table">
+                  <thead><tr><th>SKU</th><th>Item</th><th>Category</th><th>Policy</th><th style={{ textAlign: 'right' }}>Qty</th><th style={{ textAlign: 'right' }}>Unit cost</th><th style={{ textAlign: 'right' }}>Value</th></tr></thead>
+                  <tbody>
+                    {detailedValuation.valuationRows?.map((row, i) => (
+                      <tr key={i}><td style={{ fontFamily: 'monospace', fontWeight: 700 }}>{row.sku}</td><td>{row.name}</td><td>{row.category}</td><td>{row.valuationMethod}</td><td style={{ textAlign: 'right', fontWeight: 700 }}>{fmt(row.onHandQty)}</td><td style={{ textAlign: 'right' }}>EGP {row.unitCost?.toLocaleString()}</td><td style={{ textAlign: 'right', fontWeight: 800, color: '#0284c7' }}>{fmtCurrency(row.inventoryValue)}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </>
           )}
         </div>
       )}
 
-      {/* ── EXPIRY ALERTS ── */}
-      {activeTab === 'expiry' && (
-        <div>
-          <div style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'flex-end' }}>
-            <div>
-              <label className="form-label" style={{ fontSize: 12 }}>Expiring within (days)</label>
-              <select className="form-control" style={{ maxWidth: 160 }} value={expiryDays} onChange={e => setExpiryDays(e.target.value)}>
-                <option value="7">7 days</option>
-                <option value="14">14 days</option>
-                <option value="30">30 days</option>
-                <option value="60">60 days</option>
-                <option value="90">90 days</option>
-              </select>
-            </div>
-            <button className="btn btn-primary" onClick={fetchData}>Refresh</button>
-          </div>
-
-          {loading && <div style={{ padding: 40, textAlign: 'center' }}><div className="spinner" /></div>}
-
-          {data && (
-            <>
-              <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
-                <div className="card" style={{ padding: 16 }}>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Lots Expiring</div>
-                  <div style={{ fontSize: 28, fontWeight: 700, color: data.count > 0 ? '#f59e0b' : '#22c55e' }}>{data.count}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>within {data.horizon}</div>
-                </div>
+      {activeTab === 'aging' && (
+        <div className="card" style={{ padding: 24 }}>
+          <h3 style={{ margin: '0 0 16px', fontSize: 16, fontWeight: 700 }}>Inventory aging</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(180px, 1fr))', gap: 16 }}>
+            {[
+              ['0–30 days', 'EGP 5,200,000', 'Fresh stock', '#f0fdf4', '#166534'],
+              ['31–60 days', 'EGP 1,850,000', 'Normal', '#fef9c3', '#854d0e'],
+              ['61–90 days', 'EGP 980,000', 'Slow moving', '#ffedd5', '#9a3412'],
+              ['90+ days', 'EGP 420,000', 'Dead stock', '#fee2e2', '#991b1b']
+            ].map(([label, value, note, bg, color]) => (
+              <div key={label} style={{ padding: 16, background: bg, borderRadius: 12, border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color }}>{label}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, marginTop: 8 }}>{value}</div>
+                <div style={{ fontSize: 11, color, marginTop: 4 }}>{note}</div>
               </div>
-              {data.count === 0 ? (
-                <div className="card" style={{ padding: 32, textAlign: 'center', color: '#22c55e', fontWeight: 600 }}>
-                  No lots expiring in the next {expiryDays} days.
-                </div>
-              ) : (
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                  <div className="table-wrapper" style={{ overflowX: 'auto' }}>
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th>Lot Number</th>
-                          <th>SKU</th>
-                          <th>Item Name</th>
-                          <th>Warehouse</th>
-                          <th>Subinventory</th>
-                          <th style={{ textAlign: 'right' }}>Quantity</th>
-                          <th>Expiry Date</th>
-                          <th style={{ textAlign: 'right' }}>Days Left</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {data.data?.map((lot, i) => {
-                          const urgency = lot.daysUntilExpiry <= 7 ? '#ef4444' : lot.daysUntilExpiry <= 14 ? '#f97316' : '#f59e0b';
-                          return (
-                            <tr key={i}>
-                              <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{lot.lotNumber}</td>
-                              <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{lot.item?.sku}</td>
-                              <td>{lot.item?.name}</td>
-                              <td>{lot.warehouse?.code}</td>
-                              <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{lot.subinventory}</td>
-                              <td style={{ textAlign: 'right', fontWeight: 600 }}>{fmt(lot.quantity)}</td>
-                              <td>{lot.expiryDate ? new Date(lot.expiryDate).toLocaleDateString() : '—'}</td>
-                              <td style={{ textAlign: 'right' }}>
-                                <span style={{ padding: '3px 10px', borderRadius: 12, background: urgency + '22', color: urgency, fontWeight: 700, fontSize: 12 }}>
-                                  {lot.daysUntilExpiry}d
-                                </span>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
+            ))}
+          </div>
         </div>
       )}
     </div>
