@@ -15,15 +15,15 @@ const OPTIONS = [
     id: 'product',
     title: 'I sell a Product',
     icon: 'box',
-    desc: 'You manage a product catalog inside the CRM and get two extra ERP departments: Super Inventory & Super Supply Chain.',
-    shows: ['Products', 'Super Inventory', 'Super Supply Chain'],
+    desc: 'You manage a product catalog inside the CRM and get two extra ERP departments: inventory core & supply chain core.',
+    shows: ['Products', 'inventory core', 'supply chain core'],
   },
   {
     id: 'both',
     title: 'Both Service & Product',
     icon: 'rocket',
-    desc: 'Everything: Bookings, Products, Super Inventory & Super Supply Chain.',
-    shows: ['Bookings', 'Products', 'Super Inventory', 'Super Supply Chain'],
+    desc: 'Everything: Bookings, Products, inventory core & supply chain core.',
+    shows: ['Bookings', 'Products', 'inventory core', 'supply chain core'],
   },
 ];
 

@@ -725,7 +725,7 @@ const SettingsPage = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {[
                     { id: 'service', title: 'Service', desc: 'Bookings module only.' },
-                    { id: 'product', title: 'Product', desc: 'Products module + Super Inventory & Super Supply Chain.' },
+                    { id: 'product', title: 'Product', desc: 'Products module + inventory core & supply chain core.' },
                     { id: 'both', title: 'Both Service & Product', desc: 'Everything: Bookings, Products, Inventory & Supply Chain.' },
                   ].map(opt => (
                     <label

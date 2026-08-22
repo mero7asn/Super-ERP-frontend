@@ -97,7 +97,7 @@ const HRM_ROLES = [
   'RTM Team Member',
 ];
 
-// 1. SUPER CRM NAV ITEMS
+// 1. CRM core NAV ITEMS
 const CRM_NAV_ITEMS = [
   { label: 'Dashboard', icon: 'dashboard', path: '/dashboard', roles: null },
   { label: 'Leads', icon: 'leads', path: '/leads', roles: ['Core 360 Administrator','Sales Agent','Sales Manager','Marketing Specialist','Marketing Manager','Executive User','System Architect','Business Analyst'] },
@@ -115,7 +115,7 @@ const CRM_NAV_ITEMS = [
   { label: 'RTM Monitor', icon: 'rtm', path: '/rtm', roles: ['RTM Team Member','Core 360 Administrator','HRM System Administrator','HR Manager'] },
 ];
 
-// 2. SUPER INVENTORY SUB ITEMS
+// 2. inventory core SUB ITEMS
 const INVENTORY_SUB_ITEMS = [
   { label: 'Dashboard', path: '/inventory', icon: 'dashboard' },
   { label: 'Items Catalog', path: '/inventory/items', icon: 'box' },
@@ -132,7 +132,7 @@ const INVENTORY_SUB_ITEMS = [
   { label: 'Reports', path: '/inventory/reports', icon: 'analytics', roles: ['Core 360 Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Inventory Clerk'] },
 ];
 
-// 3. SUPER SUPPLY CHAIN SUB ITEMS
+// 3. supply chain core SUB ITEMS
 const SUPPLY_CHAIN_SUB_ITEMS = [
   { label: 'Overview', path: '/supply-chain', icon: 'dashboard' },
   { label: 'Demand Planning', path: '/supply-chain/planning', icon: 'analytics' },
@@ -143,7 +143,7 @@ const SUPPLY_CHAIN_SUB_ITEMS = [
   { label: 'Reports', path: '/supply-chain/reports', icon: 'analytics' },
 ];
 
-// 4. SUPER HRM NAV ITEMS
+// 4. HRM core NAV ITEMS
 const HRM_NAV_ITEMS = [
   { label: 'HRM Dashboard', icon: 'dashboard', path: '/hrm', roles: null },
   { label: 'Personal & Staff', icon: 'personal', path: '/hrm/personal', roles: ['Core 360 Administrator','HRM System Administrator','HR Manager','HR Specialist (Generalist)','HR Business Partner','Employee (General User)'] },
@@ -249,7 +249,7 @@ const Sidebar = () => {
       {/* Main Nav Scroll Container */}
       <nav className="sidebar-nav">
 
-        {/* 1. MINI SIDEBAR: SUPER CRM */}
+        {/* 1. MINI SIDEBAR: CRM core */}
         {showCRM && (
           <div className="mini-sidebar-group">
             <div
@@ -286,17 +286,17 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* 2. MINI SIDEBAR: SUPER INVENTORY */}
+        {/* 2. MINI SIDEBAR: inventory core */}
         {showERP && (
           <div className="mini-sidebar-group">
             <div
               className="mini-sidebar-sticky-header inventory-header"
               onClick={() => setInventoryOpen(!inventoryOpen)}
-              title="Super Inventory Department"
+              title="inventory core Department"
             >
               <div className="mini-sidebar-header-left">
                 <span className="mini-sidebar-icon"><SidebarIcon name="dept-inventory" /></span>
-                <span className="mini-sidebar-title">2. Super Inventory</span>
+                <span className="mini-sidebar-title">2. inventory core</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredInventoryItems.length}</span>
@@ -323,17 +323,17 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* 3. MINI SIDEBAR: SUPER SUPPLY CHAIN */}
+        {/* 3. MINI SIDEBAR: supply chain core */}
         {showERP && (
           <div className="mini-sidebar-group">
             <div
               className="mini-sidebar-sticky-header supply-header"
               onClick={() => setSupplyChainOpen(!supplyChainOpen)}
-              title="Super Supply Chain Department"
+              title="supply chain core Department"
             >
               <div className="mini-sidebar-header-left">
                 <span className="mini-sidebar-icon"><SidebarIcon name="dept-supply" /></span>
-                <span className="mini-sidebar-title">3. Super Supply Chain</span>
+                <span className="mini-sidebar-title">3. supply chain core</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredSupplyChainItems.length}</span>
@@ -360,17 +360,17 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* 4. MINI SIDEBAR: SUPER HRM */}
+        {/* 4. MINI SIDEBAR: HRM core */}
         {showHRM && (
           <div className="mini-sidebar-group">
             <div
               className="mini-sidebar-sticky-header hrm-header"
               onClick={() => setHrmOpen(!hrmOpen)}
-              title="Super HRM Department"
+              title="HRM core Department"
             >
               <div className="mini-sidebar-header-left">
                 <span className="mini-sidebar-icon"><SidebarIcon name="dept-hrm" /></span>
-                <span className="mini-sidebar-title">4. Super HRM</span>
+                <span className="mini-sidebar-title">4. HRM core</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredHrmItems.length}</span>

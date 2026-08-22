@@ -149,7 +149,7 @@ export const DEPARTMENTS = [
     id: 'Executive',
     label: 'Executive',
     icon: 'dashboard',
-    roles: ['Executive User', 'Core 360 Administrator', 'Super CRM Administrator'],
+    roles: ['Executive User', 'Core 360 Administrator', 'CRM core Administrator'],
   },
   {
     id: 'Human Resources',
