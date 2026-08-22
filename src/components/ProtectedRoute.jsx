@@ -12,10 +12,14 @@ export const ProtectedRoute = ({ children, allowedRoles }) => {
 
   const isSuperAdmin =
     !user.role ||
+    user.role === 'Super CRM Administrator' ||
+    user.role === 'Super Admin' ||
+    user.role === 'Administrator' ||
     user.role === 'CRM core Administrator' ||
     user.role === 'Core 360 Administrator' ||
     user.role === 'System Architect' ||
-    user.role === 'Executive User';
+    user.role === 'Executive User' ||
+    (typeof user.role === 'string' && (user.role.toLowerCase().includes('admin') || user.role.toLowerCase().includes('super')));
 
   if (isSuperAdmin) {
     return children;
