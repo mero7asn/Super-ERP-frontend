@@ -84,17 +84,17 @@ const SidebarIcon = ({ name }) => {
 };
 
 const CRM_ROLES = [
-  'CRM core Administrator','Sales Agent','Sales Manager','Customer Support Agent',
-  'Customer Support Manager','Marketing Specialist','Marketing Manager','Business Analyst',
-  'CRM Developer','CRM Consultant','System Architect','Executive User','RTM Team Member',
+  'CRM core Administrator', 'Core 360 Administrator', 'Sales Agent', 'Sales Manager', 'Customer Support Agent',
+  'Customer Support Manager', 'Marketing Specialist', 'Marketing Manager', 'Business Analyst',
+  'CRM Developer', 'CRM Consultant', 'System Architect', 'Executive User', 'RTM Team Member',
 ];
 
 const HRM_ROLES = [
-  'HRM System Administrator','HR Manager','HR Specialist (Generalist)',
-  'Recruitment Specialist (Talent Acquisition)','Payroll Specialist','HR Business Partner',
-  'Training and Development Specialist','Performance Management Specialist',
-  'Attendance and Time Officer','Employee (General User)','HR Director / Executive HR User',
-  'RTM Team Member',
+  'HRM System Administrator', 'HR Manager', 'HR Specialist (Generalist)',
+  'Recruitment Specialist (Talent Acquisition)', 'Payroll Specialist', 'HR Business Partner',
+  'Training and Development Specialist', 'Performance Management Specialist',
+  'Attendance and Time Officer', 'Employee (General User)', 'HR Director / Executive HR User',
+  'RTM Team Member', 'CRM core Administrator', 'Core 360 Administrator',
 ];
 
 // 1. CRM core NAV ITEMS
@@ -222,10 +222,18 @@ const Sidebar = () => {
     navigate('/login');
   };
 
+  const isSuperAdmin =
+    !user?.role ||
+    user?.role === 'CRM core Administrator' ||
+    user?.role === 'Core 360 Administrator' ||
+    user?.role === 'System Architect' ||
+    user?.role === 'Executive User';
+
   const canSee = (item) => {
+    if (isSuperAdmin) return true;
     if (item.roles && !item.roles.includes(user?.role)) return false;
     if (item.businessModel) {
-      const bm = user?.businessModel || 'service';
+      const bm = user?.businessModel || 'both';
       if (!item.businessModel.includes(bm)) return false;
     }
     return true;
@@ -236,10 +244,9 @@ const Sidebar = () => {
   const isSupplyChainActive = useMatch('/supply-chain') || useMatch('/supply-chain/*');
   const isAccountingActive = useMatch('/accounting') || useMatch('/accounting/*');
 
-  const isSuperAdmin = user?.role === 'CRM core Administrator' || user?.role === 'System Architect' || user?.role === 'Executive User';
   const showCRM = isSuperAdmin || CRM_ROLES.includes(user?.role);
   const showHRM = isSuperAdmin || HRM_ROLES.includes(user?.role);
-  const bm = user?.businessModel || 'service';
+  const bm = user?.businessModel || 'both';
   const showERP = isSuperAdmin || ['product', 'both'].includes(bm) || INVENTORY_ROLES.includes(user?.role);
 
   const userTheme = getDepartmentThemeByRole(user?.role) || { primary: '#6366f1', dark: '#4338ca' };
@@ -250,7 +257,7 @@ const Sidebar = () => {
 
   // Filtered lists for counter badges
   const filteredCrmItems = CRM_NAV_ITEMS.filter(canSee);
-  const filteredInventoryItems = INVENTORY_SUB_ITEMS.filter((sub) => !sub.roles || sub.roles.includes(user?.role));
+  const filteredInventoryItems = INVENTORY_SUB_ITEMS.filter((sub) => isSuperAdmin || !sub.roles || sub.roles.includes(user?.role));
   const filteredSupplyChainItems = SUPPLY_CHAIN_SUB_ITEMS;
   const filteredAccountingItems = ACCOUNTING_SUB_ITEMS;
   const filteredHrmItems = HRM_NAV_ITEMS.filter(canSee);
