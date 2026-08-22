@@ -1,10 +1,10 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { AUX_COLORS } from '../../context/AuxContext';
 
 const fmt = (mins) => {
-  if (mins === null || mins === undefined) return '—';
+  if (mins === null || mins === undefined) return '�';
   const h = Math.floor(mins / 60);
   const m = mins % 60;
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
@@ -36,7 +36,7 @@ const getWeeksOfMonth = (month) => {
     weekEnd.setDate(weekEnd.getDate() + 6);
     if (weekEnd.getMonth() !== m - 1) weekEnd.setDate(new Date(y, m, 0).getDate());
     weeks.push({
-      weekLabel: `Week ${wNum} (${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}–${weekEnd.toLocaleDateString('en-US', { day: 'numeric' })})`,
+      weekLabel: `Week ${wNum} (${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}�${weekEnd.toLocaleDateString('en-US', { day: 'numeric' })})`,
       weekStart: weekStart.toISOString(),
       weekEnd: weekEnd.toISOString(),
     });
@@ -49,7 +49,7 @@ const getWeeksOfMonth = (month) => {
 
 const AuxSchedulePage = () => {
   const { user } = useAuth();
-  const isHR = ['HRM System Administrator', 'HR Manager', 'Super CRM Administrator', 'Attendance and Time Officer', 'HR Director / Executive HR User'].includes(user?.role);
+  const isHR = ['HRM System Administrator', 'HR Manager', 'CRM core Administrator', 'Attendance and Time Officer', 'HR Director / Executive HR User'].includes(user?.role);
   const isRTM = user?.role === 'RTM Team Member';
   const canManageSchedules = isHR; // only HR can edit schedules
 
@@ -146,7 +146,7 @@ const AuxSchedulePage = () => {
       <div className="page-header">
         <div>
           <h1 className="page-title">AUX Schedule & Compliance</h1>
-          <p className="page-subtitle">Monitor AUX time vs planned schedule — monthly targets with weekly overrides</p>
+          <p className="page-subtitle">Monitor AUX time vs planned schedule � monthly targets with weekly overrides</p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <label style={{ fontSize: 12, color: 'var(--text-muted)' }}>Month:</label>
@@ -167,8 +167,8 @@ const AuxSchedulePage = () => {
       {/* Tab bar */}
       <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--border-color)' }}>
         {[
-          { id: 'report', label: '📊 Compliance Report' },
-          ...(isHR ? [{ id: 'schedule', label: '📅 Schedule Editor' }] : []),
+          { id: 'report', label: '?? Compliance Report' },
+          ...(isHR ? [{ id: 'schedule', label: '?? Schedule Editor' }] : []),
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
             padding: '10px 20px', border: 'none', background: 'transparent', cursor: 'pointer',
@@ -179,11 +179,11 @@ const AuxSchedulePage = () => {
         ))}
       </div>
 
-      {/* ── REPORT TAB ── */}
+      {/* -- REPORT TAB -- */}
       {tab === 'report' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {loading ? (
-            <div className="loading-state">Loading report…</div>
+            <div className="loading-state">Loading report�</div>
           ) : report.length === 0 ? (
             <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 40 }}>
               No AUX activity recorded for {month}. Make sure employees are logging their status.
@@ -198,7 +198,7 @@ const AuxSchedulePage = () => {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
                     <div>
                       <div style={{ fontWeight: 700, fontSize: 15 }}>{name}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{entry.user?.role} · {entry.workDays} working days</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{entry.user?.role} � {entry.workDays} working days</div>
                     </div>
                     <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                       {['Live', 'Coaching', 'Break', 'Training', 'Logged out'].map(s => (
@@ -233,7 +233,7 @@ const AuxSchedulePage = () => {
 
                   {!entry.planned?.liveMinutes && (
                     <div style={{ fontSize: 12, color: 'var(--text-muted)', fontStyle: 'italic' }}>
-                      ⚠ No schedule set for this employee in {month}. Set one in the Schedule Editor.
+                      ? No schedule set for this employee in {month}. Set one in the Schedule Editor.
                     </div>
                   )}
                 </div>
@@ -243,7 +243,7 @@ const AuxSchedulePage = () => {
         </div>
       )}
 
-      {/* ── SCHEDULE EDITOR TAB ── */}
+      {/* -- SCHEDULE EDITOR TAB -- */}
       {tab === 'schedule' && isHR && (
         <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-start' }}>
           {/* Employee selector */}
@@ -260,7 +260,7 @@ const AuxSchedulePage = () => {
                   }}>
                     <div style={{ fontWeight: 600, fontSize: 13 }}>{emp.firstName} {emp.lastName}</div>
                     <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{emp.role}</div>
-                    {hasSched && <div style={{ fontSize: 10, color: '#10B981', marginTop: 2 }}>✓ Schedule set</div>}
+                    {hasSched && <div style={{ fontSize: 10, color: '#10B981', marginTop: 2 }}>? Schedule set</div>}
                   </div>
                 );
               })}
@@ -271,7 +271,7 @@ const AuxSchedulePage = () => {
           {selectedEmpId && (
             <div className="card" style={{ flex: '1 1 480px' }}>
               <h3 style={{ margin: '0 0 18px 0', fontSize: 14 }}>
-                Monthly Schedule — {employees.find(e => e._id === selectedEmpId)?.firstName} · {month}
+                Monthly Schedule � {employees.find(e => e._id === selectedEmpId)?.firstName} � {month}
               </h3>
               <form onSubmit={handleSaveSchedule} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 {/* Monthly base plan */}
@@ -336,7 +336,7 @@ const AuxSchedulePage = () => {
                 </div>
 
                 <button type="submit" className="btn btn-primary" disabled={saving}>
-                  {saving ? 'Saving…' : 'Save Schedule'}
+                  {saving ? 'Saving�' : 'Save Schedule'}
                 </button>
               </form>
             </div>

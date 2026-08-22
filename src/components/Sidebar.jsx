@@ -84,7 +84,7 @@ const SidebarIcon = ({ name }) => {
 };
 
 const CRM_ROLES = [
-  'Super CRM Administrator','Sales Agent','Sales Manager','Customer Support Agent',
+  'CRM core Administrator','Sales Agent','Sales Manager','Customer Support Agent',
   'Customer Support Manager','Marketing Specialist','Marketing Manager','Business Analyst',
   'CRM Developer','CRM Consultant','System Architect','Executive User','RTM Team Member',
 ];
@@ -97,25 +97,25 @@ const HRM_ROLES = [
   'RTM Team Member',
 ];
 
-// 1. SUPER CRM NAV ITEMS
+// 1. CRM core NAV ITEMS
 const CRM_NAV_ITEMS = [
   { label: 'Dashboard', icon: 'dashboard', path: '/dashboard', roles: null },
-  { label: 'Leads', icon: 'leads', path: '/leads', roles: ['Super CRM Administrator','Sales Agent','Sales Manager','Marketing Specialist','Marketing Manager','Executive User','System Architect','Business Analyst'] },
-  { label: 'Teams', icon: 'teams', path: '/teams', roles: ['Super CRM Administrator','System Architect','Sales Manager','Sales Agent','Customer Support Manager','Customer Support Agent','Marketing Manager','Marketing Specialist'] },
-  { label: 'Sales Dashboard', icon: 'kanban', path: '/kanban', roles: ['Super CRM Administrator','Sales Agent','Sales Manager','Executive User','System Architect','Business Analyst'] },
+  { label: 'Leads', icon: 'leads', path: '/leads', roles: ['CRM core Administrator','Sales Agent','Sales Manager','Marketing Specialist','Marketing Manager','Executive User','System Architect','Business Analyst'] },
+  { label: 'Teams', icon: 'teams', path: '/teams', roles: ['CRM core Administrator','System Architect','Sales Manager','Sales Agent','Customer Support Manager','Customer Support Agent','Marketing Manager','Marketing Specialist'] },
+  { label: 'Sales Dashboard', icon: 'kanban', path: '/kanban', roles: ['CRM core Administrator','Sales Agent','Sales Manager','Executive User','System Architect','Business Analyst'] },
   { label: 'Technical Issues', icon: 'tickets', path: '/tickets', roles: null },
-  { label: 'Bookings', icon: 'bookings', path: '/bookings', roles: ['Sales Agent','Sales Manager','Customer Support Agent','Customer Support Manager','CRM Developer','CRM Consultant','System Architect','Super CRM Administrator'], businessModel: ['service', 'both'] },
-  { label: 'Products', icon: 'box', path: '/products', roles: ['Super CRM Administrator','System Architect','Sales Agent','Sales Manager','Executive User'], businessModel: ['product', 'both'] },
-  { label: 'Campaigns', icon: 'campaigns', path: '/campaigns', roles: ['Super CRM Administrator','Marketing Specialist','Marketing Manager','Executive User','Business Analyst','System Architect'] },
-  { label: 'Analytics', icon: 'analytics', path: '/analytics', roles: ['Super CRM Administrator','Executive User','Business Analyst','System Architect'] },
-  { label: 'Executive Dashboard', icon: 'executive', path: '/executive', roles: ['Super CRM Administrator','Executive User','Business Analyst','System Architect'] },
-  { label: 'User Management', icon: 'users', path: '/users', roles: ['Super CRM Administrator','System Architect'] },
-  { label: 'System Settings', icon: 'settings', path: '/settings', roles: ['Super CRM Administrator'] },
-  { label: 'CRM Dev Tools', icon: 'devtools', path: '/devtools', roles: ['CRM Developer','System Architect','Super CRM Administrator'] },
-  { label: 'RTM Monitor', icon: 'rtm', path: '/rtm', roles: ['RTM Team Member','Super CRM Administrator','HRM System Administrator','HR Manager'] },
+  { label: 'Bookings', icon: 'bookings', path: '/bookings', roles: ['Sales Agent','Sales Manager','Customer Support Agent','Customer Support Manager','CRM Developer','CRM Consultant','System Architect','CRM core Administrator'], businessModel: ['service', 'both'] },
+  { label: 'Products', icon: 'box', path: '/products', roles: ['CRM core Administrator','System Architect','Sales Agent','Sales Manager','Executive User'], businessModel: ['product', 'both'] },
+  { label: 'Campaigns', icon: 'campaigns', path: '/campaigns', roles: ['CRM core Administrator','Marketing Specialist','Marketing Manager','Executive User','Business Analyst','System Architect'] },
+  { label: 'Analytics', icon: 'analytics', path: '/analytics', roles: ['CRM core Administrator','Executive User','Business Analyst','System Architect'] },
+  { label: 'Executive Dashboard', icon: 'executive', path: '/executive', roles: ['CRM core Administrator','Executive User','Business Analyst','System Architect'] },
+  { label: 'User Management', icon: 'users', path: '/users', roles: ['CRM core Administrator','System Architect'] },
+  { label: 'System Settings', icon: 'settings', path: '/settings', roles: ['CRM core Administrator'] },
+  { label: 'CRM Dev Tools', icon: 'devtools', path: '/devtools', roles: ['CRM Developer','System Architect','CRM core Administrator'] },
+  { label: 'RTM Monitor', icon: 'rtm', path: '/rtm', roles: ['RTM Team Member','CRM core Administrator','HRM System Administrator','HR Manager'] },
 ];
 
-// 2. SUPER INVENTORY SUB ITEMS
+// 2. inventory core SUB ITEMS
 const INVENTORY_SUB_ITEMS = [
   { label: 'Dashboard', path: '/inventory', icon: 'dashboard' },
   { label: 'Items & Matrix', path: '/inventory/items', icon: 'box' },
@@ -130,11 +130,11 @@ const INVENTORY_SUB_ITEMS = [
   { label: 'Transfers', path: '/inventory/transfers', icon: 'teams' },
   { label: 'Adjustments', path: '/inventory/adjustments', icon: 'analytics' },
   { label: 'Cycle Counts', path: '/inventory/cycle-counts', icon: 'calendar' },
-  { label: 'Warehouses', path: '/inventory/warehouses', icon: 'dashboard', roles: ['Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'] },
-  { label: 'Valuation & Reports', path: '/inventory/reports', icon: 'analytics', roles: ['Super CRM Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Inventory Clerk'] },
+  { label: 'Warehouses', path: '/inventory/warehouses', icon: 'dashboard', roles: ['CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager'] },
+  { label: 'Valuation & Reports', path: '/inventory/reports', icon: 'analytics', roles: ['CRM core Administrator', 'System Architect', 'Inventory Manager', 'Warehouse Manager', 'Inventory Clerk'] },
 ];
 
-// 3. SUPER SUPPLY CHAIN SUB ITEMS
+// 3. supply chain core SUB ITEMS
 const SUPPLY_CHAIN_SUB_ITEMS = [
   { label: 'Control Tower', path: '/supply-chain', icon: 'dashboard' },
   { label: 'Demand & Planning', path: '/supply-chain/planning', icon: 'analytics' },
@@ -163,14 +163,14 @@ const ACCOUNTING_SUB_ITEMS = [
   { label: 'Financial Reports', path: '/accounting/reports', icon: 'analytics' },
 ];
 
-// 4. SUPER HRM NAV ITEMS
+// 4. HRM core NAV ITEMS
 const HRM_NAV_ITEMS = [
   { label: 'HRM Dashboard', icon: 'dashboard', path: '/hrm', roles: null },
-  { label: 'Personal & Staff', icon: 'personal', path: '/hrm/personal', roles: ['Super CRM Administrator','HRM System Administrator','HR Manager','HR Specialist (Generalist)','HR Business Partner','Employee (General User)'] },
-  { label: 'Payroll', icon: 'payroll', path: '/hrm/payroll', roles: ['Super CRM Administrator','HRM System Administrator','HR Manager','Payroll Specialist','Employee (General User)'] },
-  { label: 'Training & Development', icon: 'training', path: '/hrm/training', roles: ['Super CRM Administrator','HRM System Administrator','HR Manager','Training and Development Specialist','Employee (General User)'] },
-  { label: 'Talent Acquisition', icon: 'talent', path: '/hrm/talent', roles: ['Super CRM Administrator','HRM System Administrator','HR Manager','Recruitment Specialist (Talent Acquisition)'] },
-  { label: 'BD & People Culture', icon: 'partnerships', path: '/hrm/partnerships', roles: ['Super CRM Administrator','HRM System Administrator','HR Manager','HR Business Partner','Employee (General User)'] },
+  { label: 'Personal & Staff', icon: 'personal', path: '/hrm/personal', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','HR Specialist (Generalist)','HR Business Partner','Employee (General User)'] },
+  { label: 'Payroll', icon: 'payroll', path: '/hrm/payroll', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Payroll Specialist','Employee (General User)'] },
+  { label: 'Training & Development', icon: 'training', path: '/hrm/training', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Training and Development Specialist','Employee (General User)'] },
+  { label: 'Talent Acquisition', icon: 'talent', path: '/hrm/talent', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Recruitment Specialist (Talent Acquisition)'] },
+  { label: 'BD & People Culture', icon: 'partnerships', path: '/hrm/partnerships', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','HR Business Partner','Employee (General User)'] },
 ];
 
 // 5. MY WORKSPACE NAV ITEMS
@@ -231,7 +231,7 @@ const Sidebar = () => {
   const isSupplyChainActive = useMatch('/supply-chain') || useMatch('/supply-chain/*');
   const isAccountingActive = useMatch('/accounting') || useMatch('/accounting/*');
 
-  const isSuperAdmin = user?.role === 'Super CRM Administrator';
+  const isSuperAdmin = user?.role === 'CRM core Administrator';
   const showCRM = isSuperAdmin || CRM_ROLES.includes(user?.role);
   const showHRM = isSuperAdmin || HRM_ROLES.includes(user?.role);
   const bm = user?.businessModel || 'service';
@@ -267,17 +267,17 @@ const Sidebar = () => {
       {/* Main Nav Scroll Container */}
       <nav className="sidebar-nav">
 
-        {/* 1. MINI SIDEBAR: SUPER CRM */}
+        {/* 1. MINI SIDEBAR: CRM core */}
         {showCRM && (
           <div className="mini-sidebar-group">
             <div
               className="mini-sidebar-sticky-header crm-header"
               onClick={() => setCrmOpen(!crmOpen)}
-              title="Super CRM Department"
+              title="CRM core Department"
             >
               <div className="mini-sidebar-header-left">
                 <span className="mini-sidebar-icon"><SidebarIcon name="dept-crm" /></span>
-                <span className="mini-sidebar-title">1. Super CRM</span>
+                <span className="mini-sidebar-title">1. CRM core</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredCrmItems.length}</span>
@@ -304,17 +304,17 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* 2. MINI SIDEBAR: SUPER INVENTORY */}
+        {/* 2. MINI SIDEBAR: inventory core */}
         {showERP && (
           <div className="mini-sidebar-group">
             <div
               className="mini-sidebar-sticky-header inventory-header"
               onClick={() => setInventoryOpen(!inventoryOpen)}
-              title="Super Inventory Department"
+              title="inventory core Department"
             >
               <div className="mini-sidebar-header-left">
                 <span className="mini-sidebar-icon"><SidebarIcon name="dept-inventory" /></span>
-                <span className="mini-sidebar-title">2. Super Inventory</span>
+                <span className="mini-sidebar-title">2. inventory core</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredInventoryItems.length}</span>
@@ -341,17 +341,17 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* 3. MINI SIDEBAR: SUPER SUPPLY CHAIN */}
+        {/* 3. MINI SIDEBAR: supply chain core */}
         {showERP && (
           <div className="mini-sidebar-group">
             <div
               className="mini-sidebar-sticky-header supply-header"
               onClick={() => setSupplyChainOpen(!supplyChainOpen)}
-              title="Super Supply Chain Department"
+              title="supply chain core Department"
             >
               <div className="mini-sidebar-header-left">
                 <span className="mini-sidebar-icon"><SidebarIcon name="dept-supply" /></span>
-                <span className="mini-sidebar-title">3. Super Supply Chain</span>
+                <span className="mini-sidebar-title">3. supply chain core</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredSupplyChainItems.length}</span>
@@ -414,17 +414,17 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* 4. MINI SIDEBAR: SUPER HRM */}
+        {/* 4. MINI SIDEBAR: HRM core */}
         {showHRM && (
           <div className="mini-sidebar-group">
             <div
               className="mini-sidebar-sticky-header hrm-header"
               onClick={() => setHrmOpen(!hrmOpen)}
-              title="Super HRM Department"
+              title="HRM core Department"
             >
               <div className="mini-sidebar-header-left">
                 <span className="mini-sidebar-icon"><SidebarIcon name="dept-hrm" /></span>
-                <span className="mini-sidebar-title">4. Super HRM</span>
+                <span className="mini-sidebar-title">4. HRM core</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="mini-sidebar-badge">{filteredHrmItems.length}</span>

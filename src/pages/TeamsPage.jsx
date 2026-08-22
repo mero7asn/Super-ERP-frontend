@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import { getDepartmentTheme } from '../services/departmentJobs';
@@ -66,8 +66,8 @@ const MemberCard = ({ member, dept, isAdmin, managers, onMove }) => {
             minWidth: 120
           }}
         >
-          <option value="">Move to…</option>
-          <option value="none">✕ Unassign</option>
+          <option value="">Move to�</option>
+          <option value="none">? Unassign</option>
           {managers.filter(m => m._id !== member._id).map(m => (
             <option key={m._id} value={m._id}>{m.firstName} {m.lastName}</option>
           ))}
@@ -87,7 +87,7 @@ const TeamsPage = () => {
   const [success, setSuccess] = useState('');
   const [activeTab, setActiveTab] = useState('All');
 
-  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['CRM core Administrator', 'System Architect'].includes(user?.role);
 
   const fetchTeams = useCallback(async () => {
     setLoading(true);
@@ -117,7 +117,7 @@ const TeamsPage = () => {
     }
   };
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading teams…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading teams�</div>;
 
   const departments = [
     'All', 'Sales', 'Customer Support', 'Marketing', 'Technology', 'Human Resources',
@@ -280,7 +280,7 @@ const TeamsPage = () => {
         {filteredUnassigned.length > 0 && (
           <div className="table-wrapper" style={{ padding: 0, overflow: 'hidden', border: '2px dashed rgba(239,68,68,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '20px 24px', borderBottom: '1px solid var(--border-color)', background: 'rgba(239,68,68,0.05)' }}>
-              <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>⚠️</div>
+              <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>??</div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700, fontSize: 16 }}>Unassigned Members</div>
                 <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>These members need to be assigned to a team</div>

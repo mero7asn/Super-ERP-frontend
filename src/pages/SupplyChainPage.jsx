@@ -135,7 +135,7 @@ const SupplyChainPage = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#7dd3fc', marginBottom: 6 }}>Supply chain operations</div>
-            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: '#fff' }}>Super Supply Chain & Procurement Control Tower</h1>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: '#fff' }}>supply chain core & Procurement Control Tower</h1>
             <p style={{ margin: '8px 0 0', fontSize: 14, color: '#e2e8f0' }}>From planning and requisitions to imports, supplier scorecards, and spend intelligence.</p>
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>

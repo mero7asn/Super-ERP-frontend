@@ -1,4 +1,4 @@
-ï»¿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -11,20 +11,20 @@ const PROVIDER_PRESETS = {
 
 const COMMON_CURRENCIES = [
   { code: 'USD', name: 'US Dollar', symbol: '$', rate: 1 },
-  { code: 'EUR', name: 'Euro', symbol: 'â‚¬', rate: 0.92 },
-  { code: 'GBP', name: 'British Pound', symbol: 'Â£', rate: 0.79 },
-  { code: 'EGP', name: 'Egyptian Pound', symbol: 'EÂ£', rate: 48.5 },
-  { code: 'SAR', name: 'Saudi Riyal', symbol: 'ï·¼', rate: 3.75 },
-  { code: 'AED', name: 'UAE Dirham', symbol: 'Ø¯.Ø¥', rate: 3.67 },
+  { code: 'EUR', name: 'Euro', symbol: '€', rate: 0.92 },
+  { code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.79 },
+  { code: 'EGP', name: 'Egyptian Pound', symbol: 'E£', rate: 48.5 },
+  { code: 'SAR', name: 'Saudi Riyal', symbol: '?', rate: 3.75 },
+  { code: 'AED', name: 'UAE Dirham', symbol: '?.?', rate: 3.67 },
   { code: 'KWD', name: 'Kuwaiti Dinar', symbol: 'KD', rate: 0.31 },
-  { code: 'QAR', name: 'Qatari Riyal', symbol: 'ï·¼', rate: 3.64 },
+  { code: 'QAR', name: 'Qatari Riyal', symbol: '?', rate: 3.64 },
   { code: 'BHD', name: 'Bahraini Dinar', symbol: 'BD', rate: 0.38 },
-  { code: 'OMR', name: 'Omani Rial', symbol: 'ï·¼', rate: 0.38 },
+  { code: 'OMR', name: 'Omani Rial', symbol: '?', rate: 0.38 },
   { code: 'JOD', name: 'Jordanian Dinar', symbol: 'JD', rate: 0.71 },
-  { code: 'LBP', name: 'Lebanese Pound', symbol: 'LÂ£', rate: 89500 },
+  { code: 'LBP', name: 'Lebanese Pound', symbol: 'L£', rate: 89500 },
   { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', rate: 1.36 },
   { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', rate: 1.53 },
-  { code: 'JPY', name: 'Japanese Yen', symbol: 'Â¥', rate: 149.5 },
+  { code: 'JPY', name: 'Japanese Yen', symbol: '¥', rate: 149.5 },
 ];
 
 const normalizeCurrencies = (values = []) => {
@@ -50,7 +50,7 @@ const normalizeCurrencies = (values = []) => {
 
 const SettingsPage = () => {
   const { user, setBusinessModel } = useAuth();
-  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(user?.role);
+  const isAdmin = ['CRM core Administrator', 'System Architect'].includes(user?.role);
   const [activeTab, setActiveTab] = useState('general');
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -389,7 +389,7 @@ const SettingsPage = () => {
           >
             Business Model
           </button>
-          {user?.role === 'Super CRM Administrator' && (
+          {user?.role === 'CRM core Administrator' && (
             <button
               onClick={() => setActiveTab('pricing')}
               className="sidebar-link"
@@ -597,7 +597,7 @@ const SettingsPage = () => {
                     <input
                       className="form-input"
                       type="password"
-                      placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                      placeholder="••••••••"
                       value={smtpPass}
                       onChange={(e) => setSmtpPass(e.target.value)}
                       required
@@ -619,10 +619,10 @@ const SettingsPage = () => {
 
                 <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
                   <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: 'auto', padding: '10px 32px' }}>
-                    {loading ? 'Savingâ€¦' : 'Save SMTP Settings'}
+                    {loading ? 'Saving…' : 'Save SMTP Settings'}
                   </button>
                   <button type="button" className="btn btn-secondary" onClick={handleTestConnection} disabled={testing || !smtpHost} style={{ width: 'auto', padding: '10px 32px' }}>
-                    {testing ? 'Testingâ€¦' : 'Test Connection'}
+                    {testing ? 'Testing…' : 'Test Connection'}
                   </button>
                 </div>
 
@@ -659,11 +659,11 @@ const SettingsPage = () => {
                       </div>
                       <div className="form-group" style={{ margin: 0 }}>
                         <label className="form-label">Password</label>
-                        <input className="form-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" value={telephonyPassword} onChange={(e) => setTelephonyPassword(e.target.value)} />
+                        <input className="form-input" type="password" placeholder="••••••••" value={telephonyPassword} onChange={(e) => setTelephonyPassword(e.target.value)} />
                       </div>
                     </div>
                     <button type="button" className="btn btn-primary" onClick={handleSaveTelephony} disabled={savingTelephony} style={{ width: 'auto', padding: '10px 28px', marginTop: 14 }}>
-                      {savingTelephony ? 'Savingâ€¦' : 'Save Phone Call Settings'}
+                      {savingTelephony ? 'Saving…' : 'Save Phone Call Settings'}
                     </button>
                   </div>
                 )}
@@ -731,7 +731,7 @@ const SettingsPage = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {[
                     { id: 'service', title: 'Service', desc: 'Bookings module only.' },
-                    { id: 'product', title: 'Product', desc: 'Products module + Super Inventory & Super Supply Chain.' },
+                    { id: 'product', title: 'Product', desc: 'Products module + inventory core & supply chain core.' },
                     { id: 'both', title: 'Both Service & Product', desc: 'Everything: Bookings, Products, Inventory & Supply Chain.' },
                   ].map(opt => (
                     <label
@@ -780,7 +780,7 @@ const SettingsPage = () => {
                     }}
                     style={{ width: 'auto', padding: '10px 32px' }}
                   >
-                    {savingBm ? 'Savingâ€¦' : 'Save Business Model'}
+                    {savingBm ? 'Saving…' : 'Save Business Model'}
                   </button>
                 </div>
 
@@ -825,13 +825,13 @@ const SettingsPage = () => {
                     }}
                     style={{ width: 'auto', padding: '10px 28px' }}
                   >
-                    {savingErp ? 'Savingâ€¦' : 'Save ERP URL'}
+                    {savingErp ? 'Saving…' : 'Save ERP URL'}
                   </button>
                 </div>
               </div>
             )}
 
-            {activeTab === 'pricing' && user?.role === 'Super CRM Administrator' && (
+            {activeTab === 'pricing' && user?.role === 'CRM core Administrator' && (
               <div>
                 <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Icon name="dollar" size={18} style={{ color: 'var(--accent-primary)' }} />
@@ -904,7 +904,7 @@ const SettingsPage = () => {
                     }}
                     style={{ width: 'auto', padding: '10px 32px' }}
                   >
-                    {savingPricing ? 'Savingâ€¦' : 'Save Pricing Settings'}
+                    {savingPricing ? 'Saving…' : 'Save Pricing Settings'}
                   </button>
                 </div>
 

@@ -1,4 +1,4 @@
-ï»¿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
@@ -6,7 +6,7 @@ import { DEPARTMENTS, getRolesByDepartment, getDepartmentByRole, getDepartmentTh
 
 const roleBadge = (role) => {
   const map = {
-    'Super CRM Administrator': 'badge-urgent',
+    'CRM core Administrator': 'badge-urgent',
     'System Architect': 'badge-urgent',
     'Sales Manager': 'badge-qualified',
     'Customer Support Manager': 'badge-qualified',
@@ -94,7 +94,7 @@ const UsersPage = () => {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <input
             className="table-search"
-            placeholder="Search usersâ€¦"
+            placeholder="Search users…"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -119,7 +119,7 @@ const UsersPage = () => {
         {loading ? (
           <div className="loading-state">
             <div className="spinner" />
-            Loading usersâ€¦
+            Loading users…
           </div>
         ) : filtered.length === 0 ? (
           <div className="empty-state">

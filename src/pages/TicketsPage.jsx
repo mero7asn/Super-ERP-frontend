@@ -1,4 +1,4 @@
-ï»¿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
@@ -23,7 +23,7 @@ const AFFECTED_PAGES = [
 
 const userName = (person) => (person ? `${person.firstName} ${person.lastName}` : 'System');
 const sameId = (left, right) => Boolean(left && right && left.toString() === right.toString());
-const formatDate = (value) => (value ? new Date(value).toLocaleString() : 'â€”');
+const formatDate = (value) => (value ? new Date(value).toLocaleString() : '—');
 
 const priorityBadge = (p) => {
   switch (p) {
@@ -67,7 +67,7 @@ const TicketsPage = () => {
     assignedTo: ''
   });
 
-  const canManage = ['CRM Developer', 'CRM Consultant', 'System Architect', 'Super CRM Administrator'].includes(user?.role);
+  const canManage = ['CRM Developer', 'CRM Consultant', 'System Architect', 'CRM core Administrator'].includes(user?.role);
   const canCreate = Boolean(user);
   const canComment = Boolean(
     selectedTicket &&
@@ -187,7 +187,7 @@ const TicketsPage = () => {
             System Support & Maintenance
           </div>
           <h1 style={{ fontSize: 26, fontWeight: 800, color: '#ffffff', margin: 0, letterSpacing: '-0.02em' }}>
-            <span style={{ marginRight: 8 }}>ğŸ«</span> Technical Issues ({filtered.length})
+            <span style={{ marginRight: 8 }}>??</span> Technical Issues ({filtered.length})
           </h1>
           <p style={{ fontSize: 14, color: '#CBD5E1', marginTop: 8, margin: 0, lineHeight: 1.5 }}>
             {canManage
@@ -269,7 +269,7 @@ const TicketsPage = () => {
               ))}
             </div>
             <div style={{ position: 'relative', width: 280 }}>
-              <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}>ğŸ”</span>
+              <span style={{ position: 'absolute', left: 10, top: 8, fontSize: 13, color: '#94A3B8' }}>??</span>
               <input
                 type="text"
                 placeholder="Search by subject, status, or team..."
@@ -296,7 +296,7 @@ const TicketsPage = () => {
           <div className="loading-state" style={{ padding: 40 }}><div className="spinner" />Loading support issues...</div>
         ) : filtered.length === 0 ? (
           <div className="empty-state" style={{ padding: 48 }}>
-            <div style={{ fontSize: 40, marginBottom: 8 }}>ğŸ«</div>
+            <div style={{ fontSize: 40, marginBottom: 8 }}>??</div>
             <p style={{ fontWeight: 600, color: '#475569' }}>No support tickets match your search criteria.</p>
           </div>
         ) : (
@@ -327,7 +327,7 @@ const TicketsPage = () => {
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginTop: 12 }}>
                     <div style={{ fontSize: 12, color: '#64748B' }}><strong style={{ color: '#0F172A' }}>Affected page:</strong> {ticket.affectedPage || 'Other'}</div>
-                    <div style={{ fontSize: 12, color: '#64748B' }}><strong style={{ color: '#0F172A' }}>Reporting team:</strong> {ticket.requesterTeam || ticket.createdBy?.role || 'â€”'}</div>
+                    <div style={{ fontSize: 12, color: '#64748B' }}><strong style={{ color: '#0F172A' }}>Reporting team:</strong> {ticket.requesterTeam || ticket.createdBy?.role || '—'}</div>
                     <div style={{ fontSize: 12, color: '#64748B' }}><strong style={{ color: '#0F172A' }}>Assignee:</strong> {ticket.assignedTo ? `${ticket.assignedTo.firstName} ${ticket.assignedTo.lastName}` : 'Unassigned'}</div>
                     <div style={{ fontSize: 12, color: '#64748B' }}><strong style={{ color: '#0F172A' }}>Created:</strong> {new Date(ticket.createdAt).toLocaleDateString()}</div>
                   </div>
@@ -455,10 +455,10 @@ const TicketsPage = () => {
               <div>
                 <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', margin: 0 }}>{selectedTicket.subject}</h2>
                 <div style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>
-                  Page: <strong>{selectedTicket.affectedPage || 'Other'}</strong> Â· Status: <strong>{selectedTicket.status}</strong> Â· Priority: <strong>{selectedTicket.priority}</strong>
+                  Page: <strong>{selectedTicket.affectedPage || 'Other'}</strong> · Status: <strong>{selectedTicket.status}</strong> · Priority: <strong>{selectedTicket.priority}</strong>
                 </div>
               </div>
-              <button onClick={() => setShowDetailsModal(false)} style={{ background: 'none', border: 'none', fontSize: 24, color: '#64748B', cursor: 'pointer' }}>Ã—</button>
+              <button onClick={() => setShowDetailsModal(false)} style={{ background: 'none', border: 'none', fontSize: 24, color: '#64748B', cursor: 'pointer' }}>×</button>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>

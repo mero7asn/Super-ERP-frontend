@@ -1,4 +1,4 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 const out = 'C:\\Users\\Admin\\Desktop\\Core 360\\frontend\\src\\pages\\BookingLookupPage.jsx';
 let c = '';
 c += "import { useState, useMemo } from 'react';\n";
@@ -68,10 +68,10 @@ c += "const[loading,setLoading]=useState(false);";
 c += "const[error,setError]=useState('');";
 c += "const[activeTab,setActiveTab]=useState('Overview');";
 c += "const[currentRole]=useState(user?.role||'Sales Agent');";
-c += "const canAccess=['Sales Agent','Sales Manager','Customer Support Agent','Customer Support Manager','CRM Developer','CRM Consultant','System Architect','Super CRM Administrator'].includes(currentRole);";
-c += "const canRefund=['Finance Manager','Finance Analyst','Super CRM Administrator','CRM Developer','CRM Consultant','System Architect'].includes(currentRole);";
-c += "const canCancel=['Sales Manager','Customer Support Manager','Super CRM Administrator','CRM Developer','CRM Consultant','System Architect'].includes(currentRole);";
-c += "const canDelete=['Super CRM Administrator','CRM Developer','System Architect'].includes(currentRole);";
+c += "const canAccess=['Sales Agent','Sales Manager','Customer Support Agent','Customer Support Manager','CRM Developer','CRM Consultant','System Architect','CRM core Administrator'].includes(currentRole);";
+c += "const canRefund=['Finance Manager','Finance Analyst','CRM core Administrator','CRM Developer','CRM Consultant','System Architect'].includes(currentRole);";
+c += "const canCancel=['Sales Manager','Customer Support Manager','CRM core Administrator','CRM Developer','CRM Consultant','System Architect'].includes(currentRole);";
+c += "const canDelete=['CRM core Administrator','CRM Developer','System Architect'].includes(currentRole);";
 // handleLookup
 c += "const handleLookup=async(e)=>{e.preventDefault();if(!recordLocator)return;setLoading(true);setError('');setBooking(null);";
 c += "try{const res=await API.get('/offers/locator/'+recordLocator);setBooking(res.data.data);}";
@@ -86,7 +86,7 @@ c += "if(label==='Cancel Booking'&&!canCancel){setError('Only managers or admins
 c += "if(label==='Delete Booking'&&!canDelete){setError('Only administrators can permanently delete a booking.');return;}";
 c += "setError(label+' action is ready for implementation.');};";
 // Extract data
-c += "const bookingId=booking?.recordLocator||booking?.bookingRef||booking?._id||'—';";
+c += "const bookingId=booking?.recordLocator||booking?.bookingRef||booking?._id||'�';";
 c += "const bookingAmount=Number(booking?.price||booking?.amount||0);";
 c += "const currency=booking?.currency||'USD';";
 c += "const paymentStatus=booking?.paymentStatus||'Pending';";

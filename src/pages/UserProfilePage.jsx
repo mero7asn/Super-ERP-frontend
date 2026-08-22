@@ -1,4 +1,4 @@
-ï»¿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -6,7 +6,7 @@ import { getDepartmentThemeByRole } from '../services/departmentJobs';
 
 const roleBadge = (role) => {
   const map = {
-    'Super CRM Administrator': 'badge-urgent',
+    'CRM core Administrator': 'badge-urgent',
     'System Architect': 'badge-urgent',
     'Sales Manager': 'badge-qualified',
     'Customer Support Manager': 'badge-qualified',
@@ -23,7 +23,7 @@ const roleBadge = (role) => {
 };
 
 const ALL_ROLES = [
-  'Super CRM Administrator', 'Sales Agent', 'Sales Manager',
+  'CRM core Administrator', 'Sales Agent', 'Sales Manager',
   'Customer Support Agent', 'Customer Support Manager',
   'Marketing Specialist', 'Marketing Manager', 'Business Analyst',
   'CRM Developer', 'CRM Consultant', 'System Architect', 'Executive User'
@@ -53,7 +53,7 @@ const UserProfilePage = () => {
   const [activeSection, setActiveSection] = useState('profile');
   const [form, setForm] = useState({});
 
-  const isAdmin = ['Super CRM Administrator', 'System Architect'].includes(currentUser?.role);
+  const isAdmin = ['CRM core Administrator', 'System Architect'].includes(currentUser?.role);
   const isOwnProfile = currentUser?._id === id;
   const canEdit = isOwnProfile || isAdmin;
   const [managers, setManagers] = useState([]);
@@ -75,12 +75,12 @@ const UserProfilePage = () => {
           if (role === 'Marketing Specialist') return u.role === 'Marketing Manager';
           if (role === 'CRM Developer' || role === 'CRM Consultant') return u.role === 'System Architect';
           
-          // All managers report to Super CRM Administrator
+          // All managers report to CRM core Administrator
           if (['Sales Manager', 'Customer Support Manager', 'Marketing Manager', 'System Architect'].includes(role))
-            return u.role === 'Super CRM Administrator';
+            return u.role === 'CRM core Administrator';
           
-          // Super CRM Administrator and Business Analyst report to Executive User
-          if (['Super CRM Administrator', 'Business Analyst'].includes(role))
+          // CRM core Administrator and Business Analyst report to Executive User
+          if (['CRM core Administrator', 'Business Analyst'].includes(role))
             return u.role === 'Executive User';
           
           return false;
@@ -144,7 +144,7 @@ const UserProfilePage = () => {
     }
   };
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading profileâ€¦</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading profile…</div>;
   if (!user) return null;
 
   const initials = `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase();
@@ -259,7 +259,7 @@ const UserProfilePage = () => {
                   </div>
                   <div className="form-group" style={{ margin: 0 }}>
                     <label className="form-label">New Password <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(leave blank to keep)</span></label>
-                    <input className="form-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
+                    <input className="form-input" type="password" placeholder="••••••••" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
                   </div>
                 </div>
               </div>
@@ -284,11 +284,11 @@ const UserProfilePage = () => {
                         </select>
                       </div>
                     </div>
-                    {(['Sales Agent', 'Customer Support Agent', 'Marketing Specialist', 'CRM Developer', 'CRM Consultant', 'Sales Manager', 'Customer Support Manager', 'Marketing Manager', 'System Architect', 'Super CRM Administrator', 'Business Analyst'].includes(form.role)) && (
+                    {(['Sales Agent', 'Customer Support Agent', 'Marketing Specialist', 'CRM Developer', 'CRM Consultant', 'Sales Manager', 'Customer Support Manager', 'Marketing Manager', 'System Architect', 'CRM core Administrator', 'Business Analyst'].includes(form.role)) && (
                       <div className="form-group" style={{ margin: '16px 0 0' }}>
                         <label className="form-label">Supervisor</label>
                         <select className="form-input" value={form.supervisor} onChange={e => setForm(f => ({ ...f, supervisor: e.target.value }))}>
-                          <option value="">â€” No Supervisor â€”</option>
+                          <option value="">— No Supervisor —</option>
                           {managers.map(m => (
                             <option key={m._id} value={m._id}>{m.firstName} {m.lastName} ({m.role})</option>
                           ))}
@@ -326,7 +326,7 @@ const UserProfilePage = () => {
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
                 <button className="btn btn-secondary btn-sm" onClick={() => setEditing(false)} disabled={saving}>Cancel</button>
                 <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving} style={{ width: 'auto' }}>
-                  {saving ? 'Savingâ€¦' : 'Save Changes'}
+                  {saving ? 'Saving…' : 'Save Changes'}
                 </button>
               </div>
             </>
@@ -342,7 +342,7 @@ const UserProfilePage = () => {
                     ...(user.title ? [{ label: 'Title', value: user.title }] : []),
                     { label: 'Email Address', value: user.email },
                     { label: 'Role', value: user.role },
-                    ...(user.role !== 'Executive User' ? [{ label: 'Supervisor', value: user.supervisor ? `${user.supervisor.firstName} ${user.supervisor.lastName} (${user.supervisor.role})` : 'â€” None â€”' }] : []),
+                    ...(user.role !== 'Executive User' ? [{ label: 'Supervisor', value: user.supervisor ? `${user.supervisor.firstName} ${user.supervisor.lastName} (${user.supervisor.role})` : '— None —' }] : []),
                     { label: 'Account Status', value: user.isActive ? 'Active' : 'Suspended' },
                     { label: 'User ID', value: user._id },
                   ].map(({ label, value }) => (
@@ -435,9 +435,9 @@ const UserProfilePage = () => {
           <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Recent system activity</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {[
-              ['Updated profile information', 'Today Â· 09:24'],
-              ['Reviewed account permissions', 'Yesterday Â· 16:12'],
-              ['Opened user management workspace', 'Yesterday Â· 11:05']
+              ['Updated profile information', 'Today · 09:24'],
+              ['Reviewed account permissions', 'Yesterday · 16:12'],
+              ['Opened user management workspace', 'Yesterday · 11:05']
             ].map(([title, time]) => (
               <div key={title} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', borderRadius: 10, background: 'rgba(248,250,252,0.9)' }}>
                 <span style={{ fontSize: 14, fontWeight: 600 }}>{title}</span>

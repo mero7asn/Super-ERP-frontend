@@ -1,4 +1,4 @@
-ï»¿import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import API from '../services/api';
@@ -58,7 +58,7 @@ const createDefaultBooking = (locator = 'BK-PPL5H9') => {
     priority: 'Normal',
     channel: 'Website',
     createdAt: '2026-07-26T10:38:05.000Z',
-    assignedEmployee: 'Super CRM Administrator',
+    assignedEmployee: 'CRM core Administrator',
     assignedEmail: defaultAgentEmail,
     price: 50.00,
     currency: 'USD',
@@ -84,7 +84,7 @@ const createDefaultBooking = (locator = 'BK-PPL5H9') => {
     // 3b. Documentations with guaranteed unique copyable IDs
     documentations: [
       { id: 'DOC-89A12B4C', author: 'Omar Hassan', authorEmail: 'asherjobs@outlook.com', category: 'Customer Preference', date: '2026-07-26T10:38:05.000Z', text: 'Customer requested SMS notification prior to booking start time.' },
-      { id: 'DOC-3F91A20D', author: 'Super CRM Administrator', authorEmail: 'admin@supercrm.com', category: 'Internal Note', date: '2026-07-27T11:20:00.000Z', text: 'Verified customer details and confirmed reservation eligibility.' }
+      { id: 'DOC-3F91A20D', author: 'CRM core Administrator', authorEmail: 'admin@supercrm.com', category: 'Internal Note', date: '2026-07-27T11:20:00.000Z', text: 'Verified customer details and confirmed reservation eligibility.' }
     ],
     // 3c. Audit Logs with explicit System Sign vs Agent Sign
     auditLogs: [
@@ -124,7 +124,7 @@ const BookingLookupPage = () => {
   const [smsBody, setSmsBody] = useState('Hi Omar, your booking BK-PPL5H9 is confirmed for 7/26/2026.');
 
   const currentAgentEmail = user?.email || 'admin@supercrm.com';
-  const currentRole = user?.role || 'Super CRM Administrator';
+  const currentRole = user?.role || 'CRM core Administrator';
 
   const handleLookup = async (e) => {
     if (e) e.preventDefault();
@@ -432,7 +432,7 @@ const BookingLookupPage = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Section 1 â€¢ Customer Information
+                  Section 1 • Customer Information
                 </div>
                 <h2 style={{ margin: '6px 0 4px', fontSize: 22, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}>
                   <Icon name="leads" size={24} style={{ color: 'var(--accent-primary)' }} />
@@ -479,7 +479,7 @@ const BookingLookupPage = () => {
               <div style={{ padding: 14, borderRadius: 14, background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Location & Preference</div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginTop: 4 }}>
-                  {booking.lead?.address || 'Cairo, Egypt'} â€¢ {booking.lead?.contactPreference || 'Email / SMS'}
+                  {booking.lead?.address || 'Cairo, Egypt'} • {booking.lead?.contactPreference || 'Email / SMS'}
                 </div>
               </div>
             </div>
@@ -492,7 +492,7 @@ const BookingLookupPage = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--status-completed)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Section 2 â€¢ Booking / Order Details & Processing
+                  Section 2 • Booking / Order Details & Processing
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4, flexWrap: 'wrap' }}>
                   <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>{booking.recordLocator}</h2>
@@ -601,7 +601,7 @@ const BookingLookupPage = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 18 }}>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--warning)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Section 3 â€¢ Billing, Documentation & Log Workspace
+                  Section 3 • Billing, Documentation & Log Workspace
                 </div>
                 <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-secondary)' }}>
                   View financial transactions, unique agent documentations, and signed system/agent audit logs.
@@ -672,7 +672,7 @@ const BookingLookupPage = () => {
                         <div key={idx} style={{ padding: 16, borderRadius: 14, background: 'var(--bg-primary)', border: '1px solid var(--border-color)', display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr auto', gap: 12, alignItems: 'center' }}>
                           <div>
                             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{txn.type}</div>
-                            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>ID: {txn.id} â€¢ Ref: {txn.reference}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>ID: {txn.id} • Ref: {txn.reference}</div>
                           </div>
                           <div>
                             <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Payment Method</div>
@@ -777,11 +777,11 @@ const BookingLookupPage = () => {
                         <div>
                           {log.signType === 'System' ? (
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 999, background: 'rgba(147, 51, 234, 0.1)', color: '#9333ea', fontSize: 12, fontWeight: 700, border: '1px solid rgba(147, 51, 234, 0.2)' }}>
-                              ðŸ¤– [System Sign: {log.signature || 'Core 360'}]
+                              ?? [System Sign: {log.signature || 'Core 360'}]
                             </span>
                           ) : (
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 999, background: 'rgba(16, 185, 129, 0.1)', color: '#059669', fontSize: 12, fontWeight: 700, border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                              ðŸ‘¤ [Agent Sign: {log.signature || currentAgentEmail}]
+                              ?? [Agent Sign: {log.signature || currentAgentEmail}]
                             </span>
                           )}
                         </div>

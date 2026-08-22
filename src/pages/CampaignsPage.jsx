@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
@@ -31,9 +31,9 @@ const CampaignsPage = () => {
   const [formError, setFormError] = useState('');
   const [copied, setCopied] = useState(null);
 
-  const canCreate = ['Super CRM Administrator', 'Marketing Specialist', 'Marketing Manager', 'System Architect'].includes(user?.role);
-  const canDelete = ['Super CRM Administrator', 'Marketing Manager', 'System Architect'].includes(user?.role);
-  const canGetFormLink = ['Super CRM Administrator', 'System Architect', 'Marketing Manager'].includes(user?.role);
+  const canCreate = ['CRM core Administrator', 'Marketing Specialist', 'Marketing Manager', 'System Architect'].includes(user?.role);
+  const canDelete = ['CRM core Administrator', 'Marketing Manager', 'System Architect'].includes(user?.role);
+  const canGetFormLink = ['CRM core Administrator', 'System Architect', 'Marketing Manager'].includes(user?.role);
 
   const handleGetFormLink = async (campaign) => {
     try {
@@ -140,7 +140,7 @@ const CampaignsPage = () => {
             Marketing Command Center
           </div>
           <h1 style={{ fontSize: 26, fontWeight: 800, color: '#ffffff', margin: 0, letterSpacing: '-0.02em' }}>
-            <span style={{ marginRight: 8 }}>📢</span> Campaigns
+            <span style={{ marginRight: 8 }}>??</span> Campaigns
           </h1>
           <p style={{ fontSize: 14, color: '#CBD5E1', marginTop: 8, margin: 0, lineHeight: 1.5 }}>
             Plan, track, and manage campaigns with a faster visual workflow across every channel.
@@ -198,12 +198,12 @@ const CampaignsPage = () => {
               <option value="WhatsApp">WhatsApp</option>
               <option value="Other">Other</option>
             </select>
-            <input placeholder="Search campaigns…" value={search} onChange={e => setSearch(e.target.value)} style={{ width: 220, border: '1px solid #CBD5E1', borderRadius: 999, padding: '6px 10px', fontSize: 12, background: '#fff' }} />
+            <input placeholder="Search campaigns�" value={search} onChange={e => setSearch(e.target.value)} style={{ width: 220, border: '1px solid #CBD5E1', borderRadius: 999, padding: '6px 10px', fontSize: 12, background: '#fff' }} />
           </div>
         </div>
 
         {loading ? (
-          <div className="loading-state"><div className="spinner" />Loading campaigns…</div>
+          <div className="loading-state"><div className="spinner" />Loading campaigns�</div>
         ) : filtered.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state-icon"><Icon name="campaigns" size={48} style={{ opacity: 0.4 }} /></div>

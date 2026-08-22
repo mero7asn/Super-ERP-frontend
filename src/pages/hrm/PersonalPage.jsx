@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { DEPARTMENTS } from '../../services/departmentJobs';
@@ -120,8 +120,8 @@ const PersonalPage = () => {
   // Leave balance
   const [leaveBalance, setLeaveBalance] = useState(null);
 
-  const isHR = ['HRM System Administrator', 'HR Manager', 'HR Specialist (Generalist)', 'Super CRM Administrator', 'HR Director / Executive HR User'].includes(user?.role);
-  const isSuperAdmin = ['Super CRM Administrator', 'HRM System Administrator'].includes(user?.role);
+  const isHR = ['HRM System Administrator', 'HR Manager', 'HR Specialist (Generalist)', 'CRM core Administrator', 'HR Director / Executive HR User'].includes(user?.role);
+  const isSuperAdmin = ['CRM core Administrator', 'HRM System Administrator'].includes(user?.role);
 
   // Dynamic role list based on selected department filter
   const availableRoles = (() => {
@@ -382,7 +382,7 @@ const PersonalPage = () => {
       const { data } = await API.post('/hrm/contracts/gov-docs/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      setStatusMsg({ type: 'success', text: 'Document uploaded – pending HR verification.' });
+      setStatusMsg({ type: 'success', text: 'Document uploaded � pending HR verification.' });
       if (data.fileUrl) {
         setGovDocs(prev => ({ ...prev, [docField]: data.fileUrl }));
       }
@@ -834,10 +834,10 @@ const PersonalPage = () => {
       {/* HRM Top Sub-Tabs Navigation */}
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 0, overflowX: 'auto' }}>
         {[
-          { id: 'profile', label: '👤 Profile & Schedule' },
-          { id: 'contract', label: '📄 Contract Terms' },
-          { id: 'docs', label: '🇪🇬 Gov Documents' },
-          { id: 'leaves', label: '🌴 Leave & Absence' }
+          { id: 'profile', label: '?? Profile & Schedule' },
+          { id: 'contract', label: '?? Contract Terms' },
+          { id: 'docs', label: '???? Gov Documents' },
+          { id: 'leaves', label: '?? Leave & Absence' }
         ].map(tab => (
           <button
             key={tab.id}
@@ -907,7 +907,7 @@ const PersonalPage = () => {
                 >
                   <div style={{ fontWeight: '600', fontSize: 13 }}>{emp.firstName} {emp.lastName}</div>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{emp.role}</div>
-                  <div style={{ fontSize: 10, color: 'var(--accent-primary)', marginTop: 4 }}>🕒 {emp.shift}</div>
+                  <div style={{ fontSize: 10, color: 'var(--accent-primary)', marginTop: 4 }}>?? {emp.shift}</div>
                 </div>
               ))}
               {filteredEmployees.length === 0 && (
@@ -958,7 +958,7 @@ const PersonalPage = () => {
                   {/* Dynamic Month Calendar with Planned AUXes */}
                   {detailedSchedule && (
                     <div className="card">
-                      <h3 style={{ margin: '0 0 12px 0', fontSize: 15 }}>🗓️ Month Schedule & Planned AUX Overview</h3>
+                      <h3 style={{ margin: '0 0 12px 0', fontSize: 15 }}>??? Month Schedule & Planned AUX Overview</h3>
                       <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
                         Visual representation of the 4 weeks of the month. Includes daily working shifts, off-days, and planned AUX target durations.
                       </p>
@@ -1081,10 +1081,10 @@ const PersonalPage = () => {
 
                                       {!day.isOff && (
                                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 4, marginTop: 4 }}>
-                                          <div style={{ fontSize: 9, color: '#6ee7b7' }}>📞 {day.targets.live}m</div>
-                                          <div style={{ fontSize: 9, color: '#fcd34d' }}>☕ {day.targets.break}m</div>
-                                          <div style={{ fontSize: 9, color: '#a5b4fc' }}>🎓 {day.targets.train}m</div>
-                                          <div style={{ fontSize: 9, color: '#c084fc' }}>👥 {day.targets.coach}m</div>
+                                          <div style={{ fontSize: 9, color: '#6ee7b7' }}>?? {day.targets.live}m</div>
+                                          <div style={{ fontSize: 9, color: '#fcd34d' }}>? {day.targets.break}m</div>
+                                          <div style={{ fontSize: 9, color: '#a5b4fc' }}>?? {day.targets.train}m</div>
+                                          <div style={{ fontSize: 9, color: '#c084fc' }}>?? {day.targets.coach}m</div>
                                         </div>
                                       )}
                                     </div>
@@ -1108,7 +1108,7 @@ const PersonalPage = () => {
                       <div className="card" style={{ width: '100%', maxWidth: 700, maxHeight: '90vh', overflowY: 'auto', border: '1px solid var(--accent-secondary)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: 12, marginBottom: 16 }}>
                           <div>
-                            <h3 style={{ margin: 0, fontSize: 16 }}>🕒 Day Details & Staggered AUX Planner</h3>
+                            <h3 style={{ margin: 0, fontSize: 16 }}>?? Day Details & Staggered AUX Planner</h3>
                             <p style={{ margin: '2px 0 0 0', fontSize: 12, color: 'var(--text-muted)' }}>Date: {activeExpandedDay.dateStr} ({activeExpandedDay.dayName})</p>
                           </div>
                           <button 
@@ -1168,10 +1168,10 @@ const PersonalPage = () => {
                                         defaultValue={defaultVal}
                                         style={{ width: 'auto', padding: '4px 8px', fontSize: 11, height: 'auto', margin: 0 }}
                                       >
-                                        <option value="Live (Online)">🟢 Live (Online)</option>
-                                        <option value="Break / Rest">☕ Break / Rest</option>
-                                        <option value="Coaching / Training">🎓 Training / Coaching</option>
-                                        <option value="Offline / Logged out">⚫ Offline / Logged out</option>
+                                        <option value="Live (Online)">?? Live (Online)</option>
+                                        <option value="Break / Rest">? Break / Rest</option>
+                                        <option value="Coaching / Training">?? Training / Coaching</option>
+                                        <option value="Offline / Logged out">? Offline / Logged out</option>
                                       </select>
                                     </div>
                                   );
@@ -1213,7 +1213,7 @@ const PersonalPage = () => {
                             disabled={copyingSchedule || !detailedSchedule}
                             style={{ fontSize: 11 }}
                           >
-                            {copyingSchedule ? 'Copying...' : '📋 Copy to Next Month'}
+                            {copyingSchedule ? 'Copying...' : '?? Copy to Next Month'}
                           </button>
                         </div>
                       </div>
@@ -1240,19 +1240,19 @@ const PersonalPage = () => {
 
                           <div style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 16 }}>
                             <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">📞 Live (mins)</label>
+                              <label className="form-label">?? Live (mins)</label>
                               <input type="number" className="form-input" value={defaultLiveTarget} onChange={(e) => setDefaultLiveTarget(e.target.value)} />
                             </div>
                             <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">☕ Break (mins)</label>
+                              <label className="form-label">? Break (mins)</label>
                               <input type="number" className="form-input" value={defaultBreakTarget} onChange={(e) => setDefaultBreakTarget(e.target.value)} />
                             </div>
                             <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">🎓 Training (mins)</label>
+                              <label className="form-label">?? Training (mins)</label>
                               <input type="number" className="form-input" value={defaultTrainingTarget} onChange={(e) => setDefaultTrainingTarget(e.target.value)} />
                             </div>
                             <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">👥 Coaching (mins)</label>
+                              <label className="form-label">?? Coaching (mins)</label>
                               <input type="number" className="form-input" value={defaultCoachingTarget} onChange={(e) => setDefaultCoachingTarget(e.target.value)} />
                             </div>
                           </div>
@@ -1384,7 +1384,7 @@ const PersonalPage = () => {
               {activeSubTab === 'contract' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-                  {/* ── Basic contract fields ── */}
+                  {/* -- Basic contract fields -- */}
                   <div className="card">
                     <h3 style={{ margin: '0 0 16px', fontSize: 15 }}>
                       {isHR ? `Contract Terms: ${fullName}` : 'My Employment Contract'}
@@ -1416,7 +1416,7 @@ const PersonalPage = () => {
                     </form>
                   </div>
 
-                  {/* ── Signed Contract + Salary Components (combined card) ── */}
+                  {/* -- Signed Contract + Salary Components (combined card) -- */}
                   <div className="card">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border-color)' }}>
                       <div>
@@ -1468,7 +1468,7 @@ const PersonalPage = () => {
                       </div>
                     </div>
 
-                    {/* Add / Edit form — HR only */}
+                    {/* Add / Edit form � HR only */}
                     {isHR && (
                       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 2fr auto', gap: 10, alignItems: 'flex-end', marginBottom: 20, padding: '14px 16px', background: 'var(--bg-secondary)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
                         <div className="form-group" style={{ margin: 0 }}>
@@ -1491,7 +1491,7 @@ const PersonalPage = () => {
                         </div>
                         <div className="form-group" style={{ margin: 0 }}>
                           <label className="form-label">{compForm.valueType === 'Percentage' ? 'Percentage' : 'Amount (EGP)'}</label>
-                          <input className="form-input" type="number" min="0" placeholder={compForm.valueType === 'Percentage' ? '0 – 100' : '0.00'} value={compForm.value} onChange={e => setCompForm(p => ({ ...p, value: e.target.value }))} />
+                          <input className="form-input" type="number" min="0" placeholder={compForm.valueType === 'Percentage' ? '0 � 100' : '0.00'} value={compForm.value} onChange={e => setCompForm(p => ({ ...p, value: e.target.value }))} />
                         </div>
                         <div className="form-group" style={{ margin: 0 }}>
                           <label className="form-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1544,7 +1544,7 @@ const PersonalPage = () => {
                                             <td><span style={{ fontWeight: 700, color: group.color }}>{c.valueType === 'Percentage' ? `${c.value}%` : `${Number(c.value).toLocaleString()} EGP`}</span></td>
                                             <td style={{ color: 'var(--text-muted)', fontSize: 12 }}>{egp.toLocaleString()} EGP</td>
                                             <td><span style={{ fontSize: 12, color: c.kpiLinked ? '#F59E0B' : 'var(--text-muted)' }}>{c.kpiLinked ? 'Yes' : 'No'}</span></td>
-                                            <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.note || '—'}</td>
+                                            <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.note || '�'}</td>
                                             {isHR && <td>
                                               <div style={{ display: 'flex', gap: 6 }}>
                                                 <button className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '3px 10px' }}
@@ -1583,7 +1583,7 @@ const PersonalPage = () => {
                   {/* Salary History */}
                   {contract?.salaryHistory?.length > 0 && (
                     <div className="card">
-                      <h3 style={{ margin: '0 0 12px', fontSize: 15 }}>📈 Salary History</h3>
+                      <h3 style={{ margin: '0 0 12px', fontSize: 15 }}>?? Salary History</h3>
                       <div className="table-wrapper">
                         <table>
                           <thead><tr><th>Date</th><th>Net Salary</th><th>Changed By</th><th>Reason</th></tr></thead>
@@ -1592,8 +1592,8 @@ const PersonalPage = () => {
                               <tr key={i}>
                                 <td style={{ fontSize: 12 }}>{new Date(h.changedAt).toLocaleDateString()}</td>
                                 <td style={{ fontWeight: 600 }}>{(h.amount || 0).toLocaleString()} EGP</td>
-                                <td style={{ fontSize: 12 }}>{h.changedBy ? `${h.changedBy.firstName} ${h.changedBy.lastName}` : '—'}</td>
-                                <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{h.reason || '—'}</td>
+                                <td style={{ fontSize: 12 }}>{h.changedBy ? `${h.changedBy.firstName} ${h.changedBy.lastName}` : '�'}</td>
+                                <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{h.reason || '�'}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -1614,11 +1614,11 @@ const PersonalPage = () => {
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                       {[
-                        { key: 'nationalId', label: 'National ID (الرقم القومي)' },
-                        { key: 'socialInsurance', label: 'Social Insurance Certificate (برنت التأمينات)' },
-                        { key: 'militaryStatus', label: 'Military Status (موقف التجنيد)' },
-                        { key: 'graduationCertificate', label: 'Graduation Certificate (شهادة التخرج)' },
-                        { key: 'criminalRecord', label: 'Criminal Record / Fish (فيش جنائي)' }
+                        { key: 'nationalId', label: 'National ID (????? ??????)' },
+                        { key: 'socialInsurance', label: 'Social Insurance Certificate (???? ?????????)' },
+                        { key: 'militaryStatus', label: 'Military Status (???? ???????)' },
+                        { key: 'graduationCertificate', label: 'Graduation Certificate (????? ??????)' },
+                        { key: 'criminalRecord', label: 'Criminal Record / Fish (??? ?????)' }
                       ].map((doc) => {
                         const docUrl = govDocs[doc.key] || '';
                         const docDetails = govDocsDetails[doc.key] || { status: 'Pending Upload', remarks: '' };
@@ -1649,10 +1649,10 @@ const PersonalPage = () => {
                                         rel="noopener noreferrer"
                                         style={{ color: 'var(--accent-secondary)', textDecoration: 'underline' }}
                                       >
-                                        📎 View / Download File
+                                        ?? View / Download File
                                       </a>
                                     ) : (
-                                      <span style={{ color: 'var(--accent-secondary)' }}>📄 {docUrl}</span>
+                                      <span style={{ color: 'var(--accent-secondary)' }}>?? {docUrl}</span>
                                     )}
                                   </div>
                                 )}
@@ -1672,7 +1672,7 @@ const PersonalPage = () => {
 
                             {docDetails.remarks && (
                               <div style={{ fontSize: 12, color: 'var(--text-muted)', background: 'rgba(0,0,0,0.15)', padding: '6px 10px', borderRadius: 4 }}>
-                                💬 Remarks: {docDetails.remarks}
+                                ?? Remarks: {docDetails.remarks}
                               </div>
                             )}
 
@@ -1690,7 +1690,7 @@ const PersonalPage = () => {
                                       cursor: 'pointer', fontWeight: 600
                                     }}
                                   >
-                                    {uploadingDoc === doc.key ? '⏳ Uploading...' : '📤 Upload Soft Copy'}
+                                    {uploadingDoc === doc.key ? '? Uploading...' : '?? Upload Soft Copy'}
                                   </label>
                                   <input
                                     id={`file-${doc.key}`}
@@ -1705,7 +1705,7 @@ const PersonalPage = () => {
                                       }
                                     }}
                                   />
-                                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>PDF, Image, or Word · max 10 MB</span>
+                                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>PDF, Image, or Word � max 10 MB</span>
                                 </div>
                               )}
                               {/* Non-HR: text link submission */}
@@ -1745,7 +1745,7 @@ const PersonalPage = () => {
                                     className="btn btn-primary btn-sm"
                                     style={{ padding: '4px 10px', fontSize: 11 }}
                                   >
-                                    ✓ Approve
+                                    ? Approve
                                   </button>
                                   <button
                                     type="button"
@@ -1756,7 +1756,7 @@ const PersonalPage = () => {
                                     className="btn btn-secondary btn-sm"
                                     style={{ padding: '4px 10px', fontSize: 11 }}
                                   >
-                                    ✗ Reject
+                                    ? Reject
                                   </button>
                                 </div>
                               )}
@@ -1793,7 +1793,7 @@ const PersonalPage = () => {
                           <div style={{ height: '100%', width: `${pct}%`, background: overUsed ? '#EF4444' : pct > 80 ? '#F59E0B' : '#10B981', borderRadius: 4, transition: 'width 0.4s' }} />
                         </div>
                         {remaining === 0 && (
-                          <div style={{ fontSize: 11, color: '#EF4444', marginTop: 6 }}>All paid days exhausted — further approved leaves will be unpaid.</div>
+                          <div style={{ fontSize: 11, color: '#EF4444', marginTop: 6 }}>All paid days exhausted � further approved leaves will be unpaid.</div>
                         )}
                       </div>
                     );
@@ -1870,7 +1870,7 @@ const PersonalPage = () => {
                                   <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{lv.reason}</div>
                                 </td>
                                 <td style={{ fontSize: 12 }}>
-                                  {new Date(lv.startDate).toLocaleDateString()} — {new Date(lv.endDate).toLocaleDateString()}
+                                  {new Date(lv.startDate).toLocaleDateString()} � {new Date(lv.endDate).toLocaleDateString()}
                                 </td>
                                 <td style={{ fontSize: 12 }}>
                                   <div>{lv.daysCount || 1} day{(lv.daysCount || 1) > 1 ? 's' : ''}</div>
@@ -1914,7 +1914,7 @@ const PersonalPage = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                   {/* 1. Personal Employee Assistant */}
                   <div className="card">
-                    <h3 style={{ margin: '0 0 4px 0', fontSize: 15 }}>🤖 Personal AI Agent (Employee Assistant)</h3>
+                    <h3 style={{ margin: '0 0 4px 0', fontSize: 15 }}>?? Personal AI Agent (Employee Assistant)</h3>
                     <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 14 }}>
                       Ask questions about your leaves, schedules, active contracts, assets, or document expirations.
                     </p>
@@ -1964,7 +1964,7 @@ const PersonalPage = () => {
                   {/* 2. HR Manager Copilot */}
                   {isHR && (
                     <div className="card">
-                      <h3 style={{ margin: '0 0 4px 0', fontSize: 15 }}>💼 AI HR Manager Agent (Supervisor Copilot)</h3>
+                      <h3 style={{ margin: '0 0 4px 0', fontSize: 15 }}>?? AI HR Manager Agent (Supervisor Copilot)</h3>
                       <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 14 }}>
                         Get supervisor analysis of team attendance, lateness trends, compliance metrics, and burnout flags.
                       </p>

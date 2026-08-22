@@ -49,10 +49,10 @@ const BookingLookupPage = () => {
   const [paymentFilter, setPaymentFilter] = useState('');
 
   const currentRole = user?.role || 'Sales Agent';
-  const canAccess = ['Sales Agent', 'Sales Manager', 'Customer Support Agent', 'Customer Support Manager', 'CRM Developer', 'CRM Consultant', 'System Architect', 'Super CRM Administrator'].includes(currentRole);
-  const canRefund = ['Finance Manager', 'Finance Analyst', 'Super CRM Administrator', 'CRM Developer', 'CRM Consultant', 'System Architect'].includes(currentRole);
-  const canCancel = ['Sales Manager', 'Customer Support Manager', 'Super CRM Administrator', 'CRM Developer', 'CRM Consultant', 'System Architect'].includes(currentRole);
-  const canDelete = ['Super CRM Administrator', 'CRM Developer', 'System Architect'].includes(currentRole);
+  const canAccess = ['Sales Agent', 'Sales Manager', 'Customer Support Agent', 'Customer Support Manager', 'CRM Developer', 'CRM Consultant', 'System Architect', 'CRM core Administrator'].includes(currentRole);
+  const canRefund = ['Finance Manager', 'Finance Analyst', 'CRM core Administrator', 'CRM Developer', 'CRM Consultant', 'System Architect'].includes(currentRole);
+  const canCancel = ['Sales Manager', 'Customer Support Manager', 'CRM core Administrator', 'CRM Developer', 'CRM Consultant', 'System Architect'].includes(currentRole);
+  const canDelete = ['CRM core Administrator', 'CRM Developer', 'System Architect'].includes(currentRole);
 
   const handleLookup = async (e) => {
     e.preventDefault();
