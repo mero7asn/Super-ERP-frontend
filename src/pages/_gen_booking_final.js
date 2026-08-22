@@ -1,4 +1,4 @@
-const fs = require('fs');
+﻿const fs = require('fs');
 const out = 'C:\\Users\\Admin\\Desktop\\Core 360\\frontend\\src\\pages\\BookingLookupPage.jsx';
 let c = '';
 c += "import { useState, useMemo } from 'react';\n";
@@ -86,7 +86,7 @@ c += "if(label==='Cancel Booking'&&!canCancel){setError('Only managers or admins
 c += "if(label==='Delete Booking'&&!canDelete){setError('Only administrators can permanently delete a booking.');return;}";
 c += "setError(label+' action is ready for implementation.');};";
 // Extract data
-c += "const bookingId=booking?.recordLocator||booking?.bookingRef||booking?._id||'�';";
+c += "const bookingId=booking?.recordLocator||booking?.bookingRef||booking?._id||'—';";
 c += "const bookingAmount=Number(booking?.price||booking?.amount||0);";
 c += "const currency=booking?.currency||'USD';";
 c += "const paymentStatus=booking?.paymentStatus||'Pending';";

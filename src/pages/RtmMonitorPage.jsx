@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { AUX_COLORS, AUX_ICONS } from '../context/AuxContext';
@@ -7,7 +7,7 @@ const REFRESH_INTERVAL = 20000; // 20s live refresh
 
 const RTM_ROLES = ['RTM Team Member', 'CRM core Administrator', 'HRM System Administrator', 'HR Manager'];
 
-// Live elapsed timer � ticks every second
+// Live elapsed timer — ticks every second
 const useLiveTick = () => {
   const [tick, setTick] = useState(0);
   useEffect(() => {
@@ -54,7 +54,7 @@ const FlagBadge = ({ reason }) => (
     border: '1px solid rgba(239,68,68,0.4)',
     animation: 'rtm-pulse 1.4s ease-in-out infinite',
   }}>
-    ?? FLAGGED{reason ? ` � ${reason}` : ''}
+    🚨 FLAGGED{reason ? ` · ${reason}` : ''}
   </span>
 );
 
@@ -169,7 +169,7 @@ const RtmMonitorPage = () => {
   if (!isRTM) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400, flexDirection: 'column', gap: 12 }}>
-        <span style={{ fontSize: 40 }}>??</span>
+        <span style={{ fontSize: 40 }}>🚫</span>
         <span style={{ color: 'var(--text-muted)' }}>Access restricted to RTM Team Members.</span>
       </div>
     );
@@ -199,18 +199,18 @@ const RtmMonitorPage = () => {
         <div className="page-header" style={{ marginBottom: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <h1 className="page-title">?? RTM Live Monitor</h1>
+              <h1 className="page-title">🎯 RTM Live Monitor</h1>
               <p className="page-subtitle">
-                Real-time agent status � auto-refreshes every 20s
+                Real-time agent status · auto-refreshes every 20s
                 {lastRefresh && (
                   <span style={{ marginLeft: 10, color: 'var(--text-muted)', fontSize: 12 }}>
-                    � Last updated: {lastRefresh.toLocaleTimeString()}
+                    · Last updated: {lastRefresh.toLocaleTimeString()}
                   </span>
                 )}
               </p>
             </div>
             <button className="btn btn-secondary" onClick={() => fetchAgents()} style={{ padding: '8px 16px', fontSize: 12 }}>
-              ? Refresh Now
+              ↻ Refresh Now
             </button>
           </div>
         </div>
@@ -224,7 +224,7 @@ const RtmMonitorPage = () => {
             { key: 'Training', label: 'Training', color: AUX_COLORS.Training },
             { key: 'Coaching', label: 'Coaching', color: AUX_COLORS.Coaching },
             { key: 'Logged out', label: 'Logged Out', color: AUX_COLORS['Logged out'] },
-            { key: 'Flagged', label: '?? Flagged', color: '#EF4444' },
+            { key: 'Flagged', label: '🚨 Flagged', color: '#EF4444' },
           ].map(({ key, label, color }) => (
             <button
               key={key}
@@ -244,7 +244,7 @@ const RtmMonitorPage = () => {
         {/* Search */}
         <input
           className="form-input"
-          placeholder="?? Search by name, role, department�"
+          placeholder="🔍 Search by name, role, department…"
           value={search}
           onChange={e => setSearch(e.target.value)}
           style={{ maxWidth: 360, padding: '8px 14px', fontSize: 13 }}
@@ -266,7 +266,7 @@ const RtmMonitorPage = () => {
             className={groupByTeam ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'}
             style={{ fontSize: 12, padding: '6px 14px' }}
           >
-            {groupByTeam ? '?? Grouped by Team' : '?? Group by Team'}
+            {groupByTeam ? '👥 Grouped by Team' : '👥 Group by Team'}
           </button>
         </div>
 
@@ -274,7 +274,7 @@ const RtmMonitorPage = () => {
         {loading ? (
           <div className="loading-state">
             <div className="spinner" />
-            Loading agents�
+            Loading agents…
           </div>
         ) : filtered.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 60 }}>
@@ -299,13 +299,13 @@ const RtmMonitorPage = () => {
                     background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: 13 }}>
-                      ?? {group.name}
+                      👥 {group.name}
                       <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}>
-                        � {group.members.length} {group.members.length === 1 ? 'agent' : 'agents'}
+                        · {group.members.length} {group.members.length === 1 ? 'agent' : 'agents'}
                       </span>
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                      ?? {group.members.filter(m => m.rtmFlagged).length} flagged
+                      🚨 {group.members.filter(m => m.rtmFlagged).length} flagged
                     </div>
                   </div>
                 )}
@@ -345,12 +345,12 @@ const RtmMonitorPage = () => {
                               background: 'rgba(245,158,11,0.15)', color: '#B45309',
                               border: '1px solid rgba(245,158,11,0.4)',
                             }}>
-                              ? OFF-SHIFT
+                              ⏰ OFF-SHIFT
                             </span>
                           )}
                         </div>
                         <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                          {agent.role}{agent.department ? ` � ${agent.department}` : ''}
+                          {agent.role}{agent.department ? ` · ${agent.department}` : ''}
                         </div>
                       </div>
 
@@ -366,7 +366,7 @@ const RtmMonitorPage = () => {
                           fontWeight: 700, fontSize: 13,
                           color: isFlagged ? '#EF4444' : agent.auxStatus === 'Live' ? AUX_COLORS.Live : 'var(--text-primary)',
                         }}>
-                          {agent.activeStatusSince ? fmtDuration(currentMs) : '�'}
+                          {agent.activeStatusSince ? fmtDuration(currentMs) : '—'}
                         </div>
                       </div>
 
@@ -388,7 +388,7 @@ const RtmMonitorPage = () => {
 
                       {/* Shift */}
                       <div style={{ flex: '0 0 160px', fontSize: 11, color: 'var(--text-muted)', textAlign: 'right' }}>
-                        <div>?? {agent.shift || 'N/A'}{agent.isOffDay ? ' � Off day' : ''}</div>
+                        <div>🕐 {agent.shift || 'N/A'}{agent.isOffDay ? ' · Off day' : ''}</div>
                         {isFlagged && agent.rtmFlaggedAt && (
                           <div style={{ color: '#EF4444', marginTop: 3 }}>
                             Flagged at {new Date(agent.rtmFlaggedAt).toLocaleTimeString()}
@@ -404,7 +404,7 @@ const RtmMonitorPage = () => {
                           disabled={unflagging === agent._id}
                           style={{ flexShrink: 0, padding: '6px 14px', fontSize: 12 }}
                         >
-                          {unflagging === agent._id ? '�' : '? Unflag'}
+                          {unflagging === agent._id ? '…' : '✓ Unflag'}
                         </button>
                       ) : agent.rtmSuppressUntil && agent.rtmSuppressUntil > now ? (
                         <div style={{
@@ -413,7 +413,7 @@ const RtmMonitorPage = () => {
                           background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.35)',
                           textAlign: 'center',
                         }}>
-                          Hold � {Math.max(1, Math.ceil((agent.rtmSuppressUntil - now) / 60000))}m
+                          Hold · {Math.max(1, Math.ceil((agent.rtmSuppressUntil - now) / 60000))}m
                         </div>
                       ) : null}
                     </div>

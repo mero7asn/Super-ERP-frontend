@@ -1,4 +1,4 @@
-export const DEPARTMENT_THEMES = {
+﻿export const DEPARTMENT_THEMES = {
   // CRM / SALES
   Sales: {
     id: 'Sales',
@@ -7,7 +7,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#C2410C',
     light: '#FFF7ED',
     badgeClass: 'badge-new',
-    icon: '??',
+    icon: '💼',
   },
   'Customer Support': {
     id: 'Customer Support',
@@ -16,7 +16,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#C2410C',
     light: '#FFF7ED',
     badgeClass: 'badge-converted',
-    icon: '??',
+    icon: '🎧',
   },
   Marketing: {
     id: 'Marketing',
@@ -25,7 +25,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#C2410C',
     light: '#FFF7ED',
     badgeClass: 'badge-meta',
-    icon: '??',
+    icon: '📣',
   },
   // IT / TECHNOLOGY
   Technology: {
@@ -35,7 +35,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#0E7490',
     light: '#ECFEFF',
     badgeClass: 'badge-qualified',
-    icon: '??',
+    icon: '⚙️',
   },
   Executive: {
     id: 'Executive',
@@ -44,7 +44,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#0E7490',
     light: '#ECFEFF',
     badgeClass: 'badge-converted',
-    icon: '??',
+    icon: '🏢',
   },
   // HR
   'Human Resources': {
@@ -54,7 +54,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#6D28D9',
     light: '#F5F3FF',
     badgeClass: 'badge-meta',
-    icon: '??',
+    icon: '👥',
   },
   Personal: {
     id: 'Personal',
@@ -63,7 +63,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#6D28D9',
     light: '#F5F3FF',
     badgeClass: 'badge-new',
-    icon: '??',
+    icon: '👤',
   },
   Payroll: {
     id: 'Payroll',
@@ -72,7 +72,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#6D28D9',
     light: '#F5F3FF',
     badgeClass: 'badge-qualified',
-    icon: '??',
+    icon: '💵',
   },
   Training: {
     id: 'Training',
@@ -81,7 +81,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#6D28D9',
     light: '#F5F3FF',
     badgeClass: 'badge-converted',
-    icon: '??',
+    icon: '📚',
   },
   'Talent Acquisition': {
     id: 'Talent Acquisition',
@@ -90,7 +90,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#6D28D9',
     light: '#F5F3FF',
     badgeClass: 'badge-meta',
-    icon: '??',
+    icon: '🎯',
   },
   'BD & People Culture': {
     id: 'BD & People Culture',
@@ -99,7 +99,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#6D28D9',
     light: '#F5F3FF',
     badgeClass: 'badge-contacted',
-    icon: '??',
+    icon: '🤝',
   },
   // FINANCE
   Finance: {
@@ -109,7 +109,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#047857',
     light: '#ECFDF5',
     badgeClass: 'badge-contacted',
-    icon: '??',
+    icon: '💰',
   },
   // INVENTORY
   Inventory: {
@@ -119,7 +119,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#B45309',
     light: '#FFFBEB',
     badgeClass: 'badge-qualified',
-    icon: '??',
+    icon: '📦',
   },
   // OPERATIONS
   Operations: {
@@ -129,7 +129,7 @@ export const DEPARTMENT_THEMES = {
     dark: '#BE123C',
     light: '#FFF1F2',
     badgeClass: 'badge-contacted',
-    icon: '???',
+    icon: '🛠️',
   },
 };
 

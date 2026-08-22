@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -144,7 +144,7 @@ const UserProfilePage = () => {
     }
   };
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading profile…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading profileâ€¦</div>;
   if (!user) return null;
 
   const initials = `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase();
@@ -259,7 +259,7 @@ const UserProfilePage = () => {
                   </div>
                   <div className="form-group" style={{ margin: 0 }}>
                     <label className="form-label">New Password <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(leave blank to keep)</span></label>
-                    <input className="form-input" type="password" placeholder="••••••••" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
+                    <input className="form-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
                   </div>
                 </div>
               </div>
@@ -288,7 +288,7 @@ const UserProfilePage = () => {
                       <div className="form-group" style={{ margin: '16px 0 0' }}>
                         <label className="form-label">Supervisor</label>
                         <select className="form-input" value={form.supervisor} onChange={e => setForm(f => ({ ...f, supervisor: e.target.value }))}>
-                          <option value="">— No Supervisor —</option>
+                          <option value="">â€” No Supervisor â€”</option>
                           {managers.map(m => (
                             <option key={m._id} value={m._id}>{m.firstName} {m.lastName} ({m.role})</option>
                           ))}
@@ -326,7 +326,7 @@ const UserProfilePage = () => {
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
                 <button className="btn btn-secondary btn-sm" onClick={() => setEditing(false)} disabled={saving}>Cancel</button>
                 <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving} style={{ width: 'auto' }}>
-                  {saving ? 'Saving…' : 'Save Changes'}
+                  {saving ? 'Savingâ€¦' : 'Save Changes'}
                 </button>
               </div>
             </>
@@ -342,7 +342,7 @@ const UserProfilePage = () => {
                     ...(user.title ? [{ label: 'Title', value: user.title }] : []),
                     { label: 'Email Address', value: user.email },
                     { label: 'Role', value: user.role },
-                    ...(user.role !== 'Executive User' ? [{ label: 'Supervisor', value: user.supervisor ? `${user.supervisor.firstName} ${user.supervisor.lastName} (${user.supervisor.role})` : '— None —' }] : []),
+                    ...(user.role !== 'Executive User' ? [{ label: 'Supervisor', value: user.supervisor ? `${user.supervisor.firstName} ${user.supervisor.lastName} (${user.supervisor.role})` : 'â€” None â€”' }] : []),
                     { label: 'Account Status', value: user.isActive ? 'Active' : 'Suspended' },
                     { label: 'User ID', value: user._id },
                   ].map(({ label, value }) => (
@@ -435,9 +435,9 @@ const UserProfilePage = () => {
           <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Recent system activity</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {[
-              ['Updated profile information', 'Today · 09:24'],
-              ['Reviewed account permissions', 'Yesterday · 16:12'],
-              ['Opened user management workspace', 'Yesterday · 11:05']
+              ['Updated profile information', 'Today Â· 09:24'],
+              ['Reviewed account permissions', 'Yesterday Â· 16:12'],
+              ['Opened user management workspace', 'Yesterday Â· 11:05']
             ].map(([title, time]) => (
               <div key={title} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', borderRadius: 10, background: 'rgba(248,250,252,0.9)' }}>
                 <span style={{ fontSize: 14, fontWeight: 600 }}>{title}</span>

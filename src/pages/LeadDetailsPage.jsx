@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -22,11 +22,11 @@ const STATUSES = ['New', 'Contacted', 'Qualified', 'Lost', 'Converted'];
 
 const FALLBACK_CURRENCIES = [
   { code: 'USD', name: 'US Dollar', symbol: '$', rate: 1 },
-  { code: 'EUR', name: 'Euro', symbol: '€', rate: 0.92 },
-  { code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.79 },
-  { code: 'EGP', name: 'Egyptian Pound', symbol: 'E£', rate: 48.5 },
-  { code: 'SAR', name: 'Saudi Riyal', symbol: '?', rate: 3.75 },
-  { code: 'AED', name: 'UAE Dirham', symbol: '?.?', rate: 3.67 },
+  { code: 'EUR', name: 'Euro', symbol: 'â‚¬', rate: 0.92 },
+  { code: 'GBP', name: 'British Pound', symbol: 'Â£', rate: 0.79 },
+  { code: 'EGP', name: 'Egyptian Pound', symbol: 'EÂ£', rate: 48.5 },
+  { code: 'SAR', name: 'Saudi Riyal', symbol: 'ï·¼', rate: 3.75 },
+  { code: 'AED', name: 'UAE Dirham', symbol: 'Ø¯.Ø¥', rate: 3.67 },
 ];
 
 const normalizeCurrencies = (values = []) => {
@@ -457,7 +457,7 @@ const LeadDetailsPage = () => {
     }
   };
 
-  if (loading) return <div className="loading-state"><div className="spinner" />Loading lead details…</div>;
+  if (loading) return <div className="loading-state"><div className="spinner" />Loading lead detailsâ€¦</div>;
   if (!lead) return <div className="empty-state"><p>Lead not found</p></div>;
 
   const leadInitials = String(lead.name || 'Lead').split(' ').slice(0, 2).map(part => part[0] || '').join('').toUpperCase() || 'L';
@@ -473,7 +473,7 @@ const LeadDetailsPage = () => {
             {lead.name}
           </h1>
           <p style={{ fontSize: 13, color: '#CBD5E1', marginTop: 8, margin: 0, lineHeight: 1.5 }}>
-            {lead.email} • {lead.phone || 'No phone on file'} • Status <strong style={{ color: '#F8FAFC' }}>{lead.status}</strong>
+            {lead.email} â€¢ {lead.phone || 'No phone on file'} â€¢ Status <strong style={{ color: '#F8FAFC' }}>{lead.status}</strong>
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
@@ -521,7 +521,7 @@ const LeadDetailsPage = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
                     <div style={{ fontSize: 14, color: 'var(--text-primary)' }}>{lead.phone}</div>
                     <button className="btn btn-secondary btn-sm" onClick={handleCallLead} disabled={callingLead || offers.length === 0}>
-                      {callingLead ? 'Calling...' : '?? Call'}
+                      {callingLead ? 'Calling...' : 'ðŸ“ž Call'}
                     </button>
                   </div>
                 </div>
@@ -605,7 +605,7 @@ const LeadDetailsPage = () => {
 
           {offers.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-state-icon">??</div>
+              <div className="empty-state-icon">ðŸ’¼</div>
               <p>No offers yet. Create one to get started.</p>
             </div>
           ) : (
@@ -625,9 +625,9 @@ const LeadDetailsPage = () => {
                   { title: 'Payment', description: offer.status === 'Accepted' || offer.status === 'Paid' ? 'Customer payment is in progress or completed.' : 'Payment is still pending.', time: offer.status === 'Accepted' || offer.status === 'Paid' ? 'Awaiting confirmation' : 'Pending' }
                 ];
                 const auditEntries = [
-                  { time: offer.createdAt ? new Date(offer.createdAt).toLocaleString() : '—', action: `${offer.createdBy?.firstName || 'Employee'} created ${offer.title || 'this offer'}` },
-                  { time: offer.updatedAt ? new Date(offer.updatedAt).toLocaleString() : '—', action: 'Offer details and pricing were revised' },
-                  { time: offer.sentAt ? new Date(offer.sentAt).toLocaleString() : '—', action: 'Offer sent to customer' }
+                  { time: offer.createdAt ? new Date(offer.createdAt).toLocaleString() : 'â€”', action: `${offer.createdBy?.firstName || 'Employee'} created ${offer.title || 'this offer'}` },
+                  { time: offer.updatedAt ? new Date(offer.updatedAt).toLocaleString() : 'â€”', action: 'Offer details and pricing were revised' },
+                  { time: offer.sentAt ? new Date(offer.sentAt).toLocaleString() : 'â€”', action: 'Offer sent to customer' }
                 ];
 
                 return (
@@ -648,7 +648,7 @@ const LeadDetailsPage = () => {
                             <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--accent-primary)' }}>{offerSymbol}{formattedPrice}</div>
                             <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{offer.currency || 'USD'}</div>
                           </div>
-                          <div style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>View details ?</div>
+                          <div style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>View details â†’</div>
                         </div>
                       </div>
                     </div>
@@ -687,7 +687,7 @@ const LeadDetailsPage = () => {
                     value={selectedTemplate}
                     onChange={e => setSelectedTemplate(e.target.value)}
                   >
-                    <option value="">— Select a template —</option>
+                    <option value="">â€” Select a template â€”</option>
                     {templates.map(t => (
                       <option key={t._id} value={t._id}>{t.name}</option>
                     ))}
@@ -716,7 +716,7 @@ const LeadDetailsPage = () => {
                        setNewOffer(prev => ({ ...prev, catalogProduct: e.target.value, price: selectedProduct ? selectedProduct.price : '' }));
                      }}
                   >
-                    <option value="">— Select a product —</option>
+                    <option value="">â€” Select a product â€”</option>
                     {products.map(product => (
                       <option key={product._id} value={product._id}>{product.name} ({product.sku})</option>
                     ))}
@@ -1021,7 +1021,7 @@ const OfferCommunicationPanel = ({ offer, user, onError, onSuccess }) => {
       </form>
 
       {loading ? (
-        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Loading communications…</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Loading communicationsâ€¦</div>
       ) : communications.length === 0 ? (
         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>No communications yet for this offer.</div>
       ) : (
@@ -1154,13 +1154,13 @@ const TemplateEditorInline = ({ mode, editingTemplateId, blocks, setBlocks, temp
           {[
             { type: 'header', label: 'Header', icon: 'H' },
             { type: 'text', label: 'Text', icon: 'T' },
-            { type: 'image', label: 'Image', icon: '??' },
-            { type: 'button', label: 'Button', icon: '??' },
-            { type: 'divider', label: 'Divider', icon: '—' },
-            { type: 'spacer', label: 'Spacer', icon: '?' },
-            { type: 'offer-details', label: 'Offer Details', icon: '??' },
-            { type: 'payment-link', label: 'Payment Button', icon: '??' },
-            { type: 'company-info', label: 'Company Info', icon: '??' },
+            { type: 'image', label: 'Image', icon: 'ðŸ–¼' },
+            { type: 'button', label: 'Button', icon: 'ðŸ”˜' },
+            { type: 'divider', label: 'Divider', icon: 'â€”' },
+            { type: 'spacer', label: 'Spacer', icon: 'â†•' },
+            { type: 'offer-details', label: 'Offer Details', icon: 'ðŸ“‹' },
+            { type: 'payment-link', label: 'Payment Button', icon: 'ðŸ’³' },
+            { type: 'company-info', label: 'Company Info', icon: 'ðŸ¢' },
           ].map(bt => (
             <div
               key={bt.type}
@@ -1201,9 +1201,9 @@ const TemplateEditorInline = ({ mode, editingTemplateId, blocks, setBlocks, temp
                   {block.type} #{index + 1}
                 </span>
                 <div style={{ display: 'flex', gap: 4 }}>
-                  <button onClick={(e) => { e.stopPropagation(); if (index > 0) moveBlock(index, index - 1); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12 }}>?</button>
-                  <button onClick={(e) => { e.stopPropagation(); if (index < blocks.length - 1) moveBlock(index, index + 1); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12 }}>?</button>
-                  <button onClick={(e) => { e.stopPropagation(); deleteBlock(block.id); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 14 }}>×</button>
+                  <button onClick={(e) => { e.stopPropagation(); if (index > 0) moveBlock(index, index - 1); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12 }}>â†‘</button>
+                  <button onClick={(e) => { e.stopPropagation(); if (index < blocks.length - 1) moveBlock(index, index + 1); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12 }}>â†“</button>
+                  <button onClick={(e) => { e.stopPropagation(); deleteBlock(block.id); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 14 }}>Ã—</button>
                 </div>
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-secondary)' }} dangerouslySetInnerHTML={{ __html: renderBlockPreview(block, previewData) }} />

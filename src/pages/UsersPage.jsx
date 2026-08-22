@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+ï»¿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
@@ -94,7 +94,7 @@ const UsersPage = () => {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <input
             className="table-search"
-            placeholder="Search users…"
+            placeholder="Search usersâ€¦"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -119,7 +119,7 @@ const UsersPage = () => {
         {loading ? (
           <div className="loading-state">
             <div className="spinner" />
-            Loading users…
+            Loading usersâ€¦
           </div>
         ) : filtered.length === 0 ? (
           <div className="empty-state">
