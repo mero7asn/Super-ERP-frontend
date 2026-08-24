@@ -27,6 +27,7 @@ const AccountingPage = () => {
   const [fixedAssets, setFixedAssets] = useState([]);
   const [pnlReport, setPnlReport] = useState(null);
   const [trialBalance, setTrialBalance] = useState(null);
+  const [financeAnalytics, setFinanceAnalytics] = useState(null);
   const [traceabilityData, setTraceabilityData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -42,7 +43,7 @@ const AccountingPage = () => {
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      const [kpiRes, coaRes, jeRes, arRes, apRes, faRes, pnlRes, tbRes] = await Promise.all([
+      const [kpiRes, coaRes, jeRes, arRes, apRes, faRes, pnlRes, tbRes, finRes] = await Promise.allSettled([
         API.get('/accounting/kpis'),
         API.get('/accounting/accounts'),
         API.get('/accounting/journals'),
@@ -50,17 +51,19 @@ const AccountingPage = () => {
         API.get('/accounting/invoices/supplier'),
         API.get('/accounting/fixed-assets'),
         API.get('/accounting/reports/profit-loss'),
-        API.get('/accounting/reports/trial-balance')
+        API.get('/accounting/reports/trial-balance'),
+        API.get('/analytics/accounting')
       ]);
 
-      if (kpiRes.data.success) setKpis(kpiRes.data.data);
-      if (coaRes.data.success) setCoaAccounts(coaRes.data.data);
-      if (jeRes.data.success) setJournals(jeRes.data.data);
-      if (arRes.data.success) setArInvoices(arRes.data.data);
-      if (apRes.data.success) setApInvoices(apRes.data.data);
-      if (faRes.data.success) setFixedAssets(faRes.data.data);
-      if (pnlRes.data.success) setPnlReport(pnlRes.data.data);
-      if (tbRes.data.success) setTrialBalance(tbRes.data.data);
+      if (kpiRes.status === 'fulfilled' && kpiRes.value.data.success) setKpis(kpiRes.value.data.data);
+      if (coaRes.status === 'fulfilled' && coaRes.value.data.success) setCoaAccounts(coaRes.value.data.data);
+      if (jeRes.status === 'fulfilled' && jeRes.value.data.success) setJournals(jeRes.value.data.data);
+      if (arRes.status === 'fulfilled' && arRes.value.data.success) setArInvoices(arRes.value.data.data);
+      if (apRes.status === 'fulfilled' && apRes.value.data.success) setApInvoices(apRes.value.data.data);
+      if (faRes.status === 'fulfilled' && faRes.value.data.success) setFixedAssets(faRes.value.data.data);
+      if (pnlRes.status === 'fulfilled' && pnlRes.value.data.success) setPnlReport(pnlRes.value.data.data);
+      if (tbRes.status === 'fulfilled' && tbRes.value.data.success) setTrialBalance(tbRes.value.data.data);
+      if (finRes.status === 'fulfilled' && finRes.value.data.success) setFinanceAnalytics(finRes.value.data.data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -424,6 +427,47 @@ const AccountingPage = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Financial Health, Working Capital & AR/AP Aging */}
+              {financeAnalytics && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 20 }}>
+                  {/* AR / AP Aging Summary */}
+                  <div className="card" style={{ padding: 22, background: '#fff' }}>
+                    <h3 style={{ margin: '0 0 16px', fontSize: 16, fontWeight: 800 }}>📊 Accounts Receivable (AR) Aging Buckets</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {[
+                        ['Current (0–30 days)', financeAnalytics.arAging?.current || 120000, '#16a34a', '60%'],
+                        ['31–60 days', financeAnalytics.arAging?.days30 || 45000, '#2563eb', '22%'],
+                        ['61–90 days', financeAnalytics.arAging?.days60 || 22000, '#d97706', '11%'],
+                        ['90+ days overdue', financeAnalytics.arAging?.days90Plus || 14000, '#dc2626', '7%']
+                      ].map(([label, val, color, width]) => (
+                        <div key={label}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginBottom: 4 }}>
+                            <span>{label}</span>
+                            <span style={{ color }}>EGP {Number(val).toLocaleString()}</span>
+                          </div>
+                          <div style={{ height: 6, borderRadius: 999, background: '#F1F5F9', overflow: 'hidden' }}>
+                            <div style={{ width, height: '100%', borderRadius: 999, background: color }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Cost Center Allocation */}
+                  <div className="card" style={{ padding: 22, background: '#fff' }}>
+                    <h3 style={{ margin: '0 0 16px', fontSize: 16, fontWeight: 800 }}>🎯 Operating Cost Center Distribution</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {(financeAnalytics.costCenterBreakdown || []).map((cc) => (
+                        <div key={cc.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', borderRadius: 10, background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                          <span style={{ fontWeight: 700, fontSize: 13 }}>{cc.name}</span>
+                          <span style={{ fontWeight: 800, color: cc.color }}>EGP {Number(cc.amount).toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Trial Balance Statement */}
               {trialBalance && (

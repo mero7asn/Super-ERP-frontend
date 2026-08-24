@@ -32,6 +32,7 @@ import PayrollPage from './pages/hrm/PayrollPage';
 import TrainingPage from './pages/hrm/TrainingPage';
 import TalentAcquisitionPage from './pages/hrm/TalentAcquisitionPage';
 import PartnershipsPage from './pages/hrm/PartnershipsPage';
+import HrmAnalyticsPage from './pages/hrm/HrmAnalyticsPage';
 import MySchedulePage from './pages/ess/MySchedulePage';
 import MyPayrollPage from './pages/ess/MyPayrollPage';
 import { useAuth } from './context/AuthContext';
@@ -742,6 +743,22 @@ const AppRoutes = () => {
           ]}>
             <AppLayout>
               <PartnershipsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Protected: HRM Analytics */}
+      <Route
+        path="/hrm/analytics"
+        element={
+          <ProtectedRoute allowedRoles={[
+            'CRM core Administrator', 'HRM System Administrator', 'HR Manager',
+            'HR Business Partner', 'Employee (General User)', 'Executive User',
+            'System Architect', 'Super CRM Administrator', 'Super Admin'
+          ]}>
+            <AppLayout>
+              <HrmAnalyticsPage />
             </AppLayout>
           </ProtectedRoute>
         }

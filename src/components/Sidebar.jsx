@@ -172,6 +172,7 @@ const ACCOUNTING_SUB_ITEMS = [
 // 4. HRM core NAV ITEMS
 const HRM_NAV_ITEMS = [
   { label: 'HRM Dashboard', icon: 'dashboard', path: '/hrm', roles: null },
+  { label: 'HR Analytics', icon: 'analytics', path: '/hrm/analytics', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','HR Specialist (Generalist)','HR Business Partner','Employee (General User)','Executive User','Business Analyst','System Architect','Super CRM Administrator','Super Admin'] },
   { label: 'Personal & Staff', icon: 'personal', path: '/hrm/personal', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','HR Specialist (Generalist)','HR Business Partner','Employee (General User)'] },
   { label: 'Payroll', icon: 'payroll', path: '/hrm/payroll', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Payroll Specialist','Employee (General User)'] },
   { label: 'Training & Development', icon: 'training', path: '/hrm/training', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Training and Development Specialist','Employee (General User)'] },

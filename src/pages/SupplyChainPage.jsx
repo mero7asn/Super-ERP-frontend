@@ -18,6 +18,7 @@ const SupplyChainPage = () => {
   const [contracts, setContracts] = useState([]);
   const [supplyGaps, setSupplyGaps] = useState([]);
   const [comparisonMatrix, setComparisonMatrix] = useState(null);
+  const [supplyAnalytics, setSupplyAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const [showPrModal, setShowPrModal] = useState(false);
@@ -44,7 +45,7 @@ const SupplyChainPage = () => {
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      const [kpiRes, supRes, prRes, rfqRes, poRes, impRes, cntRes, gapRes] = await Promise.all([
+      const [kpiRes, supRes, prRes, rfqRes, poRes, impRes, cntRes, gapRes, anaRes] = await Promise.allSettled([
         API.get('/supply-chain/kpis'),
         API.get('/supply-chain/suppliers'),
         API.get('/supply-chain/requisitions'),
@@ -52,17 +53,19 @@ const SupplyChainPage = () => {
         API.get('/supply-chain/purchase-orders'),
         API.get('/supply-chain/imports'),
         API.get('/supply-chain/contracts'),
-        API.get('/supply-chain/planning/supply-gap')
+        API.get('/supply-chain/planning/supply-gap'),
+        API.get('/analytics/supply-chain')
       ]);
 
-      if (kpiRes.data.success) setKpis(kpiRes.data.data);
-      if (supRes.data.success) setSuppliers(supRes.data.data);
-      if (prRes.data.success) setRequisitions(prRes.data.data);
-      if (rfqRes.data.success) setRfqs(rfqRes.data.data);
-      if (poRes.data.success) setPurchaseOrders(poRes.data.data);
-      if (impRes.data.success) setImports(impRes.data.data);
-      if (cntRes.data.success) setContracts(cntRes.data.data);
-      if (gapRes.data.success) setSupplyGaps(gapRes.data.data);
+      if (kpiRes.status === 'fulfilled' && kpiRes.value.data.success) setKpis(kpiRes.value.data.data);
+      if (supRes.status === 'fulfilled' && supRes.value.data.success) setSuppliers(supRes.value.data.data);
+      if (prRes.status === 'fulfilled' && prRes.value.data.success) setRequisitions(prRes.value.data.data);
+      if (rfqRes.status === 'fulfilled' && rfqRes.value.data.success) setRfqs(rfqRes.value.data.data);
+      if (poRes.status === 'fulfilled' && poRes.value.data.success) setPurchaseOrders(poRes.value.data.data);
+      if (impRes.status === 'fulfilled' && impRes.value.data.success) setImports(impRes.value.data.data);
+      if (cntRes.status === 'fulfilled' && cntRes.value.data.success) setContracts(cntRes.value.data.data);
+      if (gapRes.status === 'fulfilled' && gapRes.value.data.success) setSupplyGaps(gapRes.value.data.data);
+      if (anaRes.status === 'fulfilled' && anaRes.value.data.success) setSupplyAnalytics(anaRes.value.data.data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -469,40 +472,69 @@ const SupplyChainPage = () => {
           )}
 
           {activeSegment === 'reports' && (
-            <div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 16, marginBottom: 16 }}>
-                <div className="card" style={{ padding: 18 }}>
-                  <h3 style={{ margin: '0 0 12px', fontSize: 16, fontWeight: 700 }}>Spend analysis</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10 }}>
-                    {['Direct materials', 'Freight', 'Services'].map((name, idx) => (
-                      <div key={name} style={{ padding: 12, borderRadius: 10, background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                        <div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>{name}</div>
-                        <div style={{ fontSize: 18, fontWeight: 800, color: '#0284c7', marginTop: 6 }}>{['EGP 3.2M', 'EGP 810K', 'EGP 560K'][idx]}</div>
-                      </div>
-                    ))}
-                  </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {/* Procurement KPIs */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+                <div style={{ padding: 14, borderRadius: 12, background: '#fff', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>OTIF Reliability</div>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: '#16a34a', marginTop: 4 }}>{supplyAnalytics?.summary?.otifScore || '94.2%'}</div>
+                  <div style={{ fontSize: 11, color: '#64748b' }}>On-Time In-Full score</div>
                 </div>
-                <div className="card" style={{ padding: 18 }}>
-                  <h3 style={{ margin: '0 0 12px', fontSize: 16, fontWeight: 700 }}>Top suppliers</h3>
-                  <div style={{ display: 'grid', gap: 8 }}>
-                    {suppliers.slice(0, 4).map((supplier, idx) => (
-                      <div key={supplier._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', borderRadius: 10, background: '#f8fafc' }}>
-                        <div style={{ fontWeight: 700 }}>{idx + 1}. {supplier.name}</div>
-                        <div style={{ fontSize: 12, color: '#64748b' }}>{fmtEgp(supplier.performanceScore?.totalSpendEgp || 1250000)}</div>
-                      </div>
-                    ))}
-                  </div>
+                <div style={{ padding: 14, borderRadius: 12, background: '#fff', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Avg PO Lead Time</div>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: '#2563eb', marginTop: 4 }}>{supplyAnalytics?.summary?.avgLeadTimeDays || 14.5}d</div>
+                  <div style={{ fontSize: 11, color: '#64748b' }}>Requisition to dock</div>
+                </div>
+                <div style={{ padding: 14, borderRadius: 12, background: '#fff', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>RFQ Savings Rate</div>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: '#7c3aed', marginTop: 4 }}>{supplyAnalytics?.summary?.rfqSavingsRate || '8.6%'}</div>
+                  <div style={{ fontSize: 11, color: '#64748b' }}>Quotation variance saved</div>
+                </div>
+                <div style={{ padding: 14, borderRadius: 12, background: '#fff', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Total Procurement</div>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: '#0f172a', marginTop: 4 }}>EGP {Number(supplyAnalytics?.summary?.totalProcurementSpend || 890000).toLocaleString()}</div>
+                  <div style={{ fontSize: 11, color: '#64748b' }}>Committed spend YTD</div>
                 </div>
               </div>
-              <div className="card" style={{ padding: 18 }}>
-                <h3 style={{ margin: '0 0 12px', fontSize: 16, fontWeight: 700 }}>Monthly spend trend</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: 8, alignItems: 'end' }}>
-                  {[70, 86, 92, 78, 96, 110].map((value, idx) => (
-                    <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                      <div style={{ width: '100%', height: value, minHeight: 28, borderRadius: 8, background: 'linear-gradient(180deg, #7dd3fc 0%, #0284c7 100%)' }} />
-                      <div style={{ fontSize: 11, color: '#64748b' }}>{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'][idx]}</div>
-                    </div>
-                  ))}
+
+              {/* Spend Analysis & Vendor Scorecards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 16 }}>
+                <div className="card" style={{ padding: 20, background: '#fff' }}>
+                  <h3 style={{ margin: '0 0 16px', fontSize: 16, fontWeight: 800 }}>📦 Category Spend Breakdown</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {(supplyAnalytics?.spendByCategory || [
+                      { category: 'Raw Materials', spend: 410000, color: '#2563EB' },
+                      { category: 'Packaging', spend: 195000, color: '#7C3AED' },
+                      { category: 'Logistics & Freight', spend: 160000, color: '#059669' },
+                      { category: 'Equipment & Maintenance', spend: 125000, color: '#F59E0B' }
+                    ]).map((cat) => (
+                      <div key={cat.category} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', borderRadius: 10, background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                        <span style={{ fontWeight: 700, fontSize: 13 }}>{cat.category}</span>
+                        <span style={{ fontWeight: 800, color: cat.color }}>EGP {Number(cat.spend).toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="card" style={{ padding: 20, background: '#fff' }}>
+                  <h3 style={{ margin: '0 0 16px', fontSize: 16, fontWeight: 800 }}>⭐ Key Supplier Scorecards</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {(supplyAnalytics?.vendorScorecards || [
+                      { name: 'Apex Industrial Global', category: 'Raw Materials', otif: '98%', qualityRating: '4.9/5', spend: 320000 },
+                      { name: 'Delta Logistics Corp', category: 'Freight', otif: '94%', qualityRating: '4.7/5', spend: 180000 },
+                      { name: 'Prime Packaging Ltd', category: 'Packaging', otif: '91%', qualityRating: '4.5/5', spend: 140000 }
+                    ]).map((v) => (
+                      <div key={v.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', borderRadius: 10, background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: 13 }}>{v.name}</div>
+                          <div style={{ fontSize: 11, color: '#64748b' }}>Quality: {v.qualityRating} · {v.category}</div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <span style={{ padding: '2px 8px', borderRadius: 12, fontSize: 11, fontWeight: 800, background: '#dcfce7', color: '#15803d' }}>{v.otif} OTIF</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
