@@ -5,7 +5,7 @@ import { AUX_COLORS, AUX_ICONS } from '../context/AuxContext';
 
 const REFRESH_INTERVAL = 20000; // 20s live refresh
 
-const RTM_ROLES = ['RTM Team Member', 'CRM core Administrator', 'HRM System Administrator', 'HR Manager'];
+const RTM_ROLES = ['RTM Team Member', 'CRM core Administrator', 'HRM System Administrator', 'HR Manager', 'Super Admin', 'Super CRM Administrator', 'Administrator', 'Core 360 Administrator'];
 
 // Live elapsed timer — ticks every second
 const useLiveTick = () => {
