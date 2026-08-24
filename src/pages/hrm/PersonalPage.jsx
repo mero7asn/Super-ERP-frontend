@@ -1445,7 +1445,8 @@ const PersonalPage = () => {
                                   </div>
                                 );
                               })()}
-                            </div>gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
+                            </div>
+                            <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
                             <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>
                               Save Base Monthly Plan
                             </button>
