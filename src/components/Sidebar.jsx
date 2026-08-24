@@ -95,6 +95,7 @@ const HRM_ROLES = [
   'Training and Development Specialist', 'Performance Management Specialist',
   'Attendance and Time Officer', 'Employee (General User)', 'HR Director / Executive HR User',
   'RTM Team Member', 'CRM core Administrator', 'Core 360 Administrator',
+  'Super Admin', 'Super CRM Administrator', 'Administrator',
 ];
 
 // 1. CRM core NAV ITEMS
@@ -167,7 +168,7 @@ const ACCOUNTING_SUB_ITEMS = [
 const HRM_NAV_ITEMS = [
   { label: 'HRM Dashboard', icon: 'dashboard', path: '/hrm', roles: null },
   { label: 'Personal & Staff', icon: 'personal', path: '/hrm/personal', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','HR Specialist (Generalist)','HR Business Partner','Employee (General User)'] },
-  { label: 'Payroll', icon: 'payroll', path: '/hrm/payroll', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Payroll Specialist','Employee (General User)'] },
+  { label: 'Payroll', icon: 'payroll', path: '/hrm/payroll', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Payroll Specialist','Employee (General User)','Super Admin','Super CRM Administrator','Administrator','Core 360 Administrator'] },
   { label: 'Training & Development', icon: 'training', path: '/hrm/training', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Training and Development Specialist','Employee (General User)'] },
   { label: 'Talent Acquisition', icon: 'talent', path: '/hrm/talent', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Recruitment Specialist (Talent Acquisition)'] },
   { label: 'BD & People Culture', icon: 'partnerships', path: '/hrm/partnerships', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','HR Business Partner','Employee (General User)'] },

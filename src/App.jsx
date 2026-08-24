@@ -669,7 +669,8 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[
             'CRM core Administrator', 'HRM System Administrator', 'HR Manager',
-            'Payroll Specialist', 'Employee (General User)'
+            'Payroll Specialist', 'Employee (General User)',
+            'Super Admin', 'Super CRM Administrator', 'Administrator', 'Core 360 Administrator'
           ]}>
             <AppLayout>
               <PayrollPage />
