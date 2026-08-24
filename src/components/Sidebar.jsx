@@ -331,7 +331,40 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* 2. MINI SIDEBAR: inventory core */}
+        {/* 2. MINI SIDEBAR: HRM core */}
+        <div className="mini-sidebar-group">
+          <div
+            className="mini-sidebar-sticky-header hrm-header"
+            onClick={() => setHrmOpen(!hrmOpen)}
+            title="HRM core Department"
+          >
+            <div className="mini-sidebar-header-left">
+              <span className="mini-sidebar-icon"><SidebarIcon name="dept-hrm" /></span>
+              <span className="mini-sidebar-title">2. HRM core</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="mini-sidebar-badge">{filteredHrmItems.length}</span>
+              <span className="mini-sidebar-arrow" style={{ transform: hrmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
+            </div>
+          </div>
+
+          {hrmOpen && (
+            <div className="mini-sidebar-body">
+              {filteredHrmItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
+                >
+                  <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 3. MINI SIDEBAR: inventory core */}
         <div className="mini-sidebar-group">
           <div
             className="mini-sidebar-sticky-header inventory-header"
@@ -340,7 +373,7 @@ const Sidebar = () => {
           >
             <div className="mini-sidebar-header-left">
               <span className="mini-sidebar-icon"><SidebarIcon name="dept-inventory" /></span>
-              <span className="mini-sidebar-title">2. inventory core</span>
+              <span className="mini-sidebar-title">3. inventory core</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span className="mini-sidebar-badge">{filteredInventoryItems.length}</span>
@@ -366,7 +399,7 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* 3. MINI SIDEBAR: supply chain core */}
+        {/* 4. MINI SIDEBAR: supply chain core */}
         <div className="mini-sidebar-group">
           <div
             className="mini-sidebar-sticky-header supply-header"
@@ -375,7 +408,7 @@ const Sidebar = () => {
           >
             <div className="mini-sidebar-header-left">
               <span className="mini-sidebar-icon"><SidebarIcon name="dept-supply" /></span>
-              <span className="mini-sidebar-title">3. supply chain core</span>
+              <span className="mini-sidebar-title">4. supply chain core</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span className="mini-sidebar-badge">{filteredSupplyChainItems.length}</span>
@@ -401,7 +434,7 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* 4. MINI SIDEBAR: ACCOUNTING CORE */}
+        {/* 5. MINI SIDEBAR: ACCOUNTING CORE */}
         <div className="mini-sidebar-group">
           <div
             className="mini-sidebar-sticky-header accounting-header"
@@ -411,7 +444,7 @@ const Sidebar = () => {
           >
             <div className="mini-sidebar-header-left">
               <span className="mini-sidebar-icon"><SidebarIcon name="payroll" /></span>
-              <span className="mini-sidebar-title">4. Accounting Core</span>
+              <span className="mini-sidebar-title">5. Accounting Core</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span className="mini-sidebar-badge" style={{ background: '#dcfce7', color: '#166534' }}>{filteredAccountingItems.length}</span>
@@ -431,39 +464,6 @@ const Sidebar = () => {
                 >
                   <span className="sidebar-link-icon"><SidebarIcon name={sub.icon} /></span>
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.label}</span>
-                </NavLink>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* 5. MINI SIDEBAR: HRM core */}
-        <div className="mini-sidebar-group">
-          <div
-            className="mini-sidebar-sticky-header hrm-header"
-            onClick={() => setHrmOpen(!hrmOpen)}
-            title="HRM core Department"
-          >
-            <div className="mini-sidebar-header-left">
-              <span className="mini-sidebar-icon"><SidebarIcon name="dept-hrm" /></span>
-              <span className="mini-sidebar-title">5. HRM core</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span className="mini-sidebar-badge">{filteredHrmItems.length}</span>
-              <span className="mini-sidebar-arrow" style={{ transform: hrmOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
-            </div>
-          </div>
-
-          {hrmOpen && (
-            <div className="mini-sidebar-body">
-              {filteredHrmItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
-                >
-                  <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
-                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
                 </NavLink>
               ))}
             </div>
