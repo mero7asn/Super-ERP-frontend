@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { DEPARTMENTS } from '../../services/departmentJobs';
@@ -112,6 +112,7 @@ const PersonalPage = () => {
 
   const [deptFilter, setDeptFilter] = useState('All');
   const [roleFilter, setRoleFilter] = useState('All');
+  const [empSearch, setEmpSearch] = useState('');
 
   // Salary component form state
   const [compForm, setCompForm] = useState({ label: '', type: 'Earning', valueType: 'Fixed', value: '', kpiLinked: false, note: '', editId: null });
@@ -120,8 +121,9 @@ const PersonalPage = () => {
   // Leave balance
   const [leaveBalance, setLeaveBalance] = useState(null);
 
-  const isHR = ['HRM System Administrator', 'HR Manager', 'HR Specialist (Generalist)', 'CRM core Administrator', 'HR Director / Executive HR User'].includes(user?.role);
-  const isSuperAdmin = ['CRM core Administrator', 'HRM System Administrator'].includes(user?.role);
+  const isHR = ['HRM System Administrator', 'HR Manager', 'HR Specialist (Generalist)', 'CRM core Administrator', 'HR Director / Executive HR User',
+    'Super CRM Administrator', 'Super Admin', 'Administrator', 'Core 360 Administrator', 'System Architect'].includes(user?.role);
+  const isSuperAdmin = ['CRM core Administrator', 'HRM System Administrator', 'Super CRM Administrator', 'Super Admin', 'System Architect'].includes(user?.role);
 
   // Dynamic role list based on selected department filter
   const availableRoles = (() => {
@@ -132,7 +134,13 @@ const PersonalPage = () => {
   const filteredEmployees = employees.filter(e => {
     const deptMatch = deptFilter === 'All' || DEPARTMENTS.find(d => d.id === deptFilter)?.roles.includes(e.role);
     const roleMatch = roleFilter === 'All' || e.role === roleFilter;
-    return deptMatch && roleMatch;
+    const searchTerm = empSearch.trim().toLowerCase();
+    const searchMatch = !searchTerm ||
+      `${e.firstName} ${e.lastName}`.toLowerCase().includes(searchTerm) ||
+      (e._id && e._id.toLowerCase().includes(searchTerm)) ||
+      (e.email && e.email.toLowerCase().includes(searchTerm)) ||
+      (e.role && e.role.toLowerCase().includes(searchTerm));
+    return deptMatch && roleMatch && searchMatch;
   });
 
   const fetchEmployees = async () => {
@@ -427,7 +435,7 @@ const PersonalPage = () => {
         defaultTrainingTarget: Number(defaultTrainingTarget),
         defaultCoachingTarget: Number(defaultCoachingTarget)
       });
-      setStatusMsg({ type: 'success', text: 'Monthly base schedule and AUX targets updated successfully.' });
+      setStatusMsg({ type: 'success', text: `✅ Monthly base schedule saved for ${fullName}. Changes are now live on RTM Monitor & My Schedule.` });
       fetchDetailedSchedule();
       fetchEmployees();
     } catch (err) {
@@ -468,7 +476,7 @@ const PersonalPage = () => {
         defaultShift: primaryShift,
         defaultOffDays: newOffDays
       });
-      setStatusMsg({ type: 'success', text: 'Weekly pattern updated successfully.' });
+      setStatusMsg({ type: 'success', text: `✅ Weekly pattern saved for ${fullName}. Off-days: ${newOffDays.join(', ')}. RTM & My Schedule updated.` });
       fetchDetailedSchedule();
     } catch (err) {
       setStatusMsg({ type: 'error', text: 'Failed to update weekly pattern.' });
@@ -790,8 +798,13 @@ const PersonalPage = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div className="page-header">
         <div>
-          <h1 className="page-title">Personal Department</h1>
-          <p className="page-subtitle">Manage employee lifecycle, Egypt compliance docs, and shift schedules</p>
+          <h1 className="page-title">Personal & Staff</h1>
+          <p className="page-subtitle">
+            {isHR && selectedEmployeeName
+              ? <>Viewing <strong>{selectedEmployeeName.firstName} {selectedEmployeeName.lastName}</strong> · {selectedEmployeeName.role} · {selectedEmployeeName.department || 'No Department'}</>
+              : 'Manage employee lifecycle, Egypt compliance docs, and shift schedules'
+            }
+          </p>
         </div>
       </div>
 
@@ -862,11 +875,53 @@ const PersonalPage = () => {
       </div>
 
       <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-        {/* Left Column: Selector */}
+        {/* Left Column: Employee Selector */}
         {isHR && (
-          <div className="card" style={{ flex: '1 1 260px', maxWidth: 350, display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <h3 style={{ margin: 0, fontSize: 15 }}>Select Employee</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="card" style={{ flex: '0 0 280px', minWidth: 260, maxWidth: 300, display: 'flex', flexDirection: 'column', gap: 12, padding: 16 }}>
+
+            {/* Currently viewing banner */}
+            {selectedEmployeeName && (
+              <div style={{
+                padding: '10px 14px',
+                borderRadius: 10,
+                background: 'linear-gradient(135deg, rgba(37,99,235,0.12), rgba(124,58,237,0.08))',
+                border: '1px solid rgba(37,99,235,0.25)',
+                marginBottom: 4
+              }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--accent-secondary)', marginBottom: 6 }}>Currently Viewing</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{
+                    width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
+                    background: 'linear-gradient(135deg, #2563EB, #7C3AED)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontWeight: 800, fontSize: 14, color: '#fff'
+                  }}>
+                    {(selectedEmployeeName.firstName?.[0] || '')}{ (selectedEmployeeName.lastName?.[0] || '')}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)' }}>
+                      {selectedEmployeeName.firstName} {selectedEmployeeName.lastName}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>{selectedEmployeeName.role}</div>
+                    <div style={{ fontSize: 10, color: 'var(--accent-primary)', marginTop: 2 }}>🕒 {selectedEmployeeName.shift || 'No shift set'}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--text-primary)' }}>Select Employee</div>
+
+            {/* Search by name, ID, or email */}
+            <input
+              className="form-input"
+              type="text"
+              placeholder="🔍 Search name, email or ID…"
+              value={empSearch}
+              onChange={e => setEmpSearch(e.target.value)}
+              style={{ fontSize: 12, padding: '7px 10px' }}
+            />
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <select
                 className="form-input"
                 value={deptFilter}
@@ -890,26 +945,52 @@ const PersonalPage = () => {
               )}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 420, overflowY: 'auto' }}>
-              {filteredEmployees.map(emp => (
-                <div
-                  key={emp._id}
-                  onClick={() => setSelectedEmployeeId(emp._id)}
-                  style={{
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    background: selectedEmployeeId === emp._id ? 'rgba(37,99,235,0.12)' : 'rgba(255,255,255,0.02)',
-                    borderLeft: selectedEmployeeId === emp._id ? '3px solid var(--accent-secondary)' : '3px solid transparent',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    border: '1px solid var(--border-color)'
-                  }}
-                >
-                  <div style={{ fontWeight: '600', fontSize: 13 }}>{emp.firstName} {emp.lastName}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{emp.role}</div>
-                  <div style={{ fontSize: 10, color: 'var(--accent-primary)', marginTop: 4 }}>🕒 {emp.shift}</div>
-                </div>
-              ))}
+            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+              {filteredEmployees.length} of {employees.length} employees
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 400, overflowY: 'auto' }}>
+              {filteredEmployees.map(emp => {
+                const isSelected = selectedEmployeeId === emp._id;
+                const initials = `${emp.firstName?.[0] || ''}${emp.lastName?.[0] || ''}`.toUpperCase();
+                const colors = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4'];
+                const avatarColor = colors[(initials.charCodeAt(0) || 0) % colors.length];
+                return (
+                  <div
+                    key={emp._id}
+                    onClick={() => setSelectedEmployeeId(emp._id)}
+                    style={{
+                      padding: '10px 12px',
+                      borderRadius: 10,
+                      background: isSelected ? 'rgba(37,99,235,0.1)' : 'transparent',
+                      border: isSelected ? '1.5px solid rgba(37,99,235,0.4)' : '1px solid var(--border-color)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10
+                    }}
+                  >
+                    <div style={{
+                      width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                      background: avatarColor,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontWeight: 700, fontSize: 12, color: '#fff'
+                    }}>
+                      {initials}
+                    </div>
+                    <div style={{ overflow: 'hidden' }}>
+                      <div style={{ fontWeight: isSelected ? 700 : 600, fontSize: 13, color: isSelected ? 'var(--accent-secondary)' : 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {emp.firstName} {emp.lastName}
+                      </div>
+                      <div style={{ fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{emp.role}</div>
+                    </div>
+                    {isSelected && (
+                      <div style={{ marginLeft: 'auto', flexShrink: 0, width: 8, height: 8, borderRadius: '50%', background: '#2563EB' }} />
+                    )}
+                  </div>
+                );
+              })}
               {filteredEmployees.length === 0 && (
                 <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: 12, padding: 20 }}>
                   No employees match filter

@@ -200,32 +200,6 @@ const HrmDashboardPage = () => {
           </div>
         ))}
       </div>
-
-      {/* Cross-Core Communication Banner */}
-      <div
-        className="card"
-        style={{
-          background: 'linear-gradient(135deg, rgba(37,99,235,0.08), rgba(124,58,237,0.08))',
-          border: '1px solid rgba(37,99,235,0.2)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 16,
-          padding: 20,
-          borderRadius: 14
-        }}
-      >
-        <div>
-          <h3 style={{ margin: '0 0 4px 0', fontSize: 16, fontWeight: 800, color: '#0F172A' }}>Internal Organization Communications</h3>
-          <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>
-            Send secure announcements, formal notices, or department memos across CRM and HRM teams.
-          </p>
-        </div>
-        <Link to="/emails" className="btn btn-primary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <Icon name="email" size={14} /> Open Internal Inbox
-        </Link>
-      </div>
     </div>
   );
 };
