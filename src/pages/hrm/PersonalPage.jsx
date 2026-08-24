@@ -1391,110 +1391,61 @@ const PersonalPage = () => {
                            </div>
 
                            {/* Break Time Slot Scheduler */}
-                           <div style={{ gridColumn: 'span 2', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 16 }}>
-                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                               <div>
-                                 <label className="form-label" style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>☕ Break Time Slots</label>
-                                 <p style={{ margin: '2px 0 0 0', fontSize: 11, color: 'var(--text-muted)' }}>Set exact break times within the shift window</p>
-                               </div>
-                               <button type="button" className="btn btn-sm btn-secondary" onClick={addBreakSlot} style={{ fontSize: 11 }}>
-                                 + Add Break
-                               </button>
-                             </div>
-
-                             {/* Visual Timeline */}
-                             <div style={{ 
-                               display: 'flex', 
-                               height: 32, 
-                               background: 'rgba(59,130,246,0.08)', 
-                               borderRadius: 6,
-                               border: '1px solid rgba(59,130,246,0.15)',
-                               position: 'relative',
-                               marginBottom: 12,
-                               overflow: 'hidden'
-                             }}>
-                               {/* Shift background */}
-                               <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: '#93c5fd' }}>
-                                 Shift Window
-                               </div>
-                               {/* Break overlays */}
-                               {breakSlots.map((slot, idx) => {
-                                 const [startH] = slot.start.split(':').map(Number);
-                                 const [endH] = slot.end.split(':').map(Number);
-                                 const left = ((startH - 9) / 8) * 100;
-                                 const width = ((endH - startH) / 8) * 100;
-                                 return (
-                                   <div 
-                                     key={idx}
-                                     style={{
-                                       position: 'absolute',
-                                       left: `${Math.max(0, left)}%`,
-                                       width: `${Math.max(5, width)}%`,
-                                       height: '100%',
-                                       background: 'rgba(239,68,68,0.3)',
-                                       borderLeft: '2px solid rgba(239,68,68,0.6)',
-                                       borderRight: '2px solid rgba(239,68,68,0.6)',
-                                       display: 'flex',
-                                       alignItems: 'center',
-                                       justifyContent: 'center',
-                                       fontSize: 9,
-                                       color: '#fca5a5',
-                                       fontWeight: 600,
-                                     }}
-                                   >
-                                     ☕ {slot.start}-{slot.end}
-                                   </div>
-                                 );
-                               })}
-                             </div>
-
-                             {/* Break Slot Editors */}
-                             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                               {breakSlots.map((slot, idx) => (
-                                 <div key={idx} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                                   <span style={{ fontSize: 11, color: 'var(--text-muted)', minWidth: 60 }}>Break {idx + 1}:</span>
-                                   <input 
-                                     type="time" 
-                                     className="form-input" 
-                                     value={slot.start} 
-                                     onChange={(e) => updateBreakSlot(idx, 'start', e.target.value)}
-                                     style={{ width: 'auto', padding: '4px 8px', fontSize: 12 }}
-                                   />
-                                   <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>to</span>
-                                   <input 
-                                     type="time" 
-                                     className="form-input" 
-                                     value={slot.end} 
-                                     onChange={(e) => updateBreakSlot(idx, 'end', e.target.value)}
-                                     style={{ width: 'auto', padding: '4px 8px', fontSize: 12 }}
-                                   />
-                                   <span style={{ fontSize: 11, color: '#fcd34d', marginLeft: 8 }}>
-                                     ({calcSlotMinutes([slot])}m)
-                                   </span>
-                                   {breakSlots.length > 1 && (
-                                     <button 
-                                       type="button" 
-                                       onClick={() => removeBreakSlot(idx)}
-                                       style={{ 
-                                         background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', 
-                                         fontSize: 14, padding: '2px 6px' 
-                                       }}
-                                     >
-                                       ✕
-                                     </button>
-                                   )}
-                                 </div>
-                               ))}
-                             </div>
-
-                             {breakSlots.length === 0 && (
-                               <div style={{ textAlign: 'center', padding: 12, color: 'var(--text-muted)', fontSize: 12, background: 'rgba(255,255,255,0.02)', borderRadius: 6 }}>
-                                 No break slots defined. Break time will be deducted from live time automatically.
-                               </div>
-                             )}
-                           </div>
-
-                          <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
+                            <div style={{ gridColumn: 'span 2', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 16 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                                <div>
+                                  <label className="form-label" style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>☕ Break Time Slots</label>
+                                  <p style={{ margin: '2px 0 0 0', fontSize: 11, color: 'var(--text-muted)' }}>Add break periods within your shift</p>
+                                </div>
+                                <button type="button" className="btn btn-sm btn-secondary" onClick={addBreakSlot} style={{ fontSize: 11 }}>
+                                  + Add Break
+                                </button>
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                {breakSlots.length === 0 ? (
+                                  <div style={{ textAlign: 'center', padding: '16px 12px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: '1px dashed var(--border-color)' }}>
+                                    <div style={{ fontSize: 24, marginBottom: 4 }}>☕</div>
+                                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>No breaks added</div>
+                                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>Click "+ Add Break" to schedule break times</div>
+                                  </div>
+                                ) : (
+                                  breakSlots.map((slot, idx) => {
+                                    const mins = calcSlotMinutes([slot]);
+                                    const isValid = mins > 0;
+                                    return (
+                                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: `1px solid ${isValid ? 'var(--border-color)' : 'rgba(239,68,68,0.3)'}` }}>
+                                        <div style={{ fontSize: 20 }}>☕</div>
+                                        <div style={{ flex: 1 }}>
+                                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                            <input type="time" className="form-input" value={slot.start} onChange={(e) => updateBreakSlot(idx, 'start', e.target.value)} style={{ width: 'auto', padding: '6px 10px', fontSize: 13 }} />
+                                            <span style={{ color: 'var(--text-muted)', fontSize: 14 }}>→</span>
+                                            <input type="time" className="form-input" value={slot.end} onChange={(e) => updateBreakSlot(idx, 'end', e.target.value)} style={{ width: 'auto', padding: '6px 10px', fontSize: 13 }} />
+                                          </div>
+                                          <div style={{ fontSize: 11, marginTop: 4, color: isValid ? 'var(--text-muted)' : '#EF4444' }}>
+                                            {isValid ? `${mins} minutes` : 'End time must be after start time'}
+                                          </div>
+                                        </div>
+                                        <div style={{ padding: '4px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600, background: isValid ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)', color: isValid ? '#fcd34d' : '#EF4444' }}>
+                                          {isValid ? `${Math.floor(mins / 60) > 0 ? Math.floor(mins / 60) + 'h ' : ''}${mins % 60 > 0 ? (mins % 60) + 'm' : ''}` : 'Invalid'}
+                                        </div>
+                                        <button type="button" onClick={() => removeBreakSlot(idx)} style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#EF4444', cursor: 'pointer', borderRadius: 6, padding: '4px 8px', fontSize: 12 }}>✕</button>
+                                      </div>
+                                    );
+                                  })
+                                )}
+                              </div>
+                              {breakSlots.length > 0 && (() => {
+                                const total = calcSlotMinutes(breakSlots);
+                                const totalH = Math.floor(total / 60);
+                                const totalM = total % 60;
+                                return (
+                                  <div style={{ marginTop: 12, padding: '10px 14px', background: 'rgba(245,158,11,0.08)', borderRadius: 8, border: '1px solid rgba(245,158,11,0.2)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Total Break Time:</span>
+                                    <span style={{ fontSize: 14, fontWeight: 700, color: '#fcd34d' }}>{`${totalH > 0 ? totalH + 'h ' : ''}${totalM > 0 ? totalM + 'm' : (totalH === 0 ? '0m' : '')}`}</span>
+                                  </div>
+                                );
+                              })()}
+                            </div>gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
                             <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>
                               Save Base Monthly Plan
                             </button>
