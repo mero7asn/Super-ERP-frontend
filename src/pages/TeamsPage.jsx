@@ -753,98 +753,90 @@ const TeamsPage = () => {
         />
       )}
 
-      {/* Header Banner */}
-      <div className="crm-page-banner" style={{ padding: '20px 24px', margin: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+      {/* Clean Unified Page Header */}
+      <div className="page-header page-header--elevated" style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+        flexWrap: 'wrap', gap: 16, margin: 0, paddingBottom: 16,
+      }}>
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 4 }}>
-            Interactive Mindmap
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+            <span className="metric-pill" style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Organization Mindmap
+            </span>
+            <span className="metric-pill metric-pill--success" style={{ fontSize: 11, fontWeight: 700 }}>
+              {peopleUnderControlCount} Under Your Control
+            </span>
           </div>
-          <h1 className="page-title" style={{ color: '#fff', margin: 0, fontSize: 24, display: 'flex', alignItems: 'center', gap: 10 }}>
-            🧠 Organization &amp; Reporting Hierarchy
+          <h1 className="page-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            Teams &amp; Hierarchy
           </h1>
-          <p className="page-subtitle" style={{ color: '#CBD5E1', margin: '4px 0 0 0', fontSize: 13 }}>
-            Visual reporting lines · Fold &amp; unfold teams · Real-time command structure
+          <p className="page-subtitle" style={{ marginTop: 4, marginBottom: 0 }}>
+            Interactive reporting lines and team structure
           </p>
         </div>
 
-        {/* Stats & Quick Actions */}
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ padding: '8px 16px', borderRadius: 10, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', textAlign: 'center' }}>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#A7F3D0' }}>{peopleUnderControlCount}</div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.8)' }}>Under Your Control</div>
+        {/* View Switcher & Expand/Collapse Controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          {/* Segmented Scope Switcher */}
+          <div style={{
+            display: 'inline-flex', background: 'var(--bg-secondary)',
+            padding: 3, borderRadius: 10, border: '1px solid var(--border-color)',
+          }}>
+            <button
+              onClick={() => setViewScope('my-control')}
+              style={{
+                padding: '6px 14px', borderRadius: 8, border: 'none',
+                fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                background: viewScope === 'my-control' ? 'var(--accent-primary, #6366F1)' : 'transparent',
+                color: viewScope === 'my-control' ? '#fff' : 'var(--text-muted)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              My Team ({peopleUnderControlCount})
+            </button>
+            <button
+              onClick={() => setViewScope('all')}
+              style={{
+                padding: '6px 14px', borderRadius: 8, border: 'none',
+                fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                background: viewScope === 'all' ? 'var(--accent-primary, #6366F1)' : 'transparent',
+                color: viewScope === 'all' ? '#fff' : 'var(--text-muted)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              Full Organization
+            </button>
           </div>
-          <div style={{ padding: '8px 16px', borderRadius: 10, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', textAlign: 'center' }}>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#BAE6FD' }}>{rawTeams.length}</div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.8)' }}>Total Teams</div>
+
+          {/* Expand / Collapse All */}
+          <div style={{ display: 'inline-flex', gap: 4 }}>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={handleExpandAll}
+              style={{ fontSize: 12, padding: '6px 10px' }}
+              title="Expand all branches"
+            >
+              Expand All
+            </button>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={handleCollapseAll}
+              style={{ fontSize: 12, padding: '6px 10px' }}
+              title="Collapse all branches"
+            >
+              Collapse All
+            </button>
           </div>
-        </div>
-      </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
-
-      {/* Clean Mindmap Toolbar (Replaces the 15 redundant tabs with clean scope & controls) */}
-      <div style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12,
-        padding: '12px 18px', background: 'var(--bg-secondary)', borderRadius: 12, border: '1px solid var(--border-color)',
-      }}>
-        {/* Left: View Mode Toggle */}
-        <div style={{ display: 'flex', background: 'var(--bg-card)', padding: 3, borderRadius: 10, border: '1px solid var(--border-color)' }}>
-          <button
-            onClick={() => setViewScope('my-control')}
-            style={{
-              padding: '6px 14px', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-              background: viewScope === 'my-control' ? 'var(--accent-primary, #6366F1)' : 'transparent',
-              color: viewScope === 'my-control' ? '#fff' : 'var(--text-muted)',
-              transition: 'all 0.15s ease',
-              display: 'flex', alignItems: 'center', gap: 6,
-            }}
-          >
-            🎯 People Under My Control
-          </button>
-          <button
-            onClick={() => setViewScope('all')}
-            style={{
-              padding: '6px 14px', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-              background: viewScope === 'all' ? 'var(--accent-primary, #6366F1)' : 'transparent',
-              color: viewScope === 'all' ? '#fff' : 'var(--text-muted)',
-              transition: 'all 0.15s ease',
-              display: 'flex', alignItems: 'center', gap: 6,
-            }}
-          >
-            🌐 Full Company Org Chart
-          </button>
-        </div>
-
-        {/* Right: Mindmap Folding + Search + Dept Dropdown */}
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          {/* Fold / Unfold All */}
-          <button
-            className="btn btn-secondary btn-sm"
-            onClick={handleExpandAll}
-            style={{ fontSize: 11, padding: '5px 10px' }}
-            title="Unfold all branches"
-          >
-            ➕ Expand All
-          </button>
-          <button
-            className="btn btn-secondary btn-sm"
-            onClick={handleCollapseAll}
-            style={{ fontSize: 11, padding: '5px 10px' }}
-            title="Fold all branches"
-          >
-            ➖ Fold All
-          </button>
-
-          {/* Department Filter Dropdown */}
+          {/* Department Filter */}
           <select
             className="form-input"
             value={deptFilter}
             onChange={e => setDeptFilter(e.target.value)}
-            style={{ fontSize: 12, padding: '5px 10px', minWidth: 130, width: 'auto' }}
+            style={{ fontSize: 12, padding: '6px 12px', minWidth: 140, width: 'auto', margin: 0 }}
           >
             {departmentsList.map(d => (
-              <option key={d} value={d}>{d === 'All' ? '🏢 All Departments' : d}</option>
+              <option key={d} value={d}>{d === 'All' ? 'All Departments' : d}</option>
             ))}
           </select>
 
@@ -852,20 +844,26 @@ const TeamsPage = () => {
           <div style={{ position: 'relative' }}>
             <input
               className="form-input"
-              placeholder="🔍 Search name or role…"
+              placeholder="Search people or role…"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              style={{ fontSize: 12, padding: '5px 10px', paddingRight: search ? 24 : 10, width: 170 }}
+              style={{ fontSize: 12, padding: '6px 12px', paddingRight: search ? 26 : 12, width: 180, margin: 0 }}
             />
             {search && (
               <button
                 onClick={() => setSearch('')}
-                style={{ position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: 'var(--text-muted)' }}
+                style={{
+                  position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: 'var(--text-muted)',
+                }}
               >✕</button>
             )}
           </div>
         </div>
       </div>
+
+      {error && <div className="alert alert-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
       {/* Mindmap Canvas */}
       <div className="mm-canvas">

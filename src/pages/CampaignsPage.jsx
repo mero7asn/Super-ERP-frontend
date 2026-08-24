@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import { Icon } from '../components/Icons';
@@ -31,9 +31,15 @@ const CampaignsPage = () => {
   const [formError, setFormError] = useState('');
   const [copied, setCopied] = useState(null);
 
-  const canCreate = ['CRM core Administrator', 'Marketing Specialist', 'Marketing Manager', 'System Architect'].includes(user?.role);
-  const canDelete = ['CRM core Administrator', 'Marketing Manager', 'System Architect'].includes(user?.role);
-  const canGetFormLink = ['CRM core Administrator', 'System Architect', 'Marketing Manager'].includes(user?.role);
+  const ADMIN_MARKETING_ROLES = [
+    'Super CRM Administrator', 'Super Admin', 'Administrator',
+    'CRM core Administrator', 'Core 360 Administrator', 'System Architect',
+    'Marketing Manager', 'Marketing Specialist', 'Executive User'
+  ];
+
+  const canCreate = ADMIN_MARKETING_ROLES.includes(user?.role);
+  const canDelete = ADMIN_MARKETING_ROLES.includes(user?.role);
+  const canGetFormLink = ADMIN_MARKETING_ROLES.includes(user?.role);
 
   const handleGetFormLink = async (campaign) => {
     try {

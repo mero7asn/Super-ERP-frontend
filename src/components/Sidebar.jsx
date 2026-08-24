@@ -30,6 +30,8 @@ const SidebarIcon = ({ name }) => {
       return <svg {...p}><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>;
     case 'dept-hrm':
       return <svg {...p}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+    case 'dept-management':
+      return <svg {...p}><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/><circle cx="12" cy="12" r="2"/></svg>;
     case 'dept-workspace':
       return <svg {...p}><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>;
     case 'dashboard':
@@ -109,10 +111,14 @@ const CRM_NAV_ITEMS = [
   { label: 'Campaigns', icon: 'campaigns', path: '/campaigns', roles: ['CRM core Administrator','Marketing Specialist','Marketing Manager','Executive User','Business Analyst','System Architect'] },
   { label: 'Analytics', icon: 'analytics', path: '/analytics', roles: ['CRM core Administrator','Executive User','Business Analyst','System Architect'] },
   { label: 'Executive Dashboard', icon: 'executive', path: '/executive', roles: ['CRM core Administrator','Executive User','Business Analyst','System Architect'] },
-  { label: 'User Management', icon: 'users', path: '/users', roles: ['CRM core Administrator','System Architect'] },
-  { label: 'System Settings', icon: 'settings', path: '/settings', roles: ['CRM core Administrator'] },
-  { label: 'CRM Dev Tools', icon: 'devtools', path: '/devtools', roles: ['CRM Developer','System Architect','CRM core Administrator'] },
   { label: 'RTM Monitor', icon: 'rtm', path: '/rtm', roles: ['RTM Team Member','CRM core Administrator','HRM System Administrator','HR Manager'] },
+];
+
+// 6. MANAGEMENT CORE NAV ITEMS
+const MANAGEMENT_NAV_ITEMS = [
+  { label: 'User Management', icon: 'users', path: '/users', roles: ['CRM core Administrator','System Architect','Super CRM Administrator','Super Admin','Administrator','Core 360 Administrator','Executive User'] },
+  { label: 'System Settings', icon: 'settings', path: '/settings', roles: ['CRM core Administrator','Super CRM Administrator','Super Admin','Administrator','Core 360 Administrator','System Architect'] },
+  { label: 'CRM Dev Tools', icon: 'devtools', path: '/devtools', roles: ['CRM Developer','System Architect','CRM core Administrator','Super CRM Administrator','Super Admin','Administrator','Core 360 Administrator'] },
 ];
 
 // 2. inventory core SUB ITEMS
@@ -191,12 +197,13 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 5 Mini Sidebar Department States
+  // Mini Sidebar Department States
   const [crmOpen, setCrmOpen] = useState(true);
   const [inventoryOpen, setInventoryOpen] = useState(true);
   const [supplyChainOpen, setSupplyChainOpen] = useState(true);
   const [accountingOpen, setAccountingOpen] = useState(true);
   const [hrmOpen, setHrmOpen] = useState(true);
+  const [managementOpen, setManagementOpen] = useState(true);
   const [workspaceOpen, setWorkspaceOpen] = useState(true);
 
   // Auto expand active department based on current route
@@ -210,6 +217,8 @@ const Sidebar = () => {
       setAccountingOpen(true);
     } else if (p.startsWith('/hrm')) {
       setHrmOpen(true);
+    } else if (p.startsWith('/users') || p.startsWith('/settings') || p.startsWith('/devtools')) {
+      setManagementOpen(true);
     } else if (p.startsWith('/ess') || p.startsWith('/emails')) {
       setWorkspaceOpen(true);
     } else {
@@ -265,6 +274,7 @@ const Sidebar = () => {
   const filteredSupplyChainItems = SUPPLY_CHAIN_SUB_ITEMS;
   const filteredAccountingItems = ACCOUNTING_SUB_ITEMS;
   const filteredHrmItems = HRM_NAV_ITEMS.filter(canSee);
+  const filteredManagementItems = MANAGEMENT_NAV_ITEMS.filter(canSee);
   const filteredWorkspaceItems = WORKSPACE_NAV_ITEMS;
 
   return (
@@ -459,7 +469,49 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* 6. MINI SIDEBAR: MY WORKSPACE */}
+        {/* 6. MINI SIDEBAR: Management Core */}
+        {filteredManagementItems.length > 0 && (
+          <div className="mini-sidebar-group">
+            <div
+              className="mini-sidebar-sticky-header management-header"
+              onClick={() => setManagementOpen(!managementOpen)}
+              title="Management Core Department"
+              style={{ borderLeft: '4px solid #8b5cf6' }}
+            >
+              <div className="mini-sidebar-header-left">
+                <span className="mini-sidebar-icon" style={{ background: 'rgba(139, 92, 246, 0.15)', color: '#a78bfa' }}>
+                  <SidebarIcon name="dept-management" />
+                </span>
+                <span className="mini-sidebar-title">6. Management Core</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span className="mini-sidebar-badge" style={{ background: 'rgba(139, 92, 246, 0.15)', color: '#a78bfa', borderColor: 'rgba(139, 92, 246, 0.3)' }}>
+                  {filteredManagementItems.length}
+                </span>
+                <span className="mini-sidebar-arrow" style={{ transform: managementOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>›</span>
+              </div>
+            </div>
+
+            {managementOpen && (
+              <div className="mini-sidebar-body">
+                {filteredManagementItems.map((item) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `sidebar-link${isActive || (item.path === '/users' && isUserProfile) ? ' active' : ''}`
+                    }
+                  >
+                    <span className="sidebar-link-icon"><SidebarIcon name={item.icon} /></span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 7. MINI SIDEBAR: MY WORKSPACE */}
         <div className="mini-sidebar-group">
           <div
             className="mini-sidebar-sticky-header workspace-header"
@@ -468,7 +520,7 @@ const Sidebar = () => {
           >
             <div className="mini-sidebar-header-left">
               <span className="mini-sidebar-icon"><SidebarIcon name="dept-workspace" /></span>
-              <span className="mini-sidebar-title">6. My Workspace</span>
+              <span className="mini-sidebar-title">7. My Workspace</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span className="mini-sidebar-badge">{filteredWorkspaceItems.length}</span>
