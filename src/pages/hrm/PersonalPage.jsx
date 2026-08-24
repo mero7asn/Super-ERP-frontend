@@ -1269,193 +1269,318 @@ const PersonalPage = () => {
                     </div>
                   )}
 
-                  {/* Shift Configurator (HR/Admin or Self) */}
+                  {/* ===== UNIFIED SCHEDULE COMMAND CENTER ===== */}
                   {(isHR || selectedEmployeeId === user?._id) && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                      {/* Month Selector Card */}
-                      <div className="card" style={{ padding: '16px', display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-                        <div style={{ flexGrow: 1 }}>
-                          <h3 style={{ margin: 0, fontSize: 15 }}>Select Schedule Target Period</h3>
-                          <p style={{ margin: '4px 0 0 0', fontSize: 12, color: 'var(--text-muted)' }}>Schedules must be initialized monthly, and can be fine-tuned weekly or daily.</p>
+                    <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+
+                      {/* --- Top Control Bar --- */}
+                      <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+                        <div>
+                          <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>📅 Monthly Schedule</h3>
+                          <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
+                            Click any day on the calendar to edit its shift, off-day, and AUX targets
+                          </p>
                         </div>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                          <label className="form-label" style={{ margin: 0, whiteSpace: 'nowrap' }}>Target Month</label>
-                          <input 
-                            type="month" 
-                            className="form-input" 
-                            value={selectedMonth} 
-                            onChange={(e) => setSelectedMonth(e.target.value)} 
-                            style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
+                          <input
+                            type="month"
+                            className="form-input"
+                            value={selectedMonth}
+                            onChange={(e) => setSelectedMonth(e.target.value)}
+                            style={{ width: 'auto', padding: '6px 10px', fontSize: 13 }}
                           />
-                          <button 
+                          <button
                             type="button"
-                            className="btn btn-secondary btn-sm" 
+                            className="btn btn-secondary btn-sm"
                             onClick={handleCopyToNextMonth}
                             disabled={copyingSchedule || !detailedSchedule}
-                            style={{ fontSize: 11 }}
+                            title="Copy this month's schedule to next month"
                           >
-                            {copyingSchedule ? 'Copying...' : '📋 Copy to Next Month'}
+                            {copyingSchedule ? 'Copying…' : '📋 Copy to Next Month'}
                           </button>
                         </div>
                       </div>
 
-                      {/* 1. Monthly base schedule */}
-                      <div className="card">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                          <div>
-                            <h3 style={{ margin: 0, fontSize: 15 }}>1. Monthly Base Schedule</h3>
-                            <p style={{ margin: '2px 0 0 0', fontSize: 11, color: 'var(--text-muted)' }}>Base setup defined at the start of the month.</p>
-                          </div>
-                          <span style={{ fontSize: 11, background: 'rgba(59,130,246,0.1)', color: '#93c5fd', padding: '2px 8px', borderRadius: 4 }}>Month: {selectedMonth}</span>
-                        </div>
-                        <form onSubmit={handleSaveShift} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                          <div className="form-group" style={{ margin: 0 }}>
-                            <label className="form-label">Default Monthly Shift</label>
-                            <select className="form-input" value={shift} onChange={(e) => setShift(e.target.value)}>
-                              <option value="Day Shift (09:00 - 17:00)">Day Shift (09:00 - 17:00)</option>
-                              <option value="Afternoon Shift (15:00 - 23:00)">Afternoon Shift (15:00 - 23:00)</option>
-                              <option value="Night Shift (17:00 - 01:00)">Night Shift (17:00 - 01:00)</option>
-                              <option value="Overnight Shift (23:00 - 07:00)">Overnight Shift (23:00 - 07:00)</option>
-                            </select>
-                          </div>
-
-                          <div style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 16 }}>
-                            <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">📞 Live (mins)</label>
-                              <input type="number" className="form-input" value={defaultLiveTarget} onChange={(e) => setDefaultLiveTarget(e.target.value)} />
-                            </div>
-                            <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">☕ Break (mins)</label>
-                              <input type="number" className="form-input" value={defaultBreakTarget} onChange={(e) => setDefaultBreakTarget(e.target.value)} />
-                            </div>
-                            <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">🎓 Training (mins)</label>
-                              <input type="number" className="form-input" value={defaultTrainingTarget} onChange={(e) => setDefaultTrainingTarget(e.target.value)} />
-                            </div>
-                            <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">👥 Coaching (mins)</label>
-                              <input type="number" className="form-input" value={defaultCoachingTarget} onChange={(e) => setDefaultCoachingTarget(e.target.value)} />
-                            </div>
-                          </div>
-
-                          <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
-                            <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>
-                              Save Base Monthly Plan
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-
-                      {/* 2. Enhanced Weekly Schedule Pattern */}
-                      <div className="card">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                          <div>
-                            <h3 style={{ margin: 0, fontSize: 15 }}>2. Weekly Schedule Pattern</h3>
-                            <p style={{ margin: '2px 0 0 0', fontSize: 11, color: 'var(--text-muted)' }}>Click a day to toggle Off/Working. Use the dropdown to set the shift for working days. This becomes your default weekly schedule.</p>
-                          </div>
+                      {/* --- Month-level Defaults Strip --- */}
+                      <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border-color)', background: 'rgba(37,99,235,0.04)', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-end' }}>
+                        <div style={{ flex: '1 1 180px', minWidth: 160 }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Default Shift</div>
+                          <select className="form-input" value={shift} onChange={(e) => setShift(e.target.value)} style={{ padding: '6px 10px', fontSize: 13 }}>
+                            <option value="Day Shift (09:00 - 17:00)">Day Shift (09:00 – 17:00)</option>
+                            <option value="Afternoon Shift (15:00 - 23:00)">Afternoon Shift (15:00 – 23:00)</option>
+                            <option value="Night Shift (17:00 - 01:00)">Night Shift (17:00 – 01:00)</option>
+                            <option value="Overnight Shift (23:00 - 07:00)">Overnight Shift (23:00 – 07:00)</option>
+                          </select>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 10, marginBottom: 16 }}>
-                          {weekDayConfig.map((day, idx) => (
-                            <div 
-                              key={day.day} 
-                              onClick={() => {
-                                const newConfig = [...weekDayConfig];
-                                newConfig[idx].isOff = !newConfig[idx].isOff;
-                                setWeekDayConfig(newConfig);
-                              }}
-                              style={{
-                                background: day.isOff ? 'rgba(239,68,68,0.06)' : 'rgba(255,255,255,0.03)',
-                                border: day.isOff ? '1px dashed rgba(239,68,68,0.3)' : '1px solid var(--border-color)',
-                                borderRadius: 8,
-                                padding: 10,
-                                textAlign: 'center',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                opacity: day.isOff ? 0.8 : 1
-                              }}
-                            >
-                              <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 6, color: day.isOff ? '#EF4444' : 'var(--text-primary)' }}>
-                                {day.day.substring(0, 3)}
-                              </div>
-                              <div style={{ fontSize: 10, color: day.isOff ? '#FCA5A5' : '#93C5FD', fontWeight: 600, marginBottom: day.isOff ? 0 : 8 }}>
-                                {day.isOff ? 'Off Day' : day.shift.split(' ')[0]}
-                              </div>
-                              {!day.isOff && (
-                                <select 
-                                  className="form-input" 
-                                  value={day.shift}
-                                  onClick={(e) => e.stopPropagation()}
-                                  onChange={(e) => {
-                                    const newConfig = [...weekDayConfig];
-                                    newConfig[idx].shift = e.target.value;
-                                    setWeekDayConfig(newConfig);
+                        <div style={{ flex: '0 1 120px' }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Off Days (weekly)</div>
+                          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                            {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((short, i) => {
+                              const fullDay = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][i];
+                              const isOff = offDays.includes(fullDay);
+                              return (
+                                <button
+                                  key={fullDay}
+                                  type="button"
+                                  onClick={() => setOffDays(prev => isOff ? prev.filter(d => d !== fullDay) : [...prev, fullDay])}
+                                  style={{
+                                    padding: '3px 7px', borderRadius: 6, fontSize: 11, fontWeight: 700, border: 'none', cursor: 'pointer',
+                                    background: isOff ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.06)',
+                                    color: isOff ? '#EF4444' : 'var(--text-muted)',
+                                    outline: isOff ? '1.5px solid rgba(239,68,68,0.4)' : '1px solid var(--border-color)'
                                   }}
-                                  style={{ fontSize: 10, padding: '3px 6px', height: 'auto', width: '100%' }}
-                                >
-                                  <option value="Day Shift (09:00 - 17:00)">Day</option>
-                                  <option value="Afternoon Shift (15:00 - 23:00)">Afternoon</option>
-                                  <option value="Night Shift (17:00 - 01:00)">Night</option>
-                                  <option value="Overnight Shift (23:00 - 07:00)">Overnight</option>
-                                </select>
-                              )}
-                            </div>
-                          ))}
+                                >{short}</button>
+                              );
+                            })}
+                          </div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                          <button type="button" className="btn btn-primary btn-sm" onClick={handleSaveWeeklyPattern} disabled={saving}>
-                            {saving ? 'Saving...' : 'Save Weekly Pattern'}
-                          </button>
+                        <div style={{ flex: '0 1 80px' }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>📞 Live (min)</div>
+                          <input type="number" className="form-input" value={defaultLiveTarget} onChange={e => setDefaultLiveTarget(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }} />
                         </div>
+                        <div style={{ flex: '0 1 80px' }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>☕ Break (min)</div>
+                          <input type="number" className="form-input" value={defaultBreakTarget} onChange={e => setDefaultBreakTarget(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }} />
+                        </div>
+                        <div style={{ flex: '0 1 80px' }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>🎓 Train (min)</div>
+                          <input type="number" className="form-input" value={defaultTrainingTarget} onChange={e => setDefaultTrainingTarget(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }} />
+                        </div>
+                        <div style={{ flex: '0 1 80px' }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>👥 Coach (min)</div>
+                          <input type="number" className="form-input" value={defaultCoachingTarget} onChange={e => setDefaultCoachingTarget(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }} />
+                        </div>
+
+                        <button
+                          type="button"
+                          className="btn btn-primary btn-sm"
+                          onClick={(e) => handleSaveShift(e)}
+                          disabled={saving}
+                          style={{ alignSelf: 'flex-end', whiteSpace: 'nowrap' }}
+                        >
+                          {saving ? 'Saving…' : '✓ Apply to Entire Month'}
+                        </button>
                       </div>
 
-                      {/* 3. Daily overrides */}
-                      <div className="card">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                          <div>
-                            <h3 style={{ margin: 0, fontSize: 15 }}>3. Daily Schedule Overrides</h3>
-                            <p style={{ margin: '2px 0 0 0', fontSize: 11, color: 'var(--text-muted)' }}>Fine-tune shift requirements for a specific day.</p>
-                          </div>
-                          <input 
-                            type="date" 
-                            className="form-input" 
-                            value={selectedDate} 
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            style={{ width: 'auto', padding: '4px 8px', fontSize: 12, height: 'auto' }}
-                          />
-                        </div>
+                      {/* --- Calendar Grid --- */}
+                      {detailedSchedule && (() => {
+                        const [year, monthVal] = selectedMonth.split('-').map(Number);
+                        const daysInMonth = new Date(year, monthVal, 0).getDate();
+                        const firstDayOfMonth = new Date(year, monthVal - 1, 1).getDay(); // 0=Sun
+                        const today = new Date().toISOString().split('T')[0];
 
-                        <form onSubmit={handleSaveDailyOverride} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                          <div className="form-group" style={{ margin: 0 }}>
-                            <label className="form-label">Daily Shift</label>
-                            <select className="form-input" value={dailyShift} onChange={(e) => setDailyShift(e.target.value)} disabled={dailyIsOff}>
-                              <option value="Day Shift (09:00 - 17:00)">Day Shift (09:00 - 17:00)</option>
-                              <option value="Afternoon Shift (15:00 - 23:00)">Afternoon Shift (15:00 - 23:00)</option>
-                              <option value="Night Shift (17:00 - 01:00)">Night Shift (17:00 - 01:00)</option>
-                              <option value="Overnight Shift (23:00 - 07:00)">Overnight Shift (23:00 - 07:00)</option>
-                            </select>
+                        const daysList = [];
+                        for (let d = 1; d <= daysInMonth; d++) {
+                          const dateStr = `${selectedMonth}-${String(d).padStart(2, '0')}`;
+                          const dateObj = new Date(year, monthVal - 1, d);
+                          const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+
+                          let currentShift = detailedSchedule.defaultShift || 'Day Shift (09:00 - 17:00)';
+                          let isOff = (detailedSchedule.defaultOffDays || ['Friday','Saturday']).includes(dayName);
+                          let hasOverride = false;
+
+                          const dailyOverride = (detailedSchedule.dailyOverrides || {})[dateStr];
+                          if (dailyOverride) {
+                            if (dailyOverride.shift) currentShift = dailyOverride.shift;
+                            if (dailyOverride.isOffDay !== undefined) isOff = dailyOverride.isOffDay;
+                            hasOverride = true;
+                          }
+
+                          const liveVal = dailyOverride?.liveTarget ?? detailedSchedule.defaultLiveTarget ?? 480;
+                          const breakVal = dailyOverride?.breakTarget ?? detailedSchedule.defaultBreakTarget ?? 60;
+                          const trainVal = dailyOverride?.trainingTarget ?? detailedSchedule.defaultTrainingTarget ?? 0;
+                          const coachVal = dailyOverride?.coachingTarget ?? detailedSchedule.defaultCoachingTarget ?? 0;
+
+                          daysList.push({ dayNum: d, dayName, dateStr, shift: currentShift, isOff, hasOverride, targets: { live: liveVal, break: breakVal, train: trainVal, coach: coachVal } });
+                        }
+
+                        // Day-of-week headers
+                        const DOW_HEADERS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+                        return (
+                          <div style={{ padding: '16px 20px' }}>
+                            {/* DOW header row */}
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 6 }}>
+                              {DOW_HEADERS.map(h => (
+                                <div key={h} style={{ textAlign: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', padding: '4px 0' }}>{h}</div>
+                              ))}
+                            </div>
+
+                            {/* Days grid (CSS grid starting from correct DOW) */}
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+                              {/* blank cells before first day */}
+                              {Array.from({ length: firstDayOfMonth }).map((_, i) => <div key={`blank-${i}`} />)}
+
+                              {daysList.map(day => {
+                                const isEditing = showDayEditor && editingDay?.dayNum === day.dayNum;
+                                const isToday = day.dateStr === today;
+                                const shiftLabel = day.shift.split(' ')[0]; // "Day", "Afternoon", etc.
+
+                                return (
+                                  <div
+                                    key={day.dayNum}
+                                    onClick={() => openDayEditor(day)}
+                                    style={{
+                                      borderRadius: 8,
+                                      padding: '8px 6px',
+                                      minHeight: 80,
+                                      cursor: 'pointer',
+                                      transition: 'all 0.15s',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: 3,
+                                      background: isEditing ? 'rgba(37,99,235,0.12)' : day.isOff ? 'rgba(239,68,68,0.05)' : 'rgba(255,255,255,0.03)',
+                                      border: isEditing ? '1.5px solid #3B82F6'
+                                        : isToday ? '1.5px solid rgba(99,102,241,0.5)'
+                                        : day.isOff ? '1px dashed rgba(239,68,68,0.25)'
+                                        : '1px solid var(--border-color)',
+                                      outline: day.hasOverride ? '2px solid rgba(245,158,11,0.35)' : 'none',
+                                    }}
+                                  >
+                                    {/* Day number + today badge */}
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <span style={{ fontSize: 13, fontWeight: isToday ? 800 : 600, color: isToday ? '#818CF8' : 'var(--text-primary)' }}>{day.dayNum}</span>
+                                      {day.hasOverride && <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#F59E0B', flexShrink: 0 }} title="Has daily override" />}
+                                    </div>
+
+                                    {/* Shift or Off label */}
+                                    {day.isOff ? (
+                                      <span style={{ fontSize: 10, fontWeight: 700, color: '#FCA5A5' }}>Off-Day</span>
+                                    ) : (
+                                      <span style={{ fontSize: 10, color: '#93C5FD', fontWeight: 600 }}>{shiftLabel}</span>
+                                    )}
+
+                                    {/* AUX mini targets */}
+                                    {!day.isOff && (
+                                      <div style={{ marginTop: 'auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
+                                        <span style={{ fontSize: 8.5, color: '#6EE7B7' }}>📞{day.targets.live}m</span>
+                                        <span style={{ fontSize: 8.5, color: '#FCD34D' }}>☕{day.targets.break}m</span>
+                                        <span style={{ fontSize: 8.5, color: '#A5B4FC' }}>🎓{day.targets.train}m</span>
+                                        <span style={{ fontSize: 8.5, color: '#C084FC' }}>👥{day.targets.coach}m</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+
+                            {/* Legend */}
+                            <div style={{ display: 'flex', gap: 16, marginTop: 12, fontSize: 11, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(37,99,235,0.3)', display: 'inline-block' }} /> Editing</span>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(239,68,68,0.1)', border: '1px dashed rgba(239,68,68,0.3)', display: 'inline-block' }} /> Off-Day</span>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B', display: 'inline-block' }} /> Has daily override</span>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 10, height: 10, borderRadius: 3, border: '1.5px solid rgba(99,102,241,0.5)', display: 'inline-block' }} /> Today</span>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* --- Inline Day Editor Panel (slides in below calendar) --- */}
+                      {showDayEditor && editingDay && (
+                        <div style={{ borderTop: '2px solid #3B82F6', background: 'rgba(37,99,235,0.04)', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                              <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)' }}>
+                                ✏️ Editing: {editingDay.dateStr} — {editingDay.dayName}
+                              </div>
+                              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+                                Changes apply only to this day. Month defaults are not affected.
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', gap: 8 }}>
+                              <button
+                                type="button"
+                                className="btn btn-secondary btn-sm"
+                                onClick={resetDayToDefault}
+                                disabled={saving}
+                                title="Remove daily override – revert to month default"
+                              >
+                                ↩ Reset to Default
+                              </button>
+                              <button type="button" className="btn btn-secondary btn-sm" onClick={closeDayEditor}>✕ Close</button>
+                            </div>
                           </div>
 
-                          <div className="form-group" style={{ margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', margin: 0 }}>
-                              <input 
-                                type="checkbox" 
-                                checked={dailyIsOff} 
-                                onChange={(e) => setDailyIsOff(e.target.checked)}
-                                style={{ width: 16, height: 16 }}
-                              />
-                              <span>Mark as Off-Day Override</span>
-                            </label>
-                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'flex-end' }}>
+                            {/* Off-Day Toggle */}
+                            <div>
+                              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Day Type</div>
+                              <div style={{ display: 'flex', gap: 8 }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setEditingDayData(p => ({ ...p, isOffDay: false }))}
+                                  style={{
+                                    padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer',
+                                    background: !editingDayData.isOffDay ? '#2563EB' : 'rgba(255,255,255,0.06)',
+                                    color: !editingDayData.isOffDay ? '#fff' : 'var(--text-muted)'
+                                  }}
+                                >🟢 Working Day</button>
+                                <button
+                                  type="button"
+                                  onClick={() => setEditingDayData(p => ({ ...p, isOffDay: true }))}
+                                  style={{
+                                    padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer',
+                                    background: editingDayData.isOffDay ? '#EF4444' : 'rgba(255,255,255,0.06)',
+                                    color: editingDayData.isOffDay ? '#fff' : 'var(--text-muted)'
+                                  }}
+                                >🔴 Off-Day</button>
+                              </div>
+                            </div>
 
-                          <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
-                            <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>
-                              Save Daily Override ({selectedDate})
+                            {/* Shift selector (only if working) */}
+                            {!editingDayData.isOffDay && (
+                              <div style={{ flex: '1 1 200px', minWidth: 180 }}>
+                                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Shift</div>
+                                <select
+                                  className="form-input"
+                                  value={editingDayData.shift}
+                                  onChange={e => setEditingDayData(p => ({ ...p, shift: e.target.value }))}
+                                  style={{ padding: '7px 10px', fontSize: 13 }}
+                                >
+                                  <option value="Day Shift (09:00 - 17:00)">Day Shift (09:00 – 17:00)</option>
+                                  <option value="Afternoon Shift (15:00 - 23:00)">Afternoon Shift (15:00 – 23:00)</option>
+                                  <option value="Night Shift (17:00 - 01:00)">Night Shift (17:00 – 01:00)</option>
+                                  <option value="Overnight Shift (23:00 - 07:00)">Overnight Shift (23:00 – 07:00)</option>
+                                </select>
+                              </div>
+                            )}
+
+                            {/* AUX Targets (only if working) */}
+                            {!editingDayData.isOffDay && (
+                              <>
+                                <div>
+                                  <div style={{ fontSize: 11, fontWeight: 700, color: '#6EE7B7', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>📞 Live (min)</div>
+                                  <input type="number" className="form-input" value={editingDayData.liveTarget} onChange={e => setEditingDayData(p => ({ ...p, liveTarget: Number(e.target.value) }))} style={{ padding: '6px 8px', fontSize: 13, width: 80 }} />
+                                </div>
+                                <div>
+                                  <div style={{ fontSize: 11, fontWeight: 700, color: '#FCD34D', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>☕ Break (min)</div>
+                                  <input type="number" className="form-input" value={editingDayData.breakTarget} onChange={e => setEditingDayData(p => ({ ...p, breakTarget: Number(e.target.value) }))} style={{ padding: '6px 8px', fontSize: 13, width: 80 }} />
+                                </div>
+                                <div>
+                                  <div style={{ fontSize: 11, fontWeight: 700, color: '#A5B4FC', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>🎓 Train (min)</div>
+                                  <input type="number" className="form-input" value={editingDayData.trainingTarget} onChange={e => setEditingDayData(p => ({ ...p, trainingTarget: Number(e.target.value) }))} style={{ padding: '6px 8px', fontSize: 13, width: 80 }} />
+                                </div>
+                                <div>
+                                  <div style={{ fontSize: 11, fontWeight: 700, color: '#C084FC', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>👥 Coach (min)</div>
+                                  <input type="number" className="form-input" value={editingDayData.coachingTarget} onChange={e => setEditingDayData(p => ({ ...p, coachingTarget: Number(e.target.value) }))} style={{ padding: '6px 8px', fontSize: 13, width: 80 }} />
+                                </div>
+                              </>
+                            )}
+
+                            <button
+                              type="button"
+                              className="btn btn-primary btn-sm"
+                              onClick={saveDayEditorChanges}
+                              disabled={saving}
+                              style={{ alignSelf: 'flex-end', whiteSpace: 'nowrap' }}
+                            >
+                              {saving ? 'Saving…' : '✓ Save Day Override'}
                             </button>
                           </div>
-                        </form>
-                      </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
