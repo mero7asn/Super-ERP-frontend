@@ -68,6 +68,8 @@ const TrainingPage = () => {
   const [assignedTrainerId, setAssignedTrainerId] = useState('');
   const [topic, setTopic] = useState('');
   const [scheduledDate, setScheduledDate] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   // Training list filters
@@ -107,6 +109,10 @@ const TrainingPage = () => {
       setStatusMsg({ type: 'error', text: 'All fields are required.' });
       return;
     }
+    if (startTime && endTime && startTime >= endTime) {
+      setStatusMsg({ type: 'error', text: 'End time must be after start time.' });
+      return;
+    }
     setSubmitting(true);
     setStatusMsg({ type: '', text: '' });
     try {
@@ -116,13 +122,19 @@ const TrainingPage = () => {
         assignedTrainerId,
         topic,
         scheduledDate: scheduledDate || undefined,
+        startTime: startTime || undefined,
+        endTime: endTime || undefined,
       });
       let successMsg = `Training "${topic}" assigned successfully.`;
       if (scheduledDate) {
-        successMsg += ` Schedule updated for ${scheduledDate}.`;
+        successMsg += ` Schedule updated for ${scheduledDate}`;
+        if (startTime && endTime) {
+          successMsg += ` (${startTime} - ${endTime})`;
+        }
+        successMsg += '.';
       }
       successMsg += ` Trainer and employee notified via email.`;
-      const trainingDate = new Date(scheduledDate);
+      const trainingDate = new Date(scheduledDate + (startTime ? `T${startTime}:00` : 'T00:00:00'));
       const hoursUntil = (trainingDate - new Date()) / (1000 * 60 * 60);
       if (hoursUntil <= 48 && hoursUntil >= 0) {
         successMsg += ` RTM alerted (within 48 hours).`;
@@ -130,6 +142,8 @@ const TrainingPage = () => {
       setStatusMsg({ type: 'success', text: successMsg });
       setTopic('');
       setScheduledDate('');
+      setStartTime('');
+      setEndTime('');
       setEmployeeId('');
       setAssignedTrainerId('');
       fetchAll();
@@ -423,6 +437,27 @@ const TrainingPage = () => {
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label">Scheduled Date (optional)</label>
                 <input className="form-input" type="date" value={scheduledDate} onChange={(e) => setScheduledDate(e.target.value)} />
+              </div>
+              <div className="form-group" style={{ margin: 0 }}>
+                <label className="form-label">Time Range (optional)</label>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <input className="form-input" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} style={{ flex: 1 }} />
+                  <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>to</span>
+                  <input className="form-input" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} style={{ flex: 1 }} />
+                </div>
+                {startTime && endTime && (
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
+                    Duration: {(() => {
+                      const [sh, sm] = startTime.split(':').map(Number);
+                      const [eh, em] = endTime.split(':').map(Number);
+                      const mins = (eh * 60 + em) - (sh * 60 + sm);
+                      if (mins < 0) return 'Overnight session';
+                      const h = Math.floor(mins / 60);
+                      const m = mins % 60;
+                      return h > 0 ? `${h}h ${m}m` : `${m}m`;
+                    })()}
+                  </div>
+                )}
               </div>
               {trainingType === 'Technical' && (
                 <div style={{ padding: '8px 12px', borderRadius: 6, background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)', fontSize: 12, color: '#818CF8' }}>
