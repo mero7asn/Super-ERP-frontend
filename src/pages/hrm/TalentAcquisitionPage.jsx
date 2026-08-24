@@ -263,7 +263,7 @@ const OverviewTab = ({ data, onNavigate }) => {
 const RequisitionsTab = ({ data = [], onRefresh }) => {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
-    department: '', positionTitle: '', numberOfEmployees: 1, employmentType: 'Full Type',
+    department: '', positionTitle: '', numberOfEmployees: 1, employmentType: 'Full Time',
     location: '', priority: 'Medium', reasonForHiring: 'New Position', notes: ''
   });
 
@@ -371,7 +371,7 @@ const RequisitionsTab = ({ data = [], onRefresh }) => {
               </tr>
             </thead>
             <tbody>
-              data.map(req => (
+              {data.map(req => (
                 <tr key={req._id}>
                   <td><strong>{req.requisitionId}</strong></td>
                   <td>{req.positionTitle}</td>
@@ -679,6 +679,21 @@ const CandidatesTab = ({ data = [], onRefresh }) => {
 // ==========================================
 const InterviewsTab = ({ data = [], onRefresh }) => {
   const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    application: '', interviewer: '', interviewType: 'HR Interview',
+    scheduledDate: '', scheduledTime: '', duration: 60, location: '', meetingLink: ''
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await API.post('/talent/interviews', form);
+      setShowForm(false);
+      onRefresh();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to schedule interview');
+    }
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -688,6 +703,47 @@ const InterviewsTab = ({ data = [], onRefresh }) => {
           {showForm ? 'Cancel' : '+ Schedule Interview'}
         </button>
       </div>
+
+      {showForm && (
+        <div className="card">
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Interview Type</label>
+              <select className="form-input" value={form.interviewType} onChange={e => setForm({ ...form, interviewType: e.target.value })}>
+                <option>Phone Screening</option>
+                <option>HR Interview</option>
+                <option>Technical Interview</option>
+                <option>Manager Interview</option>
+                <option>Final Interview</option>
+                <option>Panel Interview</option>
+              </select>
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Duration (minutes)</label>
+              <input type="number" className="form-input" value={form.duration} onChange={e => setForm({ ...form, duration: e.target.value })} />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Date</label>
+              <input type="date" className="form-input" value={form.scheduledDate} onChange={e => setForm({ ...form, scheduledDate: e.target.value })} required />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Time</label>
+              <input type="time" className="form-input" value={form.scheduledTime} onChange={e => setForm({ ...form, scheduledTime: e.target.value })} required />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Location</label>
+              <input className="form-input" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} placeholder="Room name or address" />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Meeting Link</label>
+              <input className="form-input" value={form.meetingLink} onChange={e => setForm({ ...form, meetingLink: e.target.value })} placeholder="Zoom/Teams URL" />
+            </div>
+            <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="submit" className="btn btn-primary btn-sm">Schedule Interview</button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {!data.length ? (
         <div className="card" style={{ textAlign: 'center', padding: 48 }}>
@@ -733,11 +789,56 @@ const InterviewsTab = ({ data = [], onRefresh }) => {
 // DISTRIBUTION TAB
 // ==========================================
 const DistributionTab = ({ data = [], onRefresh }) => {
-  const platforms = ['Company Careers Page', 'LinkedIn', 'Indeed', 'Wuzzuf', 'Social Media', 'Manual'];
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    job: '', platform: 'Company Careers Page', externalUrl: '', publicJobLink: ''
+  });
+
+  const platforms = ['Company Careers Page', 'LinkedIn', 'Indeed', 'Wuzzuf', 'Forasna', 'Social Media', 'Manual', 'Other'];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await API.post('/talent/publications', { ...form, status: 'Published', publishedDate: new Date() });
+      setShowForm(false);
+      onRefresh();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to publish job');
+    }
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <h3 style={{ margin: 0, fontSize: 16 }}>Job Distribution ({data.length})</h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3 style={{ margin: 0, fontSize: 16 }}>Job Distribution ({data.length})</h3>
+        <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : '+ Publish Job'}
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="card">
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Platform</label>
+              <select className="form-input" value={form.platform} onChange={e => setForm({ ...form, platform: e.target.value })}>
+                {platforms.map(p => <option key={p}>{p}</option>)}
+              </select>
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">External URL</label>
+              <input className="form-input" value={form.externalUrl} onChange={e => setForm({ ...form, externalUrl: e.target.value })} placeholder="Link to job posting" />
+            </div>
+            <div className="form-group" style={{ margin: 0, gridColumn: 'span 2' }}>
+              <label className="form-label">Public Job Link</label>
+              <input className="form-input" value={form.publicJobLink} onChange={e => setForm({ ...form, publicJobLink: e.target.value })} placeholder="Company careers page link" />
+            </div>
+            <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="submit" className="btn btn-primary btn-sm">Publish</button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {!data.length ? (
         <div className="card" style={{ textAlign: 'center', padding: 48 }}>
@@ -766,7 +867,7 @@ const DistributionTab = ({ data = [], onRefresh }) => {
                   <td><Badge status={pub.status} /></td>
                   <td>{pub.publishedDate ? new Date(pub.publishedDate).toLocaleDateString() : '-'}</td>
                   <td>{pub.applicationsReceived}</td>
-                  <td>{pub.externalUrl ? <a href={pub.externalUrl} target="_blank" rel="noopener">View</a> : '-'}</td>
+                  <td>{pub.externalUrl ? <a href={pub.externalUrl} target="_blank" rel="noopener noreferrer">View</a> : '-'}</td>
                 </tr>
               ))}
             </tbody>
