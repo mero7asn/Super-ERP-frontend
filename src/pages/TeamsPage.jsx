@@ -1,194 +1,230 @@
 import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
-import { getDepartmentTheme, DEPARTMENT_THEMES } from '../services/departmentJobs';
+import { getDepartmentTheme } from '../services/departmentJobs';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Constants
+// Constants & Color Helpers
 // ─────────────────────────────────────────────────────────────────────────────
-const PALETTE = ['#3B82F6','#8B5CF6','#10B981','#F59E0B','#EF4444','#06B6D4','#EC4899','#F97316'];
-const DEPT_TABS = [
-  'All','Sales','Customer Support','Marketing','Technology',
-  'Human Resources','Finance','Inventory','Operations','Personal',
-  'Payroll','Training','Talent Acquisition','BD & People Culture','Executive',
-];
+const PALETTE = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899', '#F97316'];
+
 const ADMIN_ROLES = [
-  'CRM core Administrator','System Architect','Super Admin',
-  'Super CRM Administrator','Core 360 Administrator','Administrator',
+  'CRM core Administrator', 'System Architect', 'Super Admin',
+  'Super CRM Administrator', 'Core 360 Administrator', 'Administrator', 'Executive User',
 ];
 
+const avatarColor = (user) => PALETTE[(`${user?.firstName || ''}${user?.lastName || ''}`).charCodeAt(0) % PALETTE.length];
+const strId = (id) => (id?._id || id)?.toString() || '';
+
 // ─────────────────────────────────────────────────────────────────────────────
-// CSS injected once (org-tree connector lines + animations)
+// Mindmap & Tree Styling
 // ─────────────────────────────────────────────────────────────────────────────
-const CSS = `
-  /* ── Tree layout ─────────────────────────────── */
-  .ot-children {
+const MINDMAP_CSS = `
+  /* Mindmap canvas */
+  .mm-canvas {
+    background: radial-gradient(circle, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+    border: 1px solid var(--border-color, rgba(148, 163, 184, 0.2));
+    border-radius: 16px;
+    min-height: 480px;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 40px 24px 60px;
+    position: relative;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  /* Tree table structure */
+  .mm-tree-wrapper {
     display: table;
     margin: 0 auto;
     border-collapse: separate;
-    border-spacing: 18px 0;
-    padding-top: 32px;
+  }
+  .mm-children {
+    display: table;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 20px 0;
+    padding-top: 36px;
     position: relative;
   }
-  /* vertical stem from parent to horizontal rail */
-  .ot-children::before {
+  /* Vertical drop line from parent */
+  .mm-children::before {
     content: '';
     position: absolute;
     top: 0; left: 50%;
-    width: 0; height: 32px;
-    border-left: 2px solid var(--ot-line, rgba(148,163,184,.3));
+    width: 0; height: 36px;
+    border-left: 2px solid var(--accent-primary, #6366F1);
     transform: translateX(-50%);
+    opacity: 0.45;
   }
-  .ot-cell {
+  .mm-cell {
     display: table-cell;
     vertical-align: top;
     text-align: center;
     position: relative;
-    padding-top: 32px;
+    padding-top: 36px;
   }
-  /* horizontal rail — left arm */
-  .ot-cell::before {
+  /* Horizontal branch rails */
+  .mm-cell::before {
     content: '';
     position: absolute;
     top: 0; right: 50%;
-    width: 51%; height: 32px;
-    border-top: 2px solid var(--ot-line, rgba(148,163,184,.3));
+    width: 51%; height: 36px;
+    border-top: 2px solid var(--accent-primary, #6366F1);
+    opacity: 0.45;
   }
-  /* horizontal rail — right arm + vertical drop */
-  .ot-cell::after {
+  .mm-cell::after {
     content: '';
     position: absolute;
     top: 0; left: 50%;
-    width: 51%; height: 32px;
-    border-top: 2px solid var(--ot-line, rgba(148,163,184,.3));
-    border-left: 2px solid var(--ot-line, rgba(148,163,184,.3));
+    width: 51%; height: 36px;
+    border-top: 2px solid var(--accent-primary, #6366F1);
+    border-left: 2px solid var(--accent-primary, #6366F1);
+    opacity: 0.45;
   }
-  .ot-cell:only-child::before, .ot-cell:only-child::after { display: none; }
-  .ot-cell:first-child::before { border: none; }
-  .ot-cell:last-child::after   { width: 0; border-top: none; }
-  .ot-cell:last-child::before  { border-right: 2px solid var(--ot-line, rgba(148,163,184,.3)); border-radius: 0 6px 0 0; }
-  .ot-cell:first-child::after  { border-radius: 6px 0 0 0; }
+  .mm-cell:only-child::before, .mm-cell:only-child::after { display: none; }
+  .mm-cell:first-child::before { border: none; }
+  .mm-cell:last-child::after   { width: 0; border-top: none; }
+  .mm-cell:last-child::before  { border-right: 2px solid var(--accent-primary, #6366F1); border-radius: 0 8px 0 0; }
+  .mm-cell:first-child::after  { border-radius: 8px 0 0 0; }
 
-  /* ── Card interactions ───────────────────────── */
-  .ot-card { transition: transform .18s ease, box-shadow .18s ease; cursor: pointer; }
-  .ot-card:hover { transform: translateY(-3px); }
-  .ot-card.ot-selected { outline: 3px solid #6366F1; outline-offset: 2px; }
-
-  /* ── Search highlight ───────────────────────── */
-  @keyframes ot-pulse {
-    0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
-    50%      { box-shadow: 0 0 0 8px rgba(245,158,11,.3); }
-  }
-  .ot-matched { animation: ot-pulse 1.6s ease-in-out 3; }
-  .ot-dim { opacity: .3; pointer-events: none; }
-
-  /* ── Collapse button ───────────────────────── */
-  .ot-coll {
-    display: inline-flex; align-items: center; gap: 4px;
-    margin-top: 6px; padding: 3px 10px;
-    font-size: 10px; font-weight: 700; letter-spacing: .3px;
-    border-radius: 20px;
-    border: 1px solid var(--border-color, rgba(148,163,184,.3));
-    background: var(--bg-secondary, rgba(30,41,59,.6));
-    color: var(--text-muted, #94a3b8);
+  /* Card nodes */
+  .mm-node-card {
+    display: inline-flex;
+    flex-direction: column;
+    position: relative;
+    border-radius: 14px;
     cursor: pointer;
-    transition: background .15s, color .15s;
+    text-align: left;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    user-select: none;
   }
-  .ot-coll:hover { background: var(--bg-card); color: var(--text-primary); }
+  .mm-node-card:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  }
+  .mm-node-card.is-self {
+    ring: 3px solid #10B981;
+    box-shadow: 0 0 0 3px #10B981, 0 8px 24px rgba(16,185,129,0.25);
+  }
+  .mm-node-card.is-selected {
+    box-shadow: 0 0 0 3px #6366F1, 0 8px 24px rgba(99,102,241,0.3);
+  }
 
-  /* ── Drawer ───────────────────────── */
-  .ot-drawer-overlay {
-    position: fixed; inset: 0; z-index: 500;
-    background: rgba(0,0,0,.4);
-    backdrop-filter: blur(3px);
-    animation: ot-fade-in .2s ease;
+  /* Fold / Toggle Button */
+  .mm-fold-btn {
+    position: absolute;
+    bottom: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--bg-card, #1E293B);
+    border: 2px solid var(--accent-primary, #6366F1);
+    color: var(--text-primary, #fff);
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   }
-  .ot-drawer {
+  .mm-fold-btn:hover {
+    background: var(--accent-primary, #6366F1);
+    color: #fff;
+    transform: translateX(-50%) scale(1.15);
+  }
+  .mm-fold-btn.is-folded {
+    background: #F59E0B;
+    border-color: #D97706;
+    color: #fff;
+    width: auto;
+    padding: 0 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  /* Search highlights */
+  @keyframes mm-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+    50%      { box-shadow: 0 0 0 8px rgba(245,158,11,0.4); }
+  }
+  .mm-matched {
+    animation: mm-glow 1.5s ease-in-out 3;
+    border-color: #F59E0B !important;
+  }
+
+  /* Drawer */
+  .mm-drawer-overlay {
+    position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    animation: mmFade .2s ease;
+  }
+  .mm-drawer {
     position: fixed; top: 0; right: 0; bottom: 0;
-    width: 360px; max-width: 90vw; z-index: 501;
+    width: 380px; max-width: 90vw; z-index: 501;
     background: var(--bg-card, #1e293b);
     border-left: 1px solid var(--border-color, rgba(148,163,184,.2));
-    box-shadow: -20px 0 60px rgba(0,0,0,.3);
+    box-shadow: -20px 0 60px rgba(0,0,0,.35);
     display: flex; flex-direction: column;
-    animation: ot-slide-in .22s ease;
+    animation: mmSlide .22s ease;
     overflow-y: auto;
   }
-  @keyframes ot-fade-in { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes ot-slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
-
-  /* ── Dept tabs ───────────────────────── */
-  .ot-tabs { display: flex; overflow-x: auto; gap: 0; padding-bottom: 1px; }
-  .ot-tabs::-webkit-scrollbar { height: 3px; }
-  .ot-tab {
-    padding: 9px 16px; font-size: 12px; font-weight: 600; white-space: nowrap;
-    background: none; border: none; border-bottom: 2px solid transparent;
-    color: var(--text-muted); cursor: pointer; transition: color .15s, border-color .15s;
-    margin-bottom: -1px;
-  }
-  .ot-tab.ot-tab-active { color: var(--accent-primary, #6366F1); border-bottom-color: var(--accent-primary, #6366F1); }
-  .ot-tab:hover:not(.ot-tab-active) { color: var(--text-secondary); }
-
-  /* ── Unassigned section ───────────────────────── */
-  .ot-ua-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 10px; }
+  @keyframes mmFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes mmSlide { from { transform: translateX(100%); } to { transform: translateX(0); } }
 `;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────────────────
-const avatarColor = (user) => PALETTE[(`${user?.firstName||''}${user?.lastName||''}`).charCodeAt(0) % PALETTE.length];
-
-const userDept = (node) => {
-  const theme = node.department ? getDepartmentTheme(node.department) : null;
-  return theme;
-};
-
-const strId = (id) => (id?._id || id)?.toString() || '';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Tree transformation  (circular-ref safe, dedup by id)
+// Tree Generation (Circular-safe & Memoized)
 // ─────────────────────────────────────────────────────────────────────────────
 const buildTree = (execNode = [], teams = []) => {
   const seen = new Set();
-
   const teamByManagerId = {};
   teams.forEach(t => {
-    const mid = strId(t.manager._id);
-    teamByManagerId[mid] = t;
+    const mid = strId(t.manager?._id);
+    if (mid) teamByManagerId[mid] = t;
   });
 
   const safeNode = (raw, type, depth = 0) => {
+    if (!raw) return null;
     const id = strId(raw._id);
-    if (seen.has(id) || depth > 6) return null;   // circular / too deep
+    if (seen.has(id) || depth > 8) return null;
     seen.add(id);
 
     const team = type === 'manager' ? teamByManagerId[id] : null;
     const children = team
-      ? team.members
-          .map(m => safeNode(m, 'employee', depth + 1))
-          .filter(Boolean)
+      ? (team.members || []).map(m => safeNode(m, 'employee', depth + 1)).filter(Boolean)
       : [];
 
     const theme = team ? getDepartmentTheme(team.department) : null;
 
     return {
       _id: id,
-      firstName: raw.firstName,
-      lastName:  raw.lastName,
-      role:      raw.role,
-      email:     raw.email,
-      isActive:  raw.isActive,
+      firstName: raw.firstName || '',
+      lastName: raw.lastName || '',
+      role: raw.role || 'Member',
+      email: raw.email || '',
+      isActive: raw.isActive !== false,
       type,
-      department: team?.department || null,
+      department: team?.department || raw.department || null,
       departmentTheme: theme,
-      departmentAccent: theme?.primary || null,
+      departmentAccent: theme?.primary || '#64748B',
       children,
-      // counts
       directCount: children.length,
-      totalCount:  children.reduce((s, c) => s + 1 + (c.totalCount || 0), 0),
+      totalCount: children.reduce((s, c) => s + 1 + (c.totalCount || 0), 0),
     };
   };
 
   return execNode.map(({ executive, directReports = [] }) => {
+    if (!executive) return null;
     const execId = strId(executive._id);
     if (seen.has(execId)) return null;
     seen.add(execId);
@@ -203,86 +239,58 @@ const buildTree = (execNode = [], teams = []) => {
 
     return {
       _id: execId,
-      firstName: executive.firstName,
-      lastName:  executive.lastName,
-      role:      executive.role,
-      email:     executive.email,
-      isActive:  executive.isActive,
+      firstName: executive.firstName || '',
+      lastName: executive.lastName || '',
+      role: executive.role || 'Executive User',
+      email: executive.email || '',
+      isActive: executive.isActive !== false,
       type: 'executive',
       department: 'Executive',
       departmentTheme: getDepartmentTheme('Executive'),
       departmentAccent: '#6366F1',
       children,
       directCount: children.length,
-      totalCount:  children.reduce((s, c) => s + 1 + (c.totalCount || 0), 0),
+      totalCount: children.reduce((s, c) => s + 1 + (c.totalCount || 0), 0),
     };
   }).filter(Boolean);
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Search: returns a Set of node IDs that should be VISIBLE
-// (matching nodes + all their ancestors)
+// Subtree Extractor for "Under My Control"
 // ─────────────────────────────────────────────────────────────────────────────
-const computeVisible = (nodes, q) => {
-  if (!q) return null;
-  const lq = q.toLowerCase();
-  const visible = new Set();
+const findUserSubtree = (nodes, currentUserId) => {
+  if (!currentUserId) return null;
+  const uid = currentUserId.toString();
 
-  const matches = (n) =>
-    `${n.firstName} ${n.lastName}`.toLowerCase().includes(lq) ||
-    (n.role || '').toLowerCase().includes(lq) ||
-    (n.department || '').toLowerCase().includes(lq);
-
-  const walk = (n, ancestors) => {
-    const hit = matches(n);
-    const childHit = (n.children || []).some(c => walk(c, [...ancestors, n._id]));
-    if (hit || childHit) {
-      visible.add(n._id);
-      ancestors.forEach(a => visible.add(a));
+  const search = (node) => {
+    if (node._id === uid) return node;
+    for (const child of node.children || []) {
+      const found = search(child);
+      if (found) return found;
     }
-    return hit || childHit;
+    return null;
   };
 
-  nodes.forEach(n => walk(n, []));
-  return visible;
+  for (const root of nodes) {
+    const res = search(root);
+    if (res) return res;
+  }
+  return null;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Department filter: returns Set of IDs to show (node + ancestors)
+// Components
 // ─────────────────────────────────────────────────────────────────────────────
-const computeDeptVisible = (nodes, dept) => {
-  if (dept === 'All') return null;
-  const visible = new Set();
-
-  const deptMatch = (n) => n.department === dept || n.type === 'executive';
-
-  const walk = (n, ancestors) => {
-    const hit = deptMatch(n);
-    const childHit = (n.children || []).some(c => walk(c, [...ancestors, n._id]));
-    if (hit || childHit) {
-      visible.add(n._id);
-      ancestors.forEach(a => visible.add(a));
-    }
-    return hit || childHit;
-  };
-
-  nodes.forEach(n => walk(n, []));
-  return visible;
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Avatar
-// ─────────────────────────────────────────────────────────────────────────────
-const Avatar = memo(({ user, size = 36, color }) => {
-  const initials = `${user?.firstName?.[0]||''}${user?.lastName?.[0]||''}`.toUpperCase();
+const Avatar = memo(({ user, size = 38, color }) => {
+  const initials = `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`.toUpperCase() || '?';
   const bg = color || avatarColor(user);
   return (
     <div style={{
       width: size, height: size, borderRadius: '50%', flexShrink: 0,
       background: bg, color: '#fff',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontWeight: 800, fontSize: Math.round(size * .36),
-      boxShadow: `0 0 0 2px ${bg}44`,
+      fontWeight: 800, fontSize: Math.max(10, Math.round(size * 0.36)),
+      boxShadow: `0 0 0 2px ${bg}33`,
     }}>
       {initials}
     </div>
@@ -290,164 +298,126 @@ const Avatar = memo(({ user, size = 36, color }) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Node cards
+// Mindmap Node Component
 // ─────────────────────────────────────────────────────────────────────────────
-const ExecNodeCard = memo(({ node, selected, onClick }) => (
-  <div
-    className={`ot-card${selected ? ' ot-selected' : ''}`}
-    onClick={() => onClick(node)}
-    style={{
-      display: 'inline-flex', flexDirection: 'column', gap: 10,
-      minWidth: 240, padding: '18px 20px', borderRadius: 16,
-      background: 'linear-gradient(135deg, rgba(99,102,241,.2) 0%, rgba(139,92,246,.15) 100%)',
-      border: `2px solid rgba(99,102,241,.5)`,
-      boxShadow: '0 8px 32px rgba(99,102,241,.22)',
-    }}
-  >
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-      <Avatar user={node} size={52} color="#6366F1" />
-      <div style={{ minWidth: 0, flex: 1 }}>
-        <div style={{ fontWeight: 800, fontSize: 15, lineHeight: 1.2 }}>
-          {node.firstName} {node.lastName}
-        </div>
-        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>{node.role}</div>
-      </div>
-      <span style={{ fontSize: 20 }}>👑</span>
-    </div>
-    <div style={{
-      display: 'flex', gap: 12, paddingTop: 8,
-      borderTop: '1px solid rgba(99,102,241,.2)', fontSize: 11, color: 'rgba(139,92,246,.9)', fontWeight: 600,
-    }}>
-      <span>⬇ {node.directCount} direct</span>
-      <span>👥 {node.totalCount} total</span>
-    </div>
-  </div>
-));
+const MindmapNode = memo(({
+  node,
+  currentUserId,
+  selectedId,
+  onSelect,
+  collapsedMap,
+  onToggleFold,
+  searchQ,
+  deptFilter,
+  depth = 0
+}) => {
+  const isFolded = !!collapsedMap[node._id];
+  const hasChildren = node.children && node.children.length > 0;
+  const isSelf = currentUserId && node._id === currentUserId.toString();
+  const isSelected = selectedId === node._id;
 
-const ManagerNodeCard = memo(({ node, selected, onClick }) => {
-  const accent = node.departmentAccent || '#64748B';
+  // Search match
+  const matchesSearch = searchQ && (
+    `${node.firstName} ${node.lastName}`.toLowerCase().includes(searchQ.toLowerCase()) ||
+    (node.role || '').toLowerCase().includes(searchQ.toLowerCase()) ||
+    (node.department || '').toLowerCase().includes(searchQ.toLowerCase())
+  );
+
+  // Department filter
+  const matchesDept = deptFilter === 'All' || node.department === deptFilter || node.type === 'executive';
+
+  const accent = node.departmentAccent || '#6366F1';
   const theme = node.departmentTheme;
+
   return (
-    <div
-      className={`ot-card${selected ? ' ot-selected' : ''}`}
-      onClick={() => onClick(node)}
-      style={{
-        display: 'inline-flex', flexDirection: 'column', gap: 8,
-        minWidth: 200, padding: '14px 16px', borderRadius: 12,
-        background: `linear-gradient(135deg, ${accent}14, ${accent}06)`,
-        border: `1.5px solid ${accent}50`,
-        boxShadow: `0 4px 18px ${accent}18`,
-        borderLeft: `4px solid ${accent}`,
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <Avatar user={node} size={40} color={accent} />
-        <div style={{ minWidth: 0, flex: 1 }}>
-          <div style={{ fontWeight: 700, fontSize: 13, lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {node.firstName} {node.lastName}
+    <div className="mm-cell">
+      <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+        {/* Node Card */}
+        <div
+          className={`mm-node-card ${isSelf ? 'is-self' : ''} ${isSelected ? 'is-selected' : ''} ${matchesSearch ? 'mm-matched' : ''}`}
+          onClick={() => onSelect(node)}
+          style={{
+            minWidth: node.type === 'executive' ? 220 : node.type === 'manager' ? 190 : 155,
+            maxWidth: 240,
+            padding: node.type === 'executive' ? '14px 18px' : '10px 14px',
+            background: node.type === 'executive'
+              ? 'linear-gradient(135deg, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.15) 100%)'
+              : 'var(--bg-secondary, #1e293b)',
+            border: `1.5px solid ${node.type === 'executive' ? 'rgba(99,102,241,0.6)' : isSelf ? '#10B981' : 'var(--border-color, rgba(148,163,184,0.25))'}`,
+            borderLeft: `4px solid ${isSelf ? '#10B981' : accent}`,
+            marginBottom: hasChildren ? 14 : 0,
+            opacity: matchesDept ? 1 : 0.45,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Avatar user={node} size={node.type === 'executive' ? 44 : 34} color={accent} />
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{
+                fontWeight: 700, fontSize: node.type === 'executive' ? 14 : 13,
+                lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                display: 'flex', alignItems: 'center', gap: 6,
+              }}>
+                {node.firstName} {node.lastName}
+                {isSelf && <span style={{ fontSize: 10, background: '#10B98122', color: '#10B981', padding: '1px 5px', borderRadius: 6, fontWeight: 800 }}>YOU</span>}
+                {node.type === 'executive' && <span>👑</span>}
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {node.role}
+              </div>
+              {node.department && node.type !== 'executive' && (
+                <span style={{
+                  display: 'inline-block', marginTop: 4, fontSize: 9, fontWeight: 700,
+                  padding: '1px 6px', borderRadius: 12,
+                  background: `${accent}18`, color: accent, border: `1px solid ${accent}33`,
+                }}>
+                  {theme?.icon || '🏢'} {node.department}
+                </span>
+              )}
+            </div>
           </div>
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>{node.role}</div>
-          {node.department && (
-            <span style={{
-              display: 'inline-block', marginTop: 4, fontSize: 10, fontWeight: 700,
-              padding: '1px 7px', borderRadius: 20,
-              background: `${accent}20`, color: accent, border: `1px solid ${accent}40`,
+
+          {/* Subordinates count label */}
+          {node.directCount > 0 && (
+            <div style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              fontSize: 10, color: 'var(--text-muted)', fontWeight: 600,
+              paddingTop: 6, marginTop: 6, borderTop: '1px solid rgba(148,163,184,0.15)',
             }}>
-              {theme?.icon} {node.department}
-            </span>
+              <span>👥 {node.directCount} direct</span>
+              <span>{node.totalCount} total under</span>
+            </div>
+          )}
+
+          {/* Fold/Unfold Button */}
+          {hasChildren && (
+            <div
+              className={`mm-fold-btn ${isFolded ? 'is-folded' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFold(node._id);
+              }}
+              title={isFolded ? 'Expand subordinates' : 'Collapse subordinates'}
+            >
+              {isFolded ? `+ ${node.children.length}` : '−'}
+            </div>
           )}
         </div>
       </div>
-      {node.directCount > 0 && (
-        <div style={{
-          fontSize: 11, color: 'var(--text-muted)', fontWeight: 600,
-          paddingTop: 6, borderTop: `1px solid ${accent}20`,
-        }}>
-          👥 {node.directCount} member{node.directCount !== 1 ? 's' : ''}
-        </div>
-      )}
-    </div>
-  );
-});
 
-const EmployeeNodeCard = memo(({ node, selected, onClick }) => {
-  const color = avatarColor(node);
-  return (
-    <div
-      className={`ot-card${selected ? ' ot-selected' : ''}`}
-      onClick={() => onClick(node)}
-      style={{
-        display: 'inline-flex', flexDirection: 'column', gap: 0,
-        minWidth: 155, maxWidth: 190, padding: '10px 12px', borderRadius: 10,
-        background: 'var(--bg-secondary)',
-        border: '1px solid var(--border-color)',
-        boxShadow: '0 2px 8px rgba(0,0,0,.06)',
-        borderLeft: `3px solid ${color}`,
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Avatar user={node} size={28} color={color} />
-        <div style={{ minWidth: 0 }}>
-          <div style={{ fontWeight: 600, fontSize: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {node.firstName} {node.lastName}
-          </div>
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {node.role}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
-// OrgNode — recursive tree renderer
-// ─────────────────────────────────────────────────────────────────────────────
-const OrgNode = memo(({ node, visible, searchQ, selectedId, onSelect, depth = 0 }) => {
-  const [collapsed, setCollapsed] = useState(false);
-  const hasChildren = node.children?.length > 0;
-  const isVisible = !visible || visible.has(node._id);
-  const isMatched = searchQ && `${node.firstName} ${node.lastName} ${node.role} ${node.department||''}`.toLowerCase().includes(searchQ.toLowerCase());
-
-  if (!isVisible) return null;
-
-  const Card =
-    node.type === 'executive' ? ExecNodeCard :
-    node.type === 'manager'   ? ManagerNodeCard :
-    EmployeeNodeCard;
-
-  // filter children by visibility
-  const visibleChildren = hasChildren
-    ? node.children.filter(c => !visible || visible.has(c._id))
-    : [];
-
-  return (
-    <div className="ot-cell">
-      <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div className={isMatched ? 'ot-matched' : undefined}>
-          <Card
-            node={node}
-            selected={selectedId === node._id}
-            onClick={onSelect}
-          />
-        </div>
-        {hasChildren && visibleChildren.length > 0 && (
-          <button className="ot-coll" onClick={() => setCollapsed(c => !c)}>
-            {collapsed ? `▶ ${visibleChildren.length} reports` : '▾ collapse'}
-          </button>
-        )}
-      </div>
-
-      {!collapsed && visibleChildren.length > 0 && (
-        <div className="ot-children">
-          {visibleChildren.map(child => (
-            <OrgNode
+      {/* Children branches */}
+      {hasChildren && !isFolded && (
+        <div className="mm-children">
+          {node.children.map(child => (
+            <MindmapNode
               key={child._id}
               node={child}
-              visible={visible}
-              searchQ={searchQ}
+              currentUserId={currentUserId}
               selectedId={selectedId}
               onSelect={onSelect}
+              collapsedMap={collapsedMap}
+              onToggleFold={onToggleFold}
+              searchQ={searchQ}
+              deptFilter={deptFilter}
               depth={depth + 1}
             />
           ))}
@@ -458,13 +428,13 @@ const OrgNode = memo(({ node, visible, searchQ, selectedId, onSelect, depth = 0 
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Detail Drawer
+// Detail Drawer Component
 // ─────────────────────────────────────────────────────────────────────────────
 const Drawer = ({ node, isAdmin, allSupervisors, onMove, onClose }) => {
   const [moving, setMoving] = useState(false);
-  const [val,    setVal]    = useState('');
+  const [val, setVal] = useState('');
   const accent = node?.departmentAccent || '#6366F1';
-  const theme  = node?.departmentTheme;
+  const theme = node?.departmentTheme;
 
   if (!node) return null;
 
@@ -478,32 +448,30 @@ const Drawer = ({ node, isAdmin, allSupervisors, onMove, onClose }) => {
 
   return (
     <>
-      <div className="ot-drawer-overlay" onClick={onClose} />
-      <div className="ot-drawer">
-        {/* Header */}
+      <div className="mm-drawer-overlay" onClick={onClose} />
+      <div className="mm-drawer">
         <div style={{
           padding: '20px 24px', borderBottom: '1px solid var(--border-color)',
-          background: `linear-gradient(135deg, ${accent}14, ${accent}06)`,
+          background: `linear-gradient(135deg, ${accent}18, ${accent}06)`,
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <Avatar user={node} size={56} color={accent} />
+            <Avatar user={node} size={54} color={accent} />
             <button
               onClick={onClose}
               style={{
                 background: 'none', border: 'none', cursor: 'pointer',
-                fontSize: 18, color: 'var(--text-muted)', lineHeight: 1,
-                padding: 4,
+                fontSize: 18, color: 'var(--text-muted)', padding: 4,
               }}
             >✕</button>
           </div>
-          <div style={{ marginTop: 14 }}>
-            <div style={{ fontWeight: 800, fontSize: 18 }}>{node.firstName} {node.lastName}</div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>{node.role}</div>
+          <div style={{ marginTop: 12 }}>
+            <div style={{ fontWeight: 800, fontSize: 17 }}>{node.firstName} {node.lastName}</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{node.role}</div>
             {node.department && (
               <span style={{
-                display: 'inline-block', marginTop: 8, fontSize: 11, fontWeight: 700,
-                padding: '2px 10px', borderRadius: 20,
-                background: `${accent}22`, color: accent, border: `1px solid ${accent}44`,
+                display: 'inline-block', marginTop: 6, fontSize: 11, fontWeight: 700,
+                padding: '2px 8px', borderRadius: 20,
+                background: `${accent}20`, color: accent, border: `1px solid ${accent}40`,
               }}>
                 {theme?.icon} {node.department}
               </span>
@@ -511,79 +479,37 @@ const Drawer = ({ node, isAdmin, allSupervisors, onMove, onClose }) => {
           </div>
         </div>
 
-        {/* Body */}
-        <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 20, flex: 1 }}>
-
-          {/* Status */}
-          <div style={{ display: 'flex', gap: 10 }}>
-            <span style={{
-              padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700,
-              background: node.isActive ? 'rgba(16,185,129,.15)' : 'rgba(239,68,68,.15)',
-              color: node.isActive ? '#10B981' : '#EF4444',
-              border: `1px solid ${node.isActive ? 'rgba(16,185,129,.3)' : 'rgba(239,68,68,.3)'}`,
-            }}>
-              {node.isActive ? '● Active' : '● Inactive'}
-            </span>
-            <span style={{
-              padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700,
-              background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
-              color: 'var(--text-muted)',
-              textTransform: 'capitalize',
-            }}>
-              {node.type}
-            </span>
+        <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 18, flex: 1 }}>
+          {/* Subordinates stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <div style={{ padding: '10px 12px', background: 'var(--bg-secondary)', borderRadius: 10, textAlign: 'center', border: '1px solid var(--border-color)' }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: accent }}>{node.directCount || 0}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Direct Reports</div>
+            </div>
+            <div style={{ padding: '10px 12px', background: 'var(--bg-secondary)', borderRadius: 10, textAlign: 'center', border: '1px solid var(--border-color)' }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: accent }}>{node.totalCount || 0}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Total Subordinates</div>
+            </div>
           </div>
 
-          {/* Reporting stats */}
-          {(node.directCount > 0 || node.totalCount > 0) && (
-            <div style={{
-              display: 'grid', gridTemplateColumns: '1fr 1fr',
-              gap: 10,
-            }}>
-              {[
-                { label: 'Direct Reports', value: node.directCount || 0 },
-                { label: 'Total Reports',  value: node.totalCount  || 0 },
-              ].map(s => (
-                <div key={s.label} style={{
-                  padding: '12px 14px', borderRadius: 10,
-                  background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
-                  textAlign: 'center',
-                }}>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: accent }}>{s.value}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{s.label}</div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Email */}
           {node.email && (
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.5px' }}>Email</div>
-              <div style={{
-                padding: '8px 12px', borderRadius: 8,
-                background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
-                fontSize: 12, wordBreak: 'break-all',
-              }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase' }}>Email</div>
+              <div style={{ padding: '8px 12px', background: 'var(--bg-secondary)', borderRadius: 8, fontSize: 12, border: '1px solid var(--border-color)' }}>
                 {node.email}
               </div>
             </div>
           )}
 
-          {/* Direct reports list */}
-          {node.children?.length > 0 && (
+          {node.children && node.children.length > 0 && (
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '.5px' }}>
-                Direct Reports ({node.children.length})
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>
+                Direct Team Members ({node.children.length})
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 180, overflowY: 'auto' }}>
                 {node.children.map(c => (
-                  <div key={c._id} style={{
-                    display: 'flex', alignItems: 'center', gap: 10,
-                    padding: '8px 10px', borderRadius: 8,
-                    background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
-                  }}>
-                    <Avatar user={c} size={28} color={c.departmentAccent || avatarColor(c)} />
+                  <div key={c._id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', background: 'var(--bg-secondary)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+                    <Avatar user={c} size={26} color={c.departmentAccent || avatarColor(c)} />
                     <div>
                       <div style={{ fontSize: 12, fontWeight: 600 }}>{c.firstName} {c.lastName}</div>
                       <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{c.role}</div>
@@ -594,10 +520,9 @@ const Drawer = ({ node, isAdmin, allSupervisors, onMove, onClose }) => {
             </div>
           )}
 
-          {/* Reassign */}
           {isAdmin && node.type !== 'executive' && (
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '.5px' }}>
+            <div style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border-color)' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase' }}>
                 Reassign Supervisor
               </div>
               <select
@@ -605,11 +530,9 @@ const Drawer = ({ node, isAdmin, allSupervisors, onMove, onClose }) => {
                 onChange={handleMove}
                 disabled={moving}
                 style={{
-                  width: '100%', padding: '10px 12px', borderRadius: 8,
-                  border: '1px solid var(--border-color)',
-                  background: 'var(--bg-secondary)', color: 'var(--text-primary)',
-                  fontSize: 13, cursor: 'pointer',
-                  opacity: moving ? .5 : 1,
+                  width: '100%', padding: '8px 12px', borderRadius: 8,
+                  border: '1px solid var(--border-color)', background: 'var(--bg-secondary)',
+                  color: 'var(--text-primary)', fontSize: 12, cursor: 'pointer',
                 }}
               >
                 <option value="">Select new supervisor…</option>
@@ -617,12 +540,10 @@ const Drawer = ({ node, isAdmin, allSupervisors, onMove, onClose }) => {
                 {allSupervisors
                   .filter(s => s._id?.toString() !== node._id)
                   .map(s => (
-                    <option key={s._id} value={s._id}>
-                      {s.firstName} {s.lastName} · {s.role}
-                    </option>
+                    <option key={s._id} value={s._id}>{s.firstName} {s.lastName} · {s.role}</option>
                   ))}
               </select>
-              {moving && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>Saving…</div>}
+              {moving && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>Saving…</div>}
             </div>
           )}
         </div>
@@ -632,120 +553,62 @@ const Drawer = ({ node, isAdmin, allSupervisors, onMove, onClose }) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Unassigned sub-section
+// Unassigned Section
 // ─────────────────────────────────────────────────────────────────────────────
-const UnassignedCard = memo(({ person, label, accent, isAdmin, allSupervisors, onAssign }) => {
-  const [moving, setMoving] = useState(false);
-  const [val,    setVal]    = useState('');
-  const color = avatarColor(person);
-
-  const handleAssign = async (e) => {
-    if (!e.target.value) return;
-    setMoving(true);
-    await onAssign(person._id, e.target.value === 'none' ? null : e.target.value);
-    setMoving(false);
-    setVal('');
-  };
-
-  return (
-    <div style={{
-      display: 'flex', flexDirection: 'column', gap: 8,
-      padding: '11px 13px', borderRadius: 10,
-      background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
-      opacity: moving ? .5 : 1, pointerEvents: moving ? 'none' : 'auto',
-      borderLeft: `3px solid ${accent}`,
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <Avatar user={person} size={32} color={color} />
-        <div style={{ minWidth: 0 }}>
-          <div style={{ fontWeight: 600, fontSize: 13, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {person.firstName} {person.lastName}
-          </div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{person.role}</div>
-          <span style={{
-            display: 'inline-block', fontSize: 10, fontWeight: 700,
-            padding: '1px 7px', borderRadius: 20, marginTop: 3,
-            background: `${accent}18`, color: accent, border: `1px solid ${accent}36`,
-          }}>{label}</span>
-        </div>
-      </div>
-      {isAdmin && (
-        <select value={val} onChange={handleAssign} disabled={moving} style={{
-          fontSize: 11, padding: '4px 8px', borderRadius: 6,
-          border: '1px solid var(--border-color)',
-          background: 'var(--bg-card)', color: 'var(--text-primary)',
-          cursor: 'pointer', width: '100%',
-        }}>
-          <option value="">Assign supervisor…</option>
-          {allSupervisors.filter(s => s._id?.toString() !== person._id?.toString()).map(s => (
-            <option key={s._id} value={s._id}>{s.firstName} {s.lastName} · {s.role}</option>
-          ))}
-        </select>
-      )}
-    </div>
-  );
-});
-
-const UnassignedSection = ({ managers, directs, members, isAdmin, allSupervisors, onAssign }) => {
-  const total = managers.length + directs.length + members.length;
+const UnassignedSection = ({ unassigned, isAdmin, allSupervisors, onAssign }) => {
+  const total = (unassigned.managers?.length || 0) + (unassigned.directs?.length || 0) + (unassigned.members?.length || 0);
   if (total === 0) return null;
 
-  const groups = [
-    { label: 'Unassigned Managers',       people: managers, accent: '#F59E0B', tag: 'Manager'       },
-    { label: 'Unassigned Admin / Direct',  people: directs,  accent: '#EF4444', tag: 'Admin / Direct' },
-    { label: 'Unassigned Members',         people: members,  accent: '#94A3B8', tag: 'Member'         },
-  ].filter(g => g.people.length > 0);
+  const allItems = [
+    ...(unassigned.managers || []).map(p => ({ ...p, uType: 'Manager', accent: '#F59E0B' })),
+    ...(unassigned.directs || []).map(p => ({ ...p, uType: 'Direct Report', accent: '#EF4444' })),
+    ...(unassigned.members || []).map(p => ({ ...p, uType: 'Member', accent: '#94A3B8' })),
+  ];
 
   return (
-    <div style={{ marginTop: 32 }}>
-      {/* Section header */}
+    <div style={{ marginTop: 28 }}>
       <div style={{
-        display: 'flex', alignItems: 'center', gap: 12,
-        padding: '14px 20px', borderRadius: '12px 12px 0 0',
-        background: 'rgba(239,68,68,.07)',
-        border: '1.5px solid rgba(239,68,68,.25)', borderBottom: 'none',
+        padding: '12px 18px', borderRadius: '12px 12px 0 0',
+        background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)',
+        display: 'flex', alignItems: 'center', gap: 10,
       }}>
-        <span style={{ fontSize: 24 }}>⚠️</span>
+        <span style={{ fontSize: 20 }}>⚠️</span>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 15 }}>
-            Unassigned Users — {total}
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-            These users have no supervisor and don't appear in the chart above
-          </div>
+          <div style={{ fontWeight: 700, fontSize: 14 }}>Unassigned People ({total})</div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Employees and managers without a designated supervisor in the mindmap</div>
         </div>
       </div>
-
       <div style={{
-        border: '1.5px solid rgba(239,68,68,.25)', borderTop: 'none',
-        borderRadius: '0 0 12px 12px',
-        background: 'rgba(239,68,68,.02)',
-        padding: '16px 20px',
-        display: 'flex', flexDirection: 'column', gap: 20,
+        padding: 16, background: 'rgba(239,68,68,0.02)',
+        border: '1px solid rgba(239,68,68,0.25)', borderTop: 'none', borderRadius: '0 0 12px 12px',
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10,
       }}>
-        {groups.map(g => (
-          <div key={g.label}>
-            <div style={{
-              fontSize: 11, fontWeight: 700, color: g.accent,
-              textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 10,
-              display: 'flex', alignItems: 'center', gap: 6,
-            }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: g.accent, display: 'inline-block' }} />
-              {g.label} ({g.people.length})
+        {allItems.map(p => (
+          <div key={p._id} style={{
+            padding: '10px 12px', background: 'var(--bg-secondary)', borderRadius: 10,
+            border: '1px solid var(--border-color)', borderLeft: `3px solid ${p.accent}`,
+            display: 'flex', flexDirection: 'column', gap: 6,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Avatar user={p} size={28} color={p.accent} />
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 600, fontSize: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {p.firstName} {p.lastName}
+                </div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{p.role}</div>
+              </div>
             </div>
-            <div className="ot-ua-grid">
-              {g.people.map(p => (
-                <UnassignedCard
-                  key={p._id?.toString()}
-                  person={p}
-                  label={g.tag}
-                  accent={g.accent}
-                  isAdmin={isAdmin}
-                  allSupervisors={allSupervisors}
-                  onAssign={onAssign}
-                />
-              ))}
-            </div>
+            {isAdmin && (
+              <select
+                onChange={(e) => { if (e.target.value) onAssign(p._id, e.target.value); }}
+                style={{ fontSize: 10, padding: '3px 6px', borderRadius: 5, background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
+              >
+                <option value="">Assign to supervisor…</option>
+                {allSupervisors.filter(s => s._id?.toString() !== p._id?.toString()).map(s => (
+                  <option key={s._id} value={s._id}>{s.firstName} {s.lastName} · {s.role}</option>
+                ))}
+              </select>
+            )}
           </div>
         ))}
       </div>
@@ -754,55 +617,43 @@ const UnassignedSection = ({ managers, directs, members, isAdmin, allSupervisors
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Stat pill
-// ─────────────────────────────────────────────────────────────────────────────
-const StatPill = ({ label, value, color }) => (
-  <div style={{
-    padding: '11px 18px', textAlign: 'center', minWidth: 84,
-    background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.14)',
-    borderRadius: 12,
-  }}>
-    <div style={{ fontSize: 22, fontWeight: 700, color }}>{value}</div>
-    <div style={{ fontSize: 11, color: 'rgba(248,250,252,.75)', marginTop: 2 }}>{label}</div>
-  </div>
-);
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Main Page
+// Main Page Component
 // ─────────────────────────────────────────────────────────────────────────────
 const TeamsPage = () => {
   const { user } = useAuth();
 
-  // ── State ──
-  const [rawExecNode,     setRawExecNode]     = useState([]);
-  const [rawTeams,        setRawTeams]        = useState([]);
-  const [unassigned,      setUnassigned]      = useState({ members: [], managers: [], directs: [] });
-  const [allSupervisors,  setAllSupervisors]  = useState([]);
-  const [loading,         setLoading]         = useState(true);
-  const [error,           setError]           = useState('');
-  const [success,         setSuccess]         = useState('');
-  const [search,          setSearch]          = useState('');
-  const [activeTab,       setActiveTab]       = useState('All');
-  const [selectedNode,    setSelectedNode]    = useState(null);
+  const [rawExecNode, setRawExecNode] = useState([]);
+  const [rawTeams, setRawTeams] = useState([]);
+  const [unassigned, setUnassigned] = useState({ members: [], managers: [], directs: [] });
+  const [allSupervisors, setAllSupervisors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  // Controls
+  const [viewScope, setViewScope] = useState('my-control'); // 'my-control' | 'all'
+  const [search, setSearch] = useState('');
+  const [deptFilter, setDeptFilter] = useState('All');
+  const [selectedNode, setSelectedNode] = useState(null);
+  const [collapsedMap, setCollapsedMap] = useState({});
 
   const isAdmin = ADMIN_ROLES.includes(user?.role);
 
-  // ── Fetch ──
   const fetchTeams = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
       const { data } = await API.get('/auth/teams');
-      setRawExecNode(data.execNode  || []);
-      setRawTeams(data.teams        || []);
+      setRawExecNode(data.execNode || []);
+      setRawTeams(data.teams || []);
       setUnassigned({
-        members:  data.unassignedMembers  || [],
+        members: data.unassignedMembers || [],
         managers: data.unassignedManagers || [],
-        directs:  data.unassignedDirects  || [],
+        directs: data.unassignedDirects || [],
       });
       setAllSupervisors(data.allSupervisors || []);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load org chart');
+      setError(err.response?.data?.message || 'Failed to load organization data');
     } finally {
       setLoading(false);
     }
@@ -810,70 +661,88 @@ const TeamsPage = () => {
 
   useEffect(() => { fetchTeams(); }, [fetchTeams]);
 
-  // ── Build tree (memoized) ──
-  const treeData = useMemo(
-    () => buildTree(rawExecNode, rawTeams),
-    [rawExecNode, rawTeams]
-  );
+  // Full company tree
+  const fullTree = useMemo(() => buildTree(rawExecNode, rawTeams), [rawExecNode, rawTeams]);
 
-  // ── Visibility sets (memoized) ──
-  const searchVisible = useMemo(() => computeVisible(treeData, search), [treeData, search]);
-  const deptVisible   = useMemo(() => computeDeptVisible(treeData, activeTab), [treeData, activeTab]);
+  // User's own subtree ("Under My Control")
+  const mySubtree = useMemo(() => {
+    if (!user?._id) return null;
+    const found = findUserSubtree(fullTree, user._id);
+    if (found) return found;
 
-  // Combine: a node is visible if it passes BOTH filters
-  const visible = useMemo(() => {
-    if (!searchVisible && !deptVisible) return null;
-    if (searchVisible && deptVisible) {
-      const combined = new Set();
-      searchVisible.forEach(id => { if (deptVisible.has(id)) combined.add(id); });
-      // if nothing passes both, relax to union for ancestor paths
-      if (combined.size === 0) {
-        searchVisible.forEach(id => combined.add(id));
-        deptVisible.forEach(id => combined.add(id));
-      }
-      return combined;
+    // If logged in as top admin / executive, or not nested, fallback to first root or full tree
+    if (fullTree.length > 0 && (isAdmin || user.role === 'Executive User')) {
+      return fullTree[0];
     }
-    return searchVisible || deptVisible;
-  }, [searchVisible, deptVisible]);
+    return null;
+  }, [fullTree, user, isAdmin]);
 
-  // ── Stats ──
-  const stats = useMemo(() => {
-    const totalPeople = treeData.reduce((s, e) => s + 1 + e.directCount + e.totalCount, 0);
-    const totalTeams  = rawTeams.length;
-    const totalUnassigned = unassigned.members.length + unassigned.managers.length + unassigned.directs.length;
-    return { totalPeople, totalTeams, totalUnassigned };
-  }, [treeData, rawTeams, unassigned]);
+  // Active display tree
+  const activeTree = useMemo(() => {
+    if (viewScope === 'my-control' && mySubtree) {
+      return [mySubtree];
+    }
+    return fullTree;
+  }, [viewScope, mySubtree, fullTree]);
 
-  // ── Reassign ──
+  // Expand / Collapse all
+  const handleCollapseAll = useCallback(() => {
+    const map = {};
+    const traverse = (node) => {
+      if (node.children && node.children.length > 0) {
+        map[node._id] = true;
+        node.children.forEach(traverse);
+      }
+    };
+    fullTree.forEach(traverse);
+    setCollapsedMap(map);
+  }, [fullTree]);
+
+  const handleExpandAll = useCallback(() => {
+    setCollapsedMap({});
+  }, []);
+
+  const handleToggleFold = useCallback((nodeId) => {
+    setCollapsedMap(prev => ({ ...prev, [nodeId]: !prev[nodeId] }));
+  }, []);
+
+  // Supervisor assignment
   const handleAssign = useCallback(async (userId, supervisorId) => {
     setError(''); setSuccess('');
     try {
       await API.put(`/auth/users/${userId}`, { supervisor: supervisorId || null });
-      setSuccess('Reporting line updated');
+      setSuccess('Hierarchy updated successfully');
       await fetchTeams();
-      // If the selected node was moved, close drawer
       if (selectedNode?._id === userId) setSelectedNode(null);
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update');
+      setError(err.response?.data?.message || 'Failed to update hierarchy');
     }
   }, [fetchTeams, selectedNode]);
 
-  // ─── Render ───────────────────────────────────────────────────────────────
-  if (loading) return (
-    <div className="loading-state">
-      <div className="spinner" />
-      Building org chart…
-    </div>
-  );
+  // Available departments from teams for compact dropdown
+  const departmentsList = useMemo(() => {
+    const set = new Set();
+    rawTeams.forEach(t => { if (t.department) set.add(t.department); });
+    return ['All', ...Array.from(set)];
+  }, [rawTeams]);
 
-  const deptTheme = activeTab !== 'All' ? getDepartmentTheme(activeTab) : null;
+  if (loading) {
+    return (
+      <div className="loading-state">
+        <div className="spinner" />
+        Generating Mindmap Hierarchy…
+      </div>
+    );
+  }
+
+  const peopleUnderControlCount = mySubtree ? mySubtree.totalCount : (fullTree.reduce((s, r) => s + r.totalCount, 0));
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-      <style>{CSS}</style>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <style>{MINDMAP_CSS}</style>
 
-      {/* ── Detail Drawer ── */}
+      {/* Detail Drawer */}
       {selectedNode && (
         <Drawer
           node={selectedNode}
@@ -884,143 +753,158 @@ const TeamsPage = () => {
         />
       )}
 
-      {/* ── Page Banner ── */}
-      <div className="crm-page-banner" style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-        flexWrap: 'wrap', gap: 16, padding: 24, marginBottom: 0,
-      }}>
+      {/* Header Banner */}
+      <div className="crm-page-banner" style={{ padding: '20px 24px', margin: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.2px', color: '#60A5FA', marginBottom: 6 }}>
-            Organization Chart
+          <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#60A5FA', marginBottom: 4 }}>
+            Interactive Mindmap
           </div>
-          <h1 className="page-title" style={{ color: '#fff', margin: 0 }}>
-            Teams
+          <h1 className="page-title" style={{ color: '#fff', margin: 0, fontSize: 24, display: 'flex', alignItems: 'center', gap: 10 }}>
+            🧠 Organization &amp; Reporting Hierarchy
           </h1>
-          <p className="page-subtitle" style={{ color: '#CBD5E1', marginTop: 6, marginBottom: 0 }}>
-            Organization structure, reporting lines and team ownership
+          <p className="page-subtitle" style={{ color: '#CBD5E1', margin: '4px 0 0 0', fontSize: 13 }}>
+            Visual reporting lines · Fold &amp; unfold teams · Real-time command structure
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <StatPill label="Teams"      value={stats.totalTeams}      color="#A7F3D0" />
-          <StatPill label="Members"    value={stats.totalPeople}     color="#BAE6FD" />
-          <StatPill label="Unassigned" value={stats.totalUnassigned} color={stats.totalUnassigned > 0 ? '#FCA5A5' : '#A7F3D0'} />
+
+        {/* Stats & Quick Actions */}
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ padding: '8px 16px', borderRadius: 10, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', textAlign: 'center' }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#A7F3D0' }}>{peopleUnderControlCount}</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.8)' }}>Under Your Control</div>
+          </div>
+          <div style={{ padding: '8px 16px', borderRadius: 10, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', textAlign: 'center' }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#BAE6FD' }}>{rawTeams.length}</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.8)' }}>Total Teams</div>
+          </div>
         </div>
       </div>
 
-      {/* ── Alerts ── */}
-      {error   && <div className="alert alert-error"   style={{ marginTop: 12 }}>{error}</div>}
-      {success && <div className="alert alert-success" style={{ marginTop: 12 }}>{success}</div>}
+      {error && <div className="alert alert-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
-      {/* ── Department Tabs ── */}
+      {/* Clean Mindmap Toolbar (Replaces the 15 redundant tabs with clean scope & controls) */}
       <div style={{
-        borderBottom: '1px solid var(--border-color)',
-        marginTop: 16, marginBottom: 0,
-        position: 'sticky', top: 0, zIndex: 10,
-        background: 'var(--bg-primary)',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12,
+        padding: '12px 18px', background: 'var(--bg-secondary)', borderRadius: 12, border: '1px solid var(--border-color)',
       }}>
-        <div className="ot-tabs">
-          {DEPT_TABS.map(tab => {
-            const th = tab !== 'All' ? getDepartmentTheme(tab) : null;
-            const active = activeTab === tab;
-            return (
-              <button
-                key={tab}
-                className={`ot-tab${active ? ' ot-tab-active' : ''}`}
-                style={active && th ? { color: th.primary, borderBottomColor: th.primary } : {}}
-                onClick={() => setActiveTab(tab)}
-              >
-                {th?.icon ? `${th.icon} ` : ''}{tab}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ── Toolbar: search + hint ── */}
-      <div style={{
-        display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center',
-        padding: '16px 0',
-      }}>
-        <div style={{ position: 'relative', flex: '0 0 auto' }}>
-          <span style={{
-            position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-            color: 'var(--text-muted)', fontSize: 14, pointerEvents: 'none',
-          }}>🔍</span>
-          <input
-            className="form-input"
-            placeholder="Search employees, managers or roles…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ paddingLeft: 36, minWidth: 280 }}
-          />
-        </div>
-        {search && (
-          <button className="btn btn-secondary" onClick={() => setSearch('')} style={{ padding: '8px 14px', fontSize: 12 }}>
-            ✕ Clear
+        {/* Left: View Mode Toggle */}
+        <div style={{ display: 'flex', background: 'var(--bg-card)', padding: 3, borderRadius: 10, border: '1px solid var(--border-color)' }}>
+          <button
+            onClick={() => setViewScope('my-control')}
+            style={{
+              padding: '6px 14px', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+              background: viewScope === 'my-control' ? 'var(--accent-primary, #6366F1)' : 'transparent',
+              color: viewScope === 'my-control' ? '#fff' : 'var(--text-muted)',
+              transition: 'all 0.15s ease',
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}
+          >
+            🎯 People Under My Control
           </button>
-        )}
-        <div style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-muted)' }}>
-          🖱 Scroll to explore · Click any node to view details · ▾ collapse to fold branches
+          <button
+            onClick={() => setViewScope('all')}
+            style={{
+              padding: '6px 14px', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+              background: viewScope === 'all' ? 'var(--accent-primary, #6366F1)' : 'transparent',
+              color: viewScope === 'all' ? '#fff' : 'var(--text-muted)',
+              transition: 'all 0.15s ease',
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}
+          >
+            🌐 Full Company Org Chart
+          </button>
+        </div>
+
+        {/* Right: Mindmap Folding + Search + Dept Dropdown */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          {/* Fold / Unfold All */}
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={handleExpandAll}
+            style={{ fontSize: 11, padding: '5px 10px' }}
+            title="Unfold all branches"
+          >
+            ➕ Expand All
+          </button>
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={handleCollapseAll}
+            style={{ fontSize: 11, padding: '5px 10px' }}
+            title="Fold all branches"
+          >
+            ➖ Fold All
+          </button>
+
+          {/* Department Filter Dropdown */}
+          <select
+            className="form-input"
+            value={deptFilter}
+            onChange={e => setDeptFilter(e.target.value)}
+            style={{ fontSize: 12, padding: '5px 10px', minWidth: 130, width: 'auto' }}
+          >
+            {departmentsList.map(d => (
+              <option key={d} value={d}>{d === 'All' ? '🏢 All Departments' : d}</option>
+            ))}
+          </select>
+
+          {/* Search Box */}
+          <div style={{ position: 'relative' }}>
+            <input
+              className="form-input"
+              placeholder="🔍 Search name or role…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ fontSize: 12, padding: '5px 10px', paddingRight: search ? 24 : 10, width: 170 }}
+            />
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                style={{ position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: 'var(--text-muted)' }}
+              >✕</button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* ── Org Chart Canvas ── */}
-      <div style={{
-        overflowX: 'auto', overflowY: 'visible',
-        paddingBottom: 40, paddingTop: 8,
-        minHeight: 200,
-      }}>
-        {treeData.length === 0 ? (
-          <div className="card" style={{ textAlign: 'center', padding: '48px 24px', color: 'var(--text-muted)' }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>🏢</div>
-            <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 8 }}>No org chart to display</div>
-            <div style={{ fontSize: 13 }}>
-              Assign users with the <strong>Executive User</strong> role, then link managers and members to them via the <em>supervisor</em> field.
+      {/* Mindmap Canvas */}
+      <div className="mm-canvas">
+        {activeTree.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: 40, marginBottom: 10 }}>🎯</div>
+            <div style={{ fontWeight: 700, fontSize: 16 }}>No subordinates found under your direct control</div>
+            <div style={{ fontSize: 13, marginTop: 4, maxWidth: 460, margin: '6px auto 16px' }}>
+              You are currently not listed as a supervisor over any team member. Switch to <strong>Full Company Org Chart</strong> to view the entire organization.
             </div>
+            <button className="btn btn-primary btn-sm" onClick={() => setViewScope('all')}>
+              🌐 View Full Organization
+            </button>
           </div>
         ) : (
-          /* One table per executive so multiple executives don't overlap */
-          <div style={{ display: 'table', margin: '0 auto', borderSpacing: '48px 0', borderCollapse: 'separate' }}>
-            {treeData.map((execNode, i) => {
-              // Check if this executive has any visible children
-              const hasVis = !visible || visible.has(execNode._id);
-              if (!hasVis) return null;
-              return (
-                <div key={execNode._id} style={{ display: 'table-cell', verticalAlign: 'top', paddingLeft: i > 0 ? 48 : 0 }}>
-                  {/* Each executive is its own mini-tree */}
-                  <div style={{ display: 'table', margin: '0 auto' }}>
-                    <div style={{ display: 'table-row' }}>
-                      <OrgNode
-                        node={execNode}
-                        visible={visible}
-                        searchQ={search}
-                        selectedId={selectedNode?._id}
-                        onSelect={setSelectedNode}
-                        depth={0}
-                      />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* No results for current filter */}
-        {treeData.length > 0 && visible && visible.size === 0 && (
-          <div style={{ textAlign: 'center', padding: '40px 24px', color: 'var(--text-muted)' }}>
-            <div style={{ fontSize: 32, marginBottom: 10 }}>🔍</div>
-            <div style={{ fontWeight: 600 }}>No results found</div>
-            <div style={{ fontSize: 13, marginTop: 4 }}>Try a different search term or department filter</div>
+          <div className="mm-tree-wrapper">
+            <div style={{ display: 'table-row' }}>
+              {activeTree.map(rootNode => (
+                <MindmapNode
+                  key={rootNode._id}
+                  node={rootNode}
+                  currentUserId={user?._id}
+                  selectedId={selectedNode?._id}
+                  onSelect={setSelectedNode}
+                  collapsedMap={collapsedMap}
+                  onToggleFold={handleToggleFold}
+                  searchQ={search}
+                  deptFilter={deptFilter}
+                  depth={0}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>
 
-      {/* ── Unassigned Section ── */}
+      {/* Unassigned Staff Section */}
       <UnassignedSection
-        managers={unassigned.managers}
-        directs={unassigned.directs}
-        members={unassigned.members}
+        unassigned={unassigned}
         isAdmin={isAdmin}
         allSupervisors={allSupervisors}
         onAssign={handleAssign}
