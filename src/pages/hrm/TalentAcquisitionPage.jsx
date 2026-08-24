@@ -3,6 +3,53 @@ import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
 // ==========================================
+// ICON COMPONENT
+// ==========================================
+const Icon = ({ name, size = 16, style = {} }) => {
+  const p = {
+    xmlns: 'http://www.w3.org/2000/svg',
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: '2',
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+    style,
+  };
+
+  switch (name) {
+    case 'overview':
+      return <svg {...p}><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>;
+    case 'requisitions':
+      return <svg {...p}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>;
+    case 'jobs':
+      return <svg {...p}><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>;
+    case 'candidates':
+      return <svg {...p}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+    case 'interviews':
+      return <svg {...p}><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="23"/><line x1="8" x2="16" y1="23" y2="23"/></svg>;
+    case 'distribution':
+      return <svg {...p}><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>;
+    case 'reports':
+      return <svg {...p}><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>;
+    case 'activity':
+      return <svg {...p}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>;
+    case 'user':
+      return <svg {...p}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
+    case 'lock':
+      return <svg {...p}><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>;
+    case 'file':
+      return <svg {...p}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>;
+    case 'briefcase':
+      return <svg {...p}><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>;
+    default:
+      return null;
+  }
+};
+
+// ==========================================
 // STATUS COLORS & BADGES
 // ==========================================
 const STATUS_COLORS = {
@@ -68,13 +115,13 @@ const TalentAcquisitionPage = () => {
   const isTA = ['Recruitment Specialist (Talent Acquisition)', 'HRM System Administrator', 'HR Manager', 'CRM core Administrator', 'Super Admin', 'Super CRM Administrator'].includes(user?.role);
 
   const TABS = [
-    { id: 'overview', label: 'Overview', icon: '📊' },
-    { id: 'requisitions', label: 'Job Requisitions', icon: '📝' },
-    { id: 'jobs', label: 'Jobs', icon: '💼' },
-    { id: 'candidates', label: 'Candidates', icon: '👥' },
-    { id: 'interviews', label: 'Interviews', icon: '🎤' },
-    { id: 'distribution', label: 'Distribution', icon: '📢' },
-    { id: 'reports', label: 'Reports', icon: '📈' },
+    { id: 'overview', label: 'Overview', icon: 'overview' },
+    { id: 'requisitions', label: 'Job Requisitions', icon: 'requisitions' },
+    { id: 'jobs', label: 'Jobs', icon: 'jobs' },
+    { id: 'candidates', label: 'Candidates', icon: 'candidates' },
+    { id: 'interviews', label: 'Interviews', icon: 'interviews' },
+    { id: 'distribution', label: 'Distribution', icon: 'distribution' },
+    { id: 'reports', label: 'Reports', icon: 'reports' },
   ];
 
   const fetchData = async (tab) => {
@@ -128,7 +175,7 @@ const TalentAcquisitionPage = () => {
   if (!isTA) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400, flexDirection: 'column', gap: 12 }}>
-        <span style={{ fontSize: 40 }}>🚫</span>
+        <Icon name="lock" size={32} style={{ color: 'var(--text-muted)' }} />
         <span style={{ color: 'var(--text-muted)' }}>Access restricted to Talent Acquisition team.</span>
       </div>
     );
@@ -169,7 +216,7 @@ const TalentAcquisitionPage = () => {
               gap: 6,
             }}
           >
-            <span>{tab.icon}</span>
+            <Icon name={tab.icon} size={15} />
             {tab.label}
           </button>
         ))}
@@ -232,15 +279,15 @@ const OverviewTab = ({ data, onNavigate }) => {
         <h3 style={{ margin: '0 0 16px', fontSize: 15 }}>Recent Activity</h3>
         {!data.recentActivity?.length ? (
           <div style={{ textAlign: 'center', padding: 24, color: 'var(--text-muted)' }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}>📋</div>
+            <Icon name="activity" size={28} style={{ marginBottom: 8, opacity: 0.5 }} />
             <div>No recent activity</div>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {data.recentActivity.slice(0, 8).map((activity, idx) => (
               <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: idx < data.recentActivity.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>
-                  {activity.entityType === 'Job' ? '💼' : activity.entityType === 'Candidate' ? '👤' : '📝'}
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6366F1' }}>
+                  {activity.entityType === 'Job' ? <Icon name="jobs" size={14} /> : activity.entityType === 'Candidate' ? <Icon name="user" size={14} /> : <Icon name="file" size={14} />}
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 13 }}>{activity.description}</div>
@@ -352,7 +399,7 @@ const RequisitionsTab = ({ data = [], onRefresh }) => {
 
       {!data.length ? (
         <div className="card" style={{ textAlign: 'center', padding: 48 }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>📝</div>
+          <Icon name="requisitions" size={32} style={{ marginBottom: 12, color: 'var(--text-muted)' }} />
           <div style={{ fontWeight: 600, marginBottom: 8 }}>No job requisitions</div>
           <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Create a job requisition to start the hiring process.</div>
         </div>
@@ -482,7 +529,7 @@ const JobsTab = ({ data = [], onRefresh }) => {
 
       {!data.length ? (
         <div className="card" style={{ textAlign: 'center', padding: 48 }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>💼</div>
+          <Icon name="jobs" size={32} style={{ marginBottom: 12, color: 'var(--text-muted)' }} />
           <div style={{ fontWeight: 600, marginBottom: 8 }}>No active vacancies</div>
           <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Create a job or convert an approved requisition to start hiring.</div>
         </div>
@@ -747,7 +794,7 @@ const InterviewsTab = ({ data = [], onRefresh }) => {
 
       {!data.length ? (
         <div className="card" style={{ textAlign: 'center', padding: 48 }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>🎤</div>
+          <Icon name="interviews" size={32} style={{ marginBottom: 12, color: 'var(--text-muted)' }} />
           <div style={{ fontWeight: 600, marginBottom: 8 }}>No interviews scheduled</div>
           <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Schedule interviews with candidates to evaluate them.</div>
         </div>
@@ -842,7 +889,7 @@ const DistributionTab = ({ data = [], onRefresh }) => {
 
       {!data.length ? (
         <div className="card" style={{ textAlign: 'center', padding: 48 }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>📢</div>
+          <Icon name="distribution" size={32} style={{ marginBottom: 12, color: 'var(--text-muted)' }} />
           <div style={{ fontWeight: 600, marginBottom: 8 }}>No publications yet</div>
           <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Publish your jobs on multiple platforms to reach more candidates.</div>
         </div>
@@ -920,8 +967,8 @@ const ReportsTab = ({ data }) => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {activity.slice(0, 10).map((act, idx) => (
               <div key={idx} style={{ display: 'flex', gap: 12, padding: '8px 0', borderBottom: idx < activity.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
-                <div style={{ fontSize: 14 }}>
-                  {act.entityType === 'Job' ? '💼' : act.entityType === 'Candidate' ? '👤' : '📝'}
+                <div style={{ color: 'var(--text-muted)' }}>
+                  {act.entityType === 'Job' ? <Icon name="jobs" size={14} /> : act.entityType === 'Candidate' ? <Icon name="user" size={14} /> : <Icon name="file" size={14} />}
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 12 }}>{act.description}</div>
