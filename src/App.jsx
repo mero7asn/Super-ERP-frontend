@@ -627,7 +627,8 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[
             'RTM Team Member', 'CRM core Administrator',
-            'HRM System Administrator', 'HR Manager'
+            'HRM System Administrator', 'HR Manager',
+            'Super Admin', 'Super CRM Administrator', 'Administrator', 'Core 360 Administrator'
           ]}>
             <AppLayout>
               <RtmMonitorPage />

@@ -113,7 +113,7 @@ const CRM_NAV_ITEMS = [
   { label: 'User Management', icon: 'users', path: '/users', roles: ['CRM core Administrator','System Architect'] },
   { label: 'System Settings', icon: 'settings', path: '/settings', roles: ['CRM core Administrator'] },
   { label: 'CRM Dev Tools', icon: 'devtools', path: '/devtools', roles: ['CRM Developer','System Architect','CRM core Administrator'] },
-  { label: 'RTM Monitor', icon: 'rtm', path: '/rtm', roles: ['RTM Team Member','CRM core Administrator','HRM System Administrator','HR Manager'] },
+  { label: 'RTM Monitor', icon: 'rtm', path: '/rtm', roles: ['RTM Team Member','CRM core Administrator','HRM System Administrator','HR Manager','Super Admin','Super CRM Administrator','Administrator','Core 360 Administrator'] },
 ];
 
 // 2. inventory core SUB ITEMS
