@@ -94,11 +94,42 @@ const PersonalPage = () => {
     coachingTarget: 0
   });
 
-  // Default AUX Target fields for monthly initial configuration
-  const [defaultLiveTarget, setDefaultLiveTarget] = useState(480);
-  const [defaultBreakTarget, setDefaultBreakTarget] = useState(60);
-  const [defaultTrainingTarget, setDefaultTrainingTarget] = useState(0);
-  const [defaultCoachingTarget, setDefaultCoachingTarget] = useState(0);
+  // Break time slots for monthly schedule
+  const [breakSlots, setBreakSlots] = useState([
+    { start: '12:00', end: '13:00', type: 'Break / Rest' }
+  ]);
+  const [trainingSlots, setTrainingSlots] = useState([]);
+  const [coachingSlots, setCoachingSlots] = useState([]);
+
+  // Calculate total minutes from slots
+  const calcSlotMinutes = (slots) => {
+    return slots.reduce((total, slot) => {
+      const [startH, startM] = slot.start.split(':').map(Number);
+      const [endH, endM] = slot.end.split(':').map(Number);
+      const startMinutes = startH * 60 + startM;
+      const endMinutes = endH * 60 + endM;
+      return total + (endMinutes - startMinutes);
+    }, 0);
+  };
+
+  // Add/remove slot functions
+  const addBreakSlot = () => {
+    const lastSlot = breakSlots[breakSlots.length - 1];
+    const newStart = lastSlot ? lastSlot.end : '12:00';
+    const [h, m] = newStart.split(':').map(Number);
+    const endH = (h + 1) % 24;
+    setBreakSlots([...breakSlots, { start: newStart, end: `${String(endH).padStart(2, '0')}:${String(m).padStart(2, '0')}`, type: 'Break / Rest' }]);
+  };
+
+  const removeBreakSlot = (idx) => {
+    setBreakSlots(breakSlots.filter((_, i) => i !== idx));
+  };
+
+  const updateBreakSlot = (idx, field, value) => {
+    const updated = [...breakSlots];
+    updated[idx] = { ...updated[idx], [field]: value };
+    setBreakSlots(updated);
+  };
 
   // Leave Form Fields
   const [leaveType, setLeaveType] = useState('Annual');
@@ -256,6 +287,13 @@ const PersonalPage = () => {
         setDefaultBreakTarget(sched.defaultBreakTarget ?? 60);
         setDefaultTrainingTarget(sched.defaultTrainingTarget ?? 0);
         setDefaultCoachingTarget(sched.defaultCoachingTarget ?? 0);
+
+        // Bind break slots
+        if (sched.breakSlots && sched.breakSlots.length > 0) {
+          setBreakSlots(sched.breakSlots);
+        } else {
+          setBreakSlots([{ start: '12:00', end: '13:00', type: 'Break / Rest' }]);
+        }
 
         // Initialize weekly form controls with selected week's override if exists
         const weekData = (sched.weeklyOverrides || {})[selectedWeek] || { shift: sched.defaultShift, weeklyOffDays: sched.defaultOffDays };
@@ -423,11 +461,12 @@ const PersonalPage = () => {
         defaultShift: shift,
         defaultOffDays: offDays,
         defaultLiveTarget: Number(defaultLiveTarget),
-        defaultBreakTarget: Number(defaultBreakTarget),
+        defaultBreakTarget: calcSlotMinutes(breakSlots) || Number(defaultBreakTarget),
         defaultTrainingTarget: Number(defaultTrainingTarget),
-        defaultCoachingTarget: Number(defaultCoachingTarget)
+        defaultCoachingTarget: Number(defaultCoachingTarget),
+        breakSlots: breakSlots
       });
-      setStatusMsg({ type: 'success', text: 'Monthly base schedule and AUX targets updated successfully.' });
+      setStatusMsg({ type: 'success', text: 'Monthly base schedule, AUX targets, and break times updated successfully.' });
       fetchDetailedSchedule();
       fetchEmployees();
     } catch (err) {
@@ -1099,94 +1138,182 @@ const PersonalPage = () => {
                   )}
 
                   {/* Day Schedule Detail & Staggered AUX Planner Modal */}
-                  {activeExpandedDay && (
-                    <div style={{
-                      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                      background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center',
-                      alignItems: 'center', zIndex: 1000, padding: 20
-                    }}>
-                      <div className="card" style={{ width: '100%', maxWidth: 700, maxHeight: '90vh', overflowY: 'auto', border: '1px solid var(--accent-secondary)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: 12, marginBottom: 16 }}>
-                          <div>
-                            <h3 style={{ margin: 0, fontSize: 16 }}>🕒 Day Details & Staggered AUX Planner</h3>
-                            <p style={{ margin: '2px 0 0 0', fontSize: 12, color: 'var(--text-muted)' }}>Date: {activeExpandedDay.dateStr} ({activeExpandedDay.dayName})</p>
-                          </div>
-                          <button 
-                            className="btn btn-secondary btn-sm"
-                            onClick={() => setActiveExpandedDay(null)}
-                            style={{ padding: '4px 10px', fontSize: 11 }}
-                          >
-                            Close
-                          </button>
-                        </div>
+                  {activeExpandedDay && (() => {
+                    // Parse shift times to generate hour slots
+                    const shiftStr = activeExpandedDay.shift || 'Day Shift (09:00 - 17:00)';
+                    const timeMatch = shiftStr.match(/(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/);
+                    const startHour = timeMatch ? parseInt(timeMatch[1].split(':')[0]) : 9;
+                    const endHour = timeMatch ? parseInt(timeMatch[2].split(':')[0]) : 17;
+                    const isOvernight = endHour <= startHour;
+                    
+                    // Generate hour slots
+                    const hourSlots = [];
+                    if (isOvernight) {
+                      for (let h = startHour; h < 24; h++) {
+                        hourSlots.push(`${String(h).padStart(2, '0')}:00 - ${String(h + 1).padStart(2, '0')}:00`);
+                      }
+                      for (let h = 0; h < endHour; h++) {
+                        hourSlots.push(`${String(h).padStart(2, '0')}:00 - ${String(h + 1).padStart(2, '0')}:00`);
+                      }
+                    } else {
+                      for (let h = startHour; h < endHour; h++) {
+                        hourSlots.push(`${String(h).padStart(2, '0')}:00 - ${String(h + 1).padStart(2, '0')}:00`);
+                      }
+                    }
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, background: 'rgba(255,255,255,0.02)', padding: 12, borderRadius: 6, border: '1px solid var(--border-color)' }}>
+                    // Get targets
+                    const liveTarget = activeExpandedDay.targets?.live ?? detailedSchedule?.defaultLiveTarget ?? 480;
+                    const breakTarget = activeExpandedDay.targets?.break ?? detailedSchedule?.defaultBreakTarget ?? 60;
+                    const trainTarget = activeExpandedDay.targets?.train ?? detailedSchedule?.defaultTrainingTarget ?? 0;
+                    const coachTarget = activeExpandedDay.targets?.coach ?? detailedSchedule?.defaultCoachingTarget ?? 0;
+
+                    return (
+                      <div style={{
+                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                        background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center',
+                        alignItems: 'center', zIndex: 1000, padding: 20
+                      }}>
+                        <div className="card" style={{ width: '100%', maxWidth: 700, maxHeight: '90vh', overflowY: 'auto', border: '1px solid var(--accent-secondary)' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: 12, marginBottom: 16 }}>
                             <div>
-                              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Selected Employee</div>
-                              <div style={{ fontWeight: 'bold', fontSize: 13, color: 'var(--accent-secondary)' }}>{fullName}</div>
+                              <h3 style={{ margin: 0, fontSize: 16 }}>🕒 Day Details & Staggered AUX Planner</h3>
+                              <p style={{ margin: '2px 0 0 0', fontSize: 12, color: 'var(--text-muted)' }}>Date: {activeExpandedDay.dateStr} ({activeExpandedDay.dayName})</p>
                             </div>
-                            <div>
-                              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Planned Status</div>
-                              <div style={{ fontWeight: 'bold', fontSize: 13 }}>{activeExpandedDay.isOff ? 'Off-Day' : activeExpandedDay.shift}</div>
-                            </div>
+                            <button 
+                              className="btn btn-secondary btn-sm"
+                              onClick={() => setActiveExpandedDay(null)}
+                              style={{ padding: '4px 10px', fontSize: 11 }}
+                            >
+                              ✕ Close
+                            </button>
                           </div>
 
-                          {!activeExpandedDay.isOff ? (
-                            <div>
-                              <h4 style={{ margin: '0 0 8px 0', fontSize: 13 }}>Staggered Hour-by-Hour AUX Distribution</h4>
-                              <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12 }}>
-                                Define status for each hour to avoid simultaneous breaks with other department members.
-                              </p>
-
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                {[
-                                  '09:00 - 10:00', '10:00 - 11:00', '11:00 - 12:00', '12:00 - 13:00',
-                                  '13:00 - 14:00', '14:00 - 15:00', '15:00 - 16:00', '16:00 - 17:00'
-                                ].map((hourSlot) => {
-                                  // Mock initial staggered configuration based on targets
-                                  let defaultVal = 'Live (Online)';
-                                  if (hourSlot === '12:00 - 13:00' || hourSlot === '13:00 - 14:00') {
-                                    defaultVal = 'Break / Rest';
-                                  }
-                                  if (hourSlot === '15:00 - 16:00') {
-                                    defaultVal = 'Coaching / Training';
-                                  }
-
-                                  return (
-                                    <div 
-                                      key={hourSlot} 
-                                      style={{
-                                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                        padding: '8px 12px', background: 'rgba(255,255,255,0.01)',
-                                        border: '1px solid var(--border-color)', borderRadius: 6
-                                      }}
-                                    >
-                                      <span style={{ fontSize: 12, fontWeight: 500 }}>{hourSlot}</span>
-                                      <select 
-                                        className="form-input" 
-                                        defaultValue={defaultVal}
-                                        style={{ width: 'auto', padding: '4px 8px', fontSize: 11, height: 'auto', margin: 0 }}
-                                      >
-                                        <option value="Live (Online)">🟢 Live (Online)</option>
-                                        <option value="Break / Rest">☕ Break / Rest</option>
-                                        <option value="Coaching / Training">🎓 Training / Coaching</option>
-                                        <option value="Offline / Logged out">⚫ Offline / Logged out</option>
-                                      </select>
-                                    </div>
-                                  );
-                                })}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                            {/* Employee & Status Summary */}
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, background: 'rgba(255,255,255,0.02)', padding: 12, borderRadius: 6, border: '1px solid var(--border-color)' }}>
+                              <div>
+                                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Employee</div>
+                                <div style={{ fontWeight: 'bold', fontSize: 13, color: 'var(--accent-secondary)' }}>{fullName || 'Select an employee'}</div>
+                              </div>
+                              <div>
+                                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Scheduled</div>
+                                <div style={{ fontWeight: 'bold', fontSize: 13 }}>
+                                  {activeExpandedDay.isOff ? (
+                                    <span style={{ color: '#fca5a5' }}>Off-Day</span>
+                                  ) : (
+                                    <span style={{ color: '#93c5fd' }}>{shiftStr}</span>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          ) : (
-                            <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-muted)', fontSize: 13 }}>
-                              This day is scheduled as an Off-Day. No staggered hour planning required.
+
+                            {/* AUX Targets Summary */}
+                            {!activeExpandedDay.isOff && (
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                                <div style={{ padding: '10px 8px', background: 'rgba(16,185,129,0.08)', borderRadius: 6, border: '1px solid rgba(16,185,129,0.2)', textAlign: 'center' }}>
+                                  <div style={{ fontSize: 18, fontWeight: 700, color: '#6ee7b7' }}>{liveTarget}m</div>
+                                  <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>📞 Live</div>
+                                </div>
+                                <div style={{ padding: '10px 8px', background: 'rgba(245,158,11,0.08)', borderRadius: 6, border: '1px solid rgba(245,158,11,0.2)', textAlign: 'center' }}>
+                                  <div style={{ fontSize: 18, fontWeight: 700, color: '#fcd34d' }}>{breakTarget}m</div>
+                                  <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>☕ Break</div>
+                                </div>
+                                <div style={{ padding: '10px 8px', background: 'rgba(99,102,241,0.08)', borderRadius: 6, border: '1px solid rgba(99,102,241,0.2)', textAlign: 'center' }}>
+                                  <div style={{ fontSize: 18, fontWeight: 700, color: '#a5b4fc' }}>{trainTarget}m</div>
+                                  <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>🎓 Training</div>
+                                </div>
+                                <div style={{ padding: '10px 8px', background: 'rgba(139,92,246,0.08)', borderRadius: 6, border: '1px solid rgba(139,92,246,0.2)', textAlign: 'center' }}>
+                                  <div style={{ fontSize: 18, fontWeight: 700, color: '#c084fc' }}>{coachTarget}m</div>
+                                  <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>👥 Coaching</div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Hourly Distribution */}
+                            {!activeExpandedDay.isOff ? (
+                              <div>
+                                <h4 style={{ margin: '0 0 8px 0', fontSize: 13 }}>Hourly AUX Distribution</h4>
+                                <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12 }}>
+                                  Set status for each hour to coordinate breaks across the team.
+                                </p>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                  {hourSlots.map((hourSlot, idx) => {
+                                    // Smart defaults based on typical patterns
+                                    let defaultVal = 'Live (Online)';
+                                    const hourNum = parseInt(hourSlot.split(':')[0]);
+                                    
+                                    // Break time (middle of shift)
+                                    const midPoint = startHour + Math.floor((isOvernight ? (24 - startHour + endHour) : (endHour - startHour)) / 2);
+                                    if (hourNum === midPoint || hourNum === midPoint + 1) {
+                                      defaultVal = 'Break / Rest';
+                                    }
+                                    
+                                    return (
+                                      <div 
+                                        key={hourSlot} 
+                                        style={{
+                                          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                          padding: '6px 12px', 
+                                          background: idx % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.04)',
+                                          borderRadius: 4
+                                        }}
+                                      >
+                                        <span style={{ fontSize: 12, fontWeight: 500, minWidth: 100 }}>{hourSlot}</span>
+                                        <select 
+                                          className="form-input" 
+                                          defaultValue={defaultVal}
+                                          style={{ width: 'auto', padding: '4px 8px', fontSize: 11, height: 'auto', margin: 0 }}
+                                        >
+                                          <option value="Live (Online)">🟢 Live (Online)</option>
+                                          <option value="Break / Rest">☕ Break / Rest</option>
+                                          <option value="Coaching / Training">🎓 Training / Coaching</option>
+                                          <option value="Offline / Logged out">⚫ Offline</option>
+                                        </select>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+
+                                {hourSlots.length === 0 && (
+                                  <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-muted)', fontSize: 12 }}>
+                                    Unable to parse shift times. Please update the shift configuration.
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <div style={{ 
+                                textAlign: 'center', padding: '30px 20px', 
+                                background: 'rgba(239,68,68,0.04)', 
+                                borderRadius: 8,
+                                border: '1px dashed rgba(239,68,68,0.2)'
+                              }}>
+                                <div style={{ fontSize: 32, marginBottom: 8 }}>🌴</div>
+                                <div style={{ color: '#fca5a5', fontWeight: 600, fontSize: 14 }}>Off-Day</div>
+                                <div style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 4 }}>
+                                  No scheduling required for this day.
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Quick Actions */}
+                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', paddingTop: 12, borderTop: '1px solid var(--border-color)' }}>
+                              <button className="btn btn-sm btn-secondary" onClick={() => setActiveExpandedDay(null)}>Close</button>
+                              <button 
+                                className="btn btn-sm btn-primary" 
+                                onClick={() => {
+                                  openDayEditor(activeExpandedDay);
+                                  setActiveExpandedDay(null);
+                                }}
+                              >
+                                ✏️ Edit This Day
+                              </button>
                             </div>
-                          )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
 
                   {/* Shift Configurator (HR/Admin or Self) */}
                   {(isHR || selectedEmployeeId === user?._id) && (
@@ -1238,24 +1365,128 @@ const PersonalPage = () => {
                             </select>
                           </div>
 
-                          <div style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 16 }}>
-                            <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">📞 Live (mins)</label>
-                              <input type="number" className="form-input" value={defaultLiveTarget} onChange={(e) => setDefaultLiveTarget(e.target.value)} />
-                            </div>
-                            <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">☕ Break (mins)</label>
-                              <input type="number" className="form-input" value={defaultBreakTarget} onChange={(e) => setDefaultBreakTarget(e.target.value)} />
-                            </div>
-                            <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">🎓 Training (mins)</label>
-                              <input type="number" className="form-input" value={defaultTrainingTarget} onChange={(e) => setDefaultTrainingTarget(e.target.value)} />
-                            </div>
-                            <div className="form-group" style={{ margin: 0 }}>
-                              <label className="form-label">👥 Coaching (mins)</label>
-                              <input type="number" className="form-input" value={defaultCoachingTarget} onChange={(e) => setDefaultCoachingTarget(e.target.value)} />
-                            </div>
-                          </div>
+                           <div style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 16 }}>
+                             <div className="form-group" style={{ margin: 0 }}>
+                               <label className="form-label">📞 Live (mins)</label>
+                               <input type="number" className="form-input" value={defaultLiveTarget} onChange={(e) => setDefaultLiveTarget(e.target.value)} />
+                             </div>
+                             <div className="form-group" style={{ margin: 0 }}>
+                               <label className="form-label">☕ Break (mins)</label>
+                               <input type="number" className="form-input" value={breakSlots.length > 0 ? calcSlotMinutes(breakSlots) : defaultBreakTarget} onChange={(e) => setDefaultBreakTarget(e.target.value)} />
+                             </div>
+                             <div className="form-group" style={{ margin: 0 }}>
+                               <label className="form-label">🎓 Training (mins)</label>
+                               <input type="number" className="form-input" value={defaultTrainingTarget} onChange={(e) => setDefaultTrainingTarget(e.target.value)} />
+                             </div>
+                             <div className="form-group" style={{ margin: 0 }}>
+                               <label className="form-label">👥 Coaching (mins)</label>
+                               <input type="number" className="form-input" value={defaultCoachingTarget} onChange={(e) => setDefaultCoachingTarget(e.target.value)} />
+                             </div>
+                           </div>
+
+                           {/* Break Time Slot Scheduler */}
+                           <div style={{ gridColumn: 'span 2', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 16 }}>
+                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                               <div>
+                                 <label className="form-label" style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>☕ Break Time Slots</label>
+                                 <p style={{ margin: '2px 0 0 0', fontSize: 11, color: 'var(--text-muted)' }}>Set exact break times within the shift window</p>
+                               </div>
+                               <button type="button" className="btn btn-sm btn-secondary" onClick={addBreakSlot} style={{ fontSize: 11 }}>
+                                 + Add Break
+                               </button>
+                             </div>
+
+                             {/* Visual Timeline */}
+                             <div style={{ 
+                               display: 'flex', 
+                               height: 32, 
+                               background: 'rgba(59,130,246,0.08)', 
+                               borderRadius: 6,
+                               border: '1px solid rgba(59,130,246,0.15)',
+                               position: 'relative',
+                               marginBottom: 12,
+                               overflow: 'hidden'
+                             }}>
+                               {/* Shift background */}
+                               <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: '#93c5fd' }}>
+                                 Shift Window
+                               </div>
+                               {/* Break overlays */}
+                               {breakSlots.map((slot, idx) => {
+                                 const [startH] = slot.start.split(':').map(Number);
+                                 const [endH] = slot.end.split(':').map(Number);
+                                 const left = ((startH - 9) / 8) * 100;
+                                 const width = ((endH - startH) / 8) * 100;
+                                 return (
+                                   <div 
+                                     key={idx}
+                                     style={{
+                                       position: 'absolute',
+                                       left: `${Math.max(0, left)}%`,
+                                       width: `${Math.max(5, width)}%`,
+                                       height: '100%',
+                                       background: 'rgba(239,68,68,0.3)',
+                                       borderLeft: '2px solid rgba(239,68,68,0.6)',
+                                       borderRight: '2px solid rgba(239,68,68,0.6)',
+                                       display: 'flex',
+                                       alignItems: 'center',
+                                       justifyContent: 'center',
+                                       fontSize: 9,
+                                       color: '#fca5a5',
+                                       fontWeight: 600,
+                                     }}
+                                   >
+                                     ☕ {slot.start}-{slot.end}
+                                   </div>
+                                 );
+                               })}
+                             </div>
+
+                             {/* Break Slot Editors */}
+                             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                               {breakSlots.map((slot, idx) => (
+                                 <div key={idx} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                   <span style={{ fontSize: 11, color: 'var(--text-muted)', minWidth: 60 }}>Break {idx + 1}:</span>
+                                   <input 
+                                     type="time" 
+                                     className="form-input" 
+                                     value={slot.start} 
+                                     onChange={(e) => updateBreakSlot(idx, 'start', e.target.value)}
+                                     style={{ width: 'auto', padding: '4px 8px', fontSize: 12 }}
+                                   />
+                                   <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>to</span>
+                                   <input 
+                                     type="time" 
+                                     className="form-input" 
+                                     value={slot.end} 
+                                     onChange={(e) => updateBreakSlot(idx, 'end', e.target.value)}
+                                     style={{ width: 'auto', padding: '4px 8px', fontSize: 12 }}
+                                   />
+                                   <span style={{ fontSize: 11, color: '#fcd34d', marginLeft: 8 }}>
+                                     ({calcSlotMinutes([slot])}m)
+                                   </span>
+                                   {breakSlots.length > 1 && (
+                                     <button 
+                                       type="button" 
+                                       onClick={() => removeBreakSlot(idx)}
+                                       style={{ 
+                                         background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', 
+                                         fontSize: 14, padding: '2px 6px' 
+                                       }}
+                                     >
+                                       ✕
+                                     </button>
+                                   )}
+                                 </div>
+                               ))}
+                             </div>
+
+                             {breakSlots.length === 0 && (
+                               <div style={{ textAlign: 'center', padding: 12, color: 'var(--text-muted)', fontSize: 12, background: 'rgba(255,255,255,0.02)', borderRadius: 6 }}>
+                                 No break slots defined. Break time will be deducted from live time automatically.
+                               </div>
+                             )}
+                           </div>
 
                           <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
                             <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>

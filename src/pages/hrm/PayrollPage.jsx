@@ -11,6 +11,10 @@ const PAYROLL_ROLES = [
   'HR Director / Executive HR User',
   'HRM System Administrator',
   'CRM core Administrator',
+  'Super Admin',
+  'Super CRM Administrator',
+  'Administrator',
+  'Core 360 Administrator',
 ];
 const isPayrollMgr = (role) => PAYROLL_ROLES.includes(role);
 
