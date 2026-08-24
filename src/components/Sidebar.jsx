@@ -110,12 +110,12 @@ const CRM_NAV_ITEMS = [
   { label: 'Products', icon: 'box', path: '/products', roles: ['CRM core Administrator','System Architect','Sales Agent','Sales Manager','Executive User'], businessModel: ['product', 'both'] },
   { label: 'Campaigns', icon: 'campaigns', path: '/campaigns', roles: ['CRM core Administrator','Marketing Specialist','Marketing Manager','Executive User','Business Analyst','System Architect'] },
   { label: 'Analytics', icon: 'analytics', path: '/analytics', roles: ['CRM core Administrator','Executive User','Business Analyst','System Architect'] },
-  { label: 'Executive Dashboard', icon: 'executive', path: '/executive', roles: ['CRM core Administrator','Executive User','Business Analyst','System Architect'] },
   { label: 'RTM Monitor', icon: 'rtm', path: '/rtm', roles: ['RTM Team Member','CRM core Administrator','HRM System Administrator','HR Manager'] },
 ];
 
 // 6. MANAGEMENT CORE NAV ITEMS
 const MANAGEMENT_NAV_ITEMS = [
+  { label: 'Executive Dashboard', icon: 'executive', path: '/executive', roles: ['CRM core Administrator','Executive User','Business Analyst','System Architect','Super CRM Administrator','Super Admin','Administrator','Core 360 Administrator'] },
   { label: 'User Management', icon: 'users', path: '/users', roles: ['CRM core Administrator','System Architect','Super CRM Administrator','Super Admin','Administrator','Core 360 Administrator','Executive User'] },
   { label: 'System Settings', icon: 'settings', path: '/settings', roles: ['CRM core Administrator','Super CRM Administrator','Super Admin','Administrator','Core 360 Administrator','System Architect'] },
   { label: 'CRM Dev Tools', icon: 'devtools', path: '/devtools', roles: ['CRM Developer','System Architect','CRM core Administrator','Super CRM Administrator','Super Admin','Administrator','Core 360 Administrator'] },
@@ -217,7 +217,7 @@ const Sidebar = () => {
       setAccountingOpen(true);
     } else if (p.startsWith('/hrm')) {
       setHrmOpen(true);
-    } else if (p.startsWith('/users') || p.startsWith('/settings') || p.startsWith('/devtools')) {
+    } else if (p.startsWith('/executive') || p.startsWith('/users') || p.startsWith('/settings') || p.startsWith('/devtools')) {
       setManagementOpen(true);
     } else if (p.startsWith('/ess') || p.startsWith('/emails')) {
       setWorkspaceOpen(true);
