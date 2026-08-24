@@ -31,7 +31,7 @@ import PersonalPage from './pages/hrm/PersonalPage';
 import PayrollPage from './pages/hrm/PayrollPage';
 import TrainingPage from './pages/hrm/TrainingPage';
 import TalentAcquisitionPage from './pages/hrm/TalentAcquisitionPage';
-import PartnershipsPage from './pages/hrm/PartnershipsPage';
+import PartnershipsPage from './pages/hrm/BDCulturePage';
 import MySchedulePage from './pages/ess/MySchedulePage';
 import MyPayrollPage from './pages/ess/MyPayrollPage';
 import { useAuth } from './context/AuthContext';
@@ -736,13 +736,14 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Protected: HRM Partnerships */}
+      {/* Protected: HRM Partnerships & BD Culture */}
       <Route
         path="/hrm/partnerships"
         element={
           <ProtectedRoute allowedRoles={[
             'CRM core Administrator', 'HRM System Administrator', 'HR Manager',
-            'HR Business Partner', 'Employee (General User)'
+            'HR Business Partner', 'Employee (General User)',
+            'Super Admin', 'Super CRM Administrator', 'Administrator', 'Core 360 Administrator'
           ]}>
             <AppLayout>
               <PartnershipsPage />
