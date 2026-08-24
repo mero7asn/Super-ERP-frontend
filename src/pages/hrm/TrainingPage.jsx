@@ -117,7 +117,17 @@ const TrainingPage = () => {
         topic,
         scheduledDate: scheduledDate || undefined,
       });
-      setStatusMsg({ type: 'success', text: `Training program "${topic}" assigned successfully. ${trainingType === 'Technical' ? 'Supervisor notified via internal email.' : ''}` });
+      let successMsg = `Training "${topic}" assigned successfully.`;
+      if (scheduledDate) {
+        successMsg += ` Schedule updated for ${scheduledDate}.`;
+      }
+      successMsg += ` Trainer and employee notified via email.`;
+      const trainingDate = new Date(scheduledDate);
+      const hoursUntil = (trainingDate - new Date()) / (1000 * 60 * 60);
+      if (hoursUntil <= 48 && hoursUntil >= 0) {
+        successMsg += ` RTM alerted (within 48 hours).`;
+      }
+      setStatusMsg({ type: 'success', text: successMsg });
       setTopic('');
       setScheduledDate('');
       setEmployeeId('');
