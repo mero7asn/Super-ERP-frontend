@@ -1,308 +1,138 @@
 ﻿import { useState, useEffect, useMemo } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { DEPARTMENTS } from '../../services/departmentJobs';
 
-// --- Kanban Pipeline Column ---
-
-const PIPELINE_STAGES = ['Applied', 'Screening', 'Interview', 'Offered', 'Hired', 'Rejected'];
-
-const STAGE_COLORS = {
-  Applied: { bg: 'rgba(107,114,128,0.15)', border: '#6B7280', text: '#9CA3AF' },
-  Screening: { bg: 'rgba(99,102,241,0.12)', border: '#6366F1', text: '#818CF8' },
-  Interview: { bg: 'rgba(245,158,11,0.12)', border: '#F59E0B', text: '#FCD34D' },
-  Offered: { bg: 'rgba(59,130,246,0.12)', border: '#3B82F6', text: '#60A5FA' },
-  Hired: { bg: 'rgba(16,185,129,0.12)', border: '#10B981', text: '#6EE7B7' },
-  Rejected: { bg: 'rgba(239,68,68,0.1)', border: '#EF4444', text: '#FCA5A5' },
+// ==========================================
+// STATUS COLORS & BADGES
+// ==========================================
+const STATUS_COLORS = {
+  // Requisition statuses
+  Draft: { bg: 'rgba(148,163,184,0.15)', text: '#94A3B8' },
+  Submitted: { bg: 'rgba(59,130,246,0.12)', text: '#3B82F6' },
+  'Pending Approval': { bg: 'rgba(245,158,11,0.15)', text: '#F59E0B' },
+  Approved: { bg: 'rgba(16,185,129,0.12)', text: '#10B981' },
+  Rejected: { bg: 'rgba(239,68,68,0.12)', text: '#EF4444' },
+  'Converted to Job': { bg: 'rgba(99,102,241,0.12)', text: '#6366F1' },
+  Cancelled: { bg: 'rgba(100,116,139,0.12)', text: '#64748B' },
+  // Job statuses
+  Open: { bg: 'rgba(16,185,129,0.12)', text: '#10B981' },
+  'On Hold': { bg: 'rgba(245,158,11,0.15)', text: '#F59E0B' },
+  Closed: { bg: 'rgba(100,116,139,0.12)', text: '#64748B' },
+  Filled: { bg: 'rgba(99,102,241,0.12)', text: '#6366F1' },
+  // Candidate statuses
+  Applied: { bg: 'rgba(59,130,246,0.12)', text: '#3B82F6' },
+  Screening: { bg: 'rgba(245,158,11,0.12)', text: '#F59E0B' },
+  Shortlisted: { bg: 'rgba(99,102,241,0.12)', text: '#6366F1' },
+  Interview: { bg: 'rgba(139,92,246,0.12)', text: '#8B5CF6' },
+  Assessment: { bg: 'rgba(236,72,153,0.12)', text: '#EC4899' },
+  Offer: { bg: 'rgba(245,158,11,0.15)', text: '#F59E0B' },
+  Hired: { bg: 'rgba(16,185,129,0.12)', text: '#10B981' },
+  Withdrawn: { bg: 'rgba(100,116,139,0.12)', text: '#64748B' },
+  // Interview statuses
+  Scheduled: { bg: 'rgba(59,130,246,0.12)', text: '#3B82F6' },
+  'In Progress': { bg: 'rgba(245,158,11,0.12)', text: '#F59E0B' },
+  Completed: { bg: 'rgba(16,185,129,0.12)', text: '#10B981' },
+  // Publication statuses
+  'Not Published': { bg: 'rgba(148,163,184,0.15)', text: '#94A3B8' },
+  Publishing: { bg: 'rgba(245,158,11,0.12)', text: '#F59E0B' },
+  Published: { bg: 'rgba(16,185,129,0.12)', text: '#10B981' },
+  Expired: { bg: 'rgba(239,68,68,0.12)', text: '#EF4444' },
+  Failed: { bg: 'rgba(239,68,68,0.15)', text: '#EF4444' },
+  // Priority
+  Low: { bg: 'rgba(148,163,184,0.12)', text: '#94A3B8' },
+  Medium: { bg: 'rgba(59,130,246,0.12)', text: '#3B82F6' },
+  High: { bg: 'rgba(245,158,11,0.12)', text: '#F59E0B' },
+  Urgent: { bg: 'rgba(239,68,68,0.12)', text: '#EF4444' },
 };
 
-const CandidateCard = ({ candidate, isTA, onMove, onOpenFeedback }) => {
-  const [dragging, setDragging] = useState(false);
-  const lastNote = candidate.interviewerNotes?.[candidate.interviewerNotes.length - 1];
-
+const Badge = ({ status }) => {
+  const colors = STATUS_COLORS[status] || { bg: 'rgba(148,163,184,0.15)', text: '#94A3B8' };
   return (
-    <div
-      draggable={isTA}
-      onDragStart={(e) => { setDragging(true); e.dataTransfer.setData('candidateId', candidate._id); }}
-      onDragEnd={() => setDragging(false)}
-      style={{
-        padding: '12px 14px',
-        borderRadius: 8,
-        background: 'rgba(255,255,255,0.04)',
-        border: '1px solid var(--border-color)',
-        cursor: isTA ? 'grab' : 'default',
-        opacity: dragging ? 0.5 : 1,
-        transition: 'opacity 0.2s, transform 0.2s, box-shadow 0.2s',
-        boxShadow: dragging ? '0 6px 20px rgba(0,0,0,0.3)' : 'none',
-      }}
-    >
-      <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 3 }}>{candidate.fullName}</div>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>
-        {candidate.vacancyId?.title || 'Unknown Position'}
-      </div>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>✉ {candidate.email}</div>
-      {candidate.phone && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>📞 {candidate.phone}</div>}
-      {lastNote && (
-        <div
-          style={{
-            marginTop: 8,
-            padding: '6px 8px',
-            borderRadius: 5,
-            background: 'rgba(99,102,241,0.1)',
-            border: '1px solid rgba(99,102,241,0.2)',
-            fontSize: 11,
-            color: '#A5B4FC',
-            lineHeight: 1.4,
-          }}
-        >
-          💬 {lastNote.note.length > 80 ? lastNote.note.slice(0, 80) + '…' : lastNote.note}
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
-            — {lastNote.addedBy?.firstName} {lastNote.addedBy?.lastName}
-          </div>
-        </div>
-      )}
-      {isTA && (
-        <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
-          <button
-            className="btn btn-secondary btn-sm"
-            style={{ fontSize: 10, padding: '3px 8px', flex: 1 }}
-            onClick={() => onOpenFeedback(candidate)}
-          >
-            + Note
-          </button>
-        </div>
-      )}
-    </div>
+    <span style={{
+      display: 'inline-block', padding: '3px 10px', borderRadius: 12,
+      fontSize: 11, fontWeight: 600,
+      background: colors.bg, color: colors.text,
+    }}>{status}</span>
   );
 };
 
-const KanbanColumn = ({ stage, candidates, isTA, onDrop, onMove, onOpenFeedback }) => {
-  const colors = STAGE_COLORS[stage];
-  const [dragOver, setDragOver] = useState(false);
-
-  return (
-    <div
-      style={{
-        flex: '1 1 160px',
-        minWidth: 170,
-        maxWidth: 240,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 10,
-      }}
-      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-      onDragLeave={() => setDragOver(false)}
-      onDrop={(e) => { setDragOver(false); const id = e.dataTransfer.getData('candidateId'); if (id) onDrop(id, stage); }}
-    >
-      {/* Column Header */}
-      <div
-        style={{
-          padding: '8px 12px',
-          borderRadius: 8,
-          background: colors.bg,
-          border: `1px solid ${colors.border}44`,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <span style={{ fontWeight: 700, fontSize: 12, color: colors.text }}>{stage}</span>
-        <span
-          style={{
-            fontWeight: 700,
-            fontSize: 12,
-            minWidth: 22,
-            height: 22,
-            borderRadius: '50%',
-            background: `${colors.border}33`,
-            color: colors.text,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {candidates.length}
-        </span>
-      </div>
-
-      {/* Drop zone */}
-      <div
-        style={{
-          minHeight: 100,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-          padding: '6px',
-          borderRadius: 8,
-          border: dragOver ? `2px dashed ${colors.border}` : '2px dashed transparent',
-          transition: 'border 0.2s',
-          background: dragOver ? `${colors.bg}` : 'transparent',
-        }}
-      >
-        {candidates.map((c) => (
-          <CandidateCard
-            key={c._id}
-            candidate={c}
-            isTA={isTA}
-            onMove={onMove}
-            onOpenFeedback={onOpenFeedback}
-          />
-        ))}
-        {candidates.length === 0 && !dragOver && (
-          <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: 11, padding: '16px 0', opacity: 0.5 }}>
-            Drop here
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// --- Main Component ---
-
+// ==========================================
+// MAIN COMPONENT
+// ==========================================
 const TalentAcquisitionPage = () => {
   const { user } = useAuth();
-  const [vacancies, setVacancies] = useState([]);
-  const [candidates, setCandidates] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [statusMsg, setStatusMsg] = useState({ type: '', text: '' });
+  const [activeTab, setActiveTab] = useState('overview');
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState({});
 
-  // View mode: 'kanban' | 'table'
-  const [viewMode, setViewMode] = useState('kanban');
-  const [filterVacancy, setFilterVacancy] = useState('All');
-  const [filterDept, setFilterDept] = useState('All');
+  const isTA = ['Recruitment Specialist (Talent Acquisition)', 'HRM System Administrator', 'HR Manager', 'CRM core Administrator', 'Super Admin', 'Super CRM Administrator'].includes(user?.role);
 
-  // Forms
-  const [showVacancyForm, setShowVacancyForm] = useState(false);
-  const [showCandForm, setShowCandForm] = useState(false);
-  const [vacancyTitle, setVacancyTitle] = useState('');
-  const [vacancyDesc, setVacancyDesc] = useState('');
-  const [vacancyReq, setVacancyReq] = useState('');
-  const [vacancySalary, setVacancySalary] = useState('');
-  const [vacancyDept, setVacancyDept] = useState('Sales');
-  const [vacancyRole, setVacancyRole] = useState('Sales Agent');
-  const [selectedVacancyId, setSelectedVacancyId] = useState('');
-  const [candName, setCandName] = useState('');
-  const [candEmail, setCandEmail] = useState('');
-  const [candPhone, setCandPhone] = useState('');
-  const [candResume, setCandResume] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const TABS = [
+    { id: 'overview', label: 'Overview', icon: '📊' },
+    { id: 'requisitions', label: 'Job Requisitions', icon: '📝' },
+    { id: 'jobs', label: 'Jobs', icon: '💼' },
+    { id: 'candidates', label: 'Candidates', icon: '👥' },
+    { id: 'interviews', label: 'Interviews', icon: '🎤' },
+    { id: 'distribution', label: 'Distribution', icon: '📢' },
+    { id: 'reports', label: 'Reports', icon: '📈' },
+  ];
 
-  // Feedback modal
-  const [feedbackCandidate, setFeedbackCandidate] = useState(null);
-  const [feedbackNote, setFeedbackNote] = useState('');
-  const [savingFeedback, setSavingFeedback] = useState(false);
-
-  const isTA = ['HRM System Administrator', 'HR Manager', 'Recruitment Specialist (Talent Acquisition)', 'CRM core Administrator'].includes(user?.role);
-
-  const fetchAll = async () => {
+  const fetchData = async (tab) => {
     setLoading(true);
     try {
-      const [vacRes, candRes] = await Promise.all([
-        API.get('/hrm/vacancies'),
-        API.get('/hrm/candidates'),
-      ]);
-      setVacancies(vacRes.data?.data || []);
-      setCandidates(candRes.data?.data || []);
+      let result;
+      switch (tab) {
+        case 'overview':
+          result = await API.get('/talent/overview');
+          setData(prev => ({ ...prev, overview: result.data.data }));
+          break;
+        case 'requisitions':
+          result = await API.get('/talent/requisitions');
+          setData(prev => ({ ...prev, requisitions: result.data.data }));
+          break;
+        case 'jobs':
+          result = await API.get('/talent/jobs');
+          setData(prev => ({ ...prev, jobs: result.data.data }));
+          break;
+        case 'candidates':
+          result = await API.get('/talent/candidates');
+          setData(prev => ({ ...prev, candidates: result.data.data }));
+          break;
+        case 'interviews':
+          result = await API.get('/talent/interviews');
+          setData(prev => ({ ...prev, interviews: result.data.data }));
+          break;
+        case 'distribution':
+          result = await API.get('/talent/publications');
+          setData(prev => ({ ...prev, publications: result.data.data }));
+          break;
+        case 'reports':
+          const [funnel, activity] = await Promise.all([
+            API.get('/talent/funnel'),
+            API.get('/talent/activity')
+          ]);
+          setData(prev => ({ ...prev, funnel: funnel.data.data, activity: activity.data.data }));
+          break;
+      }
     } catch (err) {
-      console.error(err);
+      console.error('Failed to fetch TA data:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { fetchAll(); }, []);
+  useEffect(() => {
+    if (isTA) fetchData(activeTab);
+  }, [activeTab, isTA]);
 
-  const handleCreateVacancy = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    try {
-      await API.post('/hrm/vacancies', {
-        title: vacancyTitle, description: vacancyDesc,
-        requirements: vacancyReq, salaryRange: vacancySalary,
-        department: vacancyDept, jobRole: vacancyRole,
-      });
-      setStatusMsg({ type: 'success', text: `Job vacancy "${vacancyTitle}" posted.` });
-      setVacancyTitle(''); setVacancyDesc(''); setVacancyReq(''); setVacancySalary('');
-      setVacancyDept('Sales'); setVacancyRole('Sales Agent');
-      setShowVacancyForm(false);
-      fetchAll();
-    } catch {
-      setStatusMsg({ type: 'error', text: 'Failed to create vacancy.' });
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleCreateCandidate = async (e) => {
-    e.preventDefault();
-    if (!selectedVacancyId || !candName || !candEmail) return;
-    setSubmitting(true);
-    try {
-      await API.post('/hrm/candidates', {
-        vacancyId: selectedVacancyId,
-        fullName: candName, email: candEmail,
-        phone: candPhone, resumeUrl: candResume || 'pending',
-      });
-      setStatusMsg({ type: 'success', text: `Candidate "${candName}" added to pipeline.` });
-      setCandName(''); setCandEmail(''); setCandPhone(''); setCandResume('');
-      setShowCandForm(false);
-      fetchAll();
-    } catch {
-      setStatusMsg({ type: 'error', text: 'Failed to add candidate.' });
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleMoveCandidate = async (candId, newStage) => {
-    try {
-      await API.put(`/hrm/candidates/${candId}/status`, { status: newStage });
-      // Optimistic update
-      setCandidates((prev) => prev.map((c) => c._id === candId ? { ...c, status: newStage } : c));
-    } catch {
-      setStatusMsg({ type: 'error', text: 'Failed to move candidate.' });
-    }
-  };
-
-  const handleAddFeedback = async (e) => {
-    e.preventDefault();
-    if (!feedbackNote.trim() || !feedbackCandidate) return;
-    setSavingFeedback(true);
-    try {
-      await API.post(`/hrm/candidates/${feedbackCandidate._id}/notes`, { note: feedbackNote });
-      setStatusMsg({ type: 'success', text: 'Interviewer note saved.' });
-      setFeedbackNote('');
-      setFeedbackCandidate(null);
-      fetchAll();
-    } catch {
-      setStatusMsg({ type: 'error', text: 'Failed to save feedback note.' });
-    } finally {
-      setSavingFeedback(false);
-    }
-  };
-
-  // Pipeline stats
-  const pipelineStats = useMemo(() => {
-    return PIPELINE_STAGES.reduce((acc, stage) => {
-      acc[stage] = candidates.filter((c) => c.status === stage).length;
-      return acc;
-    }, {});
-  }, [candidates]);
-
-  // Filtered candidates for kanban / table
-  const filteredCandidates = useMemo(() => {
-    return candidates.filter((c) => {
-      const vacancyMatch = filterVacancy === 'All' || c.vacancyId?._id === filterVacancy || c.vacancyId === filterVacancy;
-      const deptMatch = filterDept === 'All' || (() => {
-        const v = vacancies.find(v => v._id === (c.vacancyId?._id || c.vacancyId));
-        return v?.department === filterDept;
-      })();
-      return vacancyMatch && deptMatch;
-    });
-  }, [candidates, filterVacancy, filterDept, vacancies]);
-
-  const columnCandidates = (stage) => filteredCandidates.filter((c) => c.status === stage);
+  if (!isTA) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400, flexDirection: 'column', gap: 12 }}>
+        <span style={{ fontSize: 40 }}>🚫</span>
+        <span style={{ color: 'var(--text-muted)' }}>Access restricted to Talent Acquisition team.</span>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -310,379 +140,699 @@ const TalentAcquisitionPage = () => {
       <div className="page-header">
         <div>
           <h1 className="page-title">Talent Acquisition</h1>
-          <p className="page-subtitle">
-            Manage job openings, track candidate pipelines, and log interviewer feedback notes
-          </p>
+          <p className="page-subtitle">Manage hiring requests, vacancies, candidates, interviews, and recruitment performance from one workspace.</p>
         </div>
-        {isTA && (
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button className="btn btn-secondary btn-sm" onClick={() => setShowVacancyForm((v) => !v)}>
-              {showVacancyForm ? '✕ Close' : '+ Post Vacancy'}
-            </button>
-            <button className="btn btn-primary btn-sm" onClick={() => setShowCandForm((v) => !v)}>
-              {showCandForm ? '✕ Close' : '+ Add Candidate'}
-            </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn btn-primary btn-sm" onClick={() => setActiveTab('requisitions')}>+ New Requisition</button>
+          <button className="btn btn-secondary btn-sm" onClick={() => setActiveTab('jobs')}>+ Create Job</button>
+        </div>
+      </div>
+
+      {/* Tab Navigation */}
+      <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid var(--border-color)', overflowX: 'auto' }}>
+        {TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            style={{
+              padding: '10px 16px',
+              background: 'transparent',
+              border: 'none',
+              color: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--text-muted)',
+              borderBottom: activeTab === tab.id ? '2px solid var(--accent-primary)' : '2px solid transparent',
+              fontWeight: activeTab === tab.id ? 600 : 400,
+              fontSize: 13,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+            }}
+          >
+            <span>{tab.icon}</span>
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      {loading ? (
+        <div className="loading-state"><div className="spinner" /> Loading...</div>
+      ) : (
+        <>
+          {activeTab === 'overview' && <OverviewTab data={data.overview} onNavigate={setActiveTab} />}
+          {activeTab === 'requisitions' && <RequisitionsTab data={data.requisitions} onRefresh={() => fetchData('requisitions')} />}
+          {activeTab === 'jobs' && <JobsTab data={data.jobs} onRefresh={() => fetchData('jobs')} />}
+          {activeTab === 'candidates' && <CandidatesTab data={data.candidates} onRefresh={() => fetchData('candidates')} />}
+          {activeTab === 'interviews' && <InterviewsTab data={data.interviews} onRefresh={() => fetchData('interviews')} />}
+          {activeTab === 'distribution' && <DistributionTab data={data.publications} onRefresh={() => fetchData('distribution')} />}
+          {activeTab === 'reports' && <ReportsTab data={data} />}
+        </>
+      )}
+    </div>
+  );
+};
+
+// ==========================================
+// OVERVIEW TAB
+// ==========================================
+const OverviewTab = ({ data, onNavigate }) => {
+  if (!data) return null;
+
+  const kpis = [
+    { label: 'Open Positions', value: data.openPositions || 0, color: '#3B82F6', onClick: () => onNavigate('jobs') },
+    { label: 'Candidates', value: data.totalCandidates || 0, color: '#8B5CF6', onClick: () => onNavigate('candidates') },
+    { label: 'Interviews This Week', value: data.interviewsThisWeek || 0, color: '#F59E0B', onClick: () => onNavigate('interviews') },
+    { label: 'Active Offers', value: data.activeOffers || 0, color: '#EC4899', onClick: () => onNavigate('candidates') },
+    { label: 'Hired This Month', value: data.hiredThisMonth || 0, color: '#10B981', onClick: () => onNavigate('candidates') },
+    { label: 'Avg. Time to Hire', value: `${data.avgTimeToHireDays || 0}d`, color: '#6366F1', onClick: () => onNavigate('reports') },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* KPI Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
+        {kpis.map((kpi, idx) => (
+          <div
+            key={idx}
+            onClick={kpi.onClick}
+            className="card"
+            style={{ cursor: 'pointer', padding: '16px 18px', transition: 'transform 0.15s, box-shadow 0.15s' }}
+            onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{kpi.label}</div>
+            <div style={{ fontSize: 28, fontWeight: 700, color: kpi.color }}>{kpi.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Recent Activity */}
+      <div className="card">
+        <h3 style={{ margin: '0 0 16px', fontSize: 15 }}>Recent Activity</h3>
+        {!data.recentActivity?.length ? (
+          <div style={{ textAlign: 'center', padding: 24, color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>📋</div>
+            <div>No recent activity</div>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {data.recentActivity.slice(0, 8).map((activity, idx) => (
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: idx < data.recentActivity.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>
+                  {activity.entityType === 'Job' ? '💼' : activity.entityType === 'Candidate' ? '👤' : '📝'}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13 }}>{activity.description}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                    {activity.performedBy?.firstName} {activity.performedBy?.lastName} · {new Date(activity.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// REQUISITIONS TAB
+// ==========================================
+const RequisitionsTab = ({ data = [], onRefresh }) => {
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    department: '', positionTitle: '', numberOfEmployees: 1, employmentType: 'Full Type',
+    location: '', priority: 'Medium', reasonForHiring: 'New Position', notes: ''
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await API.post('/talent/requisitions', form);
+      setShowForm(false);
+      onRefresh();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to create requisition');
+    }
+  };
+
+  const handleStatusChange = async (id, status) => {
+    try {
+      await API.put(`/talent/requisitions/${id}/status`, { status });
+      onRefresh();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update status');
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3 style={{ margin: 0, fontSize: 16 }}>Job Requisitions ({data.length})</h3>
+        <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : '+ New Requisition'}
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="card">
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Position Title</label>
+              <input className="form-input" value={form.positionTitle} onChange={e => setForm({ ...form, positionTitle: e.target.value })} required />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Department</label>
+              <input className="form-input" value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} required />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Number of Employees</label>
+              <input type="number" className="form-input" value={form.numberOfEmployees} onChange={e => setForm({ ...form, numberOfEmployees: e.target.value })} />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Employment Type</label>
+              <select className="form-input" value={form.employmentType} onChange={e => setForm({ ...form, employmentType: e.target.value })}>
+                <option>Full Time</option>
+                <option>Part Time</option>
+                <option>Contract</option>
+                <option>Temporary</option>
+                <option>Internship</option>
+              </select>
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Priority</label>
+              <select className="form-input" value={form.priority} onChange={e => setForm({ ...form, priority: e.target.value })}>
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+                <option>Urgent</option>
+              </select>
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Reason for Hiring</label>
+              <select className="form-input" value={form.reasonForHiring} onChange={e => setForm({ ...form, reasonForHiring: e.target.value })}>
+                <option>New Position</option>
+                <option>Replacement</option>
+                <option>Expansion</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div className="form-group" style={{ margin: 0, gridColumn: 'span 2' }}>
+              <label className="form-label">Notes</label>
+              <textarea className="form-input" rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
+            </div>
+            <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="submit" className="btn btn-primary btn-sm">Submit Requisition</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {!data.length ? (
+        <div className="card" style={{ textAlign: 'center', padding: 48 }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>📝</div>
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>No job requisitions</div>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Create a job requisition to start the hiring process.</div>
+        </div>
+      ) : (
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Position</th>
+                <th>Department</th>
+                <th>Requested By</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              data.map(req => (
+                <tr key={req._id}>
+                  <td><strong>{req.requisitionId}</strong></td>
+                  <td>{req.positionTitle}</td>
+                  <td>{req.department}</td>
+                  <td>{req.requestedBy?.firstName} {req.requestedBy?.lastName}</td>
+                  <td><Badge status={req.priority} /></td>
+                  <td><Badge status={req.approvalStatus} /></td>
+                  <td>
+                    {req.approvalStatus === 'Pending Approval' && (
+                      <div style={{ display: 'flex', gap: 4 }}>
+                        <button className="btn btn-sm btn-secondary" onClick={() => handleStatusChange(req._id, 'Approved')}>Approve</button>
+                        <button className="btn btn-sm btn-secondary" onClick={() => handleStatusChange(req._id, 'Rejected')}>Reject</button>
+                      </div>
+                    )}
+                    {req.approvalStatus === 'Approved' && (
+                      <button className="btn btn-sm btn-primary" onClick={async () => {
+                        try {
+                          await API.post(`/talent/requisitions/${req._id}/convert`);
+                          onRefresh();
+                        } catch (err) {
+                          alert('Failed to convert');
+                        }
+                      }}>Create Job</button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ==========================================
+// JOBS TAB
+// ==========================================
+const JobsTab = ({ data = [], onRefresh }) => {
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    title: '', department: '', location: '', employmentType: 'Full Time', numberOfPositions: 1, priority: 'Medium'
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await API.post('/talent/jobs', form);
+      setShowForm(false);
+      onRefresh();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to create job');
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3 style={{ margin: 0, fontSize: 16 }}>Jobs ({data.length})</h3>
+        <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : '+ Create Job'}
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="card">
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Job Title</label>
+              <input className="form-input" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Department</label>
+              <input className="form-input" value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} required />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Location</label>
+              <input className="form-input" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Employment Type</label>
+              <select className="form-input" value={form.employmentType} onChange={e => setForm({ ...form, employmentType: e.target.value })}>
+                <option>Full Time</option>
+                <option>Part Time</option>
+                <option>Contract</option>
+                <option>Temporary</option>
+              </select>
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Positions</label>
+              <input type="number" className="form-input" value={form.numberOfPositions} onChange={e => setForm({ ...form, numberOfPositions: e.target.value })} />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Priority</label>
+              <select className="form-input" value={form.priority} onChange={e => setForm({ ...form, priority: e.target.value })}>
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+                <option>Urgent</option>
+              </select>
+            </div>
+            <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="submit" className="btn btn-primary btn-sm">Create Job</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {!data.length ? (
+        <div className="card" style={{ textAlign: 'center', padding: 48 }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>💼</div>
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>No active vacancies</div>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Create a job or convert an approved requisition to start hiring.</div>
+        </div>
+      ) : (
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Job ID</th>
+                <th>Title</th>
+                <th>Department</th>
+                <th>Positions</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map(job => (
+                <tr key={job._id}>
+                  <td><strong>{job.jobId}</strong></td>
+                  <td>{job.title}</td>
+                  <td>{job.department}</td>
+                  <td>{job.numberOfPositions}</td>
+                  <td><Badge status={job.priority} /></td>
+                  <td><Badge status={job.status} /></td>
+                  <td>
+                    <div style={{ display: 'flex', gap: 4 }}>
+                      {job.status === 'Draft' && (
+                        <button className="btn btn-sm btn-primary" onClick={async () => {
+                          await API.put(`/talent/jobs/${job._id}/status`, { status: 'Open' });
+                          onRefresh();
+                        }}>Publish</button>
+                      )}
+                      {job.status === 'Open' && (
+                        <button className="btn btn-sm btn-secondary" onClick={async () => {
+                          await API.put(`/talent/jobs/${job._id}/status`, { status: 'On Hold' });
+                          onRefresh();
+                        }}>Pause</button>
+                      )}
+                      {job.status === 'On Hold' && (
+                        <button className="btn btn-sm btn-primary" onClick={async () => {
+                          await API.put(`/talent/jobs/${job._id}/status`, { status: 'Open' });
+                          onRefresh();
+                        }}>Resume</button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ==========================================
+// CANDIDATES TAB
+// ==========================================
+const CandidatesTab = ({ data = [], onRefresh }) => {
+  const [view, setView] = useState('kanban');
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ fullName: '', email: '', phone: '', job: '', source: 'Manual' });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await API.post('/talent/candidates', form);
+      setShowForm(false);
+      onRefresh();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to add candidate');
+    }
+  };
+
+  const stages = ['Applied', 'Screening', 'Shortlisted', 'Interview', 'Assessment', 'Offer', 'Hired', 'Rejected'];
+
+  const candidatesByStage = useMemo(() => {
+    const grouped = {};
+    stages.forEach(stage => { grouped[stage] = []; });
+    data.forEach(c => {
+      if (c.applications) {
+        c.applications.forEach(app => {
+          if (grouped[app.status]) {
+            grouped[app.status].push({ ...c, application: app });
+          }
+        });
+      }
+    });
+    return grouped;
+  }, [data]);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3 style={{ margin: 0, fontSize: 16 }}>Candidates ({data.length})</h3>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 4 }}>
+            <button className={`btn btn-sm ${view === 'kanban' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setView('kanban')}>Kanban</button>
+            <button className={`btn btn-sm ${view === 'table' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setView('table')}>Table</button>
+          </div>
+          <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
+            {showForm ? 'Cancel' : '+ Add Candidate'}
+          </button>
+        </div>
+      </div>
+
+      {showForm && (
+        <div className="card">
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Full Name</label>
+              <input className="form-input" value={form.fullName} onChange={e => setForm({ ...form, fullName: e.target.value })} required />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Email</label>
+              <input type="email" className="form-input" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Phone</label>
+              <input className="form-input" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label">Source</label>
+              <select className="form-input" value={form.source} onChange={e => setForm({ ...form, source: e.target.value })}>
+                <option>Manual</option>
+                <option>LinkedIn</option>
+                <option>Indeed</option>
+                <option>Wuzzuf</option>
+                <option>Referral</option>
+                <option>Internal</option>
+              </select>
+            </div>
+            <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="submit" className="btn btn-primary btn-sm">Add Candidate</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {view === 'kanban' ? (
+        <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 16 }}>
+          {stages.map(stage => (
+            <div key={stage} style={{ minWidth: 200, flex: 1 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontSize: 12, fontWeight: 600 }}>{stage}</span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{candidatesByStage[stage]?.length || 0}</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minHeight: 100 }}>
+                {candidatesByStage[stage]?.map((c, idx) => (
+                  <div key={idx} className="card" style={{ padding: 10, cursor: 'pointer' }}>
+                    <div style={{ fontSize: 12, fontWeight: 600 }}>{c.fullName}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.application?.job?.title || 'No job'}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Email</th>
+                <th>Job</th>
+                <th>Stage</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map(c => (
+                <tr key={c._id}>
+                  <td><strong>{c.fullName}</strong></td>
+                  <td>{c.email}</td>
+                  <td>{c.applications?.[0]?.job?.title || '-'}</td>
+                  <td><Badge status={c.applications?.[0]?.status || 'Applied'} /></td>
+                  <td>{c.applications?.[0]?.source || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ==========================================
+// INTERVIEWS TAB
+// ==========================================
+const InterviewsTab = ({ data = [], onRefresh }) => {
+  const [showForm, setShowForm] = useState(false);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3 style={{ margin: 0, fontSize: 16 }}>Interviews ({data.length})</h3>
+        <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : '+ Schedule Interview'}
+        </button>
+      </div>
+
+      {!data.length ? (
+        <div className="card" style={{ textAlign: 'center', padding: 48 }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>🎤</div>
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>No interviews scheduled</div>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Schedule interviews with candidates to evaluate them.</div>
+        </div>
+      ) : (
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Job</th>
+                <th>Interviewer</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Feedback</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map(interview => (
+                <tr key={interview._id}>
+                  <td><strong>{interview.candidate?.fullName}</strong></td>
+                  <td>{interview.job?.title}</td>
+                  <td>{interview.interviewer?.firstName} {interview.interviewer?.lastName}</td>
+                  <td>{new Date(interview.scheduledDate).toLocaleDateString()} {interview.scheduledTime}</td>
+                  <td>{interview.interviewType}</td>
+                  <td><Badge status={interview.status} /></td>
+                  <td><Badge status={interview.feedbackStatus} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ==========================================
+// DISTRIBUTION TAB
+// ==========================================
+const DistributionTab = ({ data = [], onRefresh }) => {
+  const platforms = ['Company Careers Page', 'LinkedIn', 'Indeed', 'Wuzzuf', 'Social Media', 'Manual'];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <h3 style={{ margin: 0, fontSize: 16 }}>Job Distribution ({data.length})</h3>
+
+      {!data.length ? (
+        <div className="card" style={{ textAlign: 'center', padding: 48 }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>📢</div>
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>No publications yet</div>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Publish your jobs on multiple platforms to reach more candidates.</div>
+        </div>
+      ) : (
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Job</th>
+                <th>Platform</th>
+                <th>Status</th>
+                <th>Published</th>
+                <th>Applications</th>
+                <th>URL</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map(pub => (
+                <tr key={pub._id}>
+                  <td><strong>{pub.job?.title}</strong></td>
+                  <td>{pub.platform}</td>
+                  <td><Badge status={pub.status} /></td>
+                  <td>{pub.publishedDate ? new Date(pub.publishedDate).toLocaleDateString() : '-'}</td>
+                  <td>{pub.applicationsReceived}</td>
+                  <td>{pub.externalUrl ? <a href={pub.externalUrl} target="_blank" rel="noopener">View</a> : '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ==========================================
+// REPORTS TAB
+// ==========================================
+const ReportsTab = ({ data }) => {
+  const funnel = data?.funnel || [];
+  const activity = data?.activity || [];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <h3 style={{ margin: 0, fontSize: 16 }}>Recruitment Reports</h3>
+
+      {/* Recruitment Funnel */}
+      <div className="card">
+        <h4 style={{ margin: '0 0 16px', fontSize: 14 }}>Recruitment Funnel</h4>
+        {!funnel.length ? (
+          <div style={{ textAlign: 'center', padding: 24, color: 'var(--text-muted)' }}>No data available</div>
+        ) : (
+          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', height: 120 }}>
+            {funnel.map((stage, idx) => {
+              const maxCount = Math.max(...funnel.map(s => s.count), 1);
+              const height = (stage.count / maxCount) * 100;
+              return (
+                <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600 }}>{stage.count}</div>
+                  <div style={{ width: '100%', height: `${height}%`, background: 'linear-gradient(180deg, #6366F1 0%, #4F46E5 100%)', borderRadius: '4px 4px 0 0', minHeight: 4 }} />
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center' }}>{stage.stage}</div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
 
-      {statusMsg.text && (
-        <div className={`alert alert-${statusMsg.type === 'error' ? 'error' : 'success'}`}>
-          {statusMsg.text}
-        </div>
-      )}
-
-      <div className="card" style={{
-        background: 'linear-gradient(135deg, rgba(59,130,246,0.14), rgba(124,58,237,0.12))',
-        border: '1px solid rgba(59,130,246,0.22)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: 16,
-        flexWrap: 'wrap'
-      }}>
-        <div>
-          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-primary)', fontWeight: 700 }}>Recruitment pipeline</div>
-          <h3 style={{ margin: '6px 0 4px', fontSize: 17 }}>Bring hiring activity into a clear, trackable flow</h3>
-          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 13 }}>
-            Post vacancies, queue candidates, and move each opportunity through the recruitment stages with better visibility.
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          {[
-            { label: 'Open roles', value: vacancies.length },
-            { label: 'Candidates', value: candidates.length },
-            { label: 'Stage focus', value: 'Kanban' },
-          ].map((item) => (
-            <div key={item.label} style={{ minWidth: 96, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
-              <div style={{ fontSize: 18, fontWeight: 700 }}>{item.value}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Collapsible Forms */}
-      {isTA && showVacancyForm && (
-        <div className="card">
-          <h3 style={{ margin: '0 0 16px 0', fontSize: 15 }}>Post New Job Vacancy</h3>
-          <form onSubmit={handleCreateVacancy} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Department *</label>
-              <select
-                className="form-input"
-                value={vacancyDept}
-                onChange={e => {
-                  const dept = e.target.value;
-                  setVacancyDept(dept);
-                  setVacancyRole(DEPARTMENTS.find(d => d.id === dept)?.roles[0] || '');
-                }}
-              >
-                {DEPARTMENTS.map(d => <option key={d.id} value={d.id}>{d.label}</option>)}
-              </select>
-            </div>
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Job Role *</label>
-              <select className="form-input" value={vacancyRole} onChange={e => setVacancyRole(e.target.value)}>
-                {(DEPARTMENTS.find(d => d.id === vacancyDept)?.roles || []).map(r => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Job Title *</label>
-              <input className="form-input" value={vacancyTitle} onChange={(e) => setVacancyTitle(e.target.value)} required />
-            </div>
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Salary Range</label>
-              <input className="form-input" placeholder="e.g. 15,000 – 20,000 EGP" value={vacancySalary} onChange={(e) => setVacancySalary(e.target.value)} />
-            </div>
-            <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
-              <label className="form-label">Job Description *</label>
-              <textarea className="form-input" rows={2} value={vacancyDesc} onChange={(e) => setVacancyDesc(e.target.value)} required />
-            </div>
-            <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
-              <label className="form-label">Requirements</label>
-              <input className="form-input" placeholder="e.g. 3+ years, Node.js, CRM experience" value={vacancyReq} onChange={(e) => setVacancyReq(e.target.value)} />
-            </div>
-            <div style={{ gridColumn: '1/-1' }}>
-              <button type="submit" className="btn btn-primary btn-sm" disabled={submitting}>{submitting ? 'Posting…' : 'Post Job'}</button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {isTA && showCandForm && (
-        <div className="card">
-          <h3 style={{ margin: '0 0 16px 0', fontSize: 15 }}>Add Candidate to Pipeline</h3>
-          <form onSubmit={handleCreateCandidate} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
-            <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
-              <label className="form-label">Job Vacancy *</label>
-              <select className="form-input" value={selectedVacancyId} onChange={(e) => setSelectedVacancyId(e.target.value)} required>
-                <option value="">Select vacancy…</option>
-                {vacancies.map((v) => <option key={v._id} value={v._id}>{v.title}</option>)}
-              </select>
-            </div>
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Full Name *</label>
-              <input className="form-input" value={candName} onChange={(e) => setCandName(e.target.value)} required />
-            </div>
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Email *</label>
-              <input className="form-input" type="email" value={candEmail} onChange={(e) => setCandEmail(e.target.value)} required />
-            </div>
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Phone</label>
-              <input className="form-input" value={candPhone} onChange={(e) => setCandPhone(e.target.value)} />
-            </div>
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Resume / File Name</label>
-              <input className="form-input" placeholder="CV_JohnDoe.pdf" value={candResume} onChange={(e) => setCandResume(e.target.value)} />
-            </div>
-            <div style={{ gridColumn: '1/-1' }}>
-              <button type="submit" className="btn btn-primary btn-sm" disabled={submitting}>{submitting ? 'Adding…' : 'Add Candidate'}</button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Pipeline Stats Bar */}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-        {PIPELINE_STAGES.map((stage) => {
-          const colors = STAGE_COLORS[stage];
-          return (
-            <div
-              key={stage}
-              style={{
-                flex: '1 1 100px',
-                padding: '10px 14px',
-                borderRadius: 8,
-                background: colors.bg,
-                border: `1px solid ${colors.border}44`,
-                textAlign: 'center',
-              }}
-            >
-              <div style={{ fontWeight: 700, fontSize: 22, color: colors.text }}>{pipelineStats[stage] || 0}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{stage}</div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Controls */}
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', gap: 4 }}>
-          <button
-            onClick={() => setViewMode('kanban')}
-            className={`btn ${viewMode === 'kanban' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
-            style={{ fontSize: 12 }}
-          >
-            ⬡ Kanban Board
-          </button>
-          <button
-            onClick={() => setViewMode('table')}
-            className={`btn ${viewMode === 'table' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
-            style={{ fontSize: 12 }}
-          >
-            ≡ Table View
-          </button>
-        </div>
-        <select
-          className="form-input"
-          style={{ flex: '0 1 180px', padding: '6px 10px', fontSize: 12 }}
-          value={filterDept}
-          onChange={(e) => setFilterDept(e.target.value)}
-        >
-          <option value="All">All Departments</option>
-          {DEPARTMENTS.map(d => <option key={d.id} value={d.id}>{d.label}</option>)}
-        </select>
-        <select
-          className="form-input"
-          style={{ flex: '0 1 220px', padding: '6px 10px', fontSize: 12 }}
-          value={filterVacancy}
-          onChange={(e) => setFilterVacancy(e.target.value)}
-        >
-          <option value="All">All Vacancies</option>
-          {vacancies.map((v) => <option key={v._id} value={v._id}>{v.title}</option>)}
-        </select>
-        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{filteredCandidates.length} candidates</span>
-      </div>
-
-      {/* Kanban Board */}
-      {viewMode === 'kanban' && (
-        <div
-          style={{
-            display: 'flex',
-            gap: 12,
-            overflowX: 'auto',
-            paddingBottom: 12,
-          }}
-        >
-          {PIPELINE_STAGES.map((stage) => (
-            <KanbanColumn
-              key={stage}
-              stage={stage}
-              candidates={columnCandidates(stage)}
-              isTA={isTA}
-              onDrop={handleMoveCandidate}
-              onMove={handleMoveCandidate}
-              onOpenFeedback={setFeedbackCandidate}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Table View */}
-      {viewMode === 'table' && (
-        <div className="card">
-          {loading ? (
-            <div className="loading-state">Loading candidates…</div>
-          ) : filteredCandidates.length === 0 ? (
-            <div style={{ color: 'var(--text-muted)', padding: 24, textAlign: 'center' }}>No candidates found.</div>
-          ) : (
-            <div className="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Applied For</th>
-                    <th>Contact</th>
-                    <th>Stage</th>
-                    <th>Latest Feedback</th>
-                    {isTA && <th>Actions</th>}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredCandidates.map((c) => {
-                    const colors = STAGE_COLORS[c.status] || STAGE_COLORS.Applied;
-                    const lastNote = c.interviewerNotes?.[c.interviewerNotes.length - 1];
-                    return (
-                      <tr key={c._id}>
-                        <td><strong>{c.fullName}</strong></td>
-                        <td style={{ fontSize: 13 }}>{c.vacancyId?.title || '—'}</td>
-                        <td>
-                          <div style={{ fontSize: 13 }}>{c.email}</div>
-                          {c.phone && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.phone}</div>}
-                        </td>
-                        <td>
-                          <span style={{
-                            display: 'inline-block', padding: '3px 10px', borderRadius: 12,
-                            fontSize: 11, fontWeight: 700,
-                            background: `${colors.border}22`, color: colors.text,
-                            border: `1px solid ${colors.border}44`,
-                          }}>
-                            {c.status}
-                          </span>
-                        </td>
-                        <td style={{ maxWidth: 200 }}>
-                          {lastNote ? (
-                            <div style={{ fontSize: 11, color: '#A5B4FC' }}>
-                              {lastNote.note.slice(0, 70)}{lastNote.note.length > 70 ? '…' : ''}
-                            </div>
-                          ) : (
-                            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>No notes yet</span>
-                          )}
-                        </td>
-                        {isTA && (
-                          <td>
-                            <div style={{ display: 'flex', gap: 6 }}>
-                              <button
-                                className="btn btn-secondary btn-sm"
-                                style={{ fontSize: 11, padding: '3px 10px' }}
-                                onClick={() => setFeedbackCandidate(c)}
-                              >
-                                + Note
-                              </button>
-                              <select
-                                className="form-input"
-                                style={{ padding: '3px 6px', fontSize: 11, height: 'auto', width: 'auto' }}
-                                value={c.status}
-                                onChange={(e) => handleMoveCandidate(c._id, e.target.value)}
-                              >
-                                {PIPELINE_STAGES.map((s) => <option key={s} value={s}>{s}</option>)}
-                              </select>
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Feedback Notes Modal */}
-      {feedbackCandidate && (
-        <div
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.72)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
-          onClick={() => setFeedbackCandidate(null)}
-        >
-          <div
-            style={{ background: 'var(--bg-card)', borderRadius: 14, padding: 32, maxWidth: 540, width: '100%', boxShadow: '0 24px 60px rgba(0,0,0,0.4)' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>Interviewer Feedback</h2>
-            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20 }}>
-              <strong>{feedbackCandidate.fullName}</strong> · {feedbackCandidate.vacancyId?.title || 'Unknown Position'} ·{' '}
-              <span style={{ color: STAGE_COLORS[feedbackCandidate.status]?.text }}>
-                {feedbackCandidate.status}
-              </span>
-            </p>
-
-            {/* Previous Notes Timeline */}
-            {feedbackCandidate.interviewerNotes?.length > 0 && (
-              <div style={{ marginBottom: 20 }}>
-                <h5 style={{ margin: '0 0 10px 0', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)' }}>
-                  Previous Notes ({feedbackCandidate.interviewerNotes.length})
-                </h5>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 200, overflowY: 'auto' }}>
-                  {[...feedbackCandidate.interviewerNotes].reverse().map((n, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        padding: '8px 12px',
-                        borderRadius: 6,
-                        background: 'rgba(99,102,241,0.08)',
-                        border: '1px solid rgba(99,102,241,0.18)',
-                        fontSize: 12,
-                      }}
-                    >
-                      <div style={{ color: 'var(--text-primary)', lineHeight: 1.5 }}>{n.note}</div>
-                      <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
-                        {n.addedBy?.firstName} {n.addedBy?.lastName} · {n.addedAt ? new Date(n.addedAt).toLocaleDateString() : '—'}
-                      </div>
-                    </div>
-                  ))}
+      {/* Activity Log */}
+      <div className="card">
+        <h4 style={{ margin: '0 0 16px', fontSize: 14 }}>Activity Log</h4>
+        {!activity.length ? (
+          <div style={{ textAlign: 'center', padding: 24, color: 'var(--text-muted)' }}>No activity recorded</div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {activity.slice(0, 10).map((act, idx) => (
+              <div key={idx} style={{ display: 'flex', gap: 12, padding: '8px 0', borderBottom: idx < activity.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
+                <div style={{ fontSize: 14 }}>
+                  {act.entityType === 'Job' ? '💼' : act.entityType === 'Candidate' ? '👤' : '📝'}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 12 }}>{act.description}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                    {act.performedBy?.firstName} {act.performedBy?.lastName} · {new Date(act.createdAt).toLocaleString()}
+                  </div>
                 </div>
               </div>
-            )}
-
-            {/* Add New Note */}
-            <form onSubmit={handleAddFeedback} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div className="form-group" style={{ margin: 0 }}>
-                <label className="form-label">Add Interviewer Note</label>
-                <textarea
-                  className="form-input"
-                  rows={4}
-                  value={feedbackNote}
-                  onChange={(e) => setFeedbackNote(e.target.value)}
-                  placeholder="Document interview observations, strengths, concerns, or follow-up actions…"
-                  required
-                />
-              </div>
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setFeedbackCandidate(null)}>Cancel</button>
-                <button type="submit" className="btn btn-primary btn-sm" disabled={savingFeedback}>
-                  {savingFeedback ? 'Saving…' : 'Save Note'}
-                </button>
-              </div>
-            </form>
+            ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

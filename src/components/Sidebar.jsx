@@ -170,7 +170,7 @@ const HRM_NAV_ITEMS = [
   { label: 'Personal & Staff', icon: 'personal', path: '/hrm/personal', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','HR Specialist (Generalist)','HR Business Partner','Employee (General User)'] },
   { label: 'Payroll', icon: 'payroll', path: '/hrm/payroll', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Payroll Specialist','Employee (General User)','Super Admin','Super CRM Administrator','Administrator','Core 360 Administrator'] },
   { label: 'Training & Development', icon: 'training', path: '/hrm/training', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Training and Development Specialist','Employee (General User)','Super Admin','Super CRM Administrator','Administrator','Core 360 Administrator'] },
-  { label: 'Talent Acquisition', icon: 'talent', path: '/hrm/talent', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Recruitment Specialist (Talent Acquisition)'] },
+  { label: 'Talent Acquisition', icon: 'talent', path: '/hrm/talent', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','Recruitment Specialist (Talent Acquisition)','Super Admin','Super CRM Administrator','Administrator','Core 360 Administrator'] },
   { label: 'BD & People Culture', icon: 'partnerships', path: '/hrm/partnerships', roles: ['CRM core Administrator','HRM System Administrator','HR Manager','HR Business Partner','Employee (General User)'] },
 ];
 

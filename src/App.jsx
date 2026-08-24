@@ -726,7 +726,8 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[
             'CRM core Administrator', 'HRM System Administrator', 'HR Manager',
-            'Recruitment Specialist (Talent Acquisition)'
+            'Recruitment Specialist (Talent Acquisition)',
+            'Super Admin', 'Super CRM Administrator', 'Administrator', 'Core 360 Administrator'
           ]}>
             <AppLayout>
               <TalentAcquisitionPage />
