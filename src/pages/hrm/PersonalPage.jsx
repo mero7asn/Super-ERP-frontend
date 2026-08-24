@@ -101,6 +101,12 @@ const PersonalPage = () => {
   const [trainingSlots, setTrainingSlots] = useState([]);
   const [coachingSlots, setCoachingSlots] = useState([]);
 
+  // Default AUX Target fields for monthly initial configuration
+  const [defaultLiveTarget, setDefaultLiveTarget] = useState(480);
+  const [defaultBreakTarget, setDefaultBreakTarget] = useState(60);
+  const [defaultTrainingTarget, setDefaultTrainingTarget] = useState(0);
+  const [defaultCoachingTarget, setDefaultCoachingTarget] = useState(0);
+
   // Calculate total minutes from slots
   const calcSlotMinutes = (slots) => {
     return slots.reduce((total, slot) => {
