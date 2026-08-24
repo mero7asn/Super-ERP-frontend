@@ -709,7 +709,8 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[
             'CRM core Administrator', 'HRM System Administrator', 'HR Manager',
-            'Training and Development Specialist', 'Employee (General User)'
+            'Training and Development Specialist', 'Employee (General User)',
+            'Super Admin', 'Super CRM Administrator', 'Administrator', 'Core 360 Administrator'
           ]}>
             <AppLayout>
               <TrainingPage />

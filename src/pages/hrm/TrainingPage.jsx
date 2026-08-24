@@ -171,7 +171,7 @@ const TrainingPage = () => {
     }
   };
 
-  const isHR = ['HRM System Administrator', 'HR Manager', 'Training and Development Specialist', 'CRM core Administrator'].includes(user?.role);
+  const isHR = ['HRM System Administrator', 'HR Manager', 'Training and Development Specialist', 'CRM core Administrator', 'Super Admin', 'Super CRM Administrator', 'Administrator', 'Core 360 Administrator'].includes(user?.role);
 
   // Derive departments for filter dropdowns
   const deptOptions = useMemo(() => {
