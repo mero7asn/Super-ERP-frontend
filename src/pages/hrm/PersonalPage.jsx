@@ -157,8 +157,8 @@ const PersonalPage = () => {
   // Leave balance
   const [leaveBalance, setLeaveBalance] = useState(null);
 
-  const isHR = ['HRM System Administrator', 'HR Manager', 'HR Specialist (Generalist)', 'CRM core Administrator', 'HR Director / Executive HR User'].includes(user?.role);
-  const isSuperAdmin = ['CRM core Administrator', 'HRM System Administrator'].includes(user?.role);
+  const isHR = ['HRM System Administrator', 'HR Manager', 'HR Specialist (Generalist)', 'CRM core Administrator', 'HR Director / Executive HR User', 'Super Admin', 'Super CRM Administrator', 'Administrator', 'Core 360 Administrator'].includes(user?.role);
+  const isSuperAdmin = ['CRM core Administrator', 'HRM System Administrator', 'Super Admin', 'Super CRM Administrator', 'Administrator', 'Core 360 Administrator'].includes(user?.role);
 
   // Dynamic role list based on selected department filter
   const availableRoles = (() => {
